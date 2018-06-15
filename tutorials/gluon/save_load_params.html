@@ -5,6 +5,10 @@
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Saving and Loading Gluon Models" property="og:title">
+<meta content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" property="og:image">
+<meta content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" property="og:image:secure_url">
+<meta content="Saving and Loading Gluon Models" property="og:description"/>
 <title>Saving and Loading Gluon Models — mxnet  documentation</title>
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel="stylesheet"/>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -51,7 +55,7 @@
 <link href="../../genindex.html" rel="index" title="Index">
 <link href="../../search.html" rel="search" title="Search"/>
 <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"/>
-</link></link></link></head>
+</link></link></link></meta></meta></meta></head>
 <body background="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-background-compressed.jpeg" role="document">
 <div class="content-block"><div class="navbar navbar-fixed-top">
 <div class="container" id="navContainer">
@@ -212,7 +216,7 @@
 <p><strong>1. Save/load model parameters only</strong></p>
 <p>Parameters of any Gluon model can be saved using the <code class="docutils literal"><span class="pre">save_params</span></code> and <code class="docutils literal"><span class="pre">load_params</span></code> method. This does not save model architecture. This method is used to save parameters of dynamic (non-hybrid) models. Model architecture cannot be saved for dynamic models because model architecture changes during execution.</p>
 <p><strong>2. Save/load model parameters AND architecture</strong></p>
-<p>The Model architecture of <code class="docutils literal"><span class="pre">Hybrid</span></code> models stays static and don’t change during execution. Therefore both model parameters AND architecture can be saved and loaded using <code class="docutils literal"><span class="pre">export</span></code>, <code class="docutils literal"><span class="pre">load_checkpoint</span></code> and <code class="docutils literal"><span class="pre">load</span></code> methods.</p>
+<p>The Model architecture of <code class="docutils literal"><span class="pre">Hybrid</span></code> models stays static and don’t change during execution. Therefore both model parameters AND architecture can be saved and loaded using <code class="docutils literal"><span class="pre">export</span></code>, <code class="docutils literal"><span class="pre">imports</span></code> methods.</p>
 <p>Let’s look at the above methods in more detail. Let’s start by importing the modules we’ll need.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
@@ -257,7 +261,7 @@
         <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">"relu"</span><span class="p">))</span>
         <span class="c1"># Second fully connected layer with as many neurons as the number of classes</span>
         <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">num_outputs</span><span class="p">))</span>
-        
+
         <span class="k">return</span> <span class="n">net</span>
 
 <span class="c1"># Train a given model using MNIST data</span>
@@ -422,16 +426,8 @@ Epoch: 0; Batch 900; Loss 0.037809 <!--notebook-skip-line-->
 </div>
 <div class="section" id="from-python">
 <span id="from-python"></span><h3>From Python<a class="headerlink" href="#from-python" title="Permalink to this headline">¶</a></h3>
-<p>Serialized Hybrid networks (saved as .JSON and .params file) can be loaded and used inside Python frontend using <code class="docutils literal"><span class="pre">mx.model.load_checkpoint</span></code> and <code class="docutils literal"><span class="pre">gluon.nn.SymbolBlock</span></code>. To demonstrate that, let’s load the network we serialized above.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Load the network architecture and parameters</span>
-<span class="n">sym</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'lenet-symbol.json'</span><span class="p">)</span>
-<span class="c1"># Create a Gluon Block using the loaded network architecture.</span>
-<span class="c1"># 'inputs' parameter specifies the name of the symbol in the computation graph</span>
-<span class="c1"># that should be treated as input. 'data' is the default name used for input when</span>
-<span class="c1"># a model architecture is saved to a file.</span>
-<span class="n">deserialized_net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">sym</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">))</span>
-<span class="c1"># Load the parameters</span>
-<span class="n">deserialized_net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'lenet-0001.params'</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<p>Serialized Hybrid networks (saved as .JSON and .params file) can be loaded and used inside Python frontend using <code class="docutils literal"><span class="pre">gluon.nn.SymbolBlock</span></code>. To demonstrate that, let’s load the network we serialized above.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">deserialized_net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span><span class="s2">"lenet-symbol.json"</span><span class="p">,</span> <span class="p">[</span><span class="s1">'data'</span><span class="p">],</span> <span class="s2">"lenet-0001.params"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">deserialized_net</span></code> now contains the network we deserialized from files. Let’s test the deserialized network to make sure it works.</p>
