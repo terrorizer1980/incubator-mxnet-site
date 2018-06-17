@@ -287,7 +287,7 @@ is called, its <code class="docutils literal"><span class="pre">hybrid_forward</
 <p>Hybrid execution can be activated by simply calling <code class="docutils literal"><span class="pre">.hybridize()</span></code> on the top
 level layer. The first forward call after activation will try to build a
 computation graph from <code class="docutils literal"><span class="pre">hybrid_forward</span></code> and cache it. On subsequent forward
-calls the cached graph instead of <code class="docutils literal"><span class="pre">hybrid_forward</span></code> will be invoked:</p>
+calls the cached graph, instead of <code class="docutils literal"><span class="pre">hybrid_forward</span></code>, will be invoked:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random_normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
 <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -301,23 +301,24 @@ forward <code class="docutils literal"><span class="pre">hybrid_forward</span></
 <p>Hybridize will speed up execution and save memory. If the top level layer is
 not a <code class="docutils literal"><span class="pre">HybridBlock</span></code>, you can still call <code class="docutils literal"><span class="pre">.hybridize()</span></code> on it and Gluon will try
 to hybridize its children layers instead.</p>
+<p>Please refer to the <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/gluon/gluon.html?highlight=hybridize#mxnet.gluon.Block.hybridize">API manual</a>
+for details.</p>
 </div>
 <div class="section" id="serializing-trained-model-for-deployment">
 <span id="serializing-trained-model-for-deployment"></span><h2>Serializing trained model for deployment<a class="headerlink" href="#serializing-trained-model-for-deployment" title="Permalink to this headline">¶</a></h2>
-<p>Models implemented as <code class="docutils literal"><span class="pre">HybridBlock</span></code> can be easily serialized for deployment
-using other language front-ends like C, C++ and Scala. To this end, we simply
-forward the model with symbolic variables instead of NDArrays and save the
-output Symbol(s):</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-<span class="n">y</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">'model.json'</span><span class="p">)</span>
-<span class="n">net</span><span class="o">.</span><span class="n">save_params</span><span class="p">(</span><span class="s1">'model.params'</span><span class="p">)</span>
+<p>Models implemented as <code class="docutils literal"><span class="pre">HybridBlock</span></code> can be easily serialized. The serialized
+model can be loaded back later or used for deployment
+with other language front-ends like C, C++ and Scala. To this end, we simply
+use <code class="docutils literal"><span class="pre">export</span></code> and <code class="docutils literal"><span class="pre">SymbolBlock.imports</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'model'</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If your network outputs more than one value, you can use <code class="docutils literal"><span class="pre">mx.sym.Group</span></code> to
-combine them into a grouped Symbol and then save. The saved json and params
-files can then be loaded with C, C++ and Scala interface for prediction.</p>
+<p>Two files <code class="docutils literal"><span class="pre">model-symbol.json</span></code> and <code class="docutils literal"><span class="pre">model-0001.params</span></code> are saved on disk.
+You can use other language bindings to load them. You can also load them back
+to gluon with <code class="docutils literal"><span class="pre">SymbolBlock</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net2</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span><span class="s1">'model-symbol.json'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'data'</span><span class="p">],</span> <span class="s1">'model-0001.params'</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="btn-group" role="group">
 <div class="download-btn"><a download="hybrid.ipynb" href="hybrid.ipynb"><span class="glyphicon glyphicon-download-alt"></span> hybrid.ipynb</a></div></div></div>
 </div>

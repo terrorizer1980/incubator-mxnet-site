@@ -225,7 +225,7 @@
 <span class="c1"># under the License.</span>
 
 <span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable= arguments-differ</span>
+<span class="c1"># pylint: disable= arguments-differ, too-many-lines</span>
 <span class="sd">"""Base container class for all neural network models."""</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Block'</span><span class="p">,</span> <span class="s1">'HybridBlock'</span><span class="p">,</span> <span class="s1">'SymbolBlock'</span><span class="p">]</span>
 
@@ -357,7 +357,8 @@
 
 
 <span class="sd">    Child :py:class:`Block` assigned this way will be registered and :py:meth:`collect_params`</span>
-<span class="sd">    will collect their Parameters recursively.</span>
+<span class="sd">    will collect their Parameters recursively. You can also manually register</span>
+<span class="sd">    child blocks with :py:meth:`register_child`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -474,12 +475,12 @@
 <span class="sd">        children's Parameters(default), also can returns the select :py:class:`ParameterDict`</span>
 <span class="sd">        which match some given regular expressions.</span>
 
-<span class="sd">        For example, collect the specified parameter in ['conv1_weight', 'conv1_bias', 'fc_weight',</span>
+<span class="sd">        For example, collect the specified parameters in ['conv1_weight', 'conv1_bias', 'fc_weight',</span>
 <span class="sd">        'fc_bias']::</span>
 
 <span class="sd">            model.collect_params('conv1_weight|conv1_bias|fc_weight|fc_bias')</span>
 
-<span class="sd">        or collect all paramters which their name ends with 'weight' or 'bias', this can be done</span>
+<span class="sd">        or collect all parameters whose names end with 'weight' or 'bias', this can be done</span>
 <span class="sd">        using regular expressions::</span>
 
 <span class="sd">            model.collect_params('.*weight|.*bias')</span>
@@ -513,29 +514,62 @@
             <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-<div class="viewcode-block" id="Block.save_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.save_params">[docs]</a>    <span class="k">def</span> <span class="nf">save_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.save_parameters"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">"""Save parameters to file.</span>
 
+<span class="sd">        Saved parameters can only be loaded with `load_parameters`. Note that this method</span>
+<span class="sd">        only saves parameters, not model structure. If you want to save model structures,</span>
+<span class="sd">        please use :py:meth:`HybridBlock.export`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
 <span class="sd">        filename : str</span>
 <span class="sd">            Path to file.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        `Saving and Loading Gluon Models</span>
+<span class="sd">        <https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html>`_</span>
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">()</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span> <span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.load_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_params">[docs]</a>    <span class="k">def</span> <span class="nf">load_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">"""Load parameters from file.</span>
+<div class="viewcode-block" id="Block.save_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.save_params">[docs]</a>    <span class="k">def</span> <span class="nf">save_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">"""[Deprecated] Please use save_parameters.</span>
 
+<span class="sd">        Save parameters to file.</span>
+
+<span class="sd">        filename : str</span>
+<span class="sd">            Path to file.</span>
+<span class="sd">        """</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"save_params is deprecated. Please use save_parameters."</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">strip_prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="se">\n</span><span class="s1">save_params is deprecated. Using '</span> \
+                              <span class="s1">'save_parameters may resolve this error.'</span><span class="o">%</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.load_parameters"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Load parameters from file previously saved by `save_parameters`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
 <span class="sd">        filename : str</span>
 <span class="sd">            Path to parameter file.</span>
 <span class="sd">        ctx : Context or list of Context, default cpu()</span>
-<span class="sd">            Context(s) initialize loaded parameters on.</span>
+<span class="sd">            Context(s) to initialize loaded parameters on.</span>
 <span class="sd">        allow_missing : bool, default False</span>
 <span class="sd">            Whether to silently skip loading parameters not represents in the file.</span>
 <span class="sd">        ignore_extra : bool, default False</span>
 <span class="sd">            Whether to silently ignore parameters from the file that are not</span>
 <span class="sd">            present in this Block.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        `Saving and Loading Gluon Models</span>
+<span class="sd">        <https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html>`_</span>
 <span class="sd">        """</span>
         <span class="n">loaded</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">()</span>
@@ -563,6 +597,25 @@
                         <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
             <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Block.load_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_params">[docs]</a>    <span class="k">def</span> <span class="nf">load_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""[Deprecated] Please use load_parameters.</span>
+
+<span class="sd">        Load parameters from file.</span>
+
+<span class="sd">        filename : str</span>
+<span class="sd">            Path to parameter file.</span>
+<span class="sd">        ctx : Context or list of Context, default cpu()</span>
+<span class="sd">            Context(s) to initialize loaded parameters on.</span>
+<span class="sd">        allow_missing : bool, default False</span>
+<span class="sd">            Whether to silently skip loading parameters not represents in the file.</span>
+<span class="sd">        ignore_extra : bool, default False</span>
+<span class="sd">            Whether to silently ignore parameters from the file that are not</span>
+<span class="sd">            present in this Block.</span>
+<span class="sd">        """</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"load_params is deprecated. Please use load_parameters."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.register_child"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.register_child">[docs]</a>    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">"""Registers block as a child of self. :py:class:`Block` s assigned to self as</span>
@@ -637,9 +690,31 @@
 <div class="viewcode-block" id="HybridBlock"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock">[docs]</a><span class="k">class</span> <span class="nc">HybridBlock</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
     <span class="sd">"""`HybridBlock` supports forwarding with both Symbol and NDArray.</span>
 
+<span class="sd">    `HybridBlock` is similar to `Block`, with a few differences::</span>
+
+<span class="sd">        import mxnet as mx</span>
+<span class="sd">        from mxnet.gluon import HybridBlock, nn</span>
+
+<span class="sd">        class Model(HybridBlock):</span>
+<span class="sd">            def __init__(self, **kwargs):</span>
+<span class="sd">                super(Model, self).__init__(**kwargs)</span>
+<span class="sd">                # use name_scope to give child Blocks appropriate names.</span>
+<span class="sd">                with self.name_scope():</span>
+<span class="sd">                    self.dense0 = nn.Dense(20)</span>
+<span class="sd">                    self.dense1 = nn.Dense(20)</span>
+
+<span class="sd">            def hybrid_forward(self, F, x):</span>
+<span class="sd">                x = F.relu(self.dense0(x))</span>
+<span class="sd">                return F.relu(self.dense1(x))</span>
+
+<span class="sd">        model = Model()</span>
+<span class="sd">        model.initialize(ctx=mx.cpu(0))</span>
+<span class="sd">        model.hybridize()</span>
+<span class="sd">        model(mx.nd.zeros((10, 10), ctx=mx.cpu(0)))</span>
+
 <span class="sd">    Forward computation in :py:class:`HybridBlock` must be static to work with :py:class:`Symbol` s,</span>
 <span class="sd">    i.e. you cannot call :py:meth:`NDArray.asnumpy`, :py:attr:`NDArray.shape`,</span>
-<span class="sd">    :py:attr:`NDArray.dtype`, etc on tensors.</span>
+<span class="sd">    :py:attr:`NDArray.dtype`, `NDArray` indexing (`x[i]`) etc on tensors.</span>
 <span class="sd">    Also, you cannot use branching or loop logic that bases on non-constant</span>
 <span class="sd">    expressions like random numbers or intermediate results, since they change</span>
 <span class="sd">    the graph structure for each iteration.</span>
@@ -649,8 +724,12 @@
 <span class="sd">    representing the forward computation and cache it. On subsequent forwards,</span>
 <span class="sd">    the cached graph will be used instead of :py:meth:`hybrid_forward`.</span>
 
-<span class="sd">    Refer `Hybrid tutorial <https://mxnet.incubator.apache.org/versions/1.2.0/tutorials/gluon/hybrid.html>`_ to see</span>
-<span class="sd">    the end-to-end usage.</span>
+<span class="sd">    Please see references for detailed tutorial.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">        `Hybrid - Faster training and easy deployment</span>
+<span class="sd">        <https://mxnet.incubator.apache.org/versions/1.2.0/tutorials/gluon/hybrid.html>`_</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
@@ -788,8 +867,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_infer_attrs</span><span class="p">(</span><span class="s1">'infer_type'</span><span class="p">,</span> <span class="s1">'dtype'</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HybridBlock.export"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">"""Export HybridBlock to json format that can be loaded by `mxnet.mod.Module`</span>
-<span class="sd">        or the C++ interface.</span>
+        <span class="sd">"""Export HybridBlock to json format that can be loaded by</span>
+<span class="sd">        `SymbolBlock.imports`, `mxnet.mod.Module` or the C++ interface.</span>
 
 <span class="sd">        .. note:: When there are only one input, it will have name `data`. When there</span>
 <span class="sd">                  Are more than one inputs, they will be named as `data0`, `data1`, etc.</span>
@@ -890,6 +969,50 @@
 <span class="sd">    >>> x = mx.nd.random.normal(shape=(16, 3, 224, 224))</span>
 <span class="sd">    >>> print(feat_model(x))</span>
 <span class="sd">    """</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SymbolBlock.imports"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.SymbolBlock.imports">[docs]</a>    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">param_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">"""Import model previously saved by `HybridBlock.export` or</span>
+<span class="sd">        `Module.save_checkpoint` as a SymbolBlock for use in Gluon.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        symbol_file : str</span>
+<span class="sd">            Path to symbol file.</span>
+<span class="sd">        input_names : list of str</span>
+<span class="sd">            List of input variable names</span>
+<span class="sd">        param_file : str, optional</span>
+<span class="sd">            Path to parameter file.</span>
+<span class="sd">        ctx : Context, default None</span>
+<span class="sd">            The context to initialize SymbolBlock on.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        SymbolBlock</span>
+<span class="sd">            SymbolBlock loaded from symbol and parameter files.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> net1 = gluon.model_zoo.vision.resnet18_v1(</span>
+<span class="sd">        ...     prefix='resnet', pretrained=True)</span>
+<span class="sd">        >>> net1.hybridize()</span>
+<span class="sd">        >>> x = mx.nd.random.normal(shape=(1, 3, 32, 32))</span>
+<span class="sd">        >>> out1 = net1(x)</span>
+<span class="sd">        >>> net1.export('net1', epoch=1)</span>
+<span class="sd">        >>></span>
+<span class="sd">        >>> net2 = gluon.SymbolBlock.imports(</span>
+<span class="sd">        ...     'net1-symbol.json', ['data'], 'net1-0001.params')</span>
+<span class="sd">        >>> out2 = net2(x)</span>
+<span class="sd">        """</span>
+        <span class="n">sym</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">input_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_names</span><span class="p">]</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">SymbolBlock</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="s1">''</span>

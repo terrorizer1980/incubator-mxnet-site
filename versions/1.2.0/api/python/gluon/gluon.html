@@ -370,7 +370,8 @@ assign child <a class="reference internal" href="#mxnet.gluon.Block" title="mxne
 </pre></div>
 </div>
 <p>Child <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> assigned this way will be registered and <a class="reference internal" href="#mxnet.gluon.Block.collect_params" title="mxnet.gluon.Block.collect_params"><code class="xref py py-meth docutils literal"><span class="pre">collect_params()</span></code></a>
-will collect their Parameters recursively.</p>
+will collect their Parameters recursively. You can also manually register
+child blocks with <a class="reference internal" href="#mxnet.gluon.Block.register_child" title="mxnet.gluon.Block.register_child"><code class="xref py py-meth docutils literal"><span class="pre">register_child()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -427,12 +428,12 @@ if you want <code class="docutils literal"><span class="pre">dense1</span></code
 <dd><p>Returns a <a class="reference internal" href="#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal"><span class="pre">ParameterDict</span></code></a> containing this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a> and all of its
 children’s Parameters(default), also can returns the select <a class="reference internal" href="#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal"><span class="pre">ParameterDict</span></code></a>
 which match some given regular expressions.</p>
-<p>For example, collect the specified parameter in [‘conv1_weight’, ‘conv1_bias’, ‘fc_weight’,
+<p>For example, collect the specified parameters in [‘conv1_weight’, ‘conv1_bias’, ‘fc_weight’,
 ‘fc_bias’]:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="s1">'conv1_weight|conv1_bias|fc_weight|fc_bias'</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>or collect all paramters which their name ends with ‘weight’ or ‘bias’, this can be done
+<p>or collect all parameters whose names end with ‘weight’ or ‘bias’, this can be done
 using regular expressions:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="s1">'.*weight|.*bias'</span><span class="p">)</span>
 </pre></div>
@@ -504,14 +505,37 @@ Otherwise, <code class="xref py py-meth docutils literal"><span class="pre">Para
 </table>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.gluon.Block.load_parameters">
+<code class="descname">load_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>ctx=None</em>, <em>allow_missing=False</em>, <em>ignore_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.load_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.load_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load parameters from file previously saved by <cite>save_parameters</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>str</em>) – Path to parameter file.</li>
+<li><strong>ctx</strong> (<em>Context</em><em> or </em><em>list of Context</em><em>, </em><em>default cpu</em><em>(</em><em>)</em>) – Context(s) to initialize loaded parameters on.</li>
+<li><strong>allow_missing</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently skip loading parameters not represents in the file.</li>
+<li><strong>ignore_extra</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently ignore parameters from the file that are not
+present in this Block.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">Saving and Loading Gluon Models</a></p>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.gluon.Block.load_params">
 <code class="descname">load_params</code><span class="sig-paren">(</span><em>filename</em>, <em>ctx=None</em>, <em>allow_missing=False</em>, <em>ignore_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.load_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.load_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load parameters from file.</p>
+<dd><p>[Deprecated] Please use load_parameters.</p>
+<p>Load parameters from file.</p>
 <dl class="docutils">
 <dt>filename <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd>Path to parameter file.</dd>
 <dt>ctx <span class="classifier-delimiter">:</span> <span class="classifier">Context or list of Context, default cpu()</span></dt>
-<dd>Context(s) initialize loaded parameters on.</dd>
+<dd>Context(s) to initialize loaded parameters on.</dd>
 <dt>allow_missing <span class="classifier-delimiter">:</span> <span class="classifier">bool, default False</span></dt>
 <dd>Whether to silently skip loading parameters not represents in the file.</dd>
 <dt>ignore_extra <span class="classifier-delimiter">:</span> <span class="classifier">bool, default False</span></dt>
@@ -555,9 +579,28 @@ children’s parameters).</p>
 attributes will be registered automatically.</p>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.gluon.Block.save_parameters">
+<code class="descname">save_parameters</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.save_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.save_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save parameters to file.</p>
+<p>Saved parameters can only be loaded with <cite>load_parameters</cite>. Note that this method
+only saves parameters, not model structure. If you want to save model structures,
+please use <a class="reference internal" href="#mxnet.gluon.HybridBlock.export" title="mxnet.gluon.HybridBlock.export"><code class="xref py py-meth docutils literal"><span class="pre">HybridBlock.export()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – Path to file.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">Saving and Loading Gluon Models</a></p>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.gluon.Block.save_params">
 <code class="descname">save_params</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.save_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.save_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save parameters to file.</p>
+<dd><p>[Deprecated] Please use save_parameters.</p>
+<p>Save parameters to file.</p>
 <dl class="docutils">
 <dt>filename <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd>Path to file.</dd>
@@ -571,7 +614,7 @@ attributes will be registered automatically.</p>
 <cite>Constant`s are ignored by `autograd</cite> and <cite>Trainer</cite>, thus their values
 will not change during training. But you can still update their values
 manually with the <cite>set_data</cite> method.</p>
-<p><a href="#id2"><span class="problematic" id="id3">`</span></a>Constant`s can be created with either:</p>
+<p><a href="#id3"><span class="problematic" id="id4">`</span></a>Constant`s can be created with either:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="s1">'const'</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 </pre></div>
 </div>
@@ -582,12 +625,18 @@ manually with the <cite>set_data</cite> method.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get_constant</span><span class="p">(</span><span class="s1">'const'</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Name of the parameter.</dd>
-<dt>value <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span></dt>
-<dd>Initial value for the constant.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – Name of the parameter.</li>
+<li><strong>value</strong> (<em>array-like</em>) – Initial value for the constant.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="exception">
 <dt id="mxnet.gluon.DeferredInitializationError">
@@ -598,9 +647,31 @@ manually with the <cite>set_data</cite> method.</p>
 <dt id="mxnet.gluon.HybridBlock">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.</code><code class="descname">HybridBlock</code><span class="sig-paren">(</span><em>prefix=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#HybridBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.HybridBlock" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>HybridBlock</cite> supports forwarding with both Symbol and NDArray.</p>
+<p><cite>HybridBlock</cite> is similar to <cite>Block</cite>, with a few differences:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="k">import</span> <span class="n">HybridBlock</span><span class="p">,</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># use name_scope to give child Blocks appropriate names.</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dense0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dense0</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dense1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
+<span class="n">model</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+</pre></div>
+</div>
 <p>Forward computation in <a class="reference internal" href="#mxnet.gluon.HybridBlock" title="mxnet.gluon.HybridBlock"><code class="xref py py-class docutils literal"><span class="pre">HybridBlock</span></code></a> must be static to work with <code class="xref py py-class docutils literal"><span class="pre">Symbol</span></code> s,
 i.e. you cannot call <code class="xref py py-meth docutils literal"><span class="pre">NDArray.asnumpy()</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">NDArray.shape</span></code>,
-<code class="xref py py-attr docutils literal"><span class="pre">NDArray.dtype</span></code>, etc on tensors.
+<code class="xref py py-attr docutils literal"><span class="pre">NDArray.dtype</span></code>, <cite>NDArray</cite> indexing (<cite>x[i]</cite>) etc on tensors.
 Also, you cannot use branching or loop logic that bases on non-constant
 expressions like random numbers or intermediate results, since they change
 the graph structure for each iteration.</p>
@@ -608,8 +679,9 @@ the graph structure for each iteration.</p>
 <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a>. After activation, <a class="reference internal" href="#mxnet.gluon.HybridBlock" title="mxnet.gluon.HybridBlock"><code class="xref py py-class docutils literal"><span class="pre">HybridBlock</span></code></a> will create a symbolic graph
 representing the forward computation and cache it. On subsequent forwards,
 the cached graph will be used instead of <a class="reference internal" href="#mxnet.gluon.HybridBlock.hybrid_forward" title="mxnet.gluon.HybridBlock.hybrid_forward"><code class="xref py py-meth docutils literal"><span class="pre">hybrid_forward()</span></code></a>.</p>
-<p>Refer <a class="reference external" href="https://mxnet.incubator.apache.org/versions/1.2.0/tutorials/gluon/hybrid.html">Hybrid tutorial</a> to see
-the end-to-end usage.</p>
+<p>Please see references for detailed tutorial.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://mxnet.incubator.apache.org/versions/1.2.0/tutorials/gluon/hybrid.html">Hybrid - Faster training and easy deployment</a></p>
 <dl class="method">
 <dt id="mxnet.gluon.HybridBlock.__setattr__">
 <code class="descname">__setattr__</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#HybridBlock.__setattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.HybridBlock.__setattr__" title="Permalink to this definition">¶</a></dt>
@@ -618,8 +690,8 @@ the end-to-end usage.</p>
 <dl class="method">
 <dt id="mxnet.gluon.HybridBlock.export">
 <code class="descname">export</code><span class="sig-paren">(</span><em>path</em>, <em>epoch=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#HybridBlock.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.HybridBlock.export" title="Permalink to this definition">¶</a></dt>
-<dd><p>Export HybridBlock to json format that can be loaded by <cite>mxnet.mod.Module</cite>
-or the C++ interface.</p>
+<dd><p>Export HybridBlock to json format that can be loaded by
+<cite>SymbolBlock.imports</cite>, <cite>mxnet.mod.Module</cite> or the C++ interface.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">When there are only one input, it will have name <cite>data</cite>. When there
@@ -857,11 +929,15 @@ as <code class="xref py py-meth docutils literal"><span class="pre">values()</sp
 <dt id="mxnet.gluon.Parameter.reset_ctx">
 <code class="descname">reset_ctx</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/parameter.html#Parameter.reset_ctx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Parameter.reset_ctx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-assign Parameter to other contexts.</p>
-<dl class="docutils">
-<dt>ctx <span class="classifier-delimiter">:</span> <span class="classifier">Context or list of Context, default <code class="docutils literal"><span class="pre">context.current_context()</span></code>.</span></dt>
-<dd>Assign Parameter to given context. If ctx is a list of Context, a
-copy will be made for each context.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ctx</strong> (Context or list of Context, default <code class="docutils literal"><span class="pre">context.current_context()</span></code>.) – Assign Parameter to given context. If ctx is a list of Context, a
+copy will be made for each context.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.Parameter.set_data">
@@ -937,20 +1013,22 @@ prefix.</li>
 <a class="reference internal" href="#mxnet.gluon.ParameterDict.get" title="mxnet.gluon.ParameterDict.get"><code class="xref py py-func docutils literal"><span class="pre">get()</span></code></a> will first try to retrieve it from “shared” dict. If still not
 found, <a class="reference internal" href="#mxnet.gluon.ParameterDict.get" title="mxnet.gluon.ParameterDict.get"><code class="xref py py-func docutils literal"><span class="pre">get()</span></code></a> will create a new <a class="reference internal" href="#mxnet.gluon.Constant" title="mxnet.gluon.Constant"><code class="xref py py-class docutils literal"><span class="pre">Constant</span></code></a> with key-word
 arguments and insert it to self.</p>
-<dl class="docutils">
-<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Name of the desired Constant. It will be prepended with this dictionary’s
-prefix.</dd>
-<dt>value <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span></dt>
-<dd>Initial value of constant.</dd>
-</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The created or retrieved <a class="reference internal" href="#mxnet.gluon.Constant" title="mxnet.gluon.Constant"><code class="xref py py-class docutils literal"><span class="pre">Constant</span></code></a>.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – Name of the desired Constant. It will be prepended with this dictionary’s
+prefix.</li>
+<li><strong>value</strong> (<em>array-like</em>) – Initial value of constant.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mxnet.gluon.Constant" title="mxnet.gluon.Constant">Constant</a></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The created or retrieved <a class="reference internal" href="#mxnet.gluon.Constant" title="mxnet.gluon.Constant"><code class="xref py py-class docutils literal"><span class="pre">Constant</span></code></a>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.gluon.Constant" title="mxnet.gluon.Constant">Constant</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -980,19 +1058,22 @@ Otherwise, <code class="xref py py-meth docutils literal"><span class="pre">Para
 <dt id="mxnet.gluon.ParameterDict.load">
 <code class="descname">load</code><span class="sig-paren">(</span><em>filename</em>, <em>ctx=None</em>, <em>allow_missing=False</em>, <em>ignore_extra=False</em>, <em>restore_prefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/parameter.html#ParameterDict.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.ParameterDict.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load parameters from file.</p>
-<dl class="docutils">
-<dt>filename <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to parameter file.</dd>
-<dt>ctx <span class="classifier-delimiter">:</span> <span class="classifier">Context or list of Context</span></dt>
-<dd>Context(s) initialize loaded parameters on.</dd>
-<dt>allow_missing <span class="classifier-delimiter">:</span> <span class="classifier">bool, default False</span></dt>
-<dd>Whether to silently skip loading parameters not represents in the file.</dd>
-<dt>ignore_extra <span class="classifier-delimiter">:</span> <span class="classifier">bool, default False</span></dt>
-<dd>Whether to silently ignore parameters from the file that are not
-present in this ParameterDict.</dd>
-<dt>restore_prefix <span class="classifier-delimiter">:</span> <span class="classifier">str, default ‘’</span></dt>
-<dd>prepend prefix to names of stored parameters before loading.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>str</em>) – Path to parameter file.</li>
+<li><strong>ctx</strong> (<em>Context</em><em> or </em><em>list of Context</em>) – Context(s) initialize loaded parameters on.</li>
+<li><strong>allow_missing</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently skip loading parameters not represents in the file.</li>
+<li><strong>ignore_extra</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently ignore parameters from the file that are not
+present in this ParameterDict.</li>
+<li><strong>restore_prefix</strong> (<em>str</em><em>, </em><em>default ''</em>) – prepend prefix to names of stored parameters before loading.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="attribute">
 <dt id="mxnet.gluon.ParameterDict.prefix">
@@ -1004,22 +1085,32 @@ present in this ParameterDict.</dd>
 <dt id="mxnet.gluon.ParameterDict.reset_ctx">
 <code class="descname">reset_ctx</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/parameter.html#ParameterDict.reset_ctx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.ParameterDict.reset_ctx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-assign all Parameters to other contexts.</p>
-<dl class="docutils">
-<dt>ctx <span class="classifier-delimiter">:</span> <span class="classifier">Context or list of Context, default <code class="xref py py-meth docutils literal"><span class="pre">context.current_context()</span></code>.</span></dt>
-<dd>Assign Parameter to given context. If ctx is a list of Context, a
-copy will be made for each context.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ctx</strong> (Context or list of Context, default <code class="xref py py-meth docutils literal"><span class="pre">context.current_context()</span></code>.) – Assign Parameter to given context. If ctx is a list of Context, a
+copy will be made for each context.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.ParameterDict.save">
 <code class="descname">save</code><span class="sig-paren">(</span><em>filename</em>, <em>strip_prefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/parameter.html#ParameterDict.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.ParameterDict.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save parameters to file.</p>
-<dl class="docutils">
-<dt>filename <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to parameter file.</dd>
-<dt>strip_prefix <span class="classifier-delimiter">:</span> <span class="classifier">str, default ‘’</span></dt>
-<dd>Strip prefix from parameter names before saving.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>str</em>) – Path to parameter file.</li>
+<li><strong>strip_prefix</strong> (<em>str</em><em>, </em><em>default ''</em>) – Strip prefix from parameter names before saving.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.ParameterDict.setattr">
@@ -1095,6 +1186,45 @@ that are not inputs.</li>
 <span class="gp">>>> </span><span class="nb">print</span><span class="p">(</span><span class="n">feat_model</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
+<dl class="staticmethod">
+<dt id="mxnet.gluon.SymbolBlock.imports">
+<em class="property">static </em><code class="descname">imports</code><span class="sig-paren">(</span><em>symbol_file</em>, <em>input_names</em>, <em>param_file=None</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#SymbolBlock.imports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.SymbolBlock.imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import model previously saved by <cite>HybridBlock.export</cite> or
+<cite>Module.save_checkpoint</cite> as a SymbolBlock for use in Gluon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>symbol_file</strong> (<em>str</em>) – Path to symbol file.</li>
+<li><strong>input_names</strong> (<em>list of str</em>) – List of input variable names</li>
+<li><strong>param_file</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to parameter file.</li>
+<li><strong>ctx</strong> (<em>Context</em><em>, </em><em>default None</em>) – The context to initialize SymbolBlock on.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">SymbolBlock loaded from symbol and parameter files.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.gluon.SymbolBlock" title="mxnet.gluon.SymbolBlock">SymbolBlock</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">net1</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v1</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">prefix</span><span class="o">=</span><span class="s1">'resnet'</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">net1</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">out1</span> <span class="o">=</span> <span class="n">net1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">net1</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'net1'</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">>>></span>
+<span class="gp">>>> </span><span class="n">net2</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">'net1-symbol.json'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'data'</span><span class="p">],</span> <span class="s1">'net1-0001.params'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">out2</span> <span class="o">=</span> <span class="n">net2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.Trainer">
@@ -1214,7 +1344,7 @@ been updated by <cite>backward</cite> after last step) and skip update.</li>
 <dl class="method">
 <dt id="mxnet.gluon.nn.Sequential.hybridize">
 <code class="descname">hybridize</code><span class="sig-paren">(</span><em>active=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/basic_layers.html#Sequential.hybridize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.Sequential.hybridize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activates or deactivates <a href="#id4"><span class="problematic" id="id5">`</span></a>HybridBlock`s recursively. Has no effect on
+<dd><p>Activates or deactivates <a href="#id5"><span class="problematic" id="id6">`</span></a>HybridBlock`s recursively. Has no effect on
 non-hybrid children.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
