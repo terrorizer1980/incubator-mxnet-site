@@ -240,7 +240,8 @@
 <span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">DataIter</span><span class="p">,</span> <span class="n">DataBatch</span><span class="p">,</span> <span class="n">DataDesc</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">ndarray</span>
 
-<span class="k">def</span> <span class="nf">encode_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">invalid_label</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">invalid_key</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="n">start_label</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">encode_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">invalid_label</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">invalid_key</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span>
+                     <span class="n">start_label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">unknown_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""Encode sentences and (optionally) build a mapping</span>
 <span class="sd">    from string tokens to integer indices. Unknown keys</span>
 <span class="sd">    will be added to vocabulary.</span>
@@ -259,6 +260,9 @@
 <span class="sd">        of sentence by default.</span>
 <span class="sd">    start_label : int</span>
 <span class="sd">        lowest index.</span>
+<span class="sd">    unknown_token: str</span>
+<span class="sd">        Symbol to represent unknown token.</span>
+<span class="sd">        If not specified, unknown token will be skipped.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -278,9 +282,11 @@
         <span class="n">coded</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vocab</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">new_vocab</span><span class="p">,</span> <span class="s2">"Unknown token </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="n">word</span>
+                <span class="k">assert</span> <span class="p">(</span><span class="n">new_vocab</span> <span class="ow">or</span> <span class="n">unknown_token</span><span class="p">),</span> <span class="s2">"Unknown token </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="n">word</span>
                 <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="n">invalid_label</span><span class="p">:</span>
                     <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">unknown_token</span><span class="p">:</span>
+                    <span class="n">word</span> <span class="o">=</span> <span class="n">unknown_token</span>
                 <span class="n">vocab</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
                 <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">coded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vocab</span><span class="p">[</span><span class="n">word</span><span class="p">])</span>
