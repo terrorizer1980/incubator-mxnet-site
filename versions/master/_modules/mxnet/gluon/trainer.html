@@ -365,7 +365,6 @@
 
     <span class="k">def</span> <span class="nf">_init_kvstore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Create kvstore."""</span>
-        <span class="n">arg_arrays</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore_params</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse</span><span class="p">:</span>
             <span class="n">kvstore</span><span class="p">,</span> <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">_create_sparse_kvstore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">'kvstore'</span><span class="p">])</span>
@@ -375,6 +374,7 @@
                                    <span class="s2">"gradients and/or sparse weights are present for "</span>
                                    <span class="s2">"Parameter '</span><span class="si">%s</span><span class="s2">'."</span><span class="o">%</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">arg_arrays</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">}</span>
             <span class="n">kvstore</span><span class="p">,</span> <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">_create_kvstore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">'kvstore'</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">),</span>
                                                          <span class="n">arg_arrays</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

@@ -888,7 +888,7 @@
 <span class="k">class</span> <span class="nc">_Pooling</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sd">"""Abstract class for different pooling layers."""</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="n">global_pool</span><span class="p">,</span>
-                 <span class="n">pool_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">pool_type</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">strides</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">strides</span> <span class="o">=</span> <span class="n">pool_size</span>
@@ -900,6 +900,8 @@
             <span class="s1">'kernel'</span><span class="p">:</span> <span class="n">pool_size</span><span class="p">,</span> <span class="s1">'stride'</span><span class="p">:</span> <span class="n">strides</span><span class="p">,</span> <span class="s1">'pad'</span><span class="p">:</span> <span class="n">padding</span><span class="p">,</span>
             <span class="s1">'global_pool'</span><span class="p">:</span> <span class="n">global_pool</span><span class="p">,</span> <span class="s1">'pool_type'</span><span class="p">:</span> <span class="n">pool_type</span><span class="p">,</span>
             <span class="s1">'pooling_convention'</span><span class="p">:</span> <span class="s1">'full'</span> <span class="k">if</span> <span class="n">ceil_mode</span> <span class="k">else</span> <span class="s1">'valid'</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">count_include_pad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s1">'count_include_pad'</span><span class="p">]</span> <span class="o">=</span> <span class="n">count_include_pad</span>
 
     <span class="k">def</span> <span class="nf">_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">'pool'</span>
@@ -1076,6 +1078,8 @@
 <span class="sd">        respectively. padding is applied on 'W' dimension.</span>
 <span class="sd">    ceil_mode : bool, default False</span>
 <span class="sd">        When `True`, will use ceil instead of floor to compute the output shape.</span>
+<span class="sd">    count_include_pad : bool, default True</span>
+<span class="sd">        When 'False', will exclude padding elements when computing the average value.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1092,13 +1096,13 @@
 <span class="sd">          equation.</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCW'</span><span class="p">,</span>
-                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCW' layout for now"</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pool_size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
             <span class="n">pool_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">pool_size</span><span class="p">,)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pool_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"pool_size must be a number or a list of 1 ints"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AvgPool1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AvgPool2D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.AvgPool2D">[docs]</a><span class="k">class</span> <span class="nc">AvgPool2D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
@@ -1120,6 +1124,8 @@
 <span class="sd">        dimensions respectively. padding is applied on 'H' and 'W' dimension.</span>
 <span class="sd">    ceil_mode : bool, default False</span>
 <span class="sd">        When True, will use ceil instead of floor to compute the output shape.</span>
+<span class="sd">    count_include_pad : bool, default True</span>
+<span class="sd">        When 'False', will exclude padding elements when computing the average value.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1139,13 +1145,13 @@
 <span class="sd">          equation.</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCHW'</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCHW' layout for now"</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pool_size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
             <span class="n">pool_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">pool_size</span><span class="p">,)</span><span class="o">*</span><span class="mi">2</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pool_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"pool_size must be a number or a list of 2 ints"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AvgPool2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AvgPool3D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.AvgPool3D">[docs]</a><span class="k">class</span> <span class="nc">AvgPool3D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
@@ -1168,6 +1174,8 @@
 <span class="sd">        dimension.</span>
 <span class="sd">    ceil_mode : bool, default False</span>
 <span class="sd">        When True, will use ceil instead of floor to compute the output shape.</span>
+<span class="sd">    count_include_pad : bool, default True</span>
+<span class="sd">        When 'False', will exclude padding elements when computing the average value.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1188,13 +1196,13 @@
 <span class="sd">          equation.</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCDHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">ceil_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCDHW'</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCDHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCDHW' layout for now"</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pool_size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
             <span class="n">pool_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">pool_size</span><span class="p">,)</span><span class="o">*</span><span class="mi">3</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pool_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"pool_size must be a number or a list of 3 ints"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AvgPool3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">pool_size</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">padding</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'avg'</span><span class="p">,</span> <span class="n">count_include_pad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GlobalMaxPool1D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalMaxPool1D">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool1D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
