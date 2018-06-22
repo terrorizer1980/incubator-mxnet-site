@@ -553,7 +553,10 @@ non-hybrid children.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>active</strong> (<em>bool</em><em>, </em><em>default True</em>) – Whether to turn hybrid on or off.</li>
-<li><strong>**kwargs</strong> (<em>string</em>) – Additional flags for hybridized operator.</li>
+<li><strong>static_alloc</strong> (<em>bool</em><em>, </em><em>default False</em>) – Statically allocate memory to improve speed. Memory usage may increase.</li>
+<li><strong>static_shape</strong> (<em>bool</em><em>, </em><em>default False</em>) – Optimize for invariant input shapes between iterations. Must also
+set static_alloc to True. Change of input shapes is still allowed
+but slower.</li>
 </ul>
 </td>
 </tr>
@@ -584,11 +587,7 @@ Otherwise, <code class="xref py py-meth docutils literal"><span class="pre">Para
 <dl class="method">
 <dt id="mxnet.gluon.Block.load_parameters">
 <code class="descname">load_parameters</code><span class="sig-paren">(</span><em>filename</em>, <em>ctx=None</em>, <em>allow_missing=False</em>, <em>ignore_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.load_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.load_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load parameters from file.
-This function is to be used to load parameters of a Gluon model that were
-saved using the <cite>.save_parameters()</cite> function. Any other use is undefined behaviour.
-Refer to this tutorial for a complete overview of saving/loading models with
-MXNet: <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html</a></p>
+<dd><p>Load parameters from file previously saved by <cite>save_parameters</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -604,6 +603,9 @@ present in this Block.</li>
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<p><a href="#id1"><span class="problematic" id="id2">`</span></a>Saving and Loading Gluon Models</p>
+<p><<a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html</a>>`_</p>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.Block.load_params">
@@ -698,18 +700,10 @@ It should not modify the input or output.</p>
 <dl class="method">
 <dt id="mxnet.gluon.Block.save_parameters">
 <code class="descname">save_parameters</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#Block.save_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.save_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save parameters to file.
-This function is to be used to save parameters of a Gluon model, note that
-the saved parameters are not meant to be loaded in a different language binding for now.
-Saving parameters using <cite>.save_parameters()</cite> is different than
-<cite>.collect_params().save()</cite> and <cite>.save_params()</cite>, which are deprecated ways
-to save the parameters of a model and should be avoided.</p>
-<p>If your model is hybridizable and you want to export a serialized version of the
-structure of the model as well as its parameters please refer to
-<a class="reference internal" href="#mxnet.gluon.HybridBlock.export" title="mxnet.gluon.HybridBlock.export"><code class="xref py py-meth docutils literal"><span class="pre">HybridBlock.export()</span></code></a>. Such model can then be loaded back in any language binding
-or even in Gluon using a <a class="reference internal" href="#mxnet.gluon.SymbolBlock" title="mxnet.gluon.SymbolBlock"><code class="xref py py-class docutils literal"><span class="pre">SymbolBlock</span></code></a>.
-Refer to this tutorial for a complete overview of saving/loading models with
-MXNet: <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html</a></p>
+<dd><p>Save parameters to file.</p>
+<p>Saved parameters can only be loaded with <cite>load_parameters</cite>. Note that this
+method only saves parameters, not model structure. If you want to save
+model structures, please use <a class="reference internal" href="#mxnet.gluon.HybridBlock.export" title="mxnet.gluon.HybridBlock.export"><code class="xref py py-meth docutils literal"><span class="pre">HybridBlock.export()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -718,6 +712,9 @@ MXNet: <a class="reference external" href="https://mxnet.incubator.apache.org/tu
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<p><a href="#id4"><span class="problematic" id="id5">`</span></a>Saving and Loading Gluon Models</p>
+<p><<a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html">https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html</a>>`_</p>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.Block.save_params">
@@ -752,7 +749,7 @@ MXNet: <a class="reference external" href="https://mxnet.incubator.apache.org/tu
 <cite>Constant`s are ignored by `autograd</cite> and <cite>Trainer</cite>, thus their values
 will not change during training. But you can still update their values
 manually with the <cite>set_data</cite> method.</p>
-<p><a href="#id2"><span class="problematic" id="id3">`</span></a>Constant`s can be created with either:</p>
+<p><a href="#id6"><span class="problematic" id="id7">`</span></a>Constant`s can be created with either:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="s1">'const'</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 </pre></div>
 </div>
@@ -1576,7 +1573,7 @@ been updated by <cite>backward</cite> after last step) and skip update.</li>
 <dl class="method">
 <dt id="mxnet.gluon.nn.Sequential.hybridize">
 <code class="descname">hybridize</code><span class="sig-paren">(</span><em>active=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/basic_layers.html#Sequential.hybridize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.Sequential.hybridize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activates or deactivates <a href="#id4"><span class="problematic" id="id5">`</span></a>HybridBlock`s recursively. Has no effect on
+<dd><p>Activates or deactivates <a href="#id8"><span class="problematic" id="id9">`</span></a>HybridBlock`s recursively. Has no effect on
 non-hybrid children.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
