@@ -259,7 +259,7 @@
            <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"add"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"divide"</span><span class="p">,</span> <span class="s2">"equal"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"greater"</span><span class="p">,</span> <span class="s2">"greater_equal"</span><span class="p">,</span>
            <span class="s2">"imdecode"</span><span class="p">,</span> <span class="s2">"lesser"</span><span class="p">,</span> <span class="s2">"lesser_equal"</span><span class="p">,</span> <span class="s2">"logical_and"</span><span class="p">,</span> <span class="s2">"logical_or"</span><span class="p">,</span> <span class="s2">"logical_xor"</span><span class="p">,</span>
            <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"moveaxis"</span><span class="p">,</span> <span class="s2">"modulo"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"not_equal"</span><span class="p">,</span> <span class="s2">"onehot_encode"</span><span class="p">,</span>
-           <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"true_divide"</span><span class="p">,</span> <span class="s2">"waitall"</span><span class="p">,</span> <span class="s2">"_new_empty_handle"</span><span class="p">]</span>
+           <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"true_divide"</span><span class="p">,</span> <span class="s2">"waitall"</span><span class="p">,</span> <span class="s2">"_new_empty_handle"</span><span class="p">,</span> <span class="s2">"histogram"</span><span class="p">]</span>
 
 <span class="n">_STORAGE_TYPE_UNDEFINED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">_STORAGE_TYPE_DEFAULT</span> <span class="o">=</span> <span class="mi">0</span>
@@ -3953,6 +3953,39 @@
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">mx_real_t</span>
     <span class="k">return</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">_new_alloc_handle</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="p">))</span>
+
+
+<span class="c1"># pylint: disable= redefined-builtin</span>
+<div class="viewcode-block" id="histogram"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.histogram">[docs]</a><span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Compute the histogram of the input data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : NDArray</span>
+<span class="sd">        Input data. The histogram is computed over the flattened array.</span>
+<span class="sd">    bins : int or sequence of scalars</span>
+<span class="sd">        If bins is an int, it defines the number of equal-width bins in the</span>
+<span class="sd">        given range (10, by default). If bins is a sequence, it defines the bin edges,</span>
+<span class="sd">        including the rightmost edge, allowing for non-uniform bin widths.</span>
+<span class="sd">    range : (float, float), optional</span>
+<span class="sd">        The lower and upper range of the bins. If not provided, range is simply (a.min(), a.max()).</span>
+<span class="sd">        Values outside the range are ignored. The first element of the range must be less than or</span>
+<span class="sd">        equal to the second. range affects the automatic bin computation as well, the range will</span>
+<span class="sd">        be equally divided by the number of bins.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># pylint: disable= no-member, protected-access</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_histogram</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"range is not specified, using numpy's result "</span>
+                          <span class="s2">"to ensure consistency with numpy"</span><span class="p">)</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">bin_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="n">bin_bounds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_histogram</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">bin_cnt</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"bins argument should be either an integer or an NDArray"</span><span class="p">)</span></div>
+    <span class="c1"># pylint: enable= no-member, protected-access, redefined-builtin</span>
 </pre></div>
 </div>
 </div>

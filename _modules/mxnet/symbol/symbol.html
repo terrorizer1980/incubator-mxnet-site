@@ -247,7 +247,7 @@
 
 <span class="kn">from</span> <span class="nn">..attribute</span> <span class="k">import</span> <span class="n">AttrScope</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">c_handle_array</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">integer_types</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">ExecutorHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">MXNetError</span><span class="p">,</span> <span class="n">NotImplementedForSymbol</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">current_context</span>
@@ -260,7 +260,8 @@
 <span class="kn">from</span> <span class="nn">._internal</span> <span class="k">import</span> <span class="n">SymbolBase</span><span class="p">,</span> <span class="n">_set_symbol_class</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Symbol"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">,</span> <span class="s2">"Variable"</span><span class="p">,</span> <span class="s2">"Group"</span><span class="p">,</span> <span class="s2">"load"</span><span class="p">,</span> <span class="s2">"load_json"</span><span class="p">,</span>
-           <span class="s2">"pow"</span><span class="p">,</span> <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"hypot"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"zeros"</span><span class="p">,</span> <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">]</span>
+           <span class="s2">"pow"</span><span class="p">,</span> <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"hypot"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"zeros"</span><span class="p">,</span> <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">,</span>
+           <span class="s2">"histogram"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="Symbol"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol">[docs]</a><span class="k">class</span> <span class="nc">Symbol</span><span class="p">(</span><span class="n">SymbolBase</span><span class="p">):</span>
@@ -3076,6 +3077,31 @@
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">_numpy</span><span class="o">.</span><span class="n">float32</span>
     <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">repeat</span><span class="p">,</span>
                              <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="histogram"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.histogram">[docs]</a><span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">"""Compute the histogram of the input data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : NDArray</span>
+<span class="sd">        Input data. The histogram is computed over the flattened array.</span>
+<span class="sd">    bins : int or sequence of scalars</span>
+<span class="sd">        If bins is an int, it defines the number of equal-width bins in the</span>
+<span class="sd">        given range (10, by default). If bins is a sequence, it defines the bin edges,</span>
+<span class="sd">        including the rightmost edge, allowing for non-uniform bin widths.</span>
+<span class="sd">    range : (float, float), required if bins is an integer</span>
+<span class="sd">        The lower and upper range of the bins. If not provided, range is simply (a.min(), a.max()).</span>
+<span class="sd">        Values outside the range are ignored. The first element of the range must be less than or</span>
+<span class="sd">        equal to the second. range affects the automatic bin computation as well, the range will</span>
+<span class="sd">        be equally divided by the number of bins.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_histogram</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"null range is not supported in symbol mode"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_histogram</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">bin_cnt</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"bins argument should be either an integer or an NDArray"</span><span class="p">)</span></div>
 
 <span class="n">_set_symbol_class</span><span class="p">(</span><span class="n">Symbol</span><span class="p">)</span>
 </pre></div>
