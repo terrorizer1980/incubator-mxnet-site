@@ -782,6 +782,27 @@
             <span class="k">return</span> <span class="mf">0.</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">matthewscc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Calculate the Matthew's Correlation Coefficent</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_examples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.</span>
+
+        <span class="n">true_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span><span class="p">)</span>
+        <span class="n">false_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span><span class="p">)</span>
+        <span class="n">false_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span><span class="p">)</span>
+        <span class="n">true_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span><span class="p">)</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="p">[(</span><span class="n">true_pos</span> <span class="o">+</span> <span class="n">false_pos</span><span class="p">),</span>
+                 <span class="p">(</span><span class="n">true_pos</span> <span class="o">+</span> <span class="n">false_neg</span><span class="p">),</span>
+                 <span class="p">(</span><span class="n">true_neg</span> <span class="o">+</span> <span class="n">false_pos</span><span class="p">),</span>
+                 <span class="p">(</span><span class="n">true_neg</span> <span class="o">+</span> <span class="n">false_neg</span><span class="p">)]</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">terms</span><span class="p">):</span>
+            <span class="n">denom</span> <span class="o">*=</span> <span class="n">t</span>
+        <span class="k">return</span> <span class="p">((</span><span class="n">true_pos</span> <span class="o">*</span> <span class="n">true_neg</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">false_pos</span> <span class="o">*</span> <span class="n">false_neg</span><span class="p">))</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">denom</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">+</span> \
                <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span>
@@ -797,7 +818,7 @@
 <div class="viewcode-block" id="F1"><a class="viewcode-back" href="../../api/python/model.html#mxnet.metric.F1">[docs]</a><span class="k">class</span> <span class="nc">F1</span><span class="p">(</span><span class="n">EvalMetric</span><span class="p">):</span>
     <span class="sd">"""Computes the F1 score of a binary classification problem.</span>
 
-<span class="sd">    The F1 score is equivalent to weighted average of the precision and recall,</span>
+<span class="sd">    The F1 score is equivalent to harmonic mean of the precision and recall,</span>
 <span class="sd">    where the best value is 1.0 and the worst value is 0.0. The formula for F1 score is::</span>
 
 <span class="sd">        F1 = 2 * (precision * recall) / (precision + recall)</span>
@@ -872,6 +893,107 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div></div>
+
+
+<span class="nd">@register</span>
+<div class="viewcode-block" id="MCC"><a class="viewcode-back" href="../../api/python/model.html#mxnet.metric.MCC">[docs]</a><span class="k">class</span> <span class="nc">MCC</span><span class="p">(</span><span class="n">EvalMetric</span><span class="p">):</span>
+    <span class="sd">"""Computes the Matthews Correlation Coefficient of a binary classification problem.</span>
+
+<span class="sd">    While slower to compute than F1 the MCC can give insight that F1 or Accuracy cannot.</span>
+<span class="sd">    For instance, if the network always predicts the same result</span>
+<span class="sd">    then the MCC will immeadiately show this. The MCC is also symetric with respect</span>
+<span class="sd">    to positive and negative categorization, however, there needs to be both</span>
+<span class="sd">    positive and negative examples in the labels or it will always return 0.</span>
+<span class="sd">    MCC of 0 is uncorrelated, 1 is completely correlated, and -1 is negatively correlated.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\text{MCC} = \\frac{ TP \\times TN - FP \\times FN }</span>
+<span class="sd">        {\\sqrt{ (TP + FP) ( TP + FN ) ( TN + FP ) ( TN + FN ) } }</span>
+
+<span class="sd">    where 0 terms in the denominator are replaced by 1.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This version of MCC only supports binary classification.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of this metric instance for display.</span>
+<span class="sd">    output_names : list of str, or None</span>
+<span class="sd">        Name of predictions that should be used when updating with update_dict.</span>
+<span class="sd">        By default include all predictions.</span>
+<span class="sd">    label_names : list of str, or None</span>
+<span class="sd">        Name of labels that should be used when updating with update_dict.</span>
+<span class="sd">        By default include all labels.</span>
+<span class="sd">    average : str, default 'macro'</span>
+<span class="sd">        Strategy to be used for aggregating across mini-batches.</span>
+<span class="sd">            "macro": average the MCC for each batch.</span>
+<span class="sd">            "micro": compute a single MCC across all batches.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    In this example the network almost always predicts positive</span>
+<span class="sd">    >>> false_positives = 1000</span>
+<span class="sd">    >>> false_negatives = 1</span>
+<span class="sd">    >>> true_positives = 10000</span>
+<span class="sd">    >>> true_negatives = 1</span>
+<span class="sd">    >>> predicts = [mx.nd.array(</span>
+<span class="sd">        [[.3, .7]]*false_positives +</span>
+<span class="sd">        [[.7, .3]]*true_negatives +</span>
+<span class="sd">        [[.7, .3]]*false_negatives +</span>
+<span class="sd">        [[.3, .7]]*true_positives</span>
+<span class="sd">    )]</span>
+<span class="sd">    >>> labels  = [mx.nd.array(</span>
+<span class="sd">        [0.]*(false_positives + true_negatives) +</span>
+<span class="sd">        [1.]*(false_negatives + true_positives)</span>
+<span class="sd">    )]</span>
+<span class="sd">    >>> f1 = mx.metric.F1()</span>
+<span class="sd">    >>> f1.update(preds = predicts, labels = labels)</span>
+<span class="sd">    >>> mcc = mx.metric.MCC()</span>
+<span class="sd">    >>> mcc.update(preds = predicts, labels = labels)</span>
+<span class="sd">    >>> print f1.get()</span>
+<span class="sd">    ('f1', 0.95233560306652054)</span>
+<span class="sd">    >>> print mcc.get()</span>
+<span class="sd">    ('mcc', 0.01917751877733392)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'mcc'</span><span class="p">,</span>
+                 <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">"macro"</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">=</span> <span class="n">average</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="n">_BinaryClassificationMetrics</span><span class="p">()</span>
+        <span class="n">EvalMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MCC.update"><a class="viewcode-back" href="../../api/python/model.html#mxnet.metric.MCC.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
+        <span class="sd">"""Updates the internal evaluation result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        labels : list of `NDArray`</span>
+<span class="sd">            The labels of the data.</span>
+
+<span class="sd">        preds : list of `NDArray`</span>
+<span class="sd">            Predicted values.</span>
+<span class="sd">        """</span>
+        <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">update_binary_stats</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">==</span> <span class="s2">"macro"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span></div>
+
+<div class="viewcode-block" id="MCC.reset"><a class="viewcode-back" href="../../api/python/model.html#mxnet.metric.MCC.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div></div>
 
 
 <span class="nd">@register</span>

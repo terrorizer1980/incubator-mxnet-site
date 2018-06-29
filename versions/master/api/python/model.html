@@ -1066,7 +1066,7 @@ By default include all labels.</li>
 <dt id="mxnet.metric.F1">
 <em class="property">class </em><code class="descclassname">mxnet.metric.</code><code class="descname">F1</code><span class="sig-paren">(</span><em>name='f1'</em>, <em>output_names=None</em>, <em>label_names=None</em>, <em>average='macro'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/metric.html#F1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.F1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the F1 score of a binary classification problem.</p>
-<p>The F1 score is equivalent to weighted average of the precision and recall,
+<p>The F1 score is equivalent to harmonic mean of the precision and recall,
 where the best value is 1.0 and the worst value is 0.0. The formula for F1 score is:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">F1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">precision</span> <span class="o">*</span> <span class="n">recall</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">recall</span><span class="p">)</span>
 </pre></div>
@@ -1130,6 +1130,94 @@ By default include all labels.</li>
 <dl class="method">
 <dt id="mxnet.metric.F1.reset">
 <code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/metric.html#F1.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.F1.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the internal evaluation result to initial state.</p>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.metric.MCC">
+<em class="property">class </em><code class="descclassname">mxnet.metric.</code><code class="descname">MCC</code><span class="sig-paren">(</span><em>name='mcc'</em>, <em>output_names=None</em>, <em>label_names=None</em>, <em>average='macro'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/metric.html#MCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.MCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Matthews Correlation Coefficient of a binary classification problem.</p>
+<p>While slower to compute than F1 the MCC can give insight that F1 or Accuracy cannot.
+For instance, if the network always predicts the same result
+then the MCC will immeadiately show this. The MCC is also symetric with respect
+to positive and negative categorization, however, there needs to be both
+positive and negative examples in the labels or it will always return 0.
+MCC of 0 is uncorrelated, 1 is completely correlated, and -1 is negatively correlated.</p>
+<div class="math">
+\[\text{MCC} = \frac{ TP \times TN - FP \times FN }
+{\sqrt{ (TP + FP) ( TP + FN ) ( TN + FP ) ( TN + FN ) } }\]</div>
+<p>where 0 terms in the denominator are replaced by 1.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This version of MCC only supports binary classification.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – Name of this metric instance for display.</li>
+<li><strong>output_names</strong> (<em>list of str</em><em>, or </em><em>None</em>) – Name of predictions that should be used when updating with update_dict.
+By default include all predictions.</li>
+<li><strong>label_names</strong> (<em>list of str</em><em>, or </em><em>None</em>) – Name of labels that should be used when updating with update_dict.
+By default include all labels.</li>
+<li><strong>average</strong> (<em>str</em><em>, </em><em>default 'macro'</em>) – <dl class="docutils">
+<dt>Strategy to be used for aggregating across mini-batches.</dt>
+<dd>“macro”: average the MCC for each batch.
+“micro”: compute a single MCC across all batches.</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>In this example the network almost always predicts positive
+>>> false_positives = 1000
+>>> false_negatives = 1
+>>> true_positives = 10000
+>>> true_negatives = 1
+>>> predicts = [mx.nd.array(</p>
+<blockquote>
+<div>[[.3, .7]]*false_positives +
+[[.7, .3]]*true_negatives +
+[[.7, .3]]*false_negatives +
+[[.3, .7]]*true_positives</div></blockquote>
+<p>)]
+>>> labels  = [mx.nd.array(</p>
+<blockquote>
+<div>[0.]*(false_positives + true_negatives) +
+[1.]*(false_negatives + true_positives)</div></blockquote>
+<p>)]
+>>> f1 = mx.metric.F1()
+>>> f1.update(preds = predicts, labels = labels)
+>>> mcc = mx.metric.MCC()
+>>> mcc.update(preds = predicts, labels = labels)
+>>> print f1.get()
+(‘f1’, 0.95233560306652054)
+>>> print mcc.get()
+(‘mcc’, 0.01917751877733392)</p>
+<dl class="method">
+<dt id="mxnet.metric.MCC.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>labels</em>, <em>preds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/metric.html#MCC.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.MCC.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the internal evaluation result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>labels</strong> (list of <cite>NDArray</cite>) – The labels of the data.</li>
+<li><strong>preds</strong> (list of <cite>NDArray</cite>) – Predicted values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.metric.MCC.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/metric.html#MCC.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.MCC.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the internal evaluation result to initial state.</p>
 </dd></dl>
 </dd></dl>
@@ -2172,7 +2260,7 @@ by <a class="reference internal" href="optimization/optimization.html#mxnet.opti
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small value to avoid division by 0.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial value of the history accumulator. Avoids division by 0.</td>
 </tr>
 </tbody>
 </table>
