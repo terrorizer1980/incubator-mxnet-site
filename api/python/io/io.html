@@ -429,7 +429,7 @@ is especially useful in RNN since <code class="docutils literal"><span class="pr
 </div>
 <div class="section" id="api-reference">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
-<script src="../../_static/js/auto_module_index.js" type="text/javascript"></script><span class="target" id="module-mxnet.io"></span><p>Data iterators for common data formats.</p>
+<script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script><span class="target" id="module-mxnet.io"></span><p>Data iterators for common data formats.</p>
 <dl class="class">
 <dt id="mxnet.io.DataDesc">
 <em class="property">class </em><code class="descclassname">mxnet.io.</code><code class="descname">DataDesc</code><a class="reference internal" href="../../../_modules/mxnet/io.html#DataDesc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.DataDesc" title="Permalink to this definition">¶</a></dt>
@@ -877,8 +877,8 @@ to set <cite>round_batch</cite> to False.</p>
 <p>If <code class="docutils literal"><span class="pre">data_csv</span> <span class="pre">=</span> <span class="pre">'data/'</span></code> is set, then all the files in this directory will be read.</p>
 <p><code class="docutils literal"><span class="pre">reset()</span></code> is expected to be called only after a complete pass of data.</p>
 <p>By default, the CSVIter parses all entries in the data file as float32 data type,
-if <cite>dtype</cite> argument is set to be ‘int32’ then CSVIter will parse all entries in the file
-as int32 data type.</p>
+if <cite>dtype</cite> argument is set to be ‘int32’ or ‘int64’ then CSVIter will parse all entries in the file
+as int32 or int64 data type accordingly.</p>
 <p>Examples:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>// Contents of CSV file ``data/data.csv``.
 1,2,3
@@ -946,7 +946,7 @@ batch_size = 3, round_batch=False, dtype='int32')
 [3  4  5]]
 </pre></div>
 </div>
-<p>Defined in src/io/iter_csv.cc:L302</p>
+<p>Defined in src/io/iter_csv.cc:L308</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -959,7 +959,7 @@ batch_size = 3, round_batch=False, dtype='int32')
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 </ul>
 </td>
 </tr>
@@ -999,7 +999,7 @@ batch_size = 3, round_batch=False, dtype='int32')
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 <li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Augmentation Param: scale shorter edge to size before applying other augmentations, -1 to disable.</li>
 <li><strong>rand_crop_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability of random cropping, <= 0 to disable</li>
 <li><strong>min_crop_scales</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>]</em>) – Augmentation Param: Min crop scales.</li>
@@ -1099,7 +1099,7 @@ iterate over raw images directly use <code class="docutils literal"><span class=
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 <li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
 <li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
 <li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
@@ -1188,7 +1188,7 @@ files.</p>
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 <li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
 <li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
 <li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
@@ -1271,7 +1271,7 @@ the data type instead of <code class="docutils literal"><span class="pre">float<
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 <li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
 <li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
 <li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
@@ -1344,7 +1344,7 @@ the data type instead of <code class="docutils literal"><span class="pre">float<
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 <li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
 <li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
 <li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
@@ -1489,7 +1489,7 @@ If the label column in the <cite>data_libsvm</cite> file is ignored.</p>
 <li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
 <li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 </ul>
 </td>
 </tr>
@@ -1523,7 +1523,7 @@ If the label column in the <cite>data_libsvm</cite> file is ignored.</p>
 <li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
 <li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
 <li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
 </ul>
 </td>
 </tr>

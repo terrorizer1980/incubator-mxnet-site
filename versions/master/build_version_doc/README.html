@@ -212,8 +212,8 @@
 <div class="section" id="mxnet-documentation-build-scripts">
 <span id="mxnet-documentation-build-scripts"></span><h1>MXNet Documentation Build Scripts<a class="headerlink" href="#mxnet-documentation-build-scripts" title="Permalink to this headline">¶</a></h1>
 <p>This folder contains a variety of scripts to generate the MXNet.io website as well as the docs for different versions of MXNet.</p>
-<div class="section" id="contents">
-<span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="contents-of-the-build-version-doc-folder">
+<span id="contents-of-the-build-version-doc-folder"></span><h2>Contents of the build_version_doc Folder<a class="headerlink" href="#contents-of-the-build-version-doc-folder" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://mxnet.incubator.apache.org/build_version_doc/AddPackageLink.py">AddPackageLink.py</a> - MXNet.io site data massaging; injects pip version numbers in the different versions’ install pages</li>
 <li><a class="reference external" href="https://mxnet.incubator.apache.org/build_version_doc/AddVersion.py">AddVersion.py</a> - MXNet.io site data massaging; injects the versions dropdown menu in the navigation bar</li>
@@ -225,7 +225,8 @@
 </div>
 <div class="section" id="setting-up-a-docs-dev-server">
 <span id="setting-up-a-docs-dev-server"></span><h2>Setting Up a Docs Dev Server<a class="headerlink" href="#setting-up-a-docs-dev-server" title="Permalink to this headline">¶</a></h2>
-<p>For these instructions, you will use an Ubuntu machine. This flow has been tested on a <a class="reference external" href="https://aws.amazon.com/marketplace/pp/B077GCZ4GR">Deep Learning Base AMI</a>, although you may use the full Deep Learning Base AMI or any other Ubuntu 16.04 system with some minor adjustments.</p>
+<p>Running docs builds locally on a Mac is not recommended. For these instructions, you will use an Ubuntu machine.</p>
+<p>This flow has been tested on a vanilla Ubuntu 16.04 cloud instance on AWS.</p>
 <p><strong>Step 1:</strong> Spin up your Ubuntu server and SSH in.</p>
 <p><strong>Step 2:</strong> Create a Python 2.7 virtual environment (see note).</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt install virtualenv
@@ -235,33 +236,37 @@ virtualenv -p python2.7 mxnet_docs
 </div>
 <p><strong>Note:</strong> Using a Python 2.7 environment is required to build older versions of the docs that have Python 3 incompatibilities. If you’re only building the latest or version 1.0.0+, then you may use a Python 3 environment.</p>
 <p><strong>Step 3:</strong> Clone the repo.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/apache/incubator-mxnet.git
+<div class="highlight-bash"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/apache/incubator-mxnet.git mxnet
+<span class="nb">cd</span> mxnet
 </pre></div>
 </div>
 <p><strong>Step 4:</strong> Install dependencies.</p>
-<p>This script will install dependencies for you.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>./incubator-mxnet/docs/build_version_doc/setup_docs_ubuntu.sh
+<p>These scripts will install the dependencies for you.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>./ci/docker/install/ubuntu_core.sh
+./ci/docker/install/ubuntu_python.sh
+./ci/docker/install/ubuntu_scala.sh
+./ci/docker/install/ubuntu_docs.sh
 </pre></div>
 </div>
-<p><strong>Step 4:</strong> Make the docs.</p>
-<p>Here you have two options:</p>
+<p><strong>Step 5a:</strong> Make the docs.</p>
+<p>Here you have two options (recommended for most situations):</p>
 <ul class="simple">
-<li>Build this current version (master) with the following:</li>
+<li>Build this current branch with the following:</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> incubator-mxnet
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> mxnet
 make docs <span class="nv">USE_OPENMP</span><span class="o">=</span><span class="m">1</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li>Build all versions as what is seen in the production site. This will have the versions dropdown and any post-build processing that generates site artifacts and other requirements for the production site.</li>
-</ul>
+<p><strong>Step 5b:</strong> Alternative option for all versions to be built.</p>
+<p>This will have the versions dropdown and any post-build processing that generates site artifacts and other requirements for the production site.</p>
+<p><strong>NOTE:</strong> This option only builds what is checked into each branch.</p>
 <p>The following script will build all of the latest versions, set the default site to be <code class="docutils literal"><span class="pre">master</span></code> and use your dev server’s IP or DNS for navigation items.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>./build_site_tag.sh <span class="s1">'1.2.0;1.1.0;1.0.0;0.12.0;0.11.0;master'</span> master http://your-ip-or-dns
 </pre></div>
 </div>
 <p><strong>Final Step:</strong> Serve and test.</p>
 <p>Refer to <a class="reference external" href="#serving-your-development-version">Serving Your Development Version</a> for detailed instructions.</p>
-<p><strong>Troubleshooting</strong>: for AMI users or if you already have Conda, you might be stuck with the latest version and the docs build will have a conflict. To fix this, run <code class="docutils literal"><span class="pre">/home/ubuntu/anaconda3/bin/pip</span> <span class="pre">uninstall</span> <span class="pre">sphinx</span></code> and follow this with <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">sphinx==1.5.6</span></code>.</p>
+<p><strong>Troubleshooting</strong>: for users that have previously installed Python dependencies, or if you already have Conda, you might be stuck with the latest version of Sphinx and the docs build will have a conflict. To fix this, run <code class="docutils literal"><span class="pre">/home/ubuntu/anaconda3/bin/pip</span> <span class="pre">uninstall</span> <span class="pre">sphinx</span></code> and follow this with <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">sphinx==1.5.6</span></code>.</p>
 <p>If you need to build <= v0.12.0, then use a Python 2 environment to avoid errors with <code class="docutils literal"><span class="pre">mxdoc.py</span></code>. This is a sphinx extension, that was not Python 3 compatible in the old versions. On the Deep Learning AMI, use <code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">mxnet_p27</span></code>, and then install the following dependencies.</p>
 </div>
 <div class="section" id="full-website-build">
@@ -392,63 +397,6 @@ sudo docker run -it mxnet:docs-base</p>
 <li>Pay attention to <code class="docutils literal"><span class="pre">mxdocs.py</span></code> as some docs modifications are happening there.</li>
 </ol>
 </div>
-<div class="section" id="dependencies">
-<span id="dependencies"></span><h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>These are the dependencies for docs generation for Ubuntu 16.04.</p>
-<p>This script is available for you to run directly on Ubuntu from the source repository.
-Run <code class="docutils literal"><span class="pre">./setup_docs_ubuntu.sh</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> \
-    <span class="n">apt</span><span class="o">-</span><span class="n">transport</span><span class="o">-</span><span class="n">https</span> \
-    <span class="n">ca</span><span class="o">-</span><span class="n">certificates</span> \
-    <span class="n">curl</span> \
-    <span class="n">doxygen</span> \
-    <span class="n">git</span> \
-    <span class="n">libjemalloc</span><span class="o">-</span><span class="n">dev</span> \
-    <span class="n">pandoc</span> \
-    <span class="n">software</span><span class="o">-</span><span class="n">properties</span><span class="o">-</span><span class="n">common</span>
-
-<span class="c1"># You made need to run `/home/ubuntu/anaconda3/bin/pip uninstall sphinx`</span>
-<span class="c1"># Recommonmark/Sphinx errors: https://github.com/sphinx-doc/sphinx/issues/3800</span>
-<span class="c1"># Recommonmark should be replaced so Sphinx can be upgraded</span>
-<span class="c1"># For now we remove other versions of Sphinx and pin it to v1.5.6</span>
-
-<span class="n">pip</span> <span class="n">install</span> \
-    <span class="n">beautifulsoup4</span> \
-    <span class="n">breathe</span> \
-    <span class="n">CommonMark</span><span class="o">==</span><span class="mf">0.5</span><span class="o">.</span><span class="mi">4</span> \
-    <span class="n">h5py</span> \
-    <span class="n">mock</span><span class="o">==</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span> \
-    <span class="n">pypandoc</span> \
-    <span class="n">recommonmark</span><span class="o">==</span><span class="mf">0.4</span><span class="o">.</span><span class="mi">0</span> \
-    <span class="n">sphinx</span><span class="o">==</span><span class="mf">1.5</span><span class="o">.</span><span class="mi">6</span>
-
-<span class="c1"># Setup scala</span>
-<span class="n">echo</span> <span class="s2">"deb https://dl.bintray.com/sbt/debian /"</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">sbt</span><span class="o">.</span><span class="n">list</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">key</span> <span class="n">adv</span> <span class="o">--</span><span class="n">keyserver</span> <span class="n">hkp</span><span class="p">:</span><span class="o">//</span><span class="n">keyserver</span><span class="o">.</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">80</span> <span class="o">--</span><span class="n">recv</span> <span class="mi">2</span><span class="n">EE0EA64E40A89B84B2DF73499E82A75642AC823</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> \
-  <span class="n">maven</span> \
-  <span class="n">sbt</span> \
-  <span class="n">scala</span>
-
-<span class="c1"># Optionally setup Apache2</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">apache2</span>
-<span class="n">sudo</span> <span class="n">ufw</span> <span class="n">allow</span> <span class="s1">'Apache Full'</span>
-<span class="c1"># turn on mod_rewrite</span>
-<span class="n">sudo</span> <span class="n">a2enmod</span> <span class="n">rewrite</span>
-
-<span class="n">echo</span> <span class="s1">'To enable redirects you need to edit /etc/apache2/apache2.conf '</span>
-<span class="n">echo</span> <span class="s1">'--> Change directives for Directory for /var/www/html using the following: '</span>
-<span class="n">echo</span> <span class="s1">'       AllowOverride all '</span>
-<span class="n">echo</span> <span class="s1">'--> Then restart apache with: '</span>
-<span class="n">echo</span> <span class="s1">'       sudo systemctl restart apache2'</span>
-
-<span class="c1"># Cleanup</span>
-<span class="n">sudo</span> <span class="n">apt</span> <span class="n">autoremove</span> <span class="o">-</span><span class="n">y</span>
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -457,7 +405,7 @@ Run <code class="docutils literal"><span class="pre">./setup_docs_ubuntu.sh</spa
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul>
 <li><a class="reference internal" href="#">MXNet Documentation Build Scripts</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#contents-of-the-build-version-doc-folder">Contents of the build_version_doc Folder</a></li>
 <li><a class="reference internal" href="#setting-up-a-docs-dev-server">Setting Up a Docs Dev Server</a></li>
 <li><a class="reference internal" href="#full-website-build">Full Website Build</a><ul>
 <li><a class="reference internal" href="#build-all-version-sh">build_all_version.sh</a></li>
@@ -478,7 +426,6 @@ Run <code class="docutils literal"><span class="pre">./setup_docs_ubuntu.sh</spa
 </li>
 <li><a class="reference internal" href="#docker-usage">Docker Usage</a></li>
 <li><a class="reference internal" href="#deploying-the-website-to-production">Deploying the Website to Production</a></li>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
 </ul>
