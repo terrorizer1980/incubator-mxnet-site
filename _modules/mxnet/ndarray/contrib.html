@@ -234,6 +234,8 @@
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">current_context</span>
 <span class="kn">from</span> <span class="nn">..random</span> <span class="k">import</span> <span class="n">uniform</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_as_list</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ndarray</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.gen_contrib</span> <span class="k">import</span> <span class="o">*</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -308,6 +310,100 @@
     <span class="n">expected_count_sampled</span> <span class="o">=</span> <span class="n">expected_prob_sampled</span> <span class="o">*</span> <span class="n">num_sampled</span>
     <span class="k">return</span> <span class="n">sampled_classes</span><span class="p">,</span> <span class="n">expected_count_true</span><span class="p">,</span> <span class="n">expected_count_sampled</span></div>
 <span class="c1"># pylint: enable=line-too-long</span>
+
+<span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">):</span>
+    <span class="sd">"""Run a for loop with user-defined computation over NDArrays on dimension 0.</span>
+
+<span class="sd">    This operator simulates a for loop and body has the computation for an iteration</span>
+<span class="sd">    of the for loop. It runs the computation in body on each slice from the input</span>
+<span class="sd">    NDArrays.</span>
+
+<span class="sd">    body takes two arguments as input and outputs a tuple of two elements,</span>
+<span class="sd">    as illustrated below:</span>
+
+<span class="sd">    out, states = body(data1, states)</span>
+
+<span class="sd">    data1 can be either an NDArray or a list of NDArrays. If data is an NDArray,</span>
+<span class="sd">    data1 is an NDArray. Otherwise, data1 is a list of NDArrays and has the same</span>
+<span class="sd">    size as data. states is a list of NDArrays and have the same size as init_states.</span>
+<span class="sd">    Similarly, out can be either an NDArray or a list of NDArrays, which are concatenated</span>
+<span class="sd">    as the first output of foreach; states from the last execution of body</span>
+<span class="sd">    are the second output of foreach.</span>
+
+<span class="sd">    The computation done by this operator is equivalent to the pseudo code below</span>
+<span class="sd">    when the input data is NDArray:</span>
+
+<span class="sd">    states = init_states</span>
+<span class="sd">    outs = []</span>
+<span class="sd">    for i in data.shape[0]:</span>
+<span class="sd">        s = data[i]</span>
+<span class="sd">        out, states = body(s, states)</span>
+<span class="sd">        outs.append(out)</span>
+<span class="sd">    outs = stack(*outs)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    body : a Python function.</span>
+<span class="sd">        Define computation in an iteration.</span>
+<span class="sd">    data: an NDArray or a list of NDArrays.</span>
+<span class="sd">        The input data.</span>
+<span class="sd">    init_states: an NDArray or a list of NDArrays.</span>
+<span class="sd">        The initial values of the loop states.</span>
+<span class="sd">    name: string.</span>
+<span class="sd">        The name of the operator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs: an NDArray or a list of NDArrays.</span>
+<span class="sd">        The output data concatenated from the output of all iterations.</span>
+<span class="sd">    states: a list of NDArrays.</span>
+<span class="sd">        The loop states in the last iteration.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> step = lambda data, states: (data + states[0], [states[0] * 2])</span>
+<span class="sd">    >>> data = mx.nd.random.uniform(shape=(2, 10))</span>
+<span class="sd">    >>> states = [mx.nd.random.uniform(shape=(10))]</span>
+<span class="sd">    >>> outs, states = mx.nd.contrib.foreach(step, data, states)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">check_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">in_type</span><span class="p">):</span>
+                    <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">is_NDArray_or_list</span><span class="p">,</span> <span class="n">msg</span>
+
+    <span class="n">check_input</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="s2">"data should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
+    <span class="n">check_input</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+                <span class="s2">"init_states should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
+
+    <span class="n">not_data_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
+    <span class="n">num_iters</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">not_data_list</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">init_states</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">not_data_list</span><span class="p">:</span>
+            <span class="n">eles</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eles</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="n">outs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">eles</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">)</span>
+    <span class="n">tmp_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+        <span class="n">tmp_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">out</span><span class="p">))</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">tmp_outputs</span>
+
+    <span class="k">if</span> <span class="n">not_data_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

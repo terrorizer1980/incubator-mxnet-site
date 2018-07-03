@@ -56,6 +56,7 @@ var searchData=
   ['krspshapeerr',['kRSPShapeErr',['../namespacemxnet.html#ace60510752753f459193f95cab0e9e1aa200492eeec6fa431683ef0d943bfbc2d',1,'mxnet']]],
   ['kscalarargbeforendarray',['kScalarArgBeforeNDArray',['../namespacemxnet.html#a89a5f0f5cfd9e1e94604a7b42dda818aaef9818c8aae9d0046b3d9033a62fcfbb',1,'mxnet']]],
   ['kscalarbeforearray',['kScalarBeforeArray',['../namespacemxnet_1_1op.html#ae7310844fa858f1ec6b6428dd6977a13a44de4ba9d059034c023bc755cdc6026a',1,'mxnet::op']]],
+  ['ksubgraphexec',['kSubgraphExec',['../namespacemxnet.html#ad7801fb2dd68294d4c7a9e289bc071adabfccd41d634d8095c956c29c9ee35257',1,'mxnet']]],
   ['ksync',['kSync',['../namespacemxnet.html#ad7801fb2dd68294d4c7a9e289bc071adae3bade32f12a5139b27ef40b3689b77c',1,'mxnet']]],
   ['ktempspace',['kTempSpace',['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630aae5d4509a9b382744ea13d2daa8aa3f3',1,'mxnet::ResourceRequest']]],
   ['kundefined',['kUndefined',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2ba7934d40c7c17315d892e8d5d745b1c66',1,'mxnet']]],

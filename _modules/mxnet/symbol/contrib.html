@@ -232,6 +232,9 @@
 <span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import</span>
 <span class="sd">"""Contrib Symbol API of MXNet."""</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
 <span class="kn">from</span> <span class="nn">.random</span> <span class="k">import</span> <span class="n">uniform</span>
 <span class="kn">from</span> <span class="nn">.symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
 <span class="k">try</span><span class="p">:</span>
@@ -239,7 +242,12 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">symbol</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">_as_list</span>
+<span class="kn">from</span> <span class="nn">..attribute</span> <span class="k">import</span> <span class="n">AttrScope</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">):</span>
     <span class="sd">"""Draw random samples from an approximately log-uniform or Zipfian distribution.</span>
@@ -304,6 +312,243 @@
     <span class="n">expected_prob_sampled</span> <span class="o">=</span> <span class="p">((</span><span class="n">sampled_cls_fp64</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sampled_cls_fp64</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_range</span>
     <span class="n">expected_count_sampled</span> <span class="o">=</span> <span class="n">expected_prob_sampled</span> <span class="o">*</span> <span class="n">num_sampled</span>
     <span class="k">return</span> <span class="n">sampled_classes</span><span class="p">,</span> <span class="n">expected_count_true</span><span class="p">,</span> <span class="n">expected_count_sampled</span></div>
+
+<span class="k">def</span> <span class="nf">_get_graph_inputs</span><span class="p">(</span><span class="n">subg</span><span class="p">):</span>
+    <span class="n">num_handles</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">SymbolHandle</span><span class="p">)()</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolGetInputSymbols</span><span class="p">(</span><span class="n">subg</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handles</span><span class="p">),</span>
+                                            <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">num_handles</span><span class="p">)))</span>
+
+    <span class="n">syms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_handles</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">handles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">SymbolHandle</span><span class="p">))</span>
+        <span class="n">syms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">syms</span>
+
+<span class="k">def</span> <span class="nf">_cut_subgraph</span><span class="p">(</span><span class="n">subg</span><span class="p">):</span>
+    <span class="n">num_handles</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">SymbolHandle</span><span class="p">)()</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolCutSubgraph</span><span class="p">(</span><span class="n">subg</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handles</span><span class="p">),</span>
+                                        <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">num_handles</span><span class="p">)))</span>
+
+    <span class="n">syms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_handles</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">handles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">SymbolHandle</span><span class="p">))</span>
+        <span class="n">syms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">syms</span>
+
+<span class="c1"># This construct a subgraph for given output nodes.</span>
+<span class="c1"># If an output node is one of the input nodes, we call identity to make sure</span>
+<span class="c1"># that outputs nodes are different from input nodes.</span>
+<span class="k">def</span> <span class="nf">_construct_subgraph</span><span class="p">(</span><span class="n">sym_out</span><span class="p">,</span> <span class="n">sym_states</span><span class="p">):</span>
+    <span class="n">sym_out</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">sym_out</span><span class="p">)</span>
+    <span class="n">sym_states</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">sym_states</span><span class="p">)</span>
+    <span class="n">all_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_outputs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sym_out</span><span class="p">)</span>
+    <span class="n">all_outputs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sym_states</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">all_outputs</span><span class="p">)</span>
+
+    <span class="n">flat_out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_input_names</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+    <span class="n">output_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">sym_out</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">sym_out</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_input_names</span><span class="p">:</span>
+            <span class="n">flat_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flat_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sym_states</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_input_names</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">output_names</span><span class="p">:</span>
+            <span class="c1"># There is a problem if the outputs are the same as the inputs</span>
+            <span class="c1"># or the first output. By calling identity, we can make sure that</span>
+            <span class="c1"># all symbols will refer to different NDArrays.</span>
+            <span class="n">flat_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flat_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">flat_out</span><span class="p">)</span>
+
+<div class="viewcode-block" id="foreach"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.foreach">[docs]</a><span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"foreach"</span><span class="p">):</span>
+    <span class="sd">"""Run a for loop with user-defined computation over Symbols on dimension 0.</span>
+
+<span class="sd">    This operator simulates a for loop and body has the computation for an iteration</span>
+<span class="sd">    of the for loop. It runs the computation in body on each slice from the input</span>
+<span class="sd">    NDArrays.</span>
+
+<span class="sd">    body takes two arguments as input and outputs a tuple of two elements,</span>
+<span class="sd">    as illustrated below:</span>
+
+<span class="sd">    out, states = body(data1, states)</span>
+
+<span class="sd">    data1 can be either a symbol or a list of symbols. If data is a symbol,</span>
+<span class="sd">    data1 is a symbol. Otherwise, data1 is a list of symbols and has the same</span>
+<span class="sd">    size as data. states is a list of symbols and have the same size as init_states.</span>
+<span class="sd">    Similarly, out can be either a symbol or a list of symbols, which are concatenated</span>
+<span class="sd">    as the first output of foreach; states from the last execution of body</span>
+<span class="sd">    are the second output of foreach.</span>
+
+<span class="sd">    foreach can output only output data or states. If a user only wants states,</span>
+<span class="sd">    the body function can return ([], states). Similarly, if a user only wants</span>
+<span class="sd">    output data, the body function can return (out, []).</span>
+
+<span class="sd">    The computation done by this operator is equivalent to the pseudo code below</span>
+<span class="sd">    when the input data is NDArray:</span>
+
+<span class="sd">    states = init_states</span>
+<span class="sd">    outs = []</span>
+<span class="sd">    for i in data.shape[0]:</span>
+<span class="sd">        s = data[i]</span>
+<span class="sd">        out, states = body(s, states)</span>
+<span class="sd">        outs.append(out)</span>
+<span class="sd">    outs = stack(*outs)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    body : a Python function.</span>
+<span class="sd">        Define computation in an iteration.</span>
+<span class="sd">    data: a symbol or a list of symbols.</span>
+<span class="sd">        The input data.</span>
+<span class="sd">    init_states: a symbol or a list of symbols.</span>
+<span class="sd">        The initial values of the loop states.</span>
+<span class="sd">    name: string.</span>
+<span class="sd">        The name of the operator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs: a Symbol or a list of Symbols.</span>
+<span class="sd">        The output data concatenated from the output of all iterations.</span>
+<span class="sd">    states: a list of Symbols.</span>
+<span class="sd">        The loop states in the last iteration.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> step = lambda data, states: (data + states[0], [states[0] * 2])</span>
+<span class="sd">    >>> data = mx.sym.var('data')</span>
+<span class="sd">    >>> states = [mx.sym.var('state')]</span>
+<span class="sd">    >>> outs, states = mx.sym.contrib.foreach(step, data, states)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">check_data</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">in_type</span><span class="p">):</span>
+                    <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">is_NDArray_or_list</span><span class="p">,</span> <span class="n">msg</span>
+
+    <span class="n">check_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="s2">"data should be a symbol or a list of symbols"</span><span class="p">)</span>
+    <span class="n">check_data</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="s2">"init_states should be a symbol or a list of symbols"</span><span class="p">)</span>
+    <span class="n">not_state_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">)</span>
+
+    <span class="c1"># If the input python function references to the symbols outside</span>
+    <span class="c1"># the python function, we need to prune the computation graph constructed from</span>
+    <span class="c1"># the function. One way of doing it is to mark the nodes in the computation graph</span>
+    <span class="c1"># with AttrScope and prune the nodes without the special attribute.</span>
+    <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">in_eles</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">in_eles</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">init_states</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">init_states</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">sym_out</span><span class="p">,</span> <span class="n">sym_states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">in_eles</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+
+        <span class="n">check_data</span><span class="p">(</span><span class="n">sym_out</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span>
+                   <span class="s2">"the output should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
+        <span class="n">check_data</span><span class="p">(</span><span class="n">sym_states</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span>
+                   <span class="s2">"the output states should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sym_states</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sym_states</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">init_states</span><span class="p">),</span> \
+                    <span class="s2">"the number of output states (</span><span class="si">%d</span><span class="s2">) should be the same as input states (</span><span class="si">%d</span><span class="s2">)"</span> \
+                    <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sym_states</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">init_states</span><span class="p">))</span>
+        <span class="n">num_out_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sym_out</span><span class="p">)</span>
+        <span class="n">num_states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sym_states</span><span class="p">)</span>
+        <span class="n">num_outputs</span> <span class="o">=</span> <span class="n">num_out_data</span> <span class="o">+</span> <span class="n">num_states</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_construct_subgraph</span><span class="p">(</span><span class="n">sym_out</span><span class="p">,</span> <span class="n">sym_states</span><span class="p">)</span>
+
+    <span class="n">input_syms</span> <span class="o">=</span> <span class="n">_get_graph_inputs</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="n">cut_syms</span> <span class="o">=</span> <span class="n">_cut_subgraph</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="n">input_syms</span> <span class="o">=</span> <span class="n">_get_graph_inputs</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+    <span class="c1"># Here we need to find out how the input symbols are ordered as well as</span>
+    <span class="c1"># where the loop states are located in the list of inputs.</span>
+
+    <span class="c1"># This dict contains the symbols of the subgraph.</span>
+    <span class="n">input_syms</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span><span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">input_syms</span><span class="p">}</span>
+    <span class="n">gin_names</span> <span class="o">=</span> <span class="n">input_syms</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="c1"># This array contains the symbols for the inputs of foreach.</span>
+    <span class="c1"># They are ordered according to the inputs of the subgraph.</span>
+    <span class="n">init_states</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">init_states</span><span class="p">)</span>
+    <span class="n">state_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">init_states</span><span class="p">]</span>
+    <span class="n">data_syms</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">data_syms</span><span class="p">]</span>
+    <span class="n">cut_var_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span><span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">cut_syms</span><span class="p">}</span>
+    <span class="n">cut_var_names</span> <span class="o">=</span> <span class="n">cut_var_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="n">subg_input_names</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+    <span class="c1"># ordered_ins contains input symbols in the following order:</span>
+    <span class="c1"># data_syms, state_syms, followed by cut_vars and vars in the closure.</span>
+    <span class="n">ordered_ins</span> <span class="o">=</span> <span class="n">data_syms</span>
+    <span class="c1"># this defines the location of data_syms in the list of subgraph inputs</span>
+    <span class="n">in_data_locs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dname</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">:</span>
+        <span class="c1"># Some data may not be used.</span>
+        <span class="k">if</span> <span class="n">dname</span> <span class="ow">in</span> <span class="n">subg_input_names</span><span class="p">:</span>
+            <span class="n">in_data_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subg_input_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dname</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">"the data arrays have to be used in the loop body"</span><span class="p">)</span>
+
+    <span class="n">ordered_ins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">init_states</span><span class="p">)</span>
+    <span class="c1"># this defines the location of state_syms in the list of subgraph inputs.</span>
+    <span class="n">in_state_locs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sname</span> <span class="ow">in</span> <span class="n">state_names</span><span class="p">:</span>
+        <span class="c1"># Some state may not be used.</span>
+        <span class="k">if</span> <span class="n">sname</span> <span class="ow">in</span> <span class="n">subg_input_names</span><span class="p">:</span>
+            <span class="n">in_state_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subg_input_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sname</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">"the state arrays have to be used in the loop body"</span><span class="p">)</span>
+
+    <span class="n">remain_locs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">in_name</span> <span class="ow">in</span> <span class="n">subg_input_names</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">in_name</span> <span class="ow">in</span> <span class="n">gin_names</span><span class="p">,</span> <span class="s2">"The input variable </span><span class="si">%s</span><span class="s2"> can't be found in graph inputs: </span><span class="si">%s</span><span class="s2">"</span> \
+                <span class="o">%</span> <span class="p">(</span><span class="n">in_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">gin_names</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">in_name</span> <span class="ow">in</span> <span class="n">cut_var_names</span><span class="p">:</span>
+            <span class="n">ordered_ins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cut_var_map</span><span class="p">[</span><span class="n">in_name</span><span class="p">])</span>
+            <span class="n">remain_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subg_input_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">in_name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">in_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_names</span> <span class="ow">and</span> <span class="n">in_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">state_names</span><span class="p">:</span>
+            <span class="c1"># The remaining inputs are the variable nodes created inside the UDF.</span>
+            <span class="c1"># The subgraph can't have nodes shared with the main graph. As such,</span>
+            <span class="c1"># we need to make a copy of these variable nodes.</span>
+            <span class="k">assert</span> <span class="n">in_name</span> <span class="ow">in</span> <span class="n">gin_names</span>
+            <span class="n">ordered_ins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">input_syms</span><span class="p">[</span><span class="n">in_name</span><span class="p">]))</span>
+            <span class="n">remain_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subg_input_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">in_name</span><span class="p">))</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_foreach</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">*</span><span class="n">ordered_ins</span><span class="p">,</span> <span class="n">num_outputs</span><span class="o">=</span><span class="n">num_outputs</span><span class="p">,</span>
+                                    <span class="n">num_out_data</span><span class="o">=</span><span class="n">num_out_data</span><span class="p">,</span> <span class="n">in_state_locs</span><span class="o">=</span><span class="n">in_state_locs</span><span class="p">,</span>
+                                    <span class="n">in_data_locs</span><span class="o">=</span><span class="n">in_data_locs</span><span class="p">,</span> <span class="n">remain_locs</span><span class="o">=</span><span class="n">remain_locs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_outputs</span> <span class="o">-</span> <span class="n">num_states</span> <span class="o">></span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_outputs</span> <span class="o">-</span> <span class="n">num_states</span><span class="p">):</span>
+            <span class="n">outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">num_outputs</span> <span class="o">-</span> <span class="n">num_states</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_states</span><span class="p">):</span>
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">num_outputs</span> <span class="o">-</span> <span class="n">num_states</span> <span class="o">+</span> <span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">not_state_list</span><span class="p">:</span>
+        <span class="c1"># If there is only one input state, there should be only one output state.</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>

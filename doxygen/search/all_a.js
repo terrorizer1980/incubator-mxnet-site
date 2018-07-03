@@ -24,7 +24,7 @@ var searchData=
   ['io_2eh',['io.h',['../io_8h.html',1,'']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
-  ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#abd7405c065167e4e15af032b1e0a5c42',1,'mxnet::OpContext']]],
+  ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#a2d550bd138ed08333bebed8dd876644f',1,'mxnet::OpContext']]],
   ['is_5ftraining',['is_training',['../classmxnet_1_1Imperative.html#a05de0382a6aecf2cb8ee1c0a7c021bae',1,'mxnet::Imperative']]],
   ['isnone',['IsNone',['../classmxnet_1_1Imperative_1_1AGInfo.html#afca370cc8b3e93f950d04df6e29f1fdc',1,'mxnet::Imperative::AGInfo']]],
   ['issame',['IsSame',['../classmxnet_1_1NDArray.html#adfd9872e55953d5cbea39728ea7d4289',1,'mxnet::NDArray']]],

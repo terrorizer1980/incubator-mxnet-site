@@ -15,6 +15,7 @@ var searchData=
   ['ndarraystoragetype',['NDArrayStorageType',['../namespacemxnet.html#a536b732faa980e1de446c552460ff76a',1,'mxnet']]],
   ['ndim',['ndim',['../classmxnet_1_1TBlob.html#a3be3b640e59a480b8ac5369d73b117de',1,'mxnet::TBlob']]],
   ['ndlisthandle',['NDListHandle',['../c__predict__api_8h.html#a3058aee7831edae29e9ac39556e5fe5c',1,'c_predict_api.h']]],
+  ['need_5fgrad',['need_grad',['../structmxnet_1_1OpContext.html#adffa555a95b50893b5fe7a2930a71d62',1,'mxnet::OpContext']]],
   ['new',['New',['../classmxnet_1_1common_1_1ObjectPool.html#a5d711031f61dbd06d8c6975fd49e5632',1,'mxnet::common::ObjectPool::New()'],['../structmxnet_1_1common_1_1ObjectPoolAllocatable.html#aaf92ecb0cb6542b5c3f70ec31a31db4e',1,'mxnet::common::ObjectPoolAllocatable::New()']]],
   ['newoperator',['NewOperator',['../classmxnet_1_1Engine.html#a1aa6dcadfbca86d215366c380310dd57',1,'mxnet::Engine']]],
   ['newvariable',['NewVariable',['../classmxnet_1_1Engine.html#a6e141b188f018d5d933ab99868631d5e',1,'mxnet::Engine']]],
