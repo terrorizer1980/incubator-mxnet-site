@@ -317,7 +317,7 @@ Next, we install <code class="docutils literal"><span class="pre">graphviz</span
 <li><a class="reference external" href="#install-the-mxnet-package-for-python">Python</a></li>
 <li><a class="reference external" href="#install-mxnet-for-r">R</a></li>
 <li><a class="reference external" href="#install-the-mxnet-package-for-julia">Julia</a></li>
-<li><a class="reference external" href="#install-the-mxnet-package-for-scala">Scala</a></li>
+<li><strong>Scala</strong> is not yet available for Windows</li>
 </ul>
 </div>
 </div>
@@ -486,50 +486,7 @@ R CMD INSTALL --build --no-multiarch R-package
 </div>
 <div class="section" id="installing-the-mxnet-package-for-scala">
 <span id="installing-the-mxnet-package-for-scala"></span><h2>Installing the MXNet Package for Scala<a class="headerlink" href="#installing-the-mxnet-package-for-scala" title="Permalink to this headline">¶</a></h2>
-<p>There are four ways to install the MXNet package for Scala:</p>
-<ul class="simple">
-<li>Use the prebuilt binary package</li>
-<li>Build the library from source code</li>
-</ul>
-<div class="section" id="use-the-prebuilt-binary-package">
-<span id="use-the-prebuilt-binary-package"></span><h3>Use the Prebuilt Binary Package<a class="headerlink" href="#use-the-prebuilt-binary-package" title="Permalink to this headline">¶</a></h3>
-<p>For Linux and OS X (Mac) users, MXNet provides prebuilt binary packages that support computers with either GPU or CPU processors. To download and build these packages using <code class="docutils literal"><span class="pre">Maven</span></code>, change the <code class="docutils literal"><span class="pre">artifactId</span></code> in the following Maven dependency to match your architecture:</p>
-<div class="highlight-HTML"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>ml.dmlc.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_<span class="p">&lt;</span><span class="nt">system</span> <span class="na">architecture</span><span class="p">&gt;&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>0.1.1<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
-</pre></div>
-</div>
-<p>For example, to download and build the 64-bit CPU-only version for Linux, use:</p>
-<div class="highlight-HTML"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>ml.dmlc.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.10-linux-x86_64-cpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>0.1.1<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
-</pre></div>
-</div>
-<p>If your native environment differs slightly from the assembly package, for example, if you use the openblas package instead of the atlas package, it&#8217;s better to use the mxnet-core package and put the compiled Java native library in your load path:</p>
-<div class="highlight-HTML"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>ml.dmlc.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-core_2.10<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>0.1.1<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="build-the-library-from-source-code">
-<span id="build-the-library-from-source-code"></span><h3>Build the Library from Source Code<a class="headerlink" href="#build-the-library-from-source-code" title="Permalink to this headline">¶</a></h3>
-<p>Before you build MXNet for Scala from source code, you must complete <a class="reference external" href="#build-the-shared-library">Step 1. Build the Shared Library</a>. After you build the shared library, run the following command from the MXNet source root directory to build the MXNet Scala package:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>  make scalapkg
-</pre></div>
-</div>
-<p>This command creates the JAR files for the assembly, core, and example modules. It also creates the native library in the <code class="docutils literal"><span class="pre">native/{your-architecture}/target</span> <span class="pre">directory</span></code>, which you can use to cooperate with the core module.</p>
-<p>To install the MXNet Scala package into your local Maven repository, run the following command from the MXNet source root directory:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>  make scalainstall
-</pre></div>
-</div>
-</div>
+<p>Scala-MXNet is not yet available for Windows.</p>
 </div>
 <div class="section" id="next-steps">
 <span id="next-steps"></span><h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
@@ -568,11 +525,7 @@ R CMD INSTALL --build --no-multiarch R-package
 </ul>
 </li>
 <li><a class="reference internal" href="#install-the-mxnet-package-for-julia">Install the MXNet Package for Julia</a></li>
-<li><a class="reference internal" href="#installing-the-mxnet-package-for-scala">Installing the MXNet Package for Scala</a><ul>
-<li><a class="reference internal" href="#use-the-prebuilt-binary-package">Use the Prebuilt Binary Package</a></li>
-<li><a class="reference internal" href="#build-the-library-from-source-code">Build the Library from Source Code</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#installing-the-mxnet-package-for-scala">Installing the MXNet Package for Scala</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
