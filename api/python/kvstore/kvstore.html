@@ -448,7 +448,7 @@ other push actions.</li>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.kvstore.KVStore.pull">
-<code class="descname">pull</code><span class="sig-paren">(</span><em>key</em>, <em>out=None</em>, <em>priority=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/kvstore.html#KVStore.pull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.kvstore.KVStore.pull" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pull</code><span class="sig-paren">(</span><em>key</em>, <em>out=None</em>, <em>priority=0</em>, <em>ignore_sparse=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/kvstore.html#KVStore.pull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.kvstore.KVStore.pull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pulls a single value or a sequence of values from the store.</p>
 <p>This function returns immediately after adding an operator to the engine.
 Subsequent attempts to read from the <cite>out</cite> variable will be blocked until the
@@ -456,8 +456,8 @@ pull operation completes.</p>
 <p><cite>pull</cite> is executed asynchronously after all previous <cite>pull</cite> calls and only
 the last <cite>push</cite> call for the same input key(s) are finished.</p>
 <p>The returned values are guaranteed to be the latest values in the store.</p>
-<p>For <cite>RowSparseNDArray</cite> values, this call is ignored,
-please use <code class="docutils literal"><span class="pre">row_sparse_pull</span></code> instead.</p>
+<p>pull with <cite>RowSparseNDArray</cite> is not supported for dist kvstore.
+Please use <code class="docutils literal"><span class="pre">row_sparse_pull</span></code> instead.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -468,6 +468,7 @@ please use <code class="docutils literal"><span class="pre">row_sparse_pull</spa
 <li><strong>priority</strong> (<em>int</em><em>, </em><em>optional</em>) – The priority of the pull operation.
 Higher priority pull operations are likely to be executed before
 other pull actions.</li>
+<li><strong>ignore_sparse</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default True</em>) – Whether to ignore sparse arrays in the request.</li>
 </ul>
 </td>
 </tr>

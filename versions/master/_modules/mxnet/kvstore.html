@@ -448,7 +448,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ckeys</span><span class="p">)),</span> <span class="n">ckeys</span><span class="p">,</span> <span class="n">cvals</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">priority</span><span class="p">)))</span></div>
 
 
-<div class="viewcode-block" id="KVStore.pull"><a class="viewcode-back" href="../../api/python/kvstore/kvstore.html#mxnet.kvstore.KVStore.pull">[docs]</a>    <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="KVStore.pull"><a class="viewcode-back" href="../../api/python/kvstore/kvstore.html#mxnet.kvstore.KVStore.pull">[docs]</a>    <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">""" Pulls a single value or a sequence of values from the store.</span>
 
 <span class="sd">        This function returns immediately after adding an operator to the engine.</span>
@@ -460,8 +460,8 @@
 
 <span class="sd">        The returned values are guaranteed to be the latest values in the store.</span>
 
-<span class="sd">        For `RowSparseNDArray` values, this call is ignored,</span>
-<span class="sd">        please use ``row_sparse_pull`` instead.</span>
+<span class="sd">        pull with `RowSparseNDArray` is not supported for dist kvstore.</span>
+<span class="sd">        Please use ``row_sparse_pull`` instead.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -475,6 +475,9 @@
 <span class="sd">            The priority of the pull operation.</span>
 <span class="sd">            Higher priority pull operations are likely to be executed before</span>
 <span class="sd">            other pull actions.</span>
+
+<span class="sd">        ignore_sparse: bool, optional, default True</span>
+<span class="sd">            Whether to ignore sparse arrays in the request.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -511,11 +514,13 @@
         <span class="k">assert</span><span class="p">(</span><span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">ckeys</span><span class="p">,</span> <span class="n">cvals</span><span class="p">,</span> <span class="n">use_str_keys</span> <span class="o">=</span> <span class="n">_ctype_key_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">use_str_keys</span><span class="p">:</span>
-            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXKVStorePullEx</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ckeys</span><span class="p">)),</span> <span class="n">ckeys</span><span class="p">,</span> <span class="n">cvals</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">priority</span><span class="p">)))</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXKVStorePullWithSparseEx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ckeys</span><span class="p">)),</span> <span class="n">ckeys</span><span class="p">,</span>
+                                                      <span class="n">cvals</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">priority</span><span class="p">),</span>
+                                                      <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">(</span><span class="n">ignore_sparse</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXKVStorePull</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ckeys</span><span class="p">)),</span> <span class="n">ckeys</span><span class="p">,</span> <span class="n">cvals</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">priority</span><span class="p">)))</span></div>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXKVStorePullWithSparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ckeys</span><span class="p">)),</span> <span class="n">ckeys</span><span class="p">,</span>
+                                                    <span class="n">cvals</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">priority</span><span class="p">),</span>
+                                                    <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">(</span><span class="n">ignore_sparse</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="KVStore.row_sparse_pull"><a class="viewcode-back" href="../../api/python/kvstore/kvstore.html#mxnet.kvstore.KVStore.row_sparse_pull">[docs]</a>    <span class="k">def</span> <span class="nf">row_sparse_pull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">row_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">""" Pulls a single RowSparseNDArray value or a sequence of RowSparseNDArray values \</span>

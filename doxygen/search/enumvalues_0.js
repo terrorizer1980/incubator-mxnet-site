@@ -36,6 +36,7 @@ var searchData=
   ['kfcomputeex',['kFComputeEx',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2ba57f93219462690bc438372ecd92fedd5',1,'mxnet']]],
   ['kfcomputefallback',['kFComputeFallback',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2ba18bf63b4c196f79c9bca4ad8637e8fef',1,'mxnet']]],
   ['kgpu',['kGPU',['../structmxnet_1_1Context.html#a611c227b5e04a2777c3e4507bb76f60eab21bed4d5cee411db15283d7529f28cf',1,'mxnet::Context']]],
+  ['kgpuprioritized',['kGPUPrioritized',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3ba4879e1f172ddec6223d17ea90e691ddd',1,'mxnet']]],
   ['kidx',['kIdx',['../namespacemxnet_1_1csr.html#a74a2e3877ef7b348d5374a9d604aba42aa6ca1dbcb9c5858e0d28237ae3624ed7',1,'mxnet::csr::kIdx()'],['../namespacemxnet_1_1rowsparse.html#a0ad4c619684fa4d442c7076c18fef232ac52a46037d8cfe90ccc5da8712c7f6da',1,'mxnet::rowsparse::kIdx()']]],
   ['kindptr',['kIndPtr',['../namespacemxnet_1_1csr.html#a74a2e3877ef7b348d5374a9d604aba42ad9dcbaec1c8c6ca9d69648c83354aac1',1,'mxnet::csr']]],
   ['kinplaceinout',['kInplaceInOut',['../namespacemxnet_1_1op.html#a3c3b8c77865c7c715cfe05ee2b2fa8daa2c7771fd11a989ca2480963611405bde',1,'mxnet::op']]],
