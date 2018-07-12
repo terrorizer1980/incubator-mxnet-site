@@ -799,99 +799,36 @@ pip install graphviz
 </div> <!-- END of GPU -->
 </div> <!-- END of Python -->
 <!-- END - Linux Python GPU Installation Instructions --><div class="r">
-<div class="cpu"><p><br/></p>
-<p>Building <em>MXNet</em> from source is a 2 step process.</p>
-<ol class="simple">
-<li>Build the <em>MXNet</em> core shared library, <code class="docutils literal"><span class="pre">libmxnet.so</span></code>, from the C++ sources.</li>
-<li>Build the language specific bindings.</li>
-</ol>
-<p><strong>Minimum Requirements</strong></p>
-<ol class="simple">
-<li><a class="reference external" href="https://gcc.gnu.org/gcc-4.8/">GCC 4.8</a> or later to compile C++ 11.</li>
-<li><a class="reference external" href="https://www.gnu.org/software/make/">GNU Make</a></li>
-</ol>
-<p><br/></p>
-<p><strong>Build the MXNet core shared library</strong></p>
-<p><strong>Step 1</strong> Install build tools and git.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get update
-$ sudo apt-get install -y build-essential git
+<div class="cpu"><p>The default version of R that is installed with <code class="docutils literal"><span class="pre">apt-get</span></code> is insufficient. You will need to first <a class="reference external" href="http://mxnet.io/install/ubuntu_setup.html#install-the-mxnet-package-for-r">install R v3.4.4+ and build MXNet from source</a>.</p>
+<p>After you have setup R v3.4.4+ and MXNet, you can build and install the MXNet R bindings with the following, assuming that <code class="docutils literal"><span class="pre">incubator-mxnet</span></code> is the source directory you used to build MXNet as follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> incubator-mxnet
+$ make rpkg
 </pre></div>
 </div>
-<p><strong>Step 2</strong> Install OpenBLAS.</p>
-<p><em>MXNet</em> uses <a class="reference external" href="https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms">BLAS</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/LAPACK">LAPACK</a> libraries for accelerated numerical computations on CPU machine. There are several flavors of BLAS/LAPACK libraries - <a class="reference external" href="http://www.openblas.net/">OpenBLAS</a>, <a class="reference external" href="http://math-atlas.sourceforge.net/">ATLAS</a> and <a class="reference external" href="https://software.intel.com/en-us/intel-mkl">MKL</a>. In this step we install OpenBLAS. You can choose to install ATLAS or MKL.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install -y libopenblas-dev liblapack-dev
-</pre></div>
-</div>
-<p><strong>Step 3</strong> Install OpenCV.</p>
-<p><em>MXNet</em> uses <a class="reference external" href="http://opencv.org/">OpenCV</a> for efficient image loading and augmentation operations.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install -y libopencv-dev
-</pre></div>
-</div>
-<p><strong>Step 4</strong> Download MXNet sources and build MXNet core shared library. You can clone the repository as described in the following code block, or you may try the <a href="download.html">download links</a> for your desired MXNet version.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone --recursive https://github.com/apache/incubator-mxnet
-$ <span class="nb">cd</span> incubator-mxnet
-$ make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas
-</pre></div>
-</div>
-<p><em>Note</em> - USE_OPENCV and USE_BLAS are make file flags to set compilation options to use OpenCV and BLAS library. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code>.</p>
-<p><br/></p>
-<p><strong>Build and install the MXNet R binding</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ make rpkg
-$ R CMD INSTALL mxnet_current_r.tar.gz
-</pre></div>
-</div>
-</div> <!-- END of CPU --><div class="gpu"><p>The following installation instructions have been tested on Ubuntu 14.04 and 16.04.</p>
-<p><strong>Prerequisites</strong></p>
-<p>Install the following NVIDIA libraries to setup <em>MXNet</em> with GPU support:</p>
-<ol class="simple">
-<li>Install CUDA 9.0 following the NVIDIA&#8217;s <a class="reference external" href="http://docs.nvidia.com/cuda/cuda-installation-guide-linux/">installation guide</a>.</li>
-<li>Install cuDNN 7 for CUDA 9.0 following the NVIDIA&#8217;s <a class="reference external" href="https://developer.nvidia.com/cudnn">installation guide</a>. You may need to register with NVIDIA for downloading the cuDNN library.</li>
-</ol>
-<p><strong>Note:</strong> Make sure to add CUDA install path to <code class="docutils literal"><span class="pre">LD_LIBRARY_PATH</span></code>.</p>
-<p>Example - <em>export LD_LIBRARY_PATH=/usr/local/cuda/lib64/:$LD_LIBRARY_PATH</em></p>
-<p><br/></p>
-<p>Building <em>MXNet</em> from source is a 2 step process.</p>
-<ol class="simple">
-<li>Build the <em>MXNet</em> core shared library, <code class="docutils literal"><span class="pre">libmxnet.so</span></code>, from the C++ sources.</li>
-<li>Build the language specific bindings.</li>
-</ol>
-<p><strong>Minimum Requirements</strong></p>
-<ol class="simple">
-<li><a class="reference external" href="https://gcc.gnu.org/gcc-4.8/">GCC 4.8</a> or later to compile C++ 11.</li>
-<li><a class="reference external" href="https://www.gnu.org/software/make/">GNU Make</a></li>
-</ol>
-<p><br/></p>
-<p><strong>Build the MXNet core shared library</strong></p>
-<p><strong>Step 1</strong> Install build tools and git.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get update
-$ sudo apt-get install -y build-essential git
-</pre></div>
-</div>
-<p><strong>Step 2</strong> Install OpenBLAS.</p>
-<p><em>MXNet</em> uses <a class="reference external" href="https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms">BLAS</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/LAPACK">LAPACK</a> libraries for accelerated numerical computations on CPU machine. There are several flavors of BLAS/LAPACK libraries - <a class="reference external" href="http://www.openblas.net/">OpenBLAS</a>, <a class="reference external" href="http://math-atlas.sourceforge.net/">ATLAS</a> and <a class="reference external" href="https://software.intel.com/en-us/intel-mkl">MKL</a>. In this step we install OpenBLAS. You can choose to install ATLAS or MKL.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install -y libopenblas-dev liblapack-dev
-</pre></div>
-</div>
-<p><strong>Step 3</strong> Install OpenCV.</p>
-<p><em>MXNet</em> uses <a class="reference external" href="http://opencv.org/">OpenCV</a> for efficient image loading and augmentation operations.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install -y libopencv-dev
-</pre></div>
-</div>
-<p><strong>Step 4</strong> Download MXNet sources and build MXNet core shared library. You can clone the repository as described in the following code block, or you may try the <a href="download.html">download links</a> for your desired MXNet version.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone --recursive https://github.com/apache/incubator-mxnet
-$ <span class="nb">cd</span> incubator-mxnet
-$ make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas <span class="nv">USE_CUDA</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_CUDA_PATH</span><span class="o">=</span>/usr/local/cuda <span class="nv">USE_CUDNN</span><span class="o">=</span><span class="m">1</span>
-</pre></div>
-</div>
-<p><em>Note</em> - USE_OPENCV, USE_BLAS, USE_CUDA, USE_CUDA_PATH AND USE_CUDNN are make file flags to set compilation options to use OpenCV, OpenBLAS, CUDA and cuDNN libraries. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code>. Make sure to set USE_CUDA_PATH to right CUDA installation path. In most cases it is - <em>/usr/local/cuda</em>.</p>
-<p><br/></p>
-<p><strong>Build and install the MXNet R binding</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ make rpkg
-$ R CMD INSTALL mxnet_current_r.tar.gz
+</div> <!-- END of CPU --><div class="gpu"><p>The default version of R that is installed with <code class="docutils literal"><span class="pre">apt-get</span></code> is insufficient. You will need to first <a class="reference external" href="http://mxnet.io/install/ubuntu_setup.html#install-the-mxnet-package-for-r">install R v3.4.4+ and build MXNet from source</a>.</p>
+<p>After you have setup R v3.4.4+ and MXNet, you can build and install the MXNet R bindings with the following, assuming that <code class="docutils literal"><span class="pre">incubator-mxnet</span></code> is the source directory you used to build MXNet as follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> incubator-mxnet
+$ make rpkg
 </pre></div>
 </div>
 </div> <!-- END of GPU -->
 </div> <!-- END of R --><div class="scala">
+<div class="gpu"><div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-linux-x86_64-gpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><br></p>
+</div> <!-- End of gpu --><div class="cpu"><div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-linux-x86_64-cpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><br></p>
+</div> <!-- End of cpu -->
+</div> <!-- End of scala --><div class="scala">
 <div class="gpu"><div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-linux-x86_64-gpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
@@ -1137,7 +1074,8 @@ Alternatively, you may follow the <a class="reference external" href="https://do
 </div> <!-- END of build from source -->
 </div> <!-- END of GPU -->
 </div> <!-- END of Python --><!-- START - MacOS R CPU Installation Instructions --><div class="r">
-<div class="cpu"><p>The CPU version of MXNet R package can be installed in R like other packages</p>
+<div class="cpu"><p>Install the latest version (3.5.1+) of R from <a class="reference external" href="https://cran.r-project.org/bin/macosx/">CRAN</a>.
+You can <a class="reference external" href="http://mxnet.io/install/osx_setup.html#install-the-mxnet-package-for-r">build MXNet-R from source</a>, or you can use a pre-built binary:</p>
 <div class="highlight-r"><div class="highlight"><pre><span></span>cran <span class="o">&lt;-</span> <span class="kp">getOption</span><span class="p">(</span><span class="s">&quot;repos&quot;</span><span class="p">)</span>
 cran<span class="p">[</span><span class="s">&quot;dmlc&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/&quot;</span>
 <span class="kp">options</span><span class="p">(</span>repos <span class="o">=</span> cran<span class="p">)</span>
@@ -1340,21 +1278,21 @@ Next, we install the <code class="docutils literal"><span class="pre">graphviz</
 </div> <!-- End of pip -->
 </div> <!-- End of GPU -->
 </div> <!-- End of Python --><!-- START - Windows R CPU Installation Instructions --><div class="r">
-<div class="cpu"><p>The CPU version of MXNet R package can be installed in R like other packages</p>
+<div class="cpu"><p>Install the latest version (3.5.1+) of R from <a class="reference external" href="https://cran.r-project.org/bin/windows/">CRAN</a>.
+You can <a class="reference external" href="http://mxnet.io/install/windows_setup.html#install-the-mxnet-package-for-r">build MXNet-R from source</a>, or you can use a pre-built binary:</p>
 <div class="highlight-r"><div class="highlight"><pre><span></span>cran <span class="o">&lt;-</span> <span class="kp">getOption</span><span class="p">(</span><span class="s">&quot;repos&quot;</span><span class="p">)</span>
 cran<span class="p">[</span><span class="s">&quot;dmlc&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/&quot;</span>
 <span class="kp">options</span><span class="p">(</span>repos <span class="o">=</span> cran<span class="p">)</span>
 install.packages<span class="p">(</span><span class="s">&quot;mxnet&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div> <!-- END - Windows R CPU --><div class="gpu"><p>The GPU version of MXNet R package can be installed in R like other packages</p>
+</div> <!-- END - Windows R CPU --><div class="gpu"><p>You can <a class="reference external" href="http://mxnet.io/install/windows_setup.html#install-the-mxnet-package-for-r">build MXNet-R from source</a>, or you can use a pre-built binary:</p>
 <div class="highlight-r"><div class="highlight"><pre><span></span>cran <span class="o">&lt;-</span> <span class="kp">getOption</span><span class="p">(</span><span class="s">&quot;repos&quot;</span><span class="p">)</span>
 cran<span class="p">[</span><span class="s">&quot;dmlc&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/GPU&quot;</span>
 <span class="kp">options</span><span class="p">(</span>repos <span class="o">=</span> cran<span class="p">)</span>
 install.packages<span class="p">(</span><span class="s">&quot;mxnet&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Alternatively, You can also follow the installation instructions <a class="reference internal" href="windows_setup.html"><span class="doc">in this guide</span></a> to build MXNet from source.</p>
 </div> <!-- END of GPU -->
 </div> <!-- END - Windows R --><div class="scala">
 <div class="cpu gpu"><p>MXNet-Scala for Windows is not yet available.
@@ -1674,6 +1612,12 @@ b <span class="o">&lt;-</span> a <span class="o">*</span> <span class="m">2</spa
 b
 </pre></div>
 </div>
+<p>You should see the following output:</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="p">[,</span><span class="m">1</span><span class="p">]</span> <span class="p">[,</span><span class="m">2</span><span class="p">]</span> <span class="p">[,</span><span class="m">3</span><span class="p">]</span>
+<span class="p">[</span><span class="m">1</span><span class="p">,]</span>    <span class="m">3</span>    <span class="m">3</span>    <span class="m">3</span>
+<span class="p">[</span><span class="m">2</span><span class="p">,]</span>    <span class="m">3</span>    <span class="m">3</span>    <span class="m">3</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div><!-- Example R code for GPU --><div class="linux macos windows">
@@ -1683,6 +1627,12 @@ b
 a <span class="o">&lt;-</span> mx.nd.ones<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> ctx <span class="o">=</span> mx.gpu<span class="p">())</span>
 b <span class="o">&lt;-</span> a <span class="o">*</span> <span class="m">2</span> <span class="o">+</span> <span class="m">1</span>
 b
+</pre></div>
+</div>
+<p>You should see the following output:</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="p">[,</span><span class="m">1</span><span class="p">]</span> <span class="p">[,</span><span class="m">2</span><span class="p">]</span> <span class="p">[,</span><span class="m">3</span><span class="p">]</span>
+<span class="p">[</span><span class="m">1</span><span class="p">,]</span>    <span class="m">3</span>    <span class="m">3</span>    <span class="m">3</span>
+<span class="p">[</span><span class="m">2</span><span class="p">,]</span>    <span class="m">3</span>    <span class="m">3</span>    <span class="m">3</span>
 </pre></div>
 </div>
 </div>
