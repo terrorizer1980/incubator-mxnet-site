@@ -3689,9 +3689,16 @@ the last vector in an embedding matrix.</p>
                           <span class="p">[</span> <span class="mf">10.</span><span class="p">,</span>  <span class="mf">11.</span><span class="p">,</span>  <span class="mf">12.</span><span class="p">,</span>  <span class="mf">13.</span><span class="p">,</span>  <span class="mf">14.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>The storage type of weight can be either row_sparse or default, while
-the storage type of weight’s grad depends on the value of “sparse_grad”.</p>
-<p>Defined in src/operator/tensor/indexing_op.cc:L232</p>
+<p>The storage type of weight can be either row_sparse or default.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If “sparse_grad” is set to True, the storage type of gradient w.r.t weights will be
+“row_sparse”. Only a subset of optimizers support sparse gradients, including SGD, AdaGrad
+and Adam. Note that by default lazy updates is turned on, which may perform differently
+from standard updates. For more details, please check the Optimization API at:
+<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html">https://mxnet.incubator.apache.org/api/python/optimization/optimization.html</a></p>
+</div>
+<p>Defined in src/operator/tensor/indexing_op.cc:L239</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -5933,7 +5940,7 @@ which is computed by:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">batch_dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)[</span><span class="n">i</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:])</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/dot.cc:L117</p>
+<p>Defined in src/operator/tensor/dot.cc:L125</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -5979,7 +5986,7 @@ an output array of shape <code class="docutils literal"><span class="pre">(i0,)<
 <span class="n">batch_take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">4.</span>  <span class="mf">5.</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L444</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L451</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7391,7 +7398,15 @@ forward_stype option for output storage type. Implemented sparse operations incl
 </ul>
 <p>If the combination of input storage types and forward_stype does not match any of the
 above patterns, <code class="docutils literal"><span class="pre">dot</span></code> will fallback and generate output with default storage.</p>
-<p>Defined in src/operator/tensor/dot.cc:L69</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the storage type of the lhs is “csr”, the storage type of gradient w.r.t rhs will be
+“row_sparse”. Only a subset of optimizers support sparse gradients, including SGD, AdaGrad
+and Adam. Note that by default lazy updates is turned on, which may perform differently
+from standard updates. For more details, please check the Optimization API at:
+<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html">https://mxnet.incubator.apache.org/api/python/optimization/optimization.html</a></p>
+</div>
+<p>Defined in src/operator/tensor/dot.cc:L77</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9330,7 +9345,7 @@ in an output array of shape <code class="docutils literal"><span class="pre">(i0
                                     <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">0.</span>  <span class="mf">0.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L490</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L497</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12128,7 +12143,7 @@ take(x, [[0,1],[1,2]]) = [[[ 1.,  2.],</p>
 </div></blockquote>
 </dd>
 </dl>
-<p>Defined in src/operator/tensor/indexing_op.cc:L389</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L396</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>

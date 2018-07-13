@@ -562,13 +562,15 @@ in <code class="docutils literal"><span class="pre">gradient.indices</span></cod
 <span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">state</span>
 </pre></div>
 </div>
-<p>Meanwhile, the sparse update rule for SGD optimizer is:</p>
+<p>However, with sparse gradient the SGD optimizer uses the following lazy update by default:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">grad</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
     <span class="n">rescaled_grad</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">rescale_grad</span> <span class="o">*</span> <span class="n">clip</span><span class="p">(</span><span class="n">grad</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">clip_gradient</span><span class="p">)</span> <span class="o">+</span> <span class="n">weight_decay</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
     <span class="n">state</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">momentum</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">state</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="n">rescaled_grad</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
 </pre></div>
 </div>
+<p>This means that the lazy update leads to different optimization results if <code class="docutils literal"><span class="pre">weight_decay</span></code> or <code class="docutils literal"><span class="pre">momentum</span></code> is non-zero.
+To disable lazy update, please set <code class="docutils literal"><span class="pre">lazy_update</span></code> to be False when creating the optimizer.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Create weight</span>
 <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">weight</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">tostype</span><span class="p">(</span><span class="s1">'row_sparse'</span><span class="p">)</span>
@@ -610,8 +612,8 @@ in <code class="docutils literal"><span class="pre">gradient.indices</span></cod
         <span class="p">[</span> <span class="mf">1.</span>        <span class="p">,</span>  <span class="mf">1.</span>        <span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">)}</span>
 </pre></div>
 </div>
-<p>Note that both <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.SGD">mxnet.optimizer.SGD</a>
-and <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.Adam">mxnet.optimizer.Adam</a> support sparse updates in MXNet.</p>
+<p>Note that only <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.SGD">mxnet.optimizer.SGD</a>, <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.Adam">mxnet.optimizer.Adam</a>, and
+<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.AdaGrad">mxnet.optimizer.AdaGrad</a> support sparse updates in MXNet.</p>
 </div>
 <div class="section" id="advanced-topics">
 <span id="advanced-topics"></span><h2>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h2>
@@ -620,7 +622,7 @@ and <a class="reference external" href="https://mxnet.incubator.apache.org/api/p
 <p>By default, RowSparseNDArray operators are executed on CPU. In MXNet, GPU support for RowSparseNDArray is limited
 to a few sparse operators such as <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/sparse.html#mxnet.ndarray.sparse.sgd_update">sgd_update</a>,
 <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/sparse.html#mxnet.ndarray.sparse.dot">dot</a> and
-<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/contrib.html#mxnet.ndarray.contrib.SparseEmbedding">SparseEmbedding</a>.</p>
+<a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.Embedding">Embedding</a>.</p>
 <p>To create a RowSparseNDArray on gpu, we need to explicitly specify the context:</p>
 <p><strong>Note</strong> If a GPU is not available, an error will be reported in the following section. In order to execute it on a cpu, set gpu_device to mx.cpu().</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>

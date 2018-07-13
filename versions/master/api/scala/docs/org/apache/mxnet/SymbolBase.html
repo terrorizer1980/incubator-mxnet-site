@@ -939,12 +939,19 @@ Examples::<br/>
                             [ 10.,  11.,  12.,  13.,  14.</span>]<br/>
 <br/>
 <br/>
-The storage type of weight can be either row_sparse or default, while<br/>
-the storage type of weight's grad depends on the value of "sparse_grad".<br/>
+The storage type of weight can be either row_sparse or default.<br/>
+<br/>
+.. Note::<br/>
+<br/>
+    If "sparse_grad" is set to True, the storage type of gradient w.r.t weights will be<br/>
+    "row_sparse". Only a subset of optimizers support sparse gradients, including SGD, AdaGrad<br/>
+    and Adam. Note that by default lazy updates is turned on, which may perform differently<br/>
+    from standard updates. For more details, please check the Optimization API at:<br/>
+    https://mxnet.incubator.apache.org/api/python/optimization/optimization.html<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L232<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L239<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#Flatten" visbl="pub">
 <a id="Flatten(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -3367,7 +3374,7 @@ which is computed by::<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/dot.cc:L117<br/></p><div class="fullcomment"><div class="comment cmt"><p>Batchwise dot product.<br/>
+Defined in src/operator/tensor/dot.cc:L125<br/></p><div class="fullcomment"><div class="comment cmt"><p>Batchwise dot product.<br/>
 <br/>
 <code><code>batch_dot</code></code> is used to compute dot product of <code><code>x</code></code> and <code><code>y</code></code> when <code><code>x</code></code> and<br/>
 <code><code>y</code></code> are data in batch, namely 3D arrays in shape of <code>(batch_size, :, :)</code>.<br/>
@@ -3380,7 +3387,7 @@ which is computed by::<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/dot.cc:L117<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/dot.cc:L125<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#batch_take" visbl="pub">
 <a id="batch_take(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -3421,7 +3428,7 @@ Examples::<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L444<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L451<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#broadcast_add" visbl="pub">
 <a id="broadcast_add(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -5179,9 +5186,17 @@ forward_stype option for output storage type. Implemented sparse operations incl
 If the combination of input storage types and forward_stype does not match any of the<br/>
 above patterns, <code><code>dot</code></code> will fallback and generate output with default storage.<br/>
 <br/>
+.. Note::<br/>
+<br/>
+    If the storage type of the lhs is "csr", the storage type of gradient w.r.t rhs will be<br/>
+    "row_sparse". Only a subset of optimizers support sparse gradients, including SGD, AdaGrad<br/>
+    and Adam. Note that by default lazy updates is turned on, which may perform differently<br/>
+    from standard updates. For more details, please check the Optimization API at:<br/>
+    https://mxnet.incubator.apache.org/api/python/optimization/optimization.html<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/dot.cc:L69<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+<br/>
+Defined in src/operator/tensor/dot.cc:L77<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#elemwise_add" visbl="pub">
 <a id="elemwise_add(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -6980,7 +6995,7 @@ Examples::<br/>
                                       [ 1.  0.  0.</span>]<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L490<br/></span></p><div class="fullcomment"><div class="comment cmt"><p>Returns a one-hot array.<br/>
+Defined in src/operator/tensor/indexing_op.cc:L497<br/></span></p><div class="fullcomment"><div class="comment cmt"><p>Returns a one-hot array.<br/>
 <br/>
 The locations represented by <code>indices</code> take value <code>on_value</code>, while all<br/>
 other locations take value <code>off_value</code>.<br/>
@@ -7014,7 +7029,7 @@ Examples::<br/>
                                       [ 1.  0.  0.</span>]<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L490<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L497<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#ones_like" visbl="pub">
 <a id="ones_like(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -9917,7 +9932,7 @@ Examples::<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L389<br/></span></li></ul></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L396<br/></span></li></ul></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#tan" visbl="pub">
 <a id="tan(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
