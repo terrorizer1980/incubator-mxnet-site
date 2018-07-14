@@ -306,6 +306,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params_to_init</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_kvstore</span><span class="p">()</span>
 
@@ -363,6 +364,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot reset distributed KVStore."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params_to_init</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">]</span>
 
@@ -403,7 +405,8 @@
         <span class="k">if</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">:</span>
                 <span class="n">kvstore</span><span class="o">.</span><span class="n">set_gradient_compression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span><span class="p">:</span>
                 <span class="c1"># kv.pull(row_sparse_grad) is not supported for dist kvstore</span>
                 <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_weight</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_grad</span>
             <span class="k">if</span> <span class="n">update_on_kvstore</span><span class="p">:</span>
@@ -504,9 +507,9 @@
                 <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">grad_req</span> <span class="o">!=</span> <span class="s1">'null'</span><span class="p">:</span>
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_grad</span><span class="p">(),</span> <span class="n">priority</span><span class="o">=-</span><span class="n">i</span><span class="p">)</span>
-
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_grad</span><span class="p">(),</span> <span class="n">priority</span><span class="o">=-</span><span class="n">i</span><span class="p">,</span> <span class="n">ignore_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_grad</span><span class="p">(),</span> <span class="n">priority</span><span class="o">=-</span><span class="n">i</span><span class="p">,</span>
+                                           <span class="n">ignore_sparse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Trainer.update"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Trainer.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">ignore_stale_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""Makes one step of parameter update.</span>
