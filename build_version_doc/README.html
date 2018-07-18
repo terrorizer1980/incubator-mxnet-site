@@ -223,10 +223,87 @@
 <li><a class="reference external" href="https://mxnet.incubator.apache.org/build_version_doc/update_all_version.sh">update_all_version.sh</a> - takes the output of <code class="docutils literal"><span class="pre">build_all_version.sh</span></code> then uses <code class="docutils literal"><span class="pre">AddVersion.py</span></code> and <code class="docutils literal"><span class="pre">AddPackageLink.py</span></code> to update the static html</li>
 </ul>
 </div>
+<div class="section" id="dependencies">
+<span id="dependencies"></span><h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></code> process triggers several different documentation functions. Most of this logic is found in <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/docs/mxdoc.py">mxdoc.py</a>. If you review this file you will see several functions which will generate different API documentation sets. For example, they are called in this way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"builder-inited"</span><span class="p">,</span> <span class="n">generate_doxygen</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"builder-inited"</span><span class="p">,</span> <span class="n">build_scala_docs</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"builder-inited"</span><span class="p">,</span> <span class="n">build_clojure_docs</span><span class="p">)</span>
+<span class="c1"># app.connect("builder-inited", build_r_docs)</span>
+</pre></div>
+</div>
+<p>These four are mentioned here in dependencies since you will need to install several extra packages beyond just Sphinx and its collection of plugins and packages. You can, if you wish, simply comment out any of these lines to skip generating the related docs, thereby eliminating several dependencies, and reducing complexity in your builds.</p>
+<p>Note: If you review the file, you will see that the function to generate the R docs is commented out by default. Remove this comment mark to generate R docs manually.</p>
+<p>Covering each one, here are the related dependencies.</p>
+<ul class="simple">
+<li>core MXNet dependencies - you need to build MXNet from source before generating the docs. Once you have accomplished this, you have further dependencies to consider for docs.</li>
+<li><code class="docutils literal"><span class="pre">generate_doxygen</span></code> - this generates the Python and C++ APIs.</li>
+</ul>
+<p>To enable this manually, run the following (on Ubuntu). Similar packages can be found for other operating systems, but pay attention to versions. Newer versions have been found to have incompatibilities between packages.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get install <span class="se">\</span>
+    doxygen <span class="se">\</span>
+    pandoc
+
+pip install --upgrade pip <span class="o">&amp;&amp;</span> pip install <span class="se">\</span>
+    beautifulsoup4 <span class="se">\</span>
+    breathe <span class="se">\</span>
+    <span class="nv">CommonMark</span><span class="o">==</span><span class="m">0</span>.5.4 <span class="se">\</span>
+    h5py <span class="se">\</span>
+    <span class="nv">mock</span><span class="o">==</span><span class="m">1</span>.0.1 <span class="se">\</span>
+    pypandoc <span class="se">\</span>
+    <span class="nv">recommonmark</span><span class="o">==</span><span class="m">0</span>.4.0 <span class="se">\</span>
+    <span class="nv">sphinx</span><span class="o">==</span><span class="m">1</span>.5.6
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">build_scala_docs</span></code> - this generates the MXNet-Scala package &amp; Scala API docs.</li>
+</ul>
+<p>To enable this manually, run the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get install software-properties-common
+apt-get update
+apt-get install openjdk-8-jdk
+apt-get install openjdk-8-jre
+
+<span class="nb">echo</span> <span class="s2">"deb https://dl.bintray.com/sbt/debian /"</span> <span class="p">|</span> tee -a /etc/apt/sources.list.d/sbt.list
+apt-key add sbt.gpg
+apt-get update <span class="o">&amp;&amp;</span> apt-get install <span class="se">\</span>
+    maven <span class="se">\</span>
+    sbt <span class="se">\</span>
+    scala
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">build_clojure_docs</span></code> - this generates the Clojure API docs.</li>
+</ul>
+<p>To enable this manually, run the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+chmod <span class="m">775</span> lein
+sudo cp lein /usr/local/bin
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">build_r_docs</span></code> - this generates the R API docs in a PDF file found at <code class="docutils literal"><span class="pre">/docs/api/r/mxnet-r-reference-manual.pdf</span></code>.</li>
+</ul>
+<p>To enable this manually, run the following, and be sure to re-enable the <code class="docutils literal"><span class="pre">build_r_docs</span></code> function in <code class="docutils literal"><span class="pre">mxdoc.py</span></code> before you run <code class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get install <span class="se">\</span>
+    libcairo2-dev <span class="se">\</span>
+    libcurl4-openssl-dev <span class="se">\</span>
+    libssl-dev <span class="se">\</span>
+    libxml2-dev <span class="se">\</span>
+    libxt-dev <span class="se">\</span>
+    r-base <span class="se">\</span>
+    r-base-dev
+
+Rscript -e <span class="s2">"install.packages('devtools', repo = 'https://cran.rstudio.com')"</span>
+<span class="nb">cd</span> R-package
+Rscript -e <span class="s2">"library(devtools); library(methods); options(repos=c(CRAN='https://cran.rstudio.com')); install_deps(dependencies = TRUE)"</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="setting-up-a-docs-dev-server">
 <span id="setting-up-a-docs-dev-server"></span><h2>Setting Up a Docs Dev Server<a class="headerlink" href="#setting-up-a-docs-dev-server" title="Permalink to this headline">¶</a></h2>
-<p>Running docs builds locally on a Mac is not recommended. For these instructions, you will use an Ubuntu machine.</p>
-<p>This flow has been tested on a vanilla Ubuntu 16.04 cloud instance on AWS.</p>
+<p>Running docs builds locally on a Mac is not recommended. See <a class="reference external" href="https://github.com/apache/incubator-mxnet/issues/10858">#10858</a> for workarounds.</p>
+<p>For these instructions, you will use an Ubuntu machine. This flow has been tested on a vanilla Ubuntu 16.04 cloud instance on AWS.</p>
 <p><strong>Step 1:</strong> Spin up your Ubuntu server and SSH in.</p>
 <p><strong>Step 2:</strong> Create a Python 2.7 virtual environment (see note).</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt install virtualenv
@@ -235,23 +312,20 @@ virtualenv -p python2.7 mxnet_docs
 </pre></div>
 </div>
 <p><strong>Note:</strong> Using a Python 2.7 environment is required to build older versions of the docs that have Python 3 incompatibilities. If you’re only building the latest or version 1.0.0+, then you may use a Python 3 environment.</p>
-<p><strong>Step 3:</strong> Clone the repo.</p>
+<p><strong>Step 3:</strong> Clone the repo or your own fork of the repo.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/apache/incubator-mxnet.git mxnet
-<span class="nb">cd</span> mxnet
+<span class="nb">cd</span> mxnet/docs/build_version_doc
 </pre></div>
 </div>
-<p><strong>Step 4:</strong> Install dependencies.</p>
-<p>These scripts will install the dependencies for you.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>./ci/docker/install/ubuntu_core.sh
-./ci/docker/install/ubuntu_python.sh
-./ci/docker/install/ubuntu_scala.sh
-./ci/docker/install/ubuntu_docs.sh
+<p><strong>Step 4:</strong> Install dependencies and build MXNet.</p>
+<p>This script will install the dependencies for you and build MXNet from source.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>./setup_docs_ubuntu.sh
 </pre></div>
 </div>
 <p><strong>Step 5a:</strong> Make the docs.</p>
 <p>Here you have two options (recommended for most situations):</p>
 <ul class="simple">
-<li>Build this current branch with the following:</li>
+<li>Change branches first, or build master with the following:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> mxnet
 make docs <span class="nv">USE_OPENMP</span><span class="o">=</span><span class="m">1</span>
@@ -406,6 +480,7 @@ sudo docker run -it mxnet:docs-base</p>
 <ul>
 <li><a class="reference internal" href="#">MXNet Documentation Build Scripts</a><ul>
 <li><a class="reference internal" href="#contents-of-the-build-version-doc-folder">Contents of the build_version_doc Folder</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li><a class="reference internal" href="#setting-up-a-docs-dev-server">Setting Up a Docs Dev Server</a></li>
 <li><a class="reference internal" href="#full-website-build">Full Website Build</a><ul>
 <li><a class="reference internal" href="#build-all-version-sh">build_all_version.sh</a></li>

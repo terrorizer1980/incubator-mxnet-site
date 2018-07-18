@@ -216,9 +216,18 @@ https://mxnet.incubator.apache.org redirects to this site and advised to use lin
 <p>MXNet Documentation Website is built with <a class="reference external" href="http://www.sphinx-doc.org">Sphinx</a> and a variety of plugins including <a class="reference external" href="https://pandoc.org/">pandoc</a>, <a class="reference external" href="https://github.com/rtfd/recommonmark">recommonmark</a>, a custom Sphinx plugin (<a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/docs/mxdoc.py">mxdoc.py</a>).</p>
 <div class="section" id="how-to-build-the-mxnet-website-for-development-and-qa">
 <span id="how-to-build-the-mxnet-website-for-development-and-qa"></span><h2>How to Build the MXNet Website for Development and QA<a class="headerlink" href="#how-to-build-the-mxnet-website-for-development-and-qa" title="Permalink to this headline">¶</a></h2>
-<p>Using <code class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></code> from the MXNet root is the quickest way to generate the MXNet API docs and the website. This method automatically generates each API, <a class="reference external" href="#other-build-processes">except the Perl and R APIs</a>.</p>
+<p>Using <code class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></code> from the MXNet root is the quickest way to generate the MXNet API docs and the website, as long as you already have all of the dependencies installed. This method automatically generates each API, <a class="reference external" href="#other-build-processes">except the Perl and R APIs</a>.</p>
+<p><strong>Easy docs setup for Ubuntu:</strong> Run the following on Ubuntu 16.04 to install all MXNet and docs dependencies and to build MXNet from source. Then issue the <code class="docutils literal"><span class="pre">make</span> <span class="pre">docs</span></code> command from the source root to build the docs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/apache/incubator-mxnet.git mxnet
+<span class="nb">cd</span> mxnet/docs/build_version_doc
+./setup_docs_ubuntu.sh
+<span class="nb">cd</span> ../../
+make docs <span class="nv">USE_OPENMP</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>For more information on each API’s documentation dependencies, how to serve the docs, or how to build the full website with each legacy MXNet version, refer to the following links:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/build_version_doc#dependencies">Dependencies</a> - required before you do any building of the docs</li>
+<li><a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/build_version_doc#dependencies">Dependencies</a> - required before you build the docs</li>
 <li><a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/build_version_doc#developer-instructions">Developer Build Instructions</a> - build your local branch</li>
 <li><a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/build_version_doc#full-website-build">Full Site Build Instructions</a> - build the latest commits to the official branches</li>
 </ul>
@@ -245,12 +254,12 @@ The host repo is hooked with <a class="reference external" href="https://gitbox.
 <span id="process-for-running-the-docs-build-job"></span><h3>Process for Running the Docs Build Job<a class="headerlink" href="#process-for-running-the-docs-build-job" title="Permalink to this headline">¶</a></h3>
 <ol class="simple">
 <li>Login to <a class="reference external" href="http://jenkins.mxnet-ci.amazon-ml.com/">Jenkins</a>.</li>
-<li>View the pipeline currently called <code class="docutils literal"><span class="pre">website</span> <span class="pre">build</span> <span class="pre">pipeline</span></code>.</li>
+<li>View the pipeline currently called <code class="docutils literal"><span class="pre">restricted</span> <span class="pre">website</span> <span class="pre">build</span></code>.</li>
 <li>Click <code class="docutils literal"><span class="pre">Build</span> <span class="pre">with</span> <span class="pre">Parameters</span></code>.</li>
 <li>Use the defaults, or change the domain to be your staging server’s IP/DNS web address.</li>
 <li>Wait about 20-30 minutes while it builds the full site.</li>
 <li>On your staging server, clone the <a class="reference external" href="https://github.com/apache/incubator-mxnet-site.git">mxnet site repo</a>.</li>
-<li>When you ran <code class="docutils literal"><span class="pre">website</span> <span class="pre">build</span> <span class="pre">pipeline</span></code> it followed up with website build - test publish which pushed the changes to the incubator-mxnet-site repo.</li>
+<li>When you ran <code class="docutils literal"><span class="pre">restricted</span> <span class="pre">website</span> <span class="pre">build</span></code> it followed up with <code class="docutils literal"><span class="pre">restricted</span> <span class="pre">website</span> <span class="pre">publish</span></code> which pushed the changes to the incubator-mxnet-site repo.</li>
 <li>Make sure you git pull if you had already cloned the site repo before this first run-through.</li>
 <li>Copy the files to your webroot. For more info on this see the developer instructions for docs build.</li>
 <li>Preview the site on your staging server. Note, use the domain default before you try to use this for production, but using your own is helpful for QA’ing the site.</li>
