@@ -3433,7 +3433,7 @@ Examples::<br/>
 <br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L451<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L462<br/></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#broadcast_add" visbl="pub">
 <a id="broadcast_add(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -7000,7 +7000,7 @@ Examples::<br/>
                                       [ 1.  0.  0.</span>]<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L497<br/></span></p><div class="fullcomment"><div class="comment cmt"><p>Returns a one-hot array.<br/>
+Defined in src/operator/tensor/indexing_op.cc:L508<br/></span></p><div class="fullcomment"><div class="comment cmt"><p>Returns a one-hot array.<br/>
 <br/>
 The locations represented by <code>indices</code> take value <code>on_value</code>, while all<br/>
 other locations take value <code>off_value</code>.<br/>
@@ -7034,7 +7034,7 @@ Examples::<br/>
                                       [ 1.  0.  0.</span>]<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L497<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/indexing_op.cc:L508<br/></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#ones_like" visbl="pub">
 <a id="ones_like(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -9902,42 +9902,54 @@ Defined in src/operator/swapaxis.cc:L70<br/></span></span></p></div><dl class="p
 <br/>
 This function slices the input array along a particular axis with the provided indices.<br/>
 <br/>
-Given an input array with shape <code><code>(d0, d1, d2)</code></code> and indices with shape <code><code>(i0, i1)</code></code>, the output<br/>
-will have shape <code><code>(i0, i1, d1, d2)</code></code>, computed by::<br/>
+Given data tensor of rank r &gt;= 1, and indices tensor of rank q, gather entries of the axis<br/>
+dimension of data (by default outer-most one as axis=0) indexed by indices, and concatenates them<br/>
+in an output tensor of rank q + (r - 1).<br/>
 <br/>
-  output[i,j,:,:] = input[indices[i,j],:,:]<br/>
-<br/>
-..</p><div class="fullcomment"><div class="comment cmt"><p>Takes elements from an input array along the given axis.<br/>
+Examples::<br/>
+  x = [4.</p><div class="fullcomment"><div class="comment cmt"><p>Takes elements from an input array along the given axis.<br/>
 <br/>
 This function slices the input array along a particular axis with the provided indices.<br/>
 <br/>
-Given an input array with shape <code><code>(d0, d1, d2)</code></code> and indices with shape <code><code>(i0, i1)</code></code>, the output<br/>
-will have shape <code><code>(i0, i1, d1, d2)</code></code>, computed by::<br/>
-<br/>
-  output[i,j,:,:] = input[indices[i,j],:,:]<br/>
-<br/>
-.. note::<br/></p><ul><li><code>axis</code>- Only slicing along axis 0 is supported for now.<br/></li><li><code>mode</code>- Only <code>clip</code> mode is supported for now.<br/>
+Given data tensor of rank r &gt;= 1, and indices tensor of rank q, gather entries of the axis<br/>
+dimension of data (by default outer-most one as axis=0) indexed by indices, and concatenates them<br/>
+in an output tensor of rank q + (r - 1).<br/>
 <br/>
 Examples::<br/>
   x = [4.  5.  6.]<br/>
 <br/>
   // Trivial case, take the second element along the first axis.<br/>
+<br/>
   take(x, [1]) = [ 5. ]<br/>
+<br/>
+  // The other trivial case, axis=-1, take the third element along the first axis<br/>
+<br/>
+  take(x, [3], axis=-1, mode='clip') = [ 6. ]<br/>
 <br/>
   x = <span class="extype" name="">1.,  2.],<br/>
        [ 3.,  4.],<br/>
        [ 5.,  6.</span><br/>
 <br/>
   // In this case we will get rows 0 and 1, then 1 and 2. Along axis 0<br/>
+<br/>
   take(x, <span class="extype" name="0,1],[1,2">0,1],[1,2</span>) = <span class="extype" name="">1.,  2.],<br/>
                              [ 3.,  4.]],<br/>
 <br/>
 <span class="extype" name="">3.,  4.],<br/>
                              [ 5.,  6.</span>]<br/>
 <br/>
+  // In this case we will get rows 0 and 1, then 1 and 2 (calculated by wrapping around).<br/>
+  // Along axis 1<br/>
+<br/>
+  take(x, <span class="extype" name="0,">3], [-1, -2</span>, axis=1, mode='wrap') = <span class="extype" name="">1.,  2.],<br/>
+                                                       [ 3.,  4.]],<br/>
+<br/>
+<span class="extype" name="">3.,  4.],<br/>
+                                                       [ 5.,  6.</span>]<br/>
 <br/>
 <br/>
-Defined in src/operator/tensor/indexing_op.cc:L396<br/></span></li></ul></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+<br/>
+Defined in src/operator/tensor/indexing_op.cc:L406<br/></span></span></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#tan" visbl="pub">
 <a id="tan(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>

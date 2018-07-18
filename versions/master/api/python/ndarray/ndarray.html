@@ -5991,7 +5991,7 @@ an output array of shape <code class="docutils literal"><span class="pre">(i0,)<
 <span class="n">batch_take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">4.</span>  <span class="mf">5.</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L451</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L462</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9350,7 +9350,7 @@ in an output array of shape <code class="docutils literal"><span class="pre">(i0
                                     <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">0.</span>  <span class="mf">0.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L497</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L508</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12114,41 +12114,47 @@ NOT in axis instead.</p>
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">take</code><span class="sig-paren">(</span><em>a=None</em>, <em>indices=None</em>, <em>axis=_Null</em>, <em>mode=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.take" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes elements from an input array along the given axis.</p>
 <p>This function slices the input array along a particular axis with the provided indices.</p>
-<p>Given an input array with shape <code class="docutils literal"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">d2)</span></code> and indices with shape <code class="docutils literal"><span class="pre">(i0,</span> <span class="pre">i1)</span></code>, the output
-will have shape <code class="docutils literal"><span class="pre">(i0,</span> <span class="pre">i1,</span> <span class="pre">d1,</span> <span class="pre">d2)</span></code>, computed by:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],:,:]</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<ul class="last simple">
-<li><cite>axis</cite>- Only slicing along axis 0 is supported for now.</li>
-<li><cite>mode</cite>- Only <cite>clip</cite> mode is supported for now.</li>
-</ul>
-</div>
+<p>Given data tensor of rank r >= 1, and indices tensor of rank q, gather entries of the axis
+dimension of data (by default outer-most one as axis=0) indexed by indices, and concatenates them
+in an output tensor of rank q + (r - 1).</p>
 <dl class="docutils">
 <dt>Examples::</dt>
 <dd><p class="first">x = [4.  5.  6.]</p>
-<p>// Trivial case, take the second element along the first axis.
-take(x, [1]) = [ 5. ]</p>
+<p>// Trivial case, take the second element along the first axis.</p>
+<p>take(x, [1]) = [ 5. ]</p>
+<p>// The other trivial case, axis=-1, take the third element along the first axis</p>
+<p>take(x, [3], axis=-1, mode=’clip’) = [ 6. ]</p>
 <dl class="docutils">
 <dt>x = [[ 1.,  2.],</dt>
 <dd>[ 3.,  4.],
 [ 5.,  6.]]</dd>
 </dl>
-<p>// In this case we will get rows 0 and 1, then 1 and 2. Along axis 0
-take(x, [[0,1],[1,2]]) = [[[ 1.,  2.],</p>
-<blockquote class="last">
-<div><blockquote>
-<div>[ 3.,  4.]],</div></blockquote>
+<p>// In this case we will get rows 0 and 1, then 1 and 2. Along axis 0</p>
 <dl class="docutils">
+<dt>take(x, [[0,1],[1,2]]) = [[[ 1.,  2.],</dt>
+<dd><blockquote class="first">
+<div>[ 3.,  4.]],</div></blockquote>
+<dl class="last docutils">
 <dt>[[ 3.,  4.],</dt>
 <dd>[ 5.,  6.]]]</dd>
 </dl>
-</div></blockquote>
 </dd>
 </dl>
-<p>Defined in src/operator/tensor/indexing_op.cc:L396</p>
+<p>// In this case we will get rows 0 and 1, then 1 and 2 (calculated by wrapping around).
+// Along axis 1</p>
+<dl class="last docutils">
+<dt>take(x, [[0, 3], [-1, -2]], axis=1, mode=’wrap’) = [[[ 1.,  2.],</dt>
+<dd><blockquote class="first">
+<div>[ 3.,  4.]],</div></blockquote>
+<dl class="last docutils">
+<dt>[[ 3.,  4.],</dt>
+<dd>[ 5.,  6.]]]</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Defined in src/operator/tensor/indexing_op.cc:L406</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12156,8 +12162,8 @@ take(x, [[0,1],[1,2]]) = [[[ 1.,  2.],</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>a</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array.</li>
 <li><strong>indices</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The indices of the values to be extracted.</li>
-<li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The axis of input array to be taken.</li>
-<li><strong>mode</strong> (<em>{'clip'</em><em>, </em><em>'raise'</em><em>, </em><em>'wrap'}</em><em>,</em><em>optional</em><em>, </em><em>default='clip'</em>) – Specify how out-of-bound indices bahave. “clip” means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  “wrap” means to wrap around.  “raise” means to raise an error.</li>
+<li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The axis of input array to be taken.For input tensor of rank r, it could be in the range of [-r, r-1]</li>
+<li><strong>mode</strong> (<em>{'clip'</em><em>, </em><em>'raise'</em><em>, </em><em>'wrap'}</em><em>,</em><em>optional</em><em>, </em><em>default='clip'</em>) – Specify how out-of-bound indices bahave. Default is “clip”. “clip” means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  “wrap” means to wrap around.  “raise” means to raise an error, not supported yet.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
