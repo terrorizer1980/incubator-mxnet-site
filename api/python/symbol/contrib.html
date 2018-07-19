@@ -331,6 +331,9 @@ so that feature contributors can receive feedback.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.symbol.contrib.foreach" title="mxnet.symbol.contrib.foreach"><code class="xref py py-obj docutils literal"><span class="pre">foreach</span></code></a></td>
 <td>Run a for loop with user-defined computation over Symbols on dimension 0.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.symbol.contrib.while_loop" title="mxnet.symbol.contrib.while_loop"><code class="xref py py-obj docutils literal"><span class="pre">while_loop</span></code></a></td>
+<td>Run a while loop with user-defined computation and loop condition.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -439,6 +442,75 @@ outs.append(out)</div></blockquote>
 <span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
 <span class="gp">>>> </span><span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)]</span>
 <span class="gp">>>> </span><span class="n">outs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.contrib.while_loop">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">while_loop</code><span class="sig-paren">(</span><em>cond</em>, <em>func</em>, <em>loop_vars</em>, <em>max_iterations=None</em>, <em>name='while_loop'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/symbol/contrib.html#while_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.symbol.contrib.while_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a while loop with user-defined computation and loop condition.</p>
+<p>This operator simulates a while loop which iterately does customized computation
+as long as the condition is satisfied.</p>
+<p><cite>loop_vars</cite> is a list of Symbols on which the computation uses.</p>
+<p><cite>cond</cite> is a user-defined function, used as the loop condition.
+It consumes <cite>loop_vars</cite>, and produces a scalar MXNet symbol,
+indicating the termination of the loop.
+The loop ends when <cite>cond</cite> returns false (zero).
+The <cite>cond</cite> is variadic, and its signature should be
+<cite>cond(*loop_vars) => Symbol</cite>.</p>
+<p><cite>func</cite> is a user-defined function, used as the loop body.
+It also consumes <cite>loop_vars</cite>, and produces <cite>step_output</cite> and <cite>new_loop_vars</cite> at each step.
+In each step, <cite>step_output</cite> should contain the same number elements.
+Through all steps, the i-th element of <cite>step_output</cite> should have the same shape and dtype.
+Also, <cite>new_loop_vars</cite> should contain the same number of elements as <cite>loop_vars</cite>,
+and the corresponding element should have the same shape and dtype.
+The <cite>func</cite> is variadic, and its signature should be
+<cite>func(*loop_vars) => (List[Symbol] step_output, List[Symbol] new_loop_vars)</cite>.</p>
+<p><cite>max_iterations</cite> is a scalar that defines the maximum number of iterations allowed.</p>
+<p>This function returns two lists.
+The first list has the length of <cite>|step_output|</cite>,
+in which the i-th element are all i-th elements of
+<cite>step_output</cite> from all steps, stacked along axis 0.
+The second list has the length of <cite>|loop_vars|</cite>,
+which represents final states of loop variables.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">For now, the axis 0 of all Symbols in the first list are <cite>max_iterations</cite>,
+due to lack of dynamic shape inference.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Even if <cite>cond</cite> is never satisfied,
+while_loop returns a list of outputs with inferred dtype and shape.
+This is different from the Symbol version,
+where in this case <cite>step_outputs</cite> are assumed as an empty list.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cond</strong> (<em>a Python function.</em>) – The loop condition.</li>
+<li><strong>func</strong> (<em>a Python function.</em>) – The loop body.</li>
+<li><strong>loop_vars</strong> (<em>list of Symbol.</em>) – The initial values of the loop variables.</li>
+<li><strong>max_iterations</strong> (<em>a python int.</em>) – Maximum number of iterations.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>outputs</strong> (<em>list of Symbols</em>) – stacked output from each step</li>
+<li><strong>states</strong> (<em>list of Symbols</em>) – final state</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">cond</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">i</span> <span class="o"><=</span> <span class="mi">5</span>
+<span class="gp">>>> </span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">s</span> <span class="o">+</span> <span class="n">i</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">loop_vars</span> <span class="o">=</span> <span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'i'</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'s'</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

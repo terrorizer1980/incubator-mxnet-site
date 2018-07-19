@@ -241,7 +241,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">]</span>
 
 <span class="c1"># pylint: disable=line-too-long</span>
 <div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -311,7 +311,7 @@
     <span class="k">return</span> <span class="n">sampled_classes</span><span class="p">,</span> <span class="n">expected_count_true</span><span class="p">,</span> <span class="n">expected_count_sampled</span></div>
 <span class="c1"># pylint: enable=line-too-long</span>
 
-<span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">):</span>
+<div class="viewcode-block" id="foreach"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.foreach">[docs]</a><span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">):</span>
     <span class="sd">"""Run a for loop with user-defined computation over NDArrays on dimension 0.</span>
 
 <span class="sd">    This operator simulates a for loop and body has the computation for an iteration</span>
@@ -403,7 +403,179 @@
 
     <span class="k">if</span> <span class="n">not_data_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="while_loop"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.while_loop">[docs]</a><span class="k">def</span> <span class="nf">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Run a while loop with user-defined computation and loop condition.</span>
+
+<span class="sd">    This operator simulates a while loop which iterately does customized computation</span>
+<span class="sd">    as long as the condition is satisfied.</span>
+
+<span class="sd">    `loop_vars` is a list of NDArrays on which the computation uses.</span>
+
+<span class="sd">    `cond` is a user-defined function, used as the loop condition.</span>
+<span class="sd">    It consumes `loop_vars`, and produces a scalar MXNet NDArray,</span>
+<span class="sd">    indicating the termination of the loop.</span>
+<span class="sd">    The loop ends when `cond` returns false (zero).</span>
+<span class="sd">    The `cond` is variadic, and its signature should be</span>
+<span class="sd">    `cond(*loop_vars) => NDArray`.</span>
+
+<span class="sd">    `func` is a user-defined function, used as the loop body.</span>
+<span class="sd">    It also consumes `loop_vars`, and produces `step_output` and `new_loop_vars` at each step.</span>
+<span class="sd">    In each step, `step_output` should contain the same number elements.</span>
+<span class="sd">    Through all steps, the i-th element of `step_output` should have the same shape and dtype.</span>
+<span class="sd">    Also, `new_loop_vars` should contain the same number of elements as `loop_vars`,</span>
+<span class="sd">    and the corresponding element should have the same shape and dtype.</span>
+<span class="sd">    The `func` is variadic, and its signature should be</span>
+<span class="sd">    `func(*loop_vars) => (List[NDArray] step_output, List[NDArray] new_loop_vars)`.</span>
+
+<span class="sd">    `max_iterations` is a scalar that defines the maximum number of iterations allowed.</span>
+
+<span class="sd">    This function returns two lists.</span>
+<span class="sd">    The first list has the length of `|step_output|`,</span>
+<span class="sd">    in which the i-th element are all i-th elements of</span>
+<span class="sd">    `step_output` from all steps, stacked along axis 0.</span>
+<span class="sd">    The second list has the length of `|loop_vars|`,</span>
+<span class="sd">    which represents final states of loop variables.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       For now, the axis 0 of all NDArrays in the first list are `max_iterations`,</span>
+<span class="sd">       due to lack of dynamic shape inference.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       When `cond` is never satisfied, we assume `step_output` is empty,</span>
+<span class="sd">       because it cannot be inferred. This is different from the symbolic version.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cond: a Python function.</span>
+<span class="sd">        The loop condition.</span>
+<span class="sd">    func: a Python function.</span>
+<span class="sd">        The loop body.</span>
+<span class="sd">    loop_vars: list of NDArrays.</span>
+<span class="sd">        The initial values of the loop variables.</span>
+<span class="sd">    max_iterations: a python int.</span>
+<span class="sd">        Maximum number of iterations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    outputs: list of NDArrays</span>
+<span class="sd">        stacked output from each step</span>
+<span class="sd">    states: list of NDArrays</span>
+<span class="sd">        final state</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> cond = lambda i, s: i <= 5</span>
+<span class="sd">    >>> func = lambda i, s: ([i + s], [i + 1, s + i])</span>
+<span class="sd">    >>> loop_vars = (mx.nd.array([0], dtype="int64"), mx.nd.array([1], dtype="int64"))</span>
+<span class="sd">    >>> outputs, states = mx.nd.contrib.while_loop(cond, func, loop_vars, max_iterations=10)</span>
+<span class="sd">    >>> outputs</span>
+<span class="sd">    [</span>
+<span class="sd">    [[ 1]</span>
+<span class="sd">    [ 2]</span>
+<span class="sd">    [ 4]</span>
+<span class="sd">    [ 7]</span>
+<span class="sd">    [11]</span>
+<span class="sd">    [16]</span>
+<span class="sd">    [...]  # undefined value</span>
+<span class="sd">    [...]</span>
+<span class="sd">    [...]</span>
+<span class="sd">    [...]]</span>
+<span class="sd">    <NDArray 6x1 @cpu(0)>]</span>
+<span class="sd">    >>> states</span>
+<span class="sd">    [</span>
+<span class="sd">    [6]</span>
+<span class="sd">    <NDArray 1 @cpu(0)>,</span>
+<span class="sd">    [16]</span>
+<span class="sd">    <NDArray 1 @cpu(0)>]</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">_to_python_scalar</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly typed mxnet NDArray, a numpy ndarray, other python types,</span>
+<span class="sd">        to the given type</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_to_ndarray_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly a single mxnet NDArray, a list of mxnet NDArray,</span>
+<span class="sd">        a tuple of mxnet NDArray, into a tuple of NDArray</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">):</span>
+        <span class="sd">"""This wrapper unifies</span>
+<span class="sd">             "func: loop_vars -> new_loop_vars"</span>
+<span class="sd">         and "func: loop_vars -> (step_output, new_loop_vars)"</span>
+<span class="sd">        into "func: loop_vars -> (None or tuple of step_outputs, tuple of new_loop_vars)</span>
+<span class="sd">        """</span>
+        <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step_output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">new_loop_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">step_output</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="s2">"step_output"</span><span class="p">)</span>
+        <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">,</span> <span class="s2">"new_loop_vars"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The length of loop_vars should be consistent during the loop"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span>
+
+    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_iterations should be specified"</span><span class="p">)</span>
+    <span class="n">max_iterations</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"max_iteration"</span><span class="p">)</span>
+    <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="s2">"loop_vars"</span><span class="p">)</span>
+    <span class="c1"># It should be work as fine if loop_vars are empty I guess,</span>
+    <span class="c1"># but it is semantically unnecessary to include this case.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"loop_vars should contain at least one element"</span><span class="p">)</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">steps</span> <span class="o"><</span> <span class="n">max_iterations</span> <span class="ow">and</span> \
+            <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">cond</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">),</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">"Return value of cond"</span><span class="p">):</span> <span class="c1"># loop condition</span>
+        <span class="n">step_output</span><span class="p">,</span> <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">steps</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Number of elements in step_output should be the same in each step"</span><span class="p">)</span>
+    <span class="n">stacked_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i_th</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">),</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># `mx.ndarray.pad` only support 4-D or 5-D inputs for now</span>
+        <span class="c1"># so we could not use it.</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">steps</span> <span class="o">!=</span> <span class="n">max_iterations</span> <span class="ow">and</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">pad_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">max_iterations</span> <span class="o">-</span> <span class="n">steps</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="p">])</span>
+            <span class="n">pad</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">pad_shape</span><span class="p">,</span>
+                <span class="n">ctx</span><span class="o">=</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">pad</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stacked_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">"Shapes of </span><span class="si">%d</span><span class="s2">-th elements in step_outputs are inconsistent, which are:"</span> <span class="o">%</span> <span class="n">i_th</span><span class="p">]</span> <span class="o">+</span>
+                <span class="p">[</span><span class="s2">"  Step </span><span class="si">%d</span><span class="s2">, shape is </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
+            <span class="p">))</span>
+    <span class="k">return</span> <span class="n">stacked_outputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>

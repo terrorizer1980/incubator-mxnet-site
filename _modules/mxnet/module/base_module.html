@@ -727,12 +727,6 @@
                     <span class="n">monitor</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">forward_backward</span><span class="p">(</span><span class="n">data_batch</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="c1"># pre fetch next batch</span>
-                    <span class="n">next_data_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_iter</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">next_data_batch</span><span class="p">,</span> <span class="n">sparse_row_id_fn</span><span class="o">=</span><span class="n">sparse_row_id_fn</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                    <span class="n">end_of_batch</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_batch</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">,</span>
@@ -740,6 +734,13 @@
                                        <span class="n">pre_sliced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">,</span> <span class="n">data_batch</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># pre fetch next batch</span>
+                    <span class="n">next_data_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_iter</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">next_data_batch</span><span class="p">,</span> <span class="n">sparse_row_id_fn</span><span class="o">=</span><span class="n">sparse_row_id_fn</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                    <span class="n">end_of_batch</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">if</span> <span class="n">monitor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">monitor</span><span class="o">.</span><span class="n">toc_print</span><span class="p">()</span>

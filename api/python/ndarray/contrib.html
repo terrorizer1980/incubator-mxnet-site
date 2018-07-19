@@ -327,8 +327,11 @@ so that feature contributors can receive feedback.</p>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.contrib.quantize" title="mxnet.ndarray.contrib.quantize"><code class="xref py py-obj docutils literal"><span class="pre">quantize</span></code></a></td>
 <td>Quantize a input tensor from float to <cite>out_type</cite>, with user-specified <cite>min_range</cite> and <cite>max_range</cite>.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">foreach</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.ndarray.contrib.foreach" title="mxnet.ndarray.contrib.foreach"><code class="xref py py-obj docutils literal"><span class="pre">foreach</span></code></a></td>
 <td>Run a for loop with user-defined computation over NDArrays on dimension 0.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.contrib.while_loop" title="mxnet.ndarray.contrib.while_loop"><code class="xref py py-obj docutils literal"><span class="pre">while_loop</span></code></a></td>
+<td>Run a while loop with user-defined computation and loop condition.</td>
 </tr>
 </tbody>
 </table>
@@ -381,6 +384,147 @@ For example, if the classes represent words in a lexicon sorted in decreasing or
 <span class="gp">>>> </span><span class="n">exp_count_sample</span>
 <span class="go">[ 0.22629439  0.12453879  0.12453879  0.12453879]</span>
 <span class="go"><NDArray 4 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.contrib.foreach">
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">foreach</code><span class="sig-paren">(</span><em>body</em>, <em>data</em>, <em>init_states</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/contrib.html#foreach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.contrib.foreach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a for loop with user-defined computation over NDArrays on dimension 0.</p>
+<p>This operator simulates a for loop and body has the computation for an iteration
+of the for loop. It runs the computation in body on each slice from the input
+NDArrays.</p>
+<p>body takes two arguments as input and outputs a tuple of two elements,
+as illustrated below:</p>
+<p>out, states = body(data1, states)</p>
+<p>data1 can be either an NDArray or a list of NDArrays. If data is an NDArray,
+data1 is an NDArray. Otherwise, data1 is a list of NDArrays and has the same
+size as data. states is a list of NDArrays and have the same size as init_states.
+Similarly, out can be either an NDArray or a list of NDArrays, which are concatenated
+as the first output of foreach; states from the last execution of body
+are the second output of foreach.</p>
+<p>The computation done by this operator is equivalent to the pseudo code below
+when the input data is NDArray:</p>
+<p>states = init_states
+outs = []
+for i in data.shape[0]:</p>
+<blockquote>
+<div>s = data[i]
+out, states = body(s, states)
+outs.append(out)</div></blockquote>
+<p>outs = stack(<a href="#id1"><span class="problematic" id="id2">*</span></a>outs)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>body</strong> (<em>a Python function.</em>) – Define computation in an iteration.</li>
+<li><strong>data</strong> (<em>an NDArray</em><em> or </em><em>a list of NDArrays.</em>) – The input data.</li>
+<li><strong>init_states</strong> (<em>an NDArray</em><em> or </em><em>a list of NDArrays.</em>) – The initial values of the loop states.</li>
+<li><strong>name</strong> (<em>string.</em>) – The name of the operator.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>outputs</strong> (<em>an NDArray or a list of NDArrays.</em>) – The output data concatenated from the output of all iterations.</li>
+<li><strong>states</strong> (<em>a list of NDArrays.</em>) – The loop states in the last iteration.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">step</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">))]</span>
+<span class="gp">>>> </span><span class="n">outs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.contrib.while_loop">
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">while_loop</code><span class="sig-paren">(</span><em>cond</em>, <em>func</em>, <em>loop_vars</em>, <em>max_iterations=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/contrib.html#while_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.contrib.while_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a while loop with user-defined computation and loop condition.</p>
+<p>This operator simulates a while loop which iterately does customized computation
+as long as the condition is satisfied.</p>
+<p><cite>loop_vars</cite> is a list of NDArrays on which the computation uses.</p>
+<p><cite>cond</cite> is a user-defined function, used as the loop condition.
+It consumes <cite>loop_vars</cite>, and produces a scalar MXNet NDArray,
+indicating the termination of the loop.
+The loop ends when <cite>cond</cite> returns false (zero).
+The <cite>cond</cite> is variadic, and its signature should be
+<cite>cond(*loop_vars) => NDArray</cite>.</p>
+<p><cite>func</cite> is a user-defined function, used as the loop body.
+It also consumes <cite>loop_vars</cite>, and produces <cite>step_output</cite> and <cite>new_loop_vars</cite> at each step.
+In each step, <cite>step_output</cite> should contain the same number elements.
+Through all steps, the i-th element of <cite>step_output</cite> should have the same shape and dtype.
+Also, <cite>new_loop_vars</cite> should contain the same number of elements as <cite>loop_vars</cite>,
+and the corresponding element should have the same shape and dtype.
+The <cite>func</cite> is variadic, and its signature should be
+<cite>func(*loop_vars) => (List[NDArray] step_output, List[NDArray] new_loop_vars)</cite>.</p>
+<p><cite>max_iterations</cite> is a scalar that defines the maximum number of iterations allowed.</p>
+<p>This function returns two lists.
+The first list has the length of <cite>|step_output|</cite>,
+in which the i-th element are all i-th elements of
+<cite>step_output</cite> from all steps, stacked along axis 0.
+The second list has the length of <cite>|loop_vars|</cite>,
+which represents final states of loop variables.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">For now, the axis 0 of all NDArrays in the first list are <cite>max_iterations</cite>,
+due to lack of dynamic shape inference.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When <cite>cond</cite> is never satisfied, we assume <cite>step_output</cite> is empty,
+because it cannot be inferred. This is different from the symbolic version.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cond</strong> (<em>a Python function.</em>) – The loop condition.</li>
+<li><strong>func</strong> (<em>a Python function.</em>) – The loop body.</li>
+<li><strong>loop_vars</strong> (<em>list of NDArrays.</em>) – The initial values of the loop variables.</li>
+<li><strong>max_iterations</strong> (<em>a python int.</em>) – Maximum number of iterations.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>outputs</strong> (<em>list of NDArrays</em>) – stacked output from each step</li>
+<li><strong>states</strong> (<em>list of NDArrays</em>) – final state</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">cond</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">i</span> <span class="o"><=</span> <span class="mi">5</span>
+<span class="gp">>>> </span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">s</span> <span class="o">+</span> <span class="n">i</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">loop_vars</span> <span class="o">=</span> <span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"int64"</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"int64"</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">outputs</span>
+<span class="go">[</span>
+<span class="go">[[ 1]</span>
+<span class="go">[ 2]</span>
+<span class="go">[ 4]</span>
+<span class="go">[ 7]</span>
+<span class="go">[11]</span>
+<span class="go">[16]</span>
+<span class="go">[...]  # undefined value</span>
+<span class="go">[...]</span>
+<span class="go">[...]</span>
+<span class="go">[...]]</span>
+<span class="go"><NDArray 6x1 @cpu(0)>]</span>
+<span class="gp">>>> </span><span class="n">states</span>
+<span class="go">[</span>
+<span class="go">[6]</span>
+<span class="go"><NDArray 1 @cpu(0)>,</span>
+<span class="go">[16]</span>
+<span class="go"><NDArray 1 @cpu(0)>]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -922,9 +1066,9 @@ When the operator is used on the GPU, the recommended value for <cite>determinis
 <dd><p>Batch normalization.</p>
 <p>Normalizes a data batch by mean and variance, and applies a scale <code class="docutils literal"><span class="pre">gamma</span></code> as
 well as offset <code class="docutils literal"><span class="pre">beta</span></code>.
-Standard BN <a class="footnote-reference" href="#id3" id="id1">[1]</a> implementation only normalize the data within each device.
+Standard BN <a class="footnote-reference" href="#id5" id="id3">[1]</a> implementation only normalize the data within each device.
 SyncBN normalizes the input within the whole mini-batch.
-We follow the sync-onece implmentation described in the paper <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</p>
+We follow the sync-onece implmentation described in the paper <a class="footnote-reference" href="#id6" id="id4">[2]</a>.</p>
 <p>Assume the input has more than one dimension and we normalize along axis 1.
 We first compute the mean and variance along this axis:</p>
 <div class="math">
@@ -952,16 +1096,16 @@ the output. It is often used during inference.</p>
 then set <code class="docutils literal"><span class="pre">gamma</span></code> to 1 and its gradient to 0.</p>
 <dl class="docutils">
 <dt>Reference:</dt>
-<dd><table class="first docutils footnote" frame="void" id="id3" rules="none">
+<dd><table class="first docutils footnote" frame="void" id="id5" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Ioffe, Sergey, and Christian Szegedy. “Batch normalization: Accelerating deep network training by reducing internal covariate shift.” <em>ICML 2015</em></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>Ioffe, Sergey, and Christian Szegedy. “Batch normalization: Accelerating deep network training by reducing internal covariate shift.” <em>ICML 2015</em></td></tr>
 </tbody>
 </table>
-<table class="last docutils footnote" frame="void" id="id4" rules="none">
+<table class="last docutils footnote" frame="void" id="id6" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Hang Zhang, Kristin Dana, Jianping Shi, Zhongyue Zhang, Xiaogang Wang, Ambrish Tyagi, and Amit Agrawal. “Context Encoding for Semantic Segmentation.” <em>CVPR 2018</em></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>Hang Zhang, Kristin Dana, Jianping Shi, Zhongyue Zhang, Xiaogang Wang, Ambrish Tyagi, and Amit Agrawal. “Context Encoding for Semantic Segmentation.” <em>CVPR 2018</em></td></tr>
 </tbody>
 </table>
 </dd>

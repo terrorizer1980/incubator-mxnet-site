@@ -247,7 +247,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">_as_list</span>
 <span class="kn">from</span> <span class="nn">..attribute</span> <span class="k">import</span> <span class="n">AttrScope</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">):</span>
     <span class="sd">"""Draw random samples from an approximately log-uniform or Zipfian distribution.</span>
@@ -549,6 +549,226 @@
         <span class="n">states</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="while_loop"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.while_loop">[docs]</a><span class="k">def</span> <span class="nf">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"while_loop"</span><span class="p">):</span>
+    <span class="sd">"""Run a while loop with user-defined computation and loop condition.</span>
+
+<span class="sd">    This operator simulates a while loop which iterately does customized computation</span>
+<span class="sd">    as long as the condition is satisfied.</span>
+
+<span class="sd">    `loop_vars` is a list of Symbols on which the computation uses.</span>
+
+<span class="sd">    `cond` is a user-defined function, used as the loop condition.</span>
+<span class="sd">    It consumes `loop_vars`, and produces a scalar MXNet symbol,</span>
+<span class="sd">    indicating the termination of the loop.</span>
+<span class="sd">    The loop ends when `cond` returns false (zero).</span>
+<span class="sd">    The `cond` is variadic, and its signature should be</span>
+<span class="sd">    `cond(*loop_vars) => Symbol`.</span>
+
+<span class="sd">    `func` is a user-defined function, used as the loop body.</span>
+<span class="sd">    It also consumes `loop_vars`, and produces `step_output` and `new_loop_vars` at each step.</span>
+<span class="sd">    In each step, `step_output` should contain the same number elements.</span>
+<span class="sd">    Through all steps, the i-th element of `step_output` should have the same shape and dtype.</span>
+<span class="sd">    Also, `new_loop_vars` should contain the same number of elements as `loop_vars`,</span>
+<span class="sd">    and the corresponding element should have the same shape and dtype.</span>
+<span class="sd">    The `func` is variadic, and its signature should be</span>
+<span class="sd">    `func(*loop_vars) => (List[Symbol] step_output, List[Symbol] new_loop_vars)`.</span>
+
+<span class="sd">    `max_iterations` is a scalar that defines the maximum number of iterations allowed.</span>
+
+<span class="sd">    This function returns two lists.</span>
+<span class="sd">    The first list has the length of `|step_output|`,</span>
+<span class="sd">    in which the i-th element are all i-th elements of</span>
+<span class="sd">    `step_output` from all steps, stacked along axis 0.</span>
+<span class="sd">    The second list has the length of `|loop_vars|`,</span>
+<span class="sd">    which represents final states of loop variables.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       For now, the axis 0 of all Symbols in the first list are `max_iterations`,</span>
+<span class="sd">       due to lack of dynamic shape inference.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       Even if `cond` is never satisfied,</span>
+<span class="sd">       while_loop returns a list of outputs with inferred dtype and shape.</span>
+<span class="sd">       This is different from the Symbol version,</span>
+<span class="sd">       where in this case `step_outputs` are assumed as an empty list.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cond: a Python function.</span>
+<span class="sd">        The loop condition.</span>
+<span class="sd">    func: a Python function.</span>
+<span class="sd">        The loop body.</span>
+<span class="sd">    loop_vars: list of Symbol.</span>
+<span class="sd">        The initial values of the loop variables.</span>
+<span class="sd">    max_iterations: a python int.</span>
+<span class="sd">        Maximum number of iterations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    outputs: list of Symbols</span>
+<span class="sd">        stacked output from each step</span>
+<span class="sd">    states: list of Symbols</span>
+<span class="sd">        final state</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> cond = lambda i, s: i <= 5</span>
+<span class="sd">    >>> func = lambda i, s: ([i + s], [i + 1, s + i])</span>
+<span class="sd">    >>> loop_vars = (mx.sym.var('i'), mx.sym.var('s'))</span>
+<span class="sd">    >>> outputs, states = mx.sym.contrib.while_loop(cond, func, loop_vars, max_iterations=10)</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">_to_python_scalar</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly typed mxnet NDArray, a numpy ndarray, other python types,</span>
+<span class="sd">        to the given type</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s2">"asscalar"</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_to_symbol_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly a single mxnet Symbol, a list of mxnet Symbol,</span>
+<span class="sd">        a tuple of mxnet Symbol, into a tuple of Symbol</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be a Symbol, or a tuple or list of Symbol"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be a Symbol, or a tuple or list of Symbol"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_cond_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cond</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Return of cond must be a Symbol"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">):</span>
+        <span class="sd">"""This wrapper unifies</span>
+<span class="sd">             "func: loop_vars -> new_loop_vars"</span>
+<span class="sd">         and "func: loop_vars -> (step_output, new_loop_vars)"</span>
+<span class="sd">        into "func: loop_vars -> (list of step_outputs, tuple of new_loop_vars)</span>
+<span class="sd">        """</span>
+        <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step_output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">new_loop_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">step_output</span> <span class="o">=</span> <span class="n">_to_symbol_tuple</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="s2">"step_output"</span><span class="p">)</span>
+        <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">_to_symbol_tuple</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">,</span> <span class="s2">"new_loop_vars"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The number of loop_vars should be consistent during the loop"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_output</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_subgraph</span><span class="p">(</span><span class="n">graph_vars</span><span class="p">,</span> <span class="n">graph_func</span><span class="p">,</span> <span class="n">subgraph_name</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">subgraph_name</span><span class="p">):</span>
+            <span class="c1"># create new variables with the same name,</span>
+            <span class="c1"># them feed them to the given func</span>
+            <span class="n">new_graph_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">graph_vars</span><span class="p">]</span>
+            <span class="n">outputs</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="n">graph_func</span><span class="p">(</span><span class="n">new_graph_vars</span><span class="p">)</span>
+            <span class="c1"># first `num_out_data` elements belong to `outputs`</span>
+            <span class="c1"># other elements belong to `final_state`</span>
+            <span class="n">num_out_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+            <span class="n">num_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_state</span><span class="p">)</span>
+            <span class="c1"># nnvm cut-graph does not allow inputs and outputs overlap</span>
+            <span class="c1"># so we calculate the name of inputs, and copy outputs once it overlaps with inputs</span>
+            <span class="n">all_input_names</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">outputs</span> <span class="o">+</span> <span class="n">final_state</span><span class="p">)</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+            <span class="n">make_identity</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">symbol</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_input_names</span> <span class="k">else</span> <span class="n">x</span>
+            <span class="c1"># group all outputs of graph_func</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">make_identity</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">+</span> <span class="n">final_state</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">num_out_data</span><span class="p">,</span> <span class="n">num_outputs</span>
+
+    <span class="k">def</span> <span class="nf">_union_inputs</span><span class="p">(</span><span class="o">*</span><span class="n">graphs</span><span class="p">):</span>
+        <span class="c1"># Given a list of graphs, each whose inputs are either from loop_vars or other variables.</span>
+        <span class="c1"># 1) calculate a list `inputs`, the union of their inputs.</span>
+        <span class="c1"># 2) for each graph, determine in which indices their inputs reside in `inputs`</span>
+        <span class="c1"># 3) for each variable in the input of `graph`, find which index it is</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>             <span class="c1"># List[Symbol], result of 1)</span>
+        <span class="n">locs</span> <span class="o">=</span> <span class="p">[]</span>               <span class="c1"># List[Tuple(List[Int], List[Int])], a list of tuples,</span>
+                                <span class="c1"># where tuples are results of 2) and 3)</span>
+        <span class="n">input_id_to_loc</span> <span class="o">=</span> <span class="p">{}</span>    <span class="c1"># Dict[int, int], given id(sym), input_id_to_loc maps it</span>
+                                <span class="c1"># to a `loc`, where inputs[loc] = sym</span>
+        <span class="k">for</span> <span class="n">graph</span> <span class="ow">in</span> <span class="n">graphs</span><span class="p">:</span>
+            <span class="c1"># input_syms: all inputs to the `graph`</span>
+            <span class="n">name_to_input_syms</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">_get_graph_inputs</span><span class="p">(</span><span class="n">graph</span><span class="p">)}</span>
+            <span class="c1"># some loop_vars are inputs to `graph`, some are not</span>
+            <span class="n">name_to_loop_vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">loop_vars</span><span class="p">}</span>
+            <span class="c1"># other inputs to `graph` created by cut_graph</span>
+            <span class="n">name_to_cut_g_syms</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">_cut_subgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">)}</span>
+            <span class="c1"># also we collect the mapping from var's name to var's loc in loop_vars</span>
+            <span class="n">name_to_var_locs</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sym</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)}</span>
+            <span class="c1"># collect arguments for each subgraph</span>
+            <span class="n">input_locs</span> <span class="o">=</span> <span class="p">[]</span>                         <span class="c1"># results from the second step</span>
+            <span class="n">var_locs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>        <span class="c1"># results from the third step</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_input_syms</span>   <span class="c1"># it should obviously hold</span>
+                <span class="c1"># name -> sym</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_loop_vars</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">name_to_loop_vars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_cut_g_syms</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">name_to_cut_g_syms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">name_to_input_syms</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="c1"># do 2), and 1) is implicitly done</span>
+                <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span> <span class="ow">in</span> <span class="n">input_id_to_loc</span><span class="p">:</span>
+                    <span class="n">loc</span> <span class="o">=</span> <span class="n">input_id_to_loc</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">loc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_id_to_loc</span><span class="p">)</span>
+                    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+                    <span class="n">input_id_to_loc</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)]</span> <span class="o">=</span> <span class="n">loc</span>
+                <span class="n">input_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+                <span class="c1"># do 3)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_var_locs</span><span class="p">:</span>
+                    <span class="n">var_locs</span><span class="p">[</span><span class="n">name_to_var_locs</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_locs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">locs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">input_locs</span><span class="p">,</span> <span class="n">var_locs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">locs</span>
+    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_iterations should be specified"</span><span class="p">)</span>
+    <span class="n">max_iterations</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"max_iteration"</span><span class="p">)</span>
+    <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_to_symbol_tuple</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="s2">"loop_vars"</span><span class="p">)</span>
+    <span class="c1"># It should be work as fine if loop_vars are empty I guess,</span>
+    <span class="c1"># but it is semantically unnecessary to include this case.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"loop_vars should contain at least one element"</span><span class="p">)</span>
+    <span class="c1"># create graph for `cond'</span>
+    <span class="n">cond_g</span><span class="p">,</span> <span class="n">num_out_data</span><span class="p">,</span> <span class="n">num_outputs</span> <span class="o">=</span> \
+        <span class="n">_create_subgraph</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="n">_cond_wrapper</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_cond"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">num_out_data</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">num_outputs</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="c1"># create graph for `func`</span>
+    <span class="n">func_g</span><span class="p">,</span> <span class="n">num_out_data</span><span class="p">,</span> <span class="n">num_outputs</span> <span class="o">=</span> \
+        <span class="n">_create_subgraph</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="n">_func_wrapper</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_func"</span><span class="p">)</span>
+    <span class="c1"># find symbols used in either cond_g or func_g</span>
+    <span class="n">input_syms</span><span class="p">,</span> <span class="p">((</span><span class="n">cond_input_locs</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="p">(</span><span class="n">func_input_locs</span><span class="p">,</span> <span class="n">func_var_locs</span><span class="p">))</span> <span class="o">=</span> \
+        <span class="n">_union_inputs</span><span class="p">(</span><span class="n">cond_g</span><span class="p">,</span> <span class="n">func_g</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i_th</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">func_var_locs</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">loc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The </span><span class="si">%d</span><span class="s2">-th loop_var doesn't involve into the computation"</span> <span class="o">%</span> <span class="n">i_th</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_while_loop</span><span class="p">(</span>
+        <span class="c1"># [cond, func_g, *input_syms]</span>
+        <span class="n">cond_g</span><span class="p">,</span>
+        <span class="n">func_g</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">input_syms</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+        <span class="n">cond_input_locs</span><span class="o">=</span><span class="n">cond_input_locs</span><span class="p">,</span>
+        <span class="n">func_input_locs</span><span class="o">=</span><span class="n">func_input_locs</span><span class="p">,</span>
+        <span class="n">func_var_locs</span><span class="o">=</span><span class="n">func_var_locs</span><span class="p">,</span>
+        <span class="n">num_out_data</span><span class="o">=</span><span class="n">num_out_data</span><span class="p">,</span>
+        <span class="n">num_outputs</span><span class="o">=</span><span class="n">num_outputs</span>
+    <span class="p">)</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_out_data</span><span class="p">)]</span>
+    <span class="n">final_loop_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_out_data</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">final_loop_vars</span></div>
 </pre></div>
 </div>
 </div>
