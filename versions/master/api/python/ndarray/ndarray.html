@@ -436,6 +436,9 @@ broadcasting enabled by default.</li>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.NDArray.split" title="mxnet.ndarray.NDArray.split"><code class="xref py py-obj docutils literal"><span class="pre">NDArray.split</span></code></a></td>
 <td>Convenience fluent method for <a class="reference internal" href="#mxnet.ndarray.split" title="mxnet.ndarray.split"><code class="xref py py-func docutils literal"><span class="pre">split()</span></code></a>.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.ndarray.NDArray.diag" title="mxnet.ndarray.NDArray.diag"><code class="xref py py-obj docutils literal"><span class="pre">NDArray.diag</span></code></a></td>
+<td>Convenience fluent method for <a class="reference internal" href="#mxnet.ndarray.diag" title="mxnet.ndarray.diag"><code class="xref py py-func docutils literal"><span class="pre">diag()</span></code></a>.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -915,10 +918,13 @@ broadcasting enabled by default.</li>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.arange" title="mxnet.ndarray.arange"><code class="xref py py-obj docutils literal"><span class="pre">arange</span></code></a></td>
 <td>Returns evenly spaced values within a given interval.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="sparse.html#mxnet.ndarray.load" title="mxnet.ndarray.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.ndarray.diag" title="mxnet.ndarray.diag"><code class="xref py py-obj docutils literal"><span class="pre">diag</span></code></a></td>
+<td>Extracts a diagonal or constructs a diagonal array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="sparse.html#mxnet.ndarray.load" title="mxnet.ndarray.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a></td>
 <td>Loads an array from file.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="sparse.html#mxnet.ndarray.save" title="mxnet.ndarray.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="sparse.html#mxnet.ndarray.save" title="mxnet.ndarray.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a></td>
 <td>Saves a list of arrays or a dict of str->array to file.</td>
 </tr>
 </tbody>
@@ -2167,6 +2173,13 @@ this array as data.</p>
 <code class="descname">flip</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.flip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.flip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience fluent method for <a class="reference internal" href="#mxnet.ndarray.flip" title="mxnet.ndarray.flip"><code class="xref py py-func docutils literal"><span class="pre">flip()</span></code></a>.</p>
 <p>The arguments are the same as for <a class="reference internal" href="#mxnet.ndarray.flip" title="mxnet.ndarray.flip"><code class="xref py py-func docutils literal"><span class="pre">flip()</span></code></a>, with
+this array as data.</p>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.ndarray.NDArray.diag">
+<code class="descname">diag</code><span class="sig-paren">(</span><em>k=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.diag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience fluent method for <a class="reference internal" href="#mxnet.ndarray.diag" title="mxnet.ndarray.diag"><code class="xref py py-func docutils literal"><span class="pre">diag()</span></code></a>.</p>
+<p>The arguments are the same as for <a class="reference internal" href="#mxnet.ndarray.diag" title="mxnet.ndarray.diag"><code class="xref py py-func docutils literal"><span class="pre">diag()</span></code></a>, with
 this array as data.</p>
 </dd></dl>
 <dl class="method">
@@ -7364,6 +7377,62 @@ a dense tensor.</p>
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.ndarray.diag">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">diag</code><span class="sig-paren">(</span><em>data=None</em>, <em>k=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a diagonal or constructs a diagonal array.</p>
+<p><code class="docutils literal"><span class="pre">diag</span></code>‘s behavior depends on the input array dimensions:</p>
+<ul class="simple">
+<li>1-D arrays: constructs a 2-D array with the input as its diagonal, all other elements are zero</li>
+<li>2-D arrays: returns elements in the diagonal as a new 1-D array</li>
+<li>N-D arrays: not supported yet</li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/tensor/diag_op.cc:L68</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input ndarray</li>
+<li><strong>k</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Diagonal in question. The default is 0. Use k>0 for diagonals above the main diagonal, and k<0 for diagonals below the main diagonal. If input has shape (S0 S1) k must be between -S0 and S1</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.ndarray.dot">
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">dot</code><span class="sig-paren">(</span><em>lhs=None</em>, <em>rhs=None</em>, <em>transpose_a=_Null</em>, <em>transpose_b=_Null</em>, <em>forward_stype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dot product of two arrays.</p>
@@ -8765,7 +8834,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.log_softmax">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">log_softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.log_softmax" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">log_softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.log_softmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log softmax of the input.
 This is equivalent to computing softmax followed by log.</p>
 <p>Examples:</p>
@@ -8786,6 +8855,7 @@ This is equivalent to computing softmax followed by log.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array.</li>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – The axis along which to compute softmax.</li>
+<li><strong>temperature</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Temperature parameter in softmax</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -11481,12 +11551,13 @@ is 3.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.softmax">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmax" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the softmax function.</p>
 <p>The resulting array contains elements in the range (0,1) and the elements along the given axis sum up to 1.</p>
 <div class="math">
-\[softmax(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}\]</div>
+\[softmax(\mathbf{z/t})_j = \frac{e^{z_j/t}}{\sum_{k=1}^K e^{z_k/t}}\]</div>
 <p>for <span class="math">\(j = 1, ..., K\)</span></p>
+<p>t is the temperature parameter in softmax function. By default, t equals 1.0</p>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.</span>  <span class="mf">1.</span>  <span class="mf">1.</span><span class="p">]</span>
      <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">1.</span>  <span class="mf">1.</span><span class="p">]]</span>
@@ -11498,7 +11569,7 @@ is 3.</p>
                      <span class="p">[</span> <span class="mf">0.33333334</span><span class="p">,</span>  <span class="mf">0.33333334</span><span class="p">,</span>  <span class="mf">0.33333334</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/nn/softmax.cc:L95</p>
+<p>Defined in src/operator/nn/softmax.cc:L98</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11506,6 +11577,7 @@ is 3.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array.</li>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – The axis along which to compute softmax.</li>
+<li><strong>temperature</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Temperature parameter in softmax</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
