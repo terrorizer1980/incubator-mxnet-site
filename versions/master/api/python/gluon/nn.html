@@ -354,13 +354,13 @@
 <td>Average pooling operation for 3D data (spatial or spatio-temporal).</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.nn.GlobalMaxPool1D" title="mxnet.gluon.nn.GlobalMaxPool1D"><code class="xref py py-obj docutils literal"><span class="pre">GlobalMaxPool1D</span></code></a></td>
-<td>Global max pooling operation for temporal data.</td>
+<td>Gloabl max pooling operation for one dimensional (temporal) data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.nn.GlobalMaxPool2D" title="mxnet.gluon.nn.GlobalMaxPool2D"><code class="xref py py-obj docutils literal"><span class="pre">GlobalMaxPool2D</span></code></a></td>
-<td>Global max pooling operation for spatial data.</td>
+<td>Global max pooling operation for two dimensional (spatial) data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.nn.GlobalMaxPool3D" title="mxnet.gluon.nn.GlobalMaxPool3D"><code class="xref py py-obj docutils literal"><span class="pre">GlobalMaxPool3D</span></code></a></td>
-<td>Global max pooling operation for 3D data.</td>
+<td>Global max pooling operation for 3D data (spatial or spatio-temporal).</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.nn.GlobalAvgPool1D" title="mxnet.gluon.nn.GlobalAvgPool1D"><code class="xref py py-obj docutils literal"><span class="pre">GlobalAvgPool1D</span></code></a></td>
 <td>Global average pooling operation for temporal data.</td>
@@ -369,7 +369,7 @@
 <td>Global average pooling operation for spatial data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.nn.GlobalAvgPool3D" title="mxnet.gluon.nn.GlobalAvgPool3D"><code class="xref py py-obj docutils literal"><span class="pre">GlobalAvgPool3D</span></code></a></td>
-<td>Global max pooling operation for 3D data.</td>
+<td>Global average pooling operation for 3D data (spatial or spatio-temporal).</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.nn.ReflectionPad2D" title="mxnet.gluon.nn.ReflectionPad2D"><code class="xref py py-obj docutils literal"><span class="pre">ReflectionPad2D</span></code></a></td>
 <td>Pads the input tensor using the reflection of the input boundary.</td>
@@ -1225,31 +1225,180 @@ from standard updates. For more details, please check the Optimization API at:
 <dt id="mxnet.gluon.nn.GlobalAvgPool1D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalAvgPool1D</code><span class="sig-paren">(</span><em>layout='NCW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalAvgPool1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalAvgPool1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Global average pooling operation for temporal data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCW'</em>) – Dimension ordering of data and weight. Only supports ‘NCW’ layout for now.
+‘N’, ‘C’, ‘W’ stands for batch, channel, and width (time) dimensions
+respectively. padding is applied on ‘W’ dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 3D input tensor with shape <cite>(batch_size, in_channels, width)</cite>
+when <cite>layout</cite> is <cite>NCW</cite>. For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 3D output tensor with shape <cite>(batch_size, channels, 1)</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.GlobalAvgPool2D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalAvgPool2D</code><span class="sig-paren">(</span><em>layout='NCHW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalAvgPool2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalAvgPool2D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Global average pooling operation for spatial data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCHW'</em>) – Dimension ordering of data and weight. Only supports ‘NCHW’ layout for now.
+‘N’, ‘C’, ‘H’, ‘W’ stands for batch, channel, height, and width
+dimensions respectively.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 4D input tensor with shape
+<cite>(batch_size, in_channels, height, width)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.
+For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 4D output tensor with shape
+<cite>(batch_size, channels, 1, 1)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.GlobalAvgPool3D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalAvgPool3D</code><span class="sig-paren">(</span><em>layout='NCDHW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalAvgPool3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalAvgPool3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Global max pooling operation for 3D data.</p>
+<dd><p>Global average pooling operation for 3D data (spatial or spatio-temporal).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCDHW'</em>) – Dimension ordering of data and weight. Can be ‘NCDHW’, ‘NDHWC’, etc.
+‘N’, ‘C’, ‘H’, ‘W’, ‘D’ stands for batch, channel, height, width and
+depth dimensions respectively. padding is applied on ‘D’, ‘H’ and ‘W’
+dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 5D input tensor with shape
+<cite>(batch_size, in_channels, depth, height, width)</cite> when <cite>layout</cite> is <cite>NCDHW</cite>.
+For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 5D output tensor with shape
+<cite>(batch_size, channels, 1, 1, 1)</cite> when <cite>layout</cite> is <cite>NCDHW</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.GlobalMaxPool1D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalMaxPool1D</code><span class="sig-paren">(</span><em>layout='NCW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalMaxPool1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalMaxPool1D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Global max pooling operation for temporal data.</p>
+<dd><p>Gloabl max pooling operation for one dimensional (temporal) data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCW'</em>) – Dimension ordering of data and weight. Only supports ‘NCW’ layout for now.
+‘N’, ‘C’, ‘W’ stands for batch, channel, and width (time) dimensions
+respectively. Pooling is applied on the W dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 3D input tensor with shape <cite>(batch_size, in_channels, width)</cite>
+when <cite>layout</cite> is <cite>NCW</cite>. For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 3D output tensor with shape <cite>(batch_size, channels, 1)</cite>
+when <cite>layout</cite> is <cite>NCW</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.GlobalMaxPool2D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalMaxPool2D</code><span class="sig-paren">(</span><em>layout='NCHW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalMaxPool2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalMaxPool2D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Global max pooling operation for spatial data.</p>
+<dd><p>Global max pooling operation for two dimensional (spatial) data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCHW'</em>) – Dimension ordering of data and weight. Only supports ‘NCHW’ layout for now.
+‘N’, ‘C’, ‘H’, ‘W’ stands for batch, channel, height, and width
+dimensions respectively. padding is applied on ‘H’ and ‘W’ dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 4D input tensor with shape
+<cite>(batch_size, in_channels, height, width)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.
+For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 4D output tensor with shape
+<cite>(batch_size, channels, 1, 1)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.GlobalMaxPool3D">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GlobalMaxPool3D</code><span class="sig-paren">(</span><em>layout='NCDHW'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/conv_layers.html#GlobalMaxPool3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GlobalMaxPool3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Global max pooling operation for 3D data.</p>
+<dd><p>Global max pooling operation for 3D data (spatial or spatio-temporal).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> (<em>str</em><em>, </em><em>default 'NCDHW'</em>) – Dimension ordering of data and weight. Only supports ‘NCDHW’ layout for now.
+‘N’, ‘C’, ‘H’, ‘W’, ‘D’ stands for batch, channel, height, width and
+depth dimensions respectively. padding is applied on ‘D’, ‘H’ and ‘W’
+dimension.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: 5D input tensor with shape
+<cite>(batch_size, in_channels, depth, height, width)</cite> when <cite>layout</cite> is <cite>NCW</cite>.
+For other layouts shape is permuted accordingly.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: 5D output tensor with shape
+<cite>(batch_size, channels, 1, 1, 1)</cite> when <cite>layout</cite> is <cite>NCDHW</cite>.</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.nn.HybridLambda">

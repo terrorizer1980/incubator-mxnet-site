@@ -1207,7 +1207,25 @@
 
 
 <div class="viewcode-block" id="GlobalMaxPool1D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalMaxPool1D">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool1D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global max pooling operation for temporal data."""</span>
+    <span class="sd">"""Gloabl max pooling operation for one dimensional (temporal) data.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCW'</span>
+<span class="sd">        Dimension ordering of data and weight. Only supports 'NCW' layout for now.</span>
+<span class="sd">        'N', 'C', 'W' stands for batch, channel, and width (time) dimensions</span>
+<span class="sd">        respectively. Pooling is applied on the W dimension.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 3D input tensor with shape `(batch_size, in_channels, width)`</span>
+<span class="sd">          when `layout` is `NCW`. For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 3D output tensor with shape `(batch_size, channels, 1)`</span>
+<span class="sd">          when `layout` is `NCW`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMaxPool1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1215,7 +1233,26 @@
 
 
 <div class="viewcode-block" id="GlobalMaxPool2D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalMaxPool2D">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool2D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global max pooling operation for spatial data."""</span>
+    <span class="sd">"""Global max pooling operation for two dimensional (spatial) data.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCHW'</span>
+<span class="sd">        Dimension ordering of data and weight. Only supports 'NCHW' layout for now.</span>
+<span class="sd">        'N', 'C', 'H', 'W' stands for batch, channel, height, and width</span>
+<span class="sd">        dimensions respectively. padding is applied on 'H' and 'W' dimension.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 4D input tensor with shape</span>
+<span class="sd">          `(batch_size, in_channels, height, width)` when `layout` is `NCHW`.</span>
+<span class="sd">          For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 4D output tensor with shape</span>
+<span class="sd">          `(batch_size, channels, 1, 1)` when `layout` is `NCHW`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCHW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMaxPool2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1223,7 +1260,27 @@
 
 
 <div class="viewcode-block" id="GlobalMaxPool3D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalMaxPool3D">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool3D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global max pooling operation for 3D data."""</span>
+    <span class="sd">"""Global max pooling operation for 3D data (spatial or spatio-temporal).</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCDHW'</span>
+<span class="sd">        Dimension ordering of data and weight. Only supports 'NCDHW' layout for now.</span>
+<span class="sd">        'N', 'C', 'H', 'W', 'D' stands for batch, channel, height, width and</span>
+<span class="sd">        depth dimensions respectively. padding is applied on 'D', 'H' and 'W'</span>
+<span class="sd">        dimension.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 5D input tensor with shape</span>
+<span class="sd">          `(batch_size, in_channels, depth, height, width)` when `layout` is `NCW`.</span>
+<span class="sd">          For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 5D output tensor with shape</span>
+<span class="sd">          `(batch_size, channels, 1, 1, 1)` when `layout` is `NCDHW`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCDHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCDHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCDHW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMaxPool3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1231,7 +1288,23 @@
 
 
 <div class="viewcode-block" id="GlobalAvgPool1D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalAvgPool1D">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgPool1D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global average pooling operation for temporal data."""</span>
+    <span class="sd">"""Global average pooling operation for temporal data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCW'</span>
+<span class="sd">        Dimension ordering of data and weight. Only supports 'NCW' layout for now.</span>
+<span class="sd">        'N', 'C', 'W' stands for batch, channel, and width (time) dimensions</span>
+<span class="sd">        respectively. padding is applied on 'W' dimension.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 3D input tensor with shape `(batch_size, in_channels, width)`</span>
+<span class="sd">          when `layout` is `NCW`. For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 3D output tensor with shape `(batch_size, channels, 1)`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalAvgPool1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1239,7 +1312,25 @@
 
 
 <div class="viewcode-block" id="GlobalAvgPool2D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalAvgPool2D">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgPool2D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global average pooling operation for spatial data."""</span>
+    <span class="sd">"""Global average pooling operation for spatial data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCHW'</span>
+<span class="sd">        Dimension ordering of data and weight. Only supports 'NCHW' layout for now.</span>
+<span class="sd">        'N', 'C', 'H', 'W' stands for batch, channel, height, and width</span>
+<span class="sd">        dimensions respectively.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 4D input tensor with shape</span>
+<span class="sd">          `(batch_size, in_channels, height, width)` when `layout` is `NCHW`.</span>
+<span class="sd">          For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 4D output tensor with shape</span>
+<span class="sd">          `(batch_size, channels, 1, 1)` when `layout` is `NCHW`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCHW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalAvgPool2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1247,7 +1338,26 @@
 
 
 <div class="viewcode-block" id="GlobalAvgPool3D"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.GlobalAvgPool3D">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgPool3D</span><span class="p">(</span><span class="n">_Pooling</span><span class="p">):</span>
-    <span class="sd">"""Global max pooling operation for 3D data."""</span>
+    <span class="sd">"""Global average pooling operation for 3D data (spatial or spatio-temporal).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default 'NCDHW'</span>
+<span class="sd">        Dimension ordering of data and weight. Can be 'NCDHW', 'NDHWC', etc.</span>
+<span class="sd">        'N', 'C', 'H', 'W', 'D' stands for batch, channel, height, width and</span>
+<span class="sd">        depth dimensions respectively. padding is applied on 'D', 'H' and 'W'</span>
+<span class="sd">        dimension.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 5D input tensor with shape</span>
+<span class="sd">          `(batch_size, in_channels, depth, height, width)` when `layout` is `NCDHW`.</span>
+<span class="sd">          For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 5D output tensor with shape</span>
+<span class="sd">          `(batch_size, channels, 1, 1, 1)` when `layout` is `NCDHW`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NCDHW'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">'NCDHW'</span><span class="p">,</span> <span class="s2">"Only supports 'NCDHW' layout for now"</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalAvgPool3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
