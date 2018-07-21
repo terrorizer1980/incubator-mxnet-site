@@ -1937,6 +1937,44 @@
             <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span></div>
     <span class="c1"># pylint: enable= undefined-variable</span>
 
+<div class="viewcode-block" id="NDArray.broadcast_like"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.broadcast_like">[docs]</a>    <span class="k">def</span> <span class="nf">broadcast_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">"""Broadcasts the input array to the shape of other.</span>
+
+<span class="sd">        Broadcasting is only allowed on axes with size 1. The new shape cannot change</span>
+<span class="sd">        the number of dimensions.</span>
+<span class="sd">        For example, you could broadcast from shape (2, 1) to (2, 3), but not from</span>
+<span class="sd">        shape (2, 3) to (2, 3, 3).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : NDArray</span>
+<span class="sd">            Array with shape of the desired array.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        NDArray</span>
+<span class="sd">            A NDArray with the desired shape that is not sharing data with this</span>
+<span class="sd">            array, even if the new shape is the same as ``self.shape``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> x = mx.nd.arange(0,3).reshape((1,3,1))</span>
+<span class="sd">        >>> x.asnumpy()</span>
+<span class="sd">        array([[[ 0.],</span>
+<span class="sd">                [ 1.],</span>
+<span class="sd">                [ 2.]]], dtype=float32)</span>
+<span class="sd">        >>> y = x.broadcast_like(mx.nd.ones((2,3,3)))</span>
+<span class="sd">        >>> y.asnumpy()</span>
+<span class="sd">        array([[[ 0.,  0.,  0.],</span>
+<span class="sd">                [ 1.,  1.,  1.],</span>
+<span class="sd">                [ 2.,  2.,  2.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[ 0.,  0.,  0.],</span>
+<span class="sd">                [ 1.,  1.,  1.],</span>
+<span class="sd">                [ 2.,  2.,  2.]]], dtype=float32)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="NDArray.wait_to_read"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.wait_to_read">[docs]</a>    <span class="k">def</span> <span class="nf">wait_to_read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Waits until all previous write operations on the current array are finished.</span>
 
