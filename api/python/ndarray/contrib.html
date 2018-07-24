@@ -334,6 +334,9 @@ so that feature contributors can receive feedback.</p>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.contrib.while_loop" title="mxnet.ndarray.contrib.while_loop"><code class="xref py py-obj docutils literal"><span class="pre">while_loop</span></code></a></td>
 <td>Run a while loop with user-defined computation and loop condition.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.ndarray.contrib.cond" title="mxnet.ndarray.contrib.cond"><code class="xref py py-obj docutils literal"><span class="pre">cond</span></code></a></td>
+<td>Run an if-then-else using user-defined condition and computation</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -526,6 +529,56 @@ because it cannot be inferred. This is different from the symbolic version.</p>
 <span class="go"><NDArray 1 @cpu(0)>,</span>
 <span class="go">[16]</span>
 <span class="go"><NDArray 1 @cpu(0)>]</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.contrib.cond">
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">cond</code><span class="sig-paren">(</span><em>pred</em>, <em>then_func</em>, <em>else_func</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/contrib.html#cond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.contrib.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an if-then-else using user-defined condition and computation</p>
+<p>This operator simulates a if-like branch which chooses to do one of
+the two customized computations according to the specified condition.</p>
+<p><cite>pred</cite> is a scalar MXNet NDArray,
+indicating which branch of computation should be used.</p>
+<p><cite>then_func</cite> is a user-defined function, used as computation of the then branch.
+It produces <cite>outputs</cite>, which is a list of NDArrays.
+The signature of <cite>then_func</cite> should be
+<cite>then_func() => List[NDArray]</cite>.</p>
+<p><cite>else_func</cite> is a user-defined function, used as computation of the else branch.
+It produces <cite>outputs</cite>, which is a list of NDArrays.
+The signature of <cite>else_func</cite> should be
+<cite>else_func() => List[NDArray]</cite>.</p>
+<p>The <cite>outputs</cite> produces by <cite>then_func</cite> and <cite>else_func</cite> should have the same number
+of elements, all of which should be in the same shape, of the same dtype and stype.</p>
+<p>This function returns a list of symbols, representing the computation result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pred</strong> (<em>a MXNet NDArray representing a scalar.</em>) – The branch condition.</li>
+<li><strong>then_func</strong> (<em>a Python function.</em>) – The computation to be executed if <cite>pred</cite> is true.</li>
+<li><strong>else_func</strong> (<em>a Python function.</em>) – The computation to be executed if <cite>pred</cite> is false.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>outputs</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a list of NDArrays, representing the result of computation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">pred</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o"><</span> <span class="mi">5</span>
+<span class="gp">>>> </span><span class="n">then_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">else_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">outputs</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">else_func</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">[42.]</span>
+<span class="go"><NDArray 1 @cpu(0)></span>
 </pre></div>
 </div>
 </dd></dl>

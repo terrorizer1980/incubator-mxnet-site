@@ -230,7 +230,7 @@
 <span class="c1"># under the License.</span>
 
 <span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import</span>
+<span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import,redefined-outer-name</span>
 <span class="sd">"""Contrib NDArray API of MXNet."""</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">current_context</span>
@@ -242,7 +242,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">,</span> <span class="s2">"cond"</span><span class="p">]</span>
 
 <span class="c1"># pylint: disable=line-too-long</span>
 <div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -405,7 +405,6 @@
     <span class="k">if</span> <span class="n">not_data_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="while_loop"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.while_loop">[docs]</a><span class="k">def</span> <span class="nf">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""Run a while loop with user-defined computation and loop condition.</span>
@@ -577,6 +576,90 @@
                 <span class="p">[</span><span class="s2">"  Step </span><span class="si">%d</span><span class="s2">, shape is </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
             <span class="p">))</span>
     <span class="k">return</span> <span class="n">stacked_outputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="cond"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.cond">[docs]</a><span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">else_func</span><span class="p">):</span>
+    <span class="sd">"""Run an if-then-else using user-defined condition and computation</span>
+
+<span class="sd">    This operator simulates a if-like branch which chooses to do one of</span>
+<span class="sd">    the two customized computations according to the specified condition.</span>
+
+<span class="sd">    `pred` is a scalar MXNet NDArray,</span>
+<span class="sd">    indicating which branch of computation should be used.</span>
+
+<span class="sd">    `then_func` is a user-defined function, used as computation of the then branch.</span>
+<span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
+<span class="sd">    The signature of `then_func` should be</span>
+<span class="sd">    `then_func() => List[NDArray]`.</span>
+
+<span class="sd">    `else_func` is a user-defined function, used as computation of the else branch.</span>
+<span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
+<span class="sd">    The signature of `else_func` should be</span>
+<span class="sd">    `else_func() => List[NDArray]`.</span>
+
+<span class="sd">    The `outputs` produces by `then_func` and `else_func` should have the same number</span>
+<span class="sd">    of elements, all of which should be in the same shape, of the same dtype and stype.</span>
+
+<span class="sd">    This function returns a list of symbols, representing the computation result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pred: a MXNet NDArray representing a scalar.</span>
+<span class="sd">        The branch condition.</span>
+<span class="sd">    then_func: a Python function.</span>
+<span class="sd">        The computation to be executed if `pred` is true.</span>
+<span class="sd">    else_func: a Python function.</span>
+<span class="sd">        The computation to be executed if `pred` is false.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs: a list of NDArrays, representing the result of computation.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> a, b = mx.nd.array([1]), mx.nd.array([2])</span>
+<span class="sd">    >>> pred = a * b < 5</span>
+<span class="sd">    >>> then_func = lambda a, b: (a + 5) * (b + 5)</span>
+<span class="sd">    >>> else_func = lambda a, b: (a - 5) * (b - 5)</span>
+<span class="sd">    >>> outputs = mx.nd.contrib.cond(pred, then_func, else_func)</span>
+<span class="sd">    >>> outputs[0]</span>
+<span class="sd">    [42.]</span>
+<span class="sd">    <NDArray 1 @cpu(0)></span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">_to_python_scalar</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly typed mxnet NDArray, a numpy ndarray, other python types,</span>
+<span class="sd">        to the given type</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s2">"asscalar"</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_to_ndarray_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly a single mxnet NDArray, a list of mxnet NDArray,</span>
+<span class="sd">        a tuple of mxnet NDArray, into a tuple of NDArray</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="n">branch</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">"pred"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">branch</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">then_func</span><span class="p">()</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"outputs of then_func"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">else_func</span><span class="p">()</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"outputs of else_func"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>

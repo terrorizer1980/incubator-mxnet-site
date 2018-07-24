@@ -230,7 +230,7 @@
 <span class="c1"># under the License.</span>
 
 <span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import</span>
+<span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import,redefined-outer-name</span>
 <span class="sd">"""Contrib Symbol API of MXNet."""</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
@@ -248,7 +248,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">_as_list</span>
 <span class="kn">from</span> <span class="nn">..attribute</span> <span class="k">import</span> <span class="n">AttrScope</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rand_zipfian"</span><span class="p">,</span> <span class="s2">"foreach"</span><span class="p">,</span> <span class="s2">"while_loop"</span><span class="p">,</span> <span class="s2">"cond"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">):</span>
     <span class="sd">"""Draw random samples from an approximately log-uniform or Zipfian distribution.</span>
@@ -770,6 +770,148 @@
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_out_data</span><span class="p">)]</span>
     <span class="n">final_loop_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_out_data</span><span class="p">,</span> <span class="n">num_outputs</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">final_loop_vars</span></div>
+
+<div class="viewcode-block" id="cond"><a class="viewcode-back" href="../../../api/python/symbol/contrib.html#mxnet.symbol.contrib.cond">[docs]</a><span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">else_func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"cond"</span><span class="p">):</span>
+    <span class="sd">"""Run an if-then-else using user-defined condition and computation</span>
+
+<span class="sd">    This operator simulates a if-like branch which chooses to do one of</span>
+<span class="sd">    the two customized computations according to the specified condition.</span>
+
+<span class="sd">    `pred` is a scalar MXNet Symbol,</span>
+<span class="sd">    indicating which branch of computation should be used.</span>
+
+<span class="sd">    `then_func` is a user-defined function, used as computation of the then branch.</span>
+<span class="sd">    It produces `outputs`, which is a list of Symbols.</span>
+<span class="sd">    The signature of `then_func` should be</span>
+<span class="sd">    `then_func() => List[Symbol]`.</span>
+
+<span class="sd">    `else_func` is a user-defined function, used as computation of the else branch.</span>
+<span class="sd">    It produces `outputs`, which is a list of Symbols.</span>
+<span class="sd">    The signature of `else_func` should be</span>
+<span class="sd">    `else_func() => List[Symbol]`.</span>
+
+<span class="sd">    The `outputs` produces by `then_func` and `else_func` should have the same number</span>
+<span class="sd">    of elements, all of which should be in the same shape, of the same dtype and stype.</span>
+
+<span class="sd">    This function returns a list of symbols, representing the computation result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pred: a MXNet Symbol representing a scalar.</span>
+<span class="sd">        The branch condition.</span>
+<span class="sd">    then_func: a Python function.</span>
+<span class="sd">        The computation to be executed if `pred` is true.</span>
+<span class="sd">    else_func: a Python function.</span>
+<span class="sd">        The computation to be executed if `pred` is false.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs: a list of Symbols, representing the result of computation.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> a, b = mx.sym.var('a'), mx.sym.var('b')</span>
+<span class="sd">    >>> pred = a * b < 5</span>
+<span class="sd">    >>> then_func = lambda: (a + 5) * (b + 5)</span>
+<span class="sd">    >>> else_func = lambda: (a - 5) * (b - 5)</span>
+<span class="sd">    >>> outputs = mx.sym.contrib.cond(pred, then_func, else_func)</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">_to_symbol_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">"""Converts "inputs", possibly a single mxnet Symbol, a list of mxnet Symbol,</span>
+<span class="sd">        a tuple of mxnet Symbol, into a tuple of Symbol</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be a Symbol, or a tuple or list of Symbol"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be a Symbol, or a tuple or list of Symbol"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
+        <span class="k">return</span> <span class="n">inputs</span>
+
+    <span class="k">def</span> <span class="nf">_create_subgraph</span><span class="p">(</span><span class="n">graph_vars</span><span class="p">,</span> <span class="n">graph_func</span><span class="p">,</span> <span class="n">subgraph_name</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">subgraph_name</span><span class="p">):</span>
+            <span class="c1"># create new variables with the same name,</span>
+            <span class="c1"># them feed them to the given func</span>
+            <span class="n">new_graph_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">graph_vars</span><span class="p">]</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">graph_func</span><span class="p">(</span><span class="o">*</span><span class="n">new_graph_vars</span><span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">_to_symbol_tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"outputs"</span><span class="p">)</span>
+            <span class="n">num_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+            <span class="c1"># nnvm cut-graph does not allow inputs and outputs overlap</span>
+            <span class="c1"># so we calculate the name of inputs, and copy outputs once it overlaps with inputs</span>
+            <span class="n">all_input_names</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+            <span class="n">make_identity</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">symbol</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_input_names</span> <span class="k">else</span> <span class="n">x</span>
+            <span class="c1"># group all outputs of graph_func</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">make_identity</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">num_outputs</span>
+
+    <span class="k">def</span> <span class="nf">_union_inputs</span><span class="p">(</span><span class="o">*</span><span class="n">graphs</span><span class="p">):</span>
+        <span class="c1"># Given a list of graphs, each whose inputs are either from input_vars or other variables.</span>
+        <span class="c1"># 1) calculate a list `inputs`, the union of their inputs.</span>
+        <span class="c1"># 2) for each graph, determine in which indices their inputs reside in `inputs`</span>
+        <span class="c1"># 3) for each variable in the input of `graph`, find which index it is</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>             <span class="c1"># List[Symbol], result of 1)</span>
+        <span class="n">locs</span> <span class="o">=</span> <span class="p">[]</span>               <span class="c1"># List[Tuple(List[Int], List[Int])], a list of tuples,</span>
+                                <span class="c1"># where tuples are results of 2) and 3)</span>
+        <span class="n">input_id_to_loc</span> <span class="o">=</span> <span class="p">{}</span>    <span class="c1"># Dict[int, int], given id(sym), input_id_to_loc maps it</span>
+                                <span class="c1"># to a `loc`, where inputs[loc] = sym</span>
+        <span class="k">for</span> <span class="n">graph</span> <span class="ow">in</span> <span class="n">graphs</span><span class="p">:</span>
+            <span class="c1"># input_syms: all inputs to the `graph`</span>
+            <span class="n">name_to_input_syms</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">_get_graph_inputs</span><span class="p">(</span><span class="n">graph</span><span class="p">)}</span>
+            <span class="c1"># some input_vars are inputs to `graph`, some are not</span>
+            <span class="n">name_to_input_vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">}</span>
+            <span class="c1"># other inputs to `graph` created by cut_graph</span>
+            <span class="n">name_to_cut_g_syms</span> <span class="o">=</span> <span class="p">{</span><span class="n">sym</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">sym</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">_cut_subgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">)}</span>
+            <span class="c1"># collect arguments for each subgraph</span>
+            <span class="n">input_locs</span> <span class="o">=</span> <span class="p">[]</span>                         <span class="c1"># results from the second step</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_input_syms</span>   <span class="c1"># it should obviously hold</span>
+                <span class="c1"># name -> sym</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_input_vars</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">name_to_input_vars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_to_cut_g_syms</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">name_to_cut_g_syms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sym</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">name_to_input_syms</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="c1"># do 2), and 1) is implicitly done</span>
+                <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span> <span class="ow">in</span> <span class="n">input_id_to_loc</span><span class="p">:</span>
+                    <span class="n">loc</span> <span class="o">=</span> <span class="n">input_id_to_loc</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">loc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_id_to_loc</span><span class="p">)</span>
+                    <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+                    <span class="n">input_id_to_loc</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">sym</span><span class="p">)]</span> <span class="o">=</span> <span class="n">loc</span>
+                <span class="n">input_locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+            <span class="n">locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_locs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">locs</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># create graph for `cond_func'</span>
+    <span class="n">cond_g</span><span class="p">,</span> <span class="n">cond_num_outputs</span> <span class="o">=</span> <span class="n">_create_subgraph</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">pred</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_pred"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cond_num_outputs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"pred should always be a single output"</span><span class="p">)</span>
+    <span class="c1"># create graph for `then`</span>
+    <span class="n">then_g</span><span class="p">,</span> <span class="n">then_num_outputs</span> <span class="o">=</span> <span class="n">_create_subgraph</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_then"</span><span class="p">)</span>
+    <span class="c1"># create graph for `else`</span>
+    <span class="n">else_g</span><span class="p">,</span> <span class="n">else_num_outputs</span> <span class="o">=</span> <span class="n">_create_subgraph</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">else_func</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_else"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">then_num_outputs</span> <span class="o">!=</span> <span class="n">else_num_outputs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Number of outputs differs between then-branch and else-branch"</span><span class="p">)</span>
+    <span class="c1"># find symbols used in either cond_g or func_g</span>
+    <span class="n">input_syms</span><span class="p">,</span> <span class="p">(</span><span class="n">cond_input_locs</span><span class="p">,</span> <span class="n">then_input_locs</span><span class="p">,</span> <span class="n">else_input_locs</span><span class="p">)</span> <span class="o">=</span> \
+        <span class="n">_union_inputs</span><span class="p">(</span><span class="n">cond_g</span><span class="p">,</span> <span class="n">then_g</span><span class="p">,</span> <span class="n">else_g</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_cond</span><span class="p">(</span>
+        <span class="c1"># [cond, then_g, else_g, *input_syms]</span>
+        <span class="n">cond_g</span><span class="p">,</span>
+        <span class="n">then_g</span><span class="p">,</span>
+        <span class="n">else_g</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">input_syms</span><span class="p">,</span>
+        <span class="n">cond_input_locs</span><span class="o">=</span><span class="n">cond_input_locs</span><span class="p">,</span>
+        <span class="n">then_input_locs</span><span class="o">=</span><span class="n">then_input_locs</span><span class="p">,</span>
+        <span class="n">else_input_locs</span><span class="o">=</span><span class="n">else_input_locs</span><span class="p">,</span>
+        <span class="n">num_outputs</span><span class="o">=</span><span class="n">then_num_outputs</span>
+    <span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_to_symbol_tuple</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"result"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>
