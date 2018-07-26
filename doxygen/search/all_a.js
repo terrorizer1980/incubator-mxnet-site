@@ -2,6 +2,8 @@ var searchData=
 [
   ['id',['id',['../structmxnet_1_1Resource.html#aa1fc8578c0fa849afe7da29c1cf1308b',1,'mxnet::Resource']]],
   ['iiterator',['IIterator',['../classmxnet_1_1IIterator.html',1,'mxnet']]],
+  ['ilog2ui',['ilog2ui',['../namespacemxnet_1_1common.html#a44c77619725d8bc68a085bdbcaa5416b',1,'mxnet::common']]],
+  ['ilog2ul',['ilog2ul',['../namespacemxnet_1_1common.html#ad45245532df14e35b887c2ec91939d8d',1,'mxnet::common']]],
   ['imperative',['Imperative',['../classmxnet_1_1Imperative.html',1,'mxnet']]],
   ['imperative',['Imperative',['../classmxnet_1_1NDArray.html#add286ab9a359eb017008c9a3ff53701f',1,'mxnet::NDArray']]],
   ['imperative_2eh',['imperative.h',['../imperative_8h.html',1,'']]],
