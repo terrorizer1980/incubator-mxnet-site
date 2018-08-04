@@ -242,6 +242,7 @@
 <span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">py_str</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">KVStoreHandle</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">optimizer</span> <span class="k">as</span> <span class="n">opt</span>
+<span class="kn">from</span> <span class="nn">.profiler</span> <span class="k">import</span> <span class="n">set_kvstore_handle</span>
 
 <span class="k">def</span> <span class="nf">_ctype_key_value</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">vals</span><span class="p">):</span>
     <span class="sd">"""</span>
@@ -302,7 +303,8 @@
                      <span class="s1">'kSetMultiPrecision'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                      <span class="s1">'kStopServer'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                      <span class="s1">'kSyncMode'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-                     <span class="s1">'kSetGradientCompression'</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+                     <span class="s1">'kSetGradientCompression'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                     <span class="s1">'kSetProfilerParams'</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
     <span class="k">assert</span> <span class="p">(</span><span class="n">command</span> <span class="ow">in</span> <span class="n">command_types</span><span class="p">),</span> <span class="s2">"Unknown command type to send to server"</span>
     <span class="k">return</span> <span class="n">command_types</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
 
@@ -884,7 +886,9 @@
     <span class="n">handle</span> <span class="o">=</span> <span class="n">KVStoreHandle</span><span class="p">()</span>
     <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXKVStoreCreate</span><span class="p">(</span><span class="n">c_str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span>
                                     <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">KVStore</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
+    <span class="n">kv</span> <span class="o">=</span> <span class="n">KVStore</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="n">set_kvstore_handle</span><span class="p">(</span><span class="n">kv</span><span class="o">.</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kv</span></div>
 </pre></div>
 </div>
 </div>

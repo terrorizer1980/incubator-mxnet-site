@@ -236,8 +236,13 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">ProfileHandle</span><span class="p">,</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">py_str</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">ProfileHandle</span><span class="p">,</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">KVStoreHandle</span>
 
+<span class="n">profiler_kvstore_handle</span> <span class="o">=</span> <span class="n">KVStoreHandle</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">set_kvstore_handle</span><span class="p">(</span><span class="n">handle</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">profiler_kvstore_handle</span>
+    <span class="n">profiler_kvstore_handle</span> <span class="o">=</span> <span class="n">handle</span>
 
 <div class="viewcode-block" id="set_config"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.set_config">[docs]</a><span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">"""Set up the configure of profiler (only accepts keyword arguments).</span>
@@ -263,12 +268,17 @@
 <span class="sd">    aggregate_stats : boolean,</span>
 <span class="sd">        whether to maintain aggregate stats in memory for console</span>
 <span class="sd">        dump.  Has some negative performance impact.</span>
+<span class="sd">    profile_process : string</span>
+<span class="sd">        whether to profile kvstore `server` or `worker`.</span>
+<span class="sd">        server can only be profiled when kvstore is of type dist.</span>
+<span class="sd">        if this is not passed, defaults to `worker`</span>
 <span class="sd">    """</span>
     <span class="n">kk</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">vv</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerConfig</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">),</span>
-                                        <span class="n">c_str_array</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kk</span><span class="p">]),</span>
-                                        <span class="n">c_str_array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vv</span><span class="p">])))</span></div>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProcessProfilerConfig</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">),</span>
+                                               <span class="n">c_str_array</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kk</span><span class="p">]),</span>
+                                               <span class="n">c_str_array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vv</span><span class="p">]),</span>
+                                               <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="profiler_set_config"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.profiler_set_config">[docs]</a><span class="k">def</span> <span class="nf">profiler_set_config</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">'symbolic'</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'profile.json'</span><span class="p">):</span>
@@ -287,10 +297,10 @@
     <span class="n">keys</span> <span class="o">=</span> <span class="n">c_str_array</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"profile_"</span> <span class="o">+</span> <span class="n">mode</span><span class="p">,</span> <span class="s2">"filename"</span><span class="p">]])</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">c_str_array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="p">]])</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerConfig</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span></div>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProcessProfilerConfig</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="set_state"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.set_state">[docs]</a><span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s1">'stop'</span><span class="p">):</span>
+<div class="viewcode-block" id="set_state"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.set_state">[docs]</a><span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s1">'stop'</span><span class="p">,</span> <span class="n">profile_process</span><span class="o">=</span><span class="s1">'worker'</span><span class="p">):</span>
     <span class="sd">"""Set up the profiler state to 'run' or 'stop'.</span>
 
 <span class="sd">    Parameters</span>
@@ -298,9 +308,16 @@
 <span class="sd">    state : string, optional</span>
 <span class="sd">        Indicates whether to run the profiler, can</span>
 <span class="sd">        be 'stop' or 'run'. Default is `stop`.</span>
+<span class="sd">    profile_process : string</span>
+<span class="sd">        whether to profile kvstore `server` or `worker`.</span>
+<span class="sd">        server can only be profiled when kvstore is of type dist.</span>
+<span class="sd">        if this is not passed, defaults to `worker`</span>
 <span class="sd">    """</span>
     <span class="n">state2int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'stop'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'run'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerState</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">state2int</span><span class="p">[</span><span class="n">state</span><span class="p">])))</span></div>
+    <span class="n">profile_process2int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'worker'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'server'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProcessProfilerState</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">state2int</span><span class="p">[</span><span class="n">state</span><span class="p">]),</span>
+                                              <span class="n">profile_process2int</span><span class="p">[</span><span class="n">profile_process</span><span class="p">],</span>
+                                              <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="profiler_set_state"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.profiler_set_state">[docs]</a><span class="k">def</span> <span class="nf">profiler_set_state</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s1">'stop'</span><span class="p">):</span>
@@ -316,7 +333,7 @@
                   <span class="s1">'Please use profiler.set_state() instead'</span><span class="p">)</span>
     <span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="dump"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.dump">[docs]</a><span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">finished</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="dump"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.dump">[docs]</a><span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">finished</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profile_process</span><span class="o">=</span><span class="s1">'worker'</span><span class="p">):</span>
     <span class="sd">"""Dump profile and stop profiler. Use this to save profile</span>
 <span class="sd">    in advance in case your program cannot exit normally.</span>
 
@@ -325,9 +342,16 @@
 <span class="sd">    finished : boolean</span>
 <span class="sd">        Indicates whether to stop statistic output (dumping) after this dump.</span>
 <span class="sd">        Default is True</span>
+<span class="sd">    profile_process : string</span>
+<span class="sd">        whether to profile kvstore `server` or `worker`.</span>
+<span class="sd">        server can only be profiled when kvstore is of type dist.</span>
+<span class="sd">        if this is not passed, defaults to `worker`</span>
 <span class="sd">    """</span>
-    <span class="n">fin</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">finished</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="kc">False</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXDumpProfile</span><span class="p">(</span><span class="n">fin</span><span class="p">))</span></div>
+    <span class="n">fin</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">finished</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">profile_process2int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'worker'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'server'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXDumpProcessProfile</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span>
+                                         <span class="n">profile_process2int</span><span class="p">[</span><span class="n">profile_process</span><span class="p">],</span>
+                                         <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="dump_profile"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.dump_profile">[docs]</a><span class="k">def</span> <span class="nf">dump_profile</span><span class="p">():</span>
@@ -352,14 +376,37 @@
     <span class="k">return</span> <span class="n">py_str</span><span class="p">(</span><span class="n">debug_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="pause"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.pause">[docs]</a><span class="k">def</span> <span class="nf">pause</span><span class="p">():</span>
-    <span class="sd">"""Pause profiling."""</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXProfilePause</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span></div>
+<div class="viewcode-block" id="pause"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.pause">[docs]</a><span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="n">profile_process</span><span class="o">=</span><span class="s1">'worker'</span><span class="p">):</span>
+    <span class="sd">"""Pause profiling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    profile_process : string</span>
+<span class="sd">        whether to profile kvstore `server` or `worker`.</span>
+<span class="sd">        server can only be profiled when kvstore is of type dist.</span>
+<span class="sd">        if this is not passed, defaults to `worker`</span>
+<span class="sd">    """</span>
+    <span class="n">profile_process2int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'worker'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'server'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXProcessProfilePause</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                                          <span class="n">profile_process2int</span><span class="p">[</span><span class="n">profile_process</span><span class="p">],</span>
+                                          <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="resume"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.resume">[docs]</a><span class="k">def</span> <span class="nf">resume</span><span class="p">():</span>
-    <span class="sd">"""Resume paused profiling."""</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXProfilePause</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span></div>
+<div class="viewcode-block" id="resume"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.resume">[docs]</a><span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="n">profile_process</span><span class="o">=</span><span class="s1">'worker'</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Resume paused profiling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    profile_process : string</span>
+<span class="sd">        whether to profile kvstore `server` or `worker`.</span>
+<span class="sd">        server can only be profiled when kvstore is of type dist.</span>
+<span class="sd">        if this is not passed, defaults to `worker`</span>
+<span class="sd">    """</span>
+    <span class="n">profile_process2int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'worker'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'server'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXProcessProfilePause</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                          <span class="n">profile_process2int</span><span class="p">[</span><span class="n">profile_process</span><span class="p">],</span>
+                                          <span class="n">profiler_kvstore_handle</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Domain"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.Domain">[docs]</a><span class="k">class</span> <span class="nc">Domain</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>

@@ -35,6 +35,7 @@ var searchData=
   ['setdataname',['SetDataName',['../classmxnet_1_1IIterator.html#a79ed9023cf4e525c8b4a8c6fa96eea05',1,'mxnet::IIterator']]],
   ['setgradientcompression',['SetGradientCompression',['../classmxnet_1_1KVStore.html#ac646c6d489a1c47b84556e90b2176f49',1,'mxnet::KVStore']]],
   ['setmonitorcallback',['SetMonitorCallback',['../classmxnet_1_1Executor.html#a3c701dda22a9c1e474d23b11edda9b0d',1,'mxnet::Executor']]],
+  ['setserverprofilercommand',['SetServerProfilerCommand',['../classmxnet_1_1KVStore.html#a9e11acc2968464f907633a1c72e4d545',1,'mxnet::KVStore']]],
   ['setupdefaultblobsin',['SetupDefaultBlobsIn',['../namespacemxnet_1_1common.html#a2262a78f3d80b9adeb3b517246fe4335',1,'mxnet::common']]],
   ['setupdefaultblobsinout',['SetupDefaultBlobsInOut',['../namespacemxnet_1_1common.html#a2dc5d03c700c90be66f47c4f46d2ef6a',1,'mxnet::common']]],
   ['setupdefaultblobsout',['SetupDefaultBlobsOut',['../namespacemxnet_1_1common.html#a28bf4d1e9b7392f106950b00de5a2c62',1,'mxnet::common']]],
