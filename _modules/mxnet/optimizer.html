@@ -663,7 +663,7 @@
 <span class="sd">    **lazy updates** are applied by::</span>
 
 <span class="sd">        for row in grad.indices:</span>
-<span class="sd">            rescaled_grad[row] = lr * rescale_grad * clip(grad[row], clip_gradient) + wd * weight[row]</span>
+<span class="sd">            rescaled_grad[row] = lr * (rescale_grad * clip(grad[row], clip_gradient) + wd * weight[row])</span>
 <span class="sd">            state[row] = momentum[row] * state[row] + rescaled_grad[row]</span>
 <span class="sd">            weight[row] = weight[row] - state[row]</span>
 
@@ -676,7 +676,7 @@
 
 <span class="sd">    Otherwise, **standard updates** are applied by::</span>
 
-<span class="sd">        rescaled_grad = lr * rescale_grad * clip(grad, clip_gradient) + wd * weight</span>
+<span class="sd">        rescaled_grad = lr * (rescale_grad * clip(grad, clip_gradient) + wd * weight)</span>
 <span class="sd">        state = momentum * state + rescaled_grad</span>
 <span class="sd">        weight = weight - state</span>
 
@@ -829,6 +829,14 @@
 <span class="sd">    This class implements the optimizer described in</span>
 <span class="sd">    *FTML - Follow the Moving Leader in Deep Learning*,</span>
 <span class="sd">    available at http://proceedings.mlr.press/v70/zheng17a/zheng17a.pdf.</span>
+
+<span class="sd">    Denote time step by t. The optimizer updates the weight by::</span>
+
+<span class="sd">        rescaled_grad = clip(grad * rescale_grad + wd * weight, clip_gradient)</span>
+<span class="sd">        v = beta2 * v + (1 - beta2) * square(rescaled_grad)</span>
+<span class="sd">        d_t = (1 - power(beta1, t)) / lr * square_root(v / (1 - power(beta2, t))) + epsilon)</span>
+<span class="sd">        z = beta1 * z + (1 - beta1) * rescaled_grad - (d_t - beta1 * d_(t-1)) * weight</span>
+<span class="sd">        weight = - z / d_t</span>
 
 <span class="sd">    This optimizer accepts the following parameters in addition to those accepted</span>
 <span class="sd">    by :class:`.Optimizer`.</span>
@@ -1294,6 +1302,13 @@
 <span class="sd">    Methods for Online Learning and Stochastic Optimization*, and available at</span>
 <span class="sd">    http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf.</span>
 
+<span class="sd">    This optimizer updates each weight by::</span>
+
+<span class="sd">        grad = clip(grad * rescale_grad, clip_gradient)</span>
+<span class="sd">        history += square(grad)</span>
+<span class="sd">        div = grad / sqrt(history + float_stable_eps)</span>
+<span class="sd">        weight += (div + weight * wd) * -lr</span>
+
 <span class="sd">    This optimizer accepts the following parameters in addition to those accepted</span>
 <span class="sd">    by :class:`.Optimizer`.</span>
 
@@ -1421,6 +1436,14 @@
 <span class="sd">    This class implements AdaDelta, an optimizer described in  *ADADELTA: An adaptive</span>
 <span class="sd">    learning rate method*, available at https://arxiv.org/abs/1212.5701.</span>
 
+<span class="sd">    This optimizer updates each weight by::</span>
+
+<span class="sd">        grad = clip(grad * rescale_grad + wd * weight, clip_gradient)</span>
+<span class="sd">        acc_grad = rho * acc_grad + (1. - rho) * grad * grad</span>
+<span class="sd">        delta = sqrt(acc_delta + epsilon) / sqrt(acc_grad + epsilon) * grad</span>
+<span class="sd">        acc_delta = rho * acc_delta + (1. - rho) * delta * delta</span>
+<span class="sd">        weight -= (delta + wd * weight)</span>
+
 <span class="sd">    This optimizer accepts the following parameters in addition to those accepted</span>
 <span class="sd">    by :class:`.Optimizer`.</span>
 
@@ -1546,6 +1569,13 @@
 
 <span class="sd">    It is a variant of Adam based on the infinity norm</span>
 <span class="sd">    available at http://arxiv.org/abs/1412.6980 Section 7.</span>
+
+<span class="sd">    The optimizer updates the weight by::</span>
+
+<span class="sd">        grad = clip(grad * rescale_grad + wd * weight, clip_gradient)</span>
+<span class="sd">        m = beta1 * m_t + (1 - beta1) * grad</span>
+<span class="sd">        u = maximum(beta2 * u, abs(grad))</span>
+<span class="sd">        weight -= lr / (1 - beta1**t) * m / u</span>
 
 <span class="sd">    This optimizer accepts the following parameters in addition to those accepted</span>
 <span class="sd">    by :class:`.Optimizer`.</span>
