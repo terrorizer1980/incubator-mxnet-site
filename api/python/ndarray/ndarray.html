@@ -3880,10 +3880,16 @@ which behaves similar to mxnet.ndarray.reshape((-1,)).</p>
 </ul>
 <p>The learnable parameters include both <code class="docutils literal"><span class="pre">weight</span></code> and <code class="docutils literal"><span class="pre">bias</span></code>.</p>
 <p>If <code class="docutils literal"><span class="pre">no_bias</span></code> is set to be true, then the <code class="docutils literal"><span class="pre">bias</span></code> term is ignored.</p>
-<p>Note that the operator also supports forward computation with <cite>row_sparse</cite> weight and bias,
-where the length of <cite>weight.indices</cite> and <cite>bias.indices</cite> must be equal to <cite>num_hidden</cite>.
-This could be used for model inference with <cite>row_sparse</cite> weights trained with <cite>SparseEmbedding</cite>.</p>
-<p>Defined in src/operator/nn/fully_connected.cc:L257</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The sparse support for FullyConnected is limited to forward evaluation with <cite>row_sparse</cite>
+weight and bias, where the length of <cite>weight.indices</cite> and <cite>bias.indices</cite> must be equal
+to <cite>num_hidden</cite>. This could be useful for model inference with <cite>row_sparse</cite> weights
+trained with importance sampling or noise contrastive estimation.</p>
+<p class="last">To compute linear transformation with ‘csr’ sparse data, sparse.dot is recommended instead
+of sparse.FullyConnected.</p>
+</div>
+<p>Defined in src/operator/nn/fully_connected.cc:L263</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>

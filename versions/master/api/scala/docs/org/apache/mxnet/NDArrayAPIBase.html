@@ -1574,13 +1574,19 @@ The learnable parameters include both ``weight`` and ``bias``.
 
 If ``no_bias`` is set to be true, then the ``bias`` term is ignored.
 
-Note that the operator also supports forward computation with `row_sparse` weight and bias,
-where the length of `weight.indices` and `bias.indices` must be equal to `num_hidden`.
-This could be used for model inference with `row_sparse` weights trained with `SparseEmbedding`.
+.. Note::
+
+    The sparse support for FullyConnected is limited to forward evaluation with `row_sparse`
+    weight and bias, where the length of `weight.indices` and `bias.indices` must be equal
+    to `num_hidden`. This could be useful for model inference with `row_sparse` weights
+    trained with importance sampling or noise contrastive estimation.
+
+    To compute linear transformation with 'csr' sparse data, sparse.dot is recommended instead
+    of sparse.FullyConnected.
 
 
 
-Defined in src/operator/nn/fully_connected.cc:L257
+Defined in src/operator/nn/fully_connected.cc:L263
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Applies a linear transformation: :math:`Y = XW^T + b`.
@@ -1603,13 +1609,19 @@ The learnable parameters include both ``weight`` and ``bias``.
 
 If ``no_bias`` is set to be true, then the ``bias`` term is ignored.
 
-Note that the operator also supports forward computation with `row_sparse` weight and bias,
-where the length of `weight.indices` and `bias.indices` must be equal to `num_hidden`.
-This could be used for model inference with `row_sparse` weights trained with `SparseEmbedding`.
+.. Note::
+
+    The sparse support for FullyConnected is limited to forward evaluation with `row_sparse`
+    weight and bias, where the length of `weight.indices` and `bias.indices` must be equal
+    to `num_hidden`. This could be useful for model inference with `row_sparse` weights
+    trained with importance sampling or noise contrastive estimation.
+
+    To compute linear transformation with 'csr' sparse data, sparse.dot is recommended instead
+    of sparse.FullyConnected.
 
 
 
-Defined in src/operator/nn/fully_connected.cc:L257
+Defined in src/operator/nn/fully_connected.cc:L263
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input data.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>Weight matrix.</p></dd><dt class="param">bias</dt><dd class="cmt"><p>Bias parameter.</p></dd><dt class="param">num_hidden</dt><dd class="cmt"><p>Number of hidden nodes of the output.</p></dd><dt class="param">no_bias</dt><dd class="cmt"><p>Whether to disable bias parameter.</p></dd><dt class="param">flatten</dt><dd class="cmt"><p>Whether to collapse all but the first axis of the input data tensor.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
