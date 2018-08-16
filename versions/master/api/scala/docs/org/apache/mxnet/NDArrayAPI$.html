@@ -2063,6 +2063,8 @@ when the input is negative and has a slope of one when input is positive.
 The following modified ReLU Activation functions are supported:
 
 - *elu*: Exponential Linear Unit. `y = x &gt; 0 ? x : slope * (exp(x)-1)`
+- *selu*: Scaled Exponential Linear Unit. `y = lambda * (x &gt; 0 ? x : alpha * (exp(x) - 1))` where
+  *lambda = 1.0507009873554804934193349852946* and *alpha = 1.6732632423543772848170429916717*.
 - *leaky*: Leaky ReLU. `y = x &gt; 0 ? x : slope * x`
 - *prelu*: Parametric ReLU. This is same as *leaky* except that `slope` is learnt during training.
 - *rrelu*: Randomized ReLU. same as *leaky* but the `slope` is uniformly and randomly chosen from
@@ -2071,7 +2073,7 @@ The following modified ReLU Activation functions are supported:
 
 
 
-Defined in src/operator/leaky_relu.cc:L63
+Defined in src/operator/leaky_relu.cc:L65
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Applies Leaky rectified linear unit activation element-wise to the input.
@@ -2082,6 +2084,8 @@ when the input is negative and has a slope of one when input is positive.
 The following modified ReLU Activation functions are supported:
 
 - *elu*: Exponential Linear Unit. `y = x &gt; 0 ? x : slope * (exp(x)-1)`
+- *selu*: Scaled Exponential Linear Unit. `y = lambda * (x &gt; 0 ? x : alpha * (exp(x) - 1))` where
+  *lambda = 1.0507009873554804934193349852946* and *alpha = 1.6732632423543772848170429916717*.
 - *leaky*: Leaky ReLU. `y = x &gt; 0 ? x : slope * x`
 - *prelu*: Parametric ReLU. This is same as *leaky* except that `slope` is learnt during training.
 - *rrelu*: Randomized ReLU. same as *leaky* but the `slope` is uniformly and randomly chosen from
@@ -2090,7 +2094,7 @@ The following modified ReLU Activation functions are supported:
 
 
 
-Defined in src/operator/leaky_relu.cc:L63
+Defined in src/operator/leaky_relu.cc:L65
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input data to activation function.</p></dd><dt class="param">gamma</dt><dd class="cmt"><p>Slope parameter for PReLU. Only required when act_type is 'prelu'. It should be either a vector of size 1, or the same size as the second dimension of data.</p></dd><dt class="param">act_type</dt><dd class="cmt"><p>Activation function to be applied.</p></dd><dt class="param">slope</dt><dd class="cmt"><p>Init slope for the activation. (For leaky and elu only)</p></dd><dt class="param">lower_bound</dt><dd class="cmt"><p>Lower bound of random slope. (For rrelu only)</p></dd><dt class="param">upper_bound</dt><dd class="cmt"><p>Upper bound of random slope. (For rrelu only)</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -2632,12 +2636,11 @@ We can see that Lp pooling stands between those two, in practice the most common
 
 For each window ``X``, the mathematical expression for Lp pooling is:
 
-..math::
-  f(X) = \sqrt{p}{\sum\limits_{x \in X} x^p}
+:math:`f(X) = \sqrt[p]{\sum_{x}^{X} x^p}`
 
 
 
-Defined in src/operator/nn/pooling.cc:L383
+Defined in src/operator/nn/pooling.cc:L382
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Performs pooling on the input.
@@ -2687,12 +2690,11 @@ We can see that Lp pooling stands between those two, in practice the most common
 
 For each window ``X``, the mathematical expression for Lp pooling is:
 
-..math::
-  f(X) = \sqrt{p}{\sum\limits_{x \in X} x^p}
+:math:`f(X) = \sqrt[p]{\sum_{x}^{X} x^p}`
 
 
 
-Defined in src/operator/nn/pooling.cc:L383
+Defined in src/operator/nn/pooling.cc:L382
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input data to the pooling operator.</p></dd><dt class="param">kernel</dt><dd class="cmt"><p>Pooling kernel size: (y, x) or (d, y, x)</p></dd><dt class="param">pool_type</dt><dd class="cmt"><p>Pooling type to be applied.</p></dd><dt class="param">global_pool</dt><dd class="cmt"><p>Ignore kernel size, do global pooling based on current input feature map.</p></dd><dt class="param">cudnn_off</dt><dd class="cmt"><p>Turn off cudnn pooling and use MXNet pooling operator.</p></dd><dt class="param">pooling_convention</dt><dd class="cmt"><p>Pooling convention to be applied.</p></dd><dt class="param">stride</dt><dd class="cmt"><p>Stride: for pooling (y, x) or (d, y, x). Defaults to 1 for each dimension.</p></dd><dt class="param">pad</dt><dd class="cmt"><p>Pad for pooling: (y, x) or (d, y, x). Defaults to no padding.</p></dd><dt class="param">p_value</dt><dd class="cmt"><p>Value of p for Lp pooling, can be 1 or 2, required for Lp Pooling.</p></dd><dt class="param">count_include_pad</dt><dd class="cmt"><p>Only used for AvgPool, specify whether to count padding elements for averagecalculation. For example, with a 5*5 kernel on a 3*3 corner of a image,the sum of the 9 valid elements will be divided by 25 if this is set to true,or it will be divided by 9 if this is set to false. Defaults to true.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -8470,6 +8472,10 @@ Examples::
   data = [[0, 1], [2, 3]]
   indices = [[1, 1, 0], [0, 1, 0]]
   gather_nd(data, indices) = [2, 3, 0]
+
+  data = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+  indices = [[0, 1], [1, 0]]
+  gather_nd(data, indices) = [[3, 4], [5, 6]]
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Gather elements or slices from `data` and store to a tensor whose
@@ -8491,6 +8497,10 @@ Examples::
   data = [[0, 1], [2, 3]]
   indices = [[1, 1, 0], [0, 1, 0]]
   gather_nd(data, indices) = [2, 3, 0]
+
+  data = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+  indices = [[0, 1], [1, 0]]
+  gather_nd(data, indices) = [[3, 4], [5, 6]]
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>data</p></dd><dt class="param">indices</dt><dd class="cmt"><p>indices</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -12779,6 +12789,21 @@ Examples::
   indices = [[1, 1, 0], [0, 1, 0]]
   shape = (2, 2)
   scatter_nd(data, indices, shape) = [[0, 0], [2, 3]]
+
+  data = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+  indices = [[0, 1], [1, 1]]
+  shape = (2, 2, 2, 2)
+  scatter_nd(data, indices, shape) = [[[[0, 0],
+                                        [0, 0]],
+
+                                       [[1, 2],
+                                        [3, 4]]],
+
+                                      [[[0, 0],
+                                        [0, 0]],
+
+                                       [[5, 6],
+                                        [7, 8]]]]
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Scatters data into a new tensor according to indices.
@@ -12808,6 +12833,21 @@ Examples::
   indices = [[1, 1, 0], [0, 1, 0]]
   shape = (2, 2)
   scatter_nd(data, indices, shape) = [[0, 0], [2, 3]]
+
+  data = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+  indices = [[0, 1], [1, 1]]
+  shape = (2, 2, 2, 2)
+  scatter_nd(data, indices, shape) = [[[[0, 0],
+                                        [0, 0]],
+
+                                       [[1, 2],
+                                        [3, 4]]],
+
+                                      [[[0, 0],
+                                        [0, 0]],
+
+                                       [[5, 6],
+                                        [7, 8]]]]
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>data</p></dd><dt class="param">indices</dt><dd class="cmt"><p>indices</p></dd><dt class="param">shape</dt><dd class="cmt"><p>Shape of output.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>

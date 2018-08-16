@@ -106,7 +106,7 @@
 <li><a class="main-nav-link" href="../../../community/powered_by.html">Powered By</a></li>
 </ul>
 </span>
-<span id="dropdown-menu-position-anchor-version" style="position: relative"><a href="#" class="main-nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Versions(master)<span class="caret"></span></a><ul id="package-dropdown-menu" class="dropdown-menu"><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/>master</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></span></nav>
+<span id="dropdown-menu-position-anchor-version" style="position: relative"><a href="#" class="main-nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Versions(master)<span class="caret"></span></a><ul id="package-dropdown-menu" class="dropdown-menu"><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/>master</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li></ul></span></nav>
 <script> function getRootPath(){ return "../../../" } </script>
 <div class="burgerIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">☰</a>
@@ -153,7 +153,7 @@
 </ul>
 </li>
 <li><a class="main-nav-link" href="https://github.com/dmlc/mxnet">Github</a></li>
-<li id="dropdown-menu-position-anchor-version-mobile" class="dropdown-submenu" style="position: relative"><a href="#" tabindex="-1">Versions(master)</a><ul class="dropdown-menu"><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/>master</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></li></ul>
+<li id="dropdown-menu-position-anchor-version-mobile" class="dropdown-submenu" style="position: relative"><a href="#" tabindex="-1">Versions(master)</a><ul class="dropdown-menu"><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/>master</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li></ul></li></ul>
 </div>
 <div class="plusIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span></a>
@@ -425,26 +425,27 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_check_container_with_block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_find_block_in_container</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">def</span> <span class="nf">_find_unregistered_block_in_container</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
             <span class="c1"># Find whether a nested container structure contains Blocks</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">_find_block_in_container</span><span class="p">(</span><span class="n">ele</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">_find_unregistered_block_in_container</span><span class="p">(</span><span class="n">ele</span><span class="p">):</span>
                         <span class="k">return</span> <span class="kc">True</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">_find_block_in_container</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">_find_unregistered_block_in_container</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                         <span class="k">return</span> <span class="kc">True</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
-                <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="ow">not</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">children</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'__'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'_children'</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">_find_block_in_container</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'"</span><span class="si">{name}</span><span class="s1">" is a container with Blocks. '</span>
+                <span class="k">if</span> <span class="n">_find_unregistered_block_in_container</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'"</span><span class="si">{name}</span><span class="s1">" is an unregistered container with Blocks. '</span>
                                   <span class="s1">'Note that Blocks inside the list, tuple or dict will not be '</span>
                                   <span class="s1">'registered automatically. Make sure to register them using '</span>
                                   <span class="s1">'register_child() or switching to '</span>
