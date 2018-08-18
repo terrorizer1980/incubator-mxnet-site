@@ -1276,6 +1276,12 @@
 <span class="sd">        Label name for provided symbols.</span>
 <span class="sd">    dtype : str</span>
 <span class="sd">        Label data type. Default: float32. Other options: int32, int64, float64</span>
+<span class="sd">    last_batch_handle : str, optional</span>
+<span class="sd">        How to handle the last batch.</span>
+<span class="sd">        This parameter can be 'pad'(default), 'discard' or 'roll_over'.</span>
+<span class="sd">        If 'pad', the last batch will be padded with data starting from the begining</span>
+<span class="sd">        If 'discard', the last batch will be discarded</span>
+<span class="sd">        If 'roll_over', the remaining elements will be rolled over to the next iteration</span>
 <span class="sd">    kwargs : ...</span>
 <span class="sd">        More arguments for creating augmenter. See mx.image.CreateAugmenter.</span>
 <span class="sd">    """</span>
@@ -1283,7 +1289,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">label_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">path_imgrec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_imglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_imgidx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">part_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_parts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aug_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">imglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_name</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="s1">'softmax_label'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'float32'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">data_name</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="s1">'softmax_label'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'float32'</span><span class="p">,</span>
+                 <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'pad'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImageIter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">path_imgrec</span> <span class="ow">or</span> <span class="n">path_imglist</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">imglist</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'int32'</span><span class="p">,</span> <span class="s1">'float32'</span><span class="p">,</span> <span class="s1">'int64'</span><span class="p">,</span> <span class="s1">'float64'</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">+</span> <span class="s1">' label not supported'</span>
@@ -1346,7 +1353,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span> <span class="o">=</span> <span class="n">data_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_width</span> <span class="o">=</span> <span class="n">label_width</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">imgkeys</span>
@@ -1366,22 +1372,49 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">auglist</span> <span class="o">=</span> <span class="n">aug_list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">=</span> <span class="n">last_batch_handle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_image</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ImageIter.reset"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Resets the iterator to the beginning of the data."""</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">!=</span> <span class="s1">'roll_over'</span> <span class="ow">or</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ImageIter.hard_reset"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.hard_reset">[docs]</a>    <span class="k">def</span> <span class="nf">hard_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the iterator and ignore roll over data"""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
             <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="ImageIter.next_sample"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.next_sample">[docs]</a>    <span class="k">def</span> <span class="nf">next_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Helper function for reading in next sample."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">>=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_image</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">!=</span> <span class="s1">'discard'</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">raise</span> <span class="ne">StopIteration</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span><span class="o">.</span><span class="n">read_idx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
@@ -1396,17 +1429,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">!=</span> <span class="s1">'discard'</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
                 <span class="k">raise</span> <span class="ne">StopIteration</span>
             <span class="n">header</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">recordio</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">header</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">img</span></div>
 
-<div class="viewcode-block" id="ImageIter.next"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Returns the next batch of data."""</span>
+    <span class="k">def</span> <span class="nf">_batchify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">"""Helper function for batchifying data"""</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">start</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
-        <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span>
-        <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
-        <span class="n">batch_label</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="n">i</span> <span class="o"><</span> <span class="n">batch_size</span><span class="p">:</span>
                 <span class="n">label</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_sample</span><span class="p">()</span>
@@ -1424,8 +1456,47 @@
         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">return</span> <span class="n">i</span>
 
-        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">([</span><span class="n">batch_data</span><span class="p">],</span> <span class="p">[</span><span class="n">batch_label</span><span class="p">],</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ImageIter.next"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns the next batch of data."""</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span>
+        <span class="c1"># if last batch data is rolled over</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># check both the data and label have values</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"_cache_label didn't have values"</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"_cache_idx didn't have values"</span>
+            <span class="n">batch_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span>
+            <span class="n">batch_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span>
+            <span class="c1"># clear the cache data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">batch_label</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify</span><span class="p">(</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">)</span>
+        <span class="c1"># calculate the padding</span>
+        <span class="n">pad</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="c1"># handle padding for the last batch</span>
+        <span class="k">if</span> <span class="n">pad</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'discard'</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">StopIteration</span>
+            <span class="c1"># if the option is 'roll_over', throw StopIteration and cache the data</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'roll_over'</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="n">batch_data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="n">batch_label</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">raise</span> <span class="ne">StopIteration</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify</span><span class="p">(</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'pad'</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">([</span><span class="n">batch_data</span><span class="p">],</span> <span class="p">[</span><span class="n">batch_label</span><span class="p">],</span> <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageIter.check_data_shape"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.check_data_shape">[docs]</a>    <span class="k">def</span> <span class="nf">check_data_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">):</span>
         <span class="sd">"""Checks if the input data shape is valid"""</span>
@@ -1445,9 +1516,9 @@
         <span class="k">def</span> <span class="nf">locate</span><span class="p">():</span>
             <span class="sd">"""Locate the image file/index if decode fails."""</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_image</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cur</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_image</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imglist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imglist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">"filename: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
@@ -1462,7 +1533,6 @@
 
 <div class="viewcode-block" id="ImageIter.read_image"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.read_image">[docs]</a>    <span class="k">def</span> <span class="nf">read_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
         <span class="sd">"""Reads an input image `fname` and returns the decoded raw bytes.</span>
-
 <span class="sd">        Example usage:</span>
 <span class="sd">        ----------</span>
 <span class="sd">        >>> dataIter.read_image('Face.jpg') # returns decoded raw bytes.</span>
