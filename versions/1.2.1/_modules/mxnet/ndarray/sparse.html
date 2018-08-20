@@ -744,7 +744,7 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CSRNDArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
             <span class="n">stype</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">stype</span>
-            <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'default'</span> <span class="ow">or</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'csr'</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'default'</span><span class="p">,</span> <span class="s1">'csr'</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CSRNDArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'copyto does not support destination NDArray stype '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
@@ -991,7 +991,7 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RowSparseNDArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
             <span class="n">stype</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">stype</span>
-            <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'default'</span> <span class="ow">or</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'row_sparse'</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'default'</span><span class="p">,</span> <span class="s1">'row_sparse'</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RowSparseNDArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'copyto does not support destination NDArray stype '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
@@ -1748,7 +1748,7 @@
     <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_context</span><span class="p">()</span>
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">mx_real_t</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dtype</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'row_sparse'</span> <span class="ow">or</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'csr'</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'row_sparse'</span><span class="p">,</span> <span class="s1">'csr'</span><span class="p">):</span>
         <span class="n">aux_types</span> <span class="o">=</span> <span class="n">_STORAGE_AUX_TYPES</span><span class="p">[</span><span class="n">stype</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"unknown storage type"</span> <span class="o">+</span> <span class="n">stype</span><span class="p">)</span>
@@ -1783,7 +1783,7 @@
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">mx_real_t</span>
     <span class="k">assert</span><span class="p">(</span><span class="n">stype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'csr'</span> <span class="ow">or</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">'row_sparse'</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'csr'</span><span class="p">,</span> <span class="s1">'row_sparse'</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">zeros</span><span class="p">(</span><span class="n">stype</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"unknown stype : "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span></div>
