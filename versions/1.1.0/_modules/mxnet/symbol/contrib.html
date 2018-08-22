@@ -341,6 +341,14 @@
         <span class="n">syms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">syms</span>
 
+<span class="k">def</span> <span class="nf">_get_unique_subgraph_name</span><span class="p">(</span><span class="n">subgraph_name</span><span class="p">):</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">_attr</span>
+    <span class="k">if</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"__subgraph_name__"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="n">subgraph_name</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"__subgraph_name__"</span><span class="p">],</span> <span class="s2">"$"</span><span class="p">,</span> <span class="n">subgraph_name</span><span class="p">])</span>
+    <span class="n">AttrScope</span><span class="o">.</span><span class="n">_subgraph_names</span><span class="p">[</span><span class="n">subgraph_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">subgraph_name</span> <span class="o">=</span> <span class="n">subgraph_name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">AttrScope</span><span class="o">.</span><span class="n">_subgraph_names</span><span class="p">[</span><span class="n">subgraph_name</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subgraph_name</span>
+
 <span class="c1"># This construct a subgraph for given output nodes.</span>
 <span class="c1"># If an output node is one of the input nodes, we call identity to make sure</span>
 <span class="c1"># that outputs nodes are different from input nodes.</span>
@@ -449,6 +457,7 @@
     <span class="c1"># the python function, we need to prune the computation graph constructed from</span>
     <span class="c1"># the function. One way of doing it is to mark the nodes in the computation graph</span>
     <span class="c1"># with AttrScope and prune the nodes without the special attribute.</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">_get_unique_subgraph_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">name</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">in_eles</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
@@ -673,6 +682,7 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_output</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_subgraph</span><span class="p">(</span><span class="n">graph_vars</span><span class="p">,</span> <span class="n">graph_func</span><span class="p">,</span> <span class="n">subgraph_name</span><span class="p">):</span>
+        <span class="n">subgraph_name</span> <span class="o">=</span> <span class="n">_get_unique_subgraph_name</span><span class="p">(</span><span class="n">subgraph_name</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">subgraph_name</span><span class="p">):</span>
             <span class="c1"># create new variables with the same name,</span>
             <span class="c1"># them feed them to the given func</span>
@@ -836,6 +846,7 @@
         <span class="k">return</span> <span class="n">inputs</span>
 
     <span class="k">def</span> <span class="nf">_create_subgraph</span><span class="p">(</span><span class="n">graph_vars</span><span class="p">,</span> <span class="n">graph_func</span><span class="p">,</span> <span class="n">subgraph_name</span><span class="p">):</span>
+        <span class="n">subgraph_name</span> <span class="o">=</span> <span class="n">_get_unique_subgraph_name</span><span class="p">(</span><span class="n">subgraph_name</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">AttrScope</span><span class="p">(</span><span class="n">__subgraph_name__</span><span class="o">=</span><span class="n">subgraph_name</span><span class="p">):</span>
             <span class="c1"># create new variables with the same name,</span>
             <span class="c1"># them feed them to the given func</span>
