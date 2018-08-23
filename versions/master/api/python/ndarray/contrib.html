@@ -427,14 +427,14 @@ outs.append(out)</div></blockquote>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>body</strong> (<em>a Python function.</em>) – Define computation in an iteration.</li>
 <li><strong>data</strong> (<em>an NDArray</em><em> or </em><em>a list of NDArrays.</em>) – The input data.</li>
-<li><strong>init_states</strong> (<em>an NDArray</em><em> or </em><em>a list of NDArrays.</em>) – The initial values of the loop states.</li>
+<li><strong>init_states</strong> (<em>an NDArray</em><em> or </em><em>nested lists of NDArrays.</em>) – The initial values of the loop states.</li>
 <li><strong>name</strong> (<em>string.</em>) – The name of the operator.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>outputs</strong> (<em>an NDArray or a list of NDArrays.</em>) – The output data concatenated from the output of all iterations.</li>
-<li><strong>states</strong> (<em>a list of NDArrays.</em>) – The loop states in the last iteration.</li>
+<li><strong>outputs</strong> (<em>an NDArray or nested lists of NDArrays.</em>) – The output data concatenated from the output of all iterations.</li>
+<li><strong>states</strong> (<em>an NDArray or nested lists of NDArrays.</em>) – The loop states in the last iteration.</li>
 </ul>
 </p>
 </td>
@@ -469,7 +469,8 @@ Through all steps, the i-th element of <cite>step_output</cite> should have the 
 Also, <cite>new_loop_vars</cite> should contain the same number of elements as <cite>loop_vars</cite>,
 and the corresponding element should have the same shape and dtype.
 The <cite>func</cite> is variadic, and its signature should be
-<cite>func(*loop_vars) => (List[NDArray] step_output, List[NDArray] new_loop_vars)</cite>.</p>
+<cite>func(*loop_vars) =>
+(NDArray or nested List[NDArray] step_output, NDArray or nested List[NDArray] new_loop_vars)</cite>.</p>
 <p><cite>max_iterations</cite> is a scalar that defines the maximum number of iterations allowed.</p>
 <p>This function returns two lists.
 The first list has the length of <cite>|step_output|</cite>,
@@ -494,14 +495,14 @@ because it cannot be inferred. This is different from the symbolic version.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>cond</strong> (<em>a Python function.</em>) – The loop condition.</li>
 <li><strong>func</strong> (<em>a Python function.</em>) – The loop body.</li>
-<li><strong>loop_vars</strong> (<em>list of NDArrays.</em>) – The initial values of the loop variables.</li>
+<li><strong>loop_vars</strong> (<em>an NDArray</em><em> or </em><em>nested lists of NDArrays.</em>) – The initial values of the loop variables.</li>
 <li><strong>max_iterations</strong> (<em>a python int.</em>) – Maximum number of iterations.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>outputs</strong> (<em>list of NDArrays</em>) – stacked output from each step</li>
-<li><strong>states</strong> (<em>list of NDArrays</em>) – final state</li>
+<li><strong>outputs</strong> (<em>an NDArray or nested lists of NDArrays</em>) – stacked output from each step</li>
+<li><strong>states</strong> (<em>an NDArray or nested lists of NDArrays</em>) – final state</li>
 </ul>
 </p>
 </td>
@@ -546,11 +547,11 @@ indicating which branch of computation should be used.</p>
 <p><cite>then_func</cite> is a user-defined function, used as computation of the then branch.
 It produces <cite>outputs</cite>, which is a list of NDArrays.
 The signature of <cite>then_func</cite> should be
-<cite>then_func() => List[NDArray]</cite>.</p>
+<cite>then_func() => NDArray or nested List[NDArray]</cite>.</p>
 <p><cite>else_func</cite> is a user-defined function, used as computation of the else branch.
 It produces <cite>outputs</cite>, which is a list of NDArrays.
 The signature of <cite>else_func</cite> should be
-<cite>else_func() => List[NDArray]</cite>.</p>
+<cite>else_func() => NDArray or nested List[NDArray]</cite>.</p>
 <p>The <cite>outputs</cite> produces by <cite>then_func</cite> and <cite>else_func</cite> should have the same number
 of elements, all of which should be in the same shape, of the same dtype and stype.</p>
 <p>This function returns a list of symbols, representing the computation result.</p>
@@ -568,7 +569,7 @@ of elements, all of which should be in the same shape, of the same dtype and sty
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>outputs</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a list of NDArrays, representing the result of computation.</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">an NDArray or nested lists of NDArrays, representing the result of computation.</p>
 </td>
 </tr>
 </tbody>

@@ -272,10 +272,10 @@
 <p>After defining the model, we need to define a few more things: our loss, our trainer and our metric.</p>
 <p>Loss function is used to calculate how the output of the network differs from the ground truth. Because classes  of the logistic regression are either 0 or 1, we are using <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/gluon/loss.html#mxnet.gluon.loss.SigmoidBinaryCrossEntropyLoss">SigmoidBinaryCrossEntropyLoss</a>. Notice that we do not specify <code class="docutils literal"><span class="pre">from_sigmoid</span></code> attribute in the code, which means that the output of the neuron doesn’t need to go through sigmoid, but at inference we’d have to pass it through sigmoid. You can learn more about cross entropy on <a class="reference external" href="https://en.wikipedia.org/wiki/Cross_entropy">wikipedia</a>.</p>
 <p>Trainer object allows to specify the method of training to be used. For our tutorial we use <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html#mxnet.optimizer.SGD">Stochastic Gradient Descent (SGD)</a>. For more information on SGD refer to <a class="reference external" href="https://gluon.mxnet.io/chapter06_optimization/gd-sgd-scratch.html">the following tutorial</a>. We also need to parametrize it with learning rate value, which defines the weight updates, and weight decay, which is used for regularization.</p>
-<p>Metric helps us to estimate how good our model is in terms of a problem we are trying to solve. Where loss function has more importance for the training process, a metric is usually the thing we are trying to improve and reach maximum value. We also can use more than one metric, to measure various aspects of our model. In our example, we are using <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/model.html#mxnet.metric.Accuracy">Accuracy</a> and <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/model.html#mxnet.metric.F1">F1 score</a> as measurements of success of our model.</p>
+<p>Metric helps us to estimate how good our model is in terms of a problem we are trying to solve. Where loss function has more importance for the training process, a metric is usually the thing we are trying to improve and reach maximum value. We also can use more than one metric, to measure various aspects of our model. In our example, we are using <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/metric/metric.html?highlight=metric.acc#mxnet.metric.Accuracy">Accuracy</a> and <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/metric/metric.html?highlight=metric.f1#mxnet.metric.F1">F1 score</a> as measurements of success of our model.</p>
 <p>Below we define these objects.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">SigmoidBinaryCrossEntropyLoss</span><span class="p">()</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">'sgd'</span><span class="p">,</span> 
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">'sgd'</span><span class="p">,</span>
                   <span class="n">optimizer_params</span><span class="o">=</span><span class="p">{</span><span class="s1">'learning_rate'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">})</span>
 <span class="n">accuracy</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">Accuracy</span><span class="p">()</span>
 <span class="n">f1</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">F1</span><span class="p">()</span>
@@ -284,16 +284,16 @@
 <p>The next step is to define the training function in which we iterate over all batches of training data, execute the forward pass on each batch and calculate training loss. On line 19, we sum losses of every batch per epoch into a single variable, because we calculate loss per single batch, but want to display it per epoch.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_model</span><span class="p">():</span>
     <span class="n">cumulative_train_loss</span> <span class="o">=</span> <span class="mi">0</span>
-    
+
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
             <span class="c1"># Do forward pass on a batch of training data</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        
+
             <span class="c1"># Calculate loss for the training data batch</span>
             <span class="n">loss_result</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
 
-        <span class="c1"># Calculate gradients </span>
+        <span class="c1"># Calculate gradients</span>
         <span class="n">loss_result</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
         <span class="c1"># Update parameters of the network</span>
@@ -301,14 +301,14 @@
 
         <span class="c1"># sum losses of every batch</span>
         <span class="n">cumulative_train_loss</span> <span class="o">+=</span> <span class="n">nd</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss_result</span><span class="p">)</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
-    
+
     <span class="k">return</span> <span class="n">cumulative_train_loss</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="validating-the-model">
 <span id="validating-the-model"></span><h2>Validating the model<a class="headerlink" href="#validating-the-model" title="Permalink to this headline">¶</a></h2>
-<p>Our validation function is very similar to the training one. The main difference is that we want to calculate accuracy of the model. We use <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/model.html#mxnet.metric.Accuracy">Accuracy metric</a> to do so.</p>
+<p>Our validation function is very similar to the training one. The main difference is that we want to calculate accuracy of the model. We use <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/metric/metric.html?highlight=metric.acc#mxnet.metric.Accuracy">Accuracy metric</a> to do so.</p>
 <p><code class="docutils literal"><span class="pre">Accuracy</span></code> metric requires 2 arguments: 1) a vector of ground-truth classes and 2) A vector or matrix of predictions. When predictions are of the same shape as the vector of ground-truth classes, <code class="docutils literal"><span class="pre">Accuracy</span></code> class assumes that prediction vector contains predicted classes. So, it converts the vector to <code class="docutils literal"><span class="pre">Int32</span></code> and compare each item of ground-truth classes to prediction vector.</p>
 <p>Because of the behaviour above, you will get an unexpected result if you just apply <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.sigmoid">Sigmoid</a> function to the network result and pass it to <code class="docutils literal"><span class="pre">Accuracy</span></code> metric. As mentioned before, we need to apply <code class="docutils literal"><span class="pre">Sigmoid</span></code> function to the output of the neuron to get a probability of belonging to the class 1. But <code class="docutils literal"><span class="pre">Sigmoid</span></code> function produces output in range [0; 1], and all numbers in that range are going to be casted to 0, even if it is as high as 0.99. To avoid this we write a custom bit of code on line 12, that:</p>
 <ol class="simple">
@@ -325,27 +325,27 @@
 <p>Then we pass this stacked matrix to <code class="docutils literal"><span class="pre">F1</span></code> score.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">validate_model</span><span class="p">(</span><span class="n">threshold</span><span class="p">):</span>
     <span class="n">cumulative_val_loss</span> <span class="o">=</span> <span class="mi">0</span>
-    
+
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">val_data</span><span class="p">,</span> <span class="n">val_ground_truth_class</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val_dataloader</span><span class="p">):</span>
         <span class="c1"># Do forward pass on a batch of validation data</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">val_data</span><span class="p">)</span>
-        
+
         <span class="c1"># Similar to cumulative training loss, calculate cumulative validation loss</span>
         <span class="n">cumulative_val_loss</span> <span class="o">+=</span> <span class="n">nd</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">val_ground_truth_class</span><span class="p">))</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
-        
+
         <span class="c1"># getting prediction as a sigmoid</span>
         <span class="n">prediction</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">val_data</span><span class="p">)</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">()</span>
-        
+
         <span class="c1"># Converting neuron outputs to classes</span>
         <span class="n">predicted_classes</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span>
-        
+
         <span class="c1"># Update validation accuracy</span>
-        <span class="n">accuracy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">val_ground_truth_class</span><span class="p">,</span> <span class="n">predicted_classes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> 
-        
+        <span class="n">accuracy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">val_ground_truth_class</span><span class="p">,</span> <span class="n">predicted_classes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
         <span class="c1"># calculate probabilities of belonging to different classes. F1 metric works only with this notation</span>
         <span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">probabilities</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        
+
         <span class="n">f1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">val_ground_truth_class</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cumulative_val_loss</span>
@@ -361,8 +361,8 @@
 <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
     <span class="n">avg_train_loss</span> <span class="o">=</span> <span class="n">train_model</span><span class="p">()</span> <span class="o">/</span> <span class="n">train_data_size</span>
     <span class="n">avg_val_loss</span> <span class="o">=</span> <span class="n">validate_model</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span> <span class="o">/</span> <span class="n">val_data_size</span>
-    
-    <span class="k">print</span><span class="p">(</span><span class="s2">"Epoch: </span><span class="si">%s</span><span class="s2">, Training loss: </span><span class="si">%.2f</span><span class="s2">, Validation loss: </span><span class="si">%.2f</span><span class="s2">, Validation accuracy: </span><span class="si">%.2f</span><span class="s2">, F1 score: </span><span class="si">%.2f</span><span class="s2">"</span> <span class="o">%</span> 
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Epoch: </span><span class="si">%s</span><span class="s2">, Training loss: </span><span class="si">%.2f</span><span class="s2">, Validation loss: </span><span class="si">%.2f</span><span class="s2">, Validation accuracy: </span><span class="si">%.2f</span><span class="s2">, F1 score: </span><span class="si">%.2f</span><span class="s2">"</span> <span class="o">%</span>
           <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">avg_train_loss</span><span class="p">,</span> <span class="n">avg_val_loss</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f1</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="c1"># we reset accuracy, so the new epoch's accuracy would be calculated from the blank state</span>

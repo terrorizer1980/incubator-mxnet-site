@@ -238,8 +238,7 @@ LSTMS are powerful sequence models, that have proven especially useful
 for <a class="reference external" href="https://arxiv.org/pdf/1409.0473.pdf">natural language translation</a>, <a class="reference external" href="https://arxiv.org/abs/1512.02595">speech recognition</a>,
 and working with <a class="reference external" href="https://arxiv.org/abs/1511.03677">time series data</a>.
 For a general high-level introduction to LSTMs,
-see the excellent <a class="reference external" href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">tutorial</a> by Christopher Olah. For a working example of LSTM training with model parallelism,
-see <a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/example/model-parallel/lstm/lstm.py">example/model-parallelism-lstm/</a>.</p>
+see the excellent <a class="reference external" href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">tutorial</a> by Christopher Olah.</p>
 <div class="section" id="model-parallelism-using-multiple-gpus-as-a-pipeline">
 <span id="model-parallelism-using-multiple-gpus-as-a-pipeline"></span><h2>Model Parallelism: Using Multiple GPUs As a Pipeline<a class="headerlink" href="#model-parallelism-using-multiple-gpus-as-a-pipeline" title="Permalink to this headline">¶</a></h2>
 <p>Model parallelism in deep learning was first proposed
@@ -254,7 +253,6 @@ At the same time, GPU 1 fetches the next sentence and starts training.
 This differs significantly from data parallelism.
 Here, there is no contention to update the shared model at the end of each iteration,
 and most of the communication happens when passing intermediate results between GPUs.</p>
-<p>In the current implementation, the layers are defined in <a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/example/model-parallel/lstm/lstm.py">lstm_unroll()</a>.</p>
 </div>
 <div class="section" id="workload-partitioning">
 <span id="workload-partitioning"></span><h2>Workload Partitioning<a class="headerlink" href="#workload-partitioning" title="Permalink to this headline">¶</a></h2>
@@ -273,14 +271,12 @@ We also want to balance the workload across GPUs.
 Although the LSTM layers consume less memory than the decoder/encoder layers, they consume more computation time because of the dependency of the unrolled LSTM.
 Thus, the partition on the left will be faster than the one on the right
 because the workload is more evenly distributed.</p>
-<p>Currently, the layer partition is implemented in <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/example/model-parallel/lstm/lstm.py#L171">lstm.py</a> and configured in <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/example/model-parallel/lstm/lstm_ptb.py#L97-L102">lstm_ptb.py</a> using the <code class="docutils literal"><span class="pre">group2ctx</span></code> option.</p>
 </div>
 <div class="section" id="apply-bucketing-to-model-parallelism">
 <span id="apply-bucketing-to-model-parallelism"></span><h2>Apply Bucketing to Model Parallelism<a class="headerlink" href="#apply-bucketing-to-model-parallelism" title="Permalink to this headline">¶</a></h2>
 <p>To achieve model parallelism while using bucketing,
 you need to unroll an LSTM model for each bucket
-to obtain an executor for each.
-For details about how the model is bound, see <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/example/model-parallel/lstm/lstm.py#L225-L235">lstm.py</a>.</p>
+to obtain an executor for each.</p>
 <p>On the other hand, because model parallelism partitions the model/layers,
 the input data has to be transformed/transposed to the agreed shape.
 For more details, see <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/example/rnn/old/bucket_io.py">bucket_io</a>.</p>

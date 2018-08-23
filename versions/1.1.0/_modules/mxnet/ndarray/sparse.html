@@ -263,9 +263,9 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_internal</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">op</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.gen_sparse</span> <span class="k">import</span> <span class="o">*</span> <span class="c1"># pylint: disable=redefined-builtin</span>
+    <span class="kn">from</span> <span class="nn">.gen_sparse</span> <span class="k">import</span> <span class="n">retain</span> <span class="k">as</span> <span class="n">gs_retain</span> <span class="c1"># pylint: disable=redefined-builtin</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
+    <span class="n">gs_retain</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="kn">from</span> <span class="nn">._internal</span> <span class="k">import</span> <span class="n">_set_ndarray_class</span>
 <span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">_storage_type</span><span class="p">,</span> <span class="n">_DTYPE_NP_TO_MX</span><span class="p">,</span> <span class="n">_DTYPE_MX_TO_NP</span>
 <span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_ROW_SPARSE</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_CSR</span>
@@ -1004,7 +1004,9 @@
 <span class="sd">        The arguments are the same as for :py:func:`retain`, with</span>
 <span class="sd">        this array as data.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">retain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gs_retain</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"gen_sparse could not be imported"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gs_retain</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 <span class="k">def</span> <span class="nf">_prepare_src_array</span><span class="p">(</span><span class="n">source_array</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
     <span class="sd">"""Prepare `source_array` so that it can be used to construct NDArray.</span>

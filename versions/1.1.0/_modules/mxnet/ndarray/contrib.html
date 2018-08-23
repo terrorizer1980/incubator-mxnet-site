@@ -315,6 +315,39 @@
     <span class="k">return</span> <span class="n">sampled_classes</span><span class="p">,</span> <span class="n">expected_count_true</span><span class="p">,</span> <span class="n">expected_count_sampled</span></div>
 <span class="c1"># pylint: enable=line-too-long</span>
 
+
+<span class="k">def</span> <span class="nf">_flatten</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">inout_str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">args</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)),</span> \
+        <span class="s2">"</span><span class="si">%s</span><span class="s2"> must be (nested) list of NDArray, "</span> \
+        <span class="s2">"but got </span><span class="si">%s</span><span class="s2"> of type </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="p">(</span><span class="n">inout_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fmts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">arg</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">inout_str</span><span class="p">)</span>
+        <span class="n">flat</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">fmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flat</span><span class="p">,</span> <span class="n">fmts</span>
+
+
+<span class="k">def</span> <span class="nf">_regroup</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[:</span><span class="n">fmt</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="n">fmt</span><span class="p">:]</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)),</span> \
+        <span class="s2">"output must be (nested) list of NDArray, "</span> \
+        <span class="s2">"but got </span><span class="si">%s</span><span class="s2"> of type </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fmt</span><span class="p">:</span>
+        <span class="n">res</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">args</span>
+
+
 <div class="viewcode-block" id="foreach"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.foreach">[docs]</a><span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">):</span>
     <span class="sd">"""Run a for loop with user-defined computation over NDArrays on dimension 0.</span>
 
@@ -352,16 +385,16 @@
 <span class="sd">        Define computation in an iteration.</span>
 <span class="sd">    data: an NDArray or a list of NDArrays.</span>
 <span class="sd">        The input data.</span>
-<span class="sd">    init_states: an NDArray or a list of NDArrays.</span>
+<span class="sd">    init_states: an NDArray or nested lists of NDArrays.</span>
 <span class="sd">        The initial values of the loop states.</span>
 <span class="sd">    name: string.</span>
 <span class="sd">        The name of the operator.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    outputs: an NDArray or a list of NDArrays.</span>
+<span class="sd">    outputs: an NDArray or nested lists of NDArrays.</span>
 <span class="sd">        The output data concatenated from the output of all iterations.</span>
-<span class="sd">    states: a list of NDArrays.</span>
+<span class="sd">    states: an NDArray or nested lists of NDArrays.</span>
 <span class="sd">        The loop states in the last iteration.</span>
 
 <span class="sd">    Examples</span>
@@ -383,9 +416,12 @@
             <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">is_NDArray_or_list</span><span class="p">,</span> <span class="n">msg</span>
 
-    <span class="n">check_input</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="s2">"data should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
-    <span class="n">check_input</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
-                <span class="s2">"init_states should be an NDArray or a list of NDArrays"</span><span class="p">)</span>
+    <span class="n">flatten</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"foreach input"</span><span class="p">)</span>
+    <span class="n">check_input</span><span class="p">(</span><span class="n">flatten</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+                <span class="s2">"data should be an NDArray or a nested list of NDArrays"</span><span class="p">)</span>
+    <span class="n">flatten</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="s2">"foreach states"</span><span class="p">)</span>
+    <span class="n">check_input</span><span class="p">(</span><span class="n">flatten</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+                <span class="s2">"init_states should be an NDArray or a nested list of NDArrays"</span><span class="p">)</span>
 
     <span class="n">not_data_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
     <span class="n">num_iters</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">not_data_list</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -397,16 +433,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">eles</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
         <span class="n">outs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">eles</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
-        <span class="n">outs</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
+        <span class="n">outs</span><span class="p">,</span> <span class="n">out_fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="s2">"foreach output"</span><span class="p">)</span>
         <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">)</span>
     <span class="n">tmp_outputs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
         <span class="n">tmp_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">out</span><span class="p">))</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="n">tmp_outputs</span>
+    <span class="n">outputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">out_fmt</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">not_data_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="while_loop"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.while_loop">[docs]</a><span class="k">def</span> <span class="nf">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -431,7 +466,8 @@
 <span class="sd">    Also, `new_loop_vars` should contain the same number of elements as `loop_vars`,</span>
 <span class="sd">    and the corresponding element should have the same shape and dtype.</span>
 <span class="sd">    The `func` is variadic, and its signature should be</span>
-<span class="sd">    `func(*loop_vars) => (List[NDArray] step_output, List[NDArray] new_loop_vars)`.</span>
+<span class="sd">    `func(*loop_vars) =></span>
+<span class="sd">    (NDArray or nested List[NDArray] step_output, NDArray or nested List[NDArray] new_loop_vars)`.</span>
 
 <span class="sd">    `max_iterations` is a scalar that defines the maximum number of iterations allowed.</span>
 
@@ -458,16 +494,16 @@
 <span class="sd">        The loop condition.</span>
 <span class="sd">    func: a Python function.</span>
 <span class="sd">        The loop body.</span>
-<span class="sd">    loop_vars: list of NDArrays.</span>
+<span class="sd">    loop_vars: an NDArray or nested lists of NDArrays.</span>
 <span class="sd">        The initial values of the loop variables.</span>
 <span class="sd">    max_iterations: a python int.</span>
 <span class="sd">        Maximum number of iterations.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    ------</span>
-<span class="sd">    outputs: list of NDArrays</span>
+<span class="sd">    outputs: an NDArray or nested lists of NDArrays</span>
 <span class="sd">        stacked output from each step</span>
-<span class="sd">    states: list of NDArrays</span>
+<span class="sd">    states: an NDArray or nested lists of NDArrays</span>
 <span class="sd">        final state</span>
 
 <span class="sd">    Examples</span>
@@ -508,21 +544,6 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">inputs</span>
 
-    <span class="k">def</span> <span class="nf">_to_ndarray_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">"""Converts "inputs", possibly a single mxnet NDArray, a list of mxnet NDArray,</span>
-<span class="sd">        a tuple of mxnet NDArray, into a tuple of NDArray</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
-        <span class="k">return</span> <span class="n">inputs</span>
-
     <span class="k">def</span> <span class="nf">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">):</span>
         <span class="sd">"""This wrapper unifies</span>
 <span class="sd">             "func: loop_vars -> new_loop_vars"</span>
@@ -534,8 +555,11 @@
             <span class="n">step_output</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">new_loop_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">step_output</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="s2">"step_output"</span><span class="p">)</span>
-        <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">,</span> <span class="s2">"new_loop_vars"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">step_output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
+        <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The length of loop_vars should be consistent during the loop"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span>
@@ -543,7 +567,6 @@
     <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_iterations should be specified"</span><span class="p">)</span>
     <span class="n">max_iterations</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"max_iteration"</span><span class="p">)</span>
-    <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="s2">"loop_vars"</span><span class="p">)</span>
     <span class="c1"># It should be work as fine if loop_vars are empty I guess,</span>
     <span class="c1"># but it is semantically unnecessary to include this case.</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -551,9 +574,14 @@
 
     <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># there might not be an iteration.</span>
+    <span class="n">out_fmt</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">not_loop_var_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
+    <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>
     <span class="k">while</span> <span class="n">steps</span> <span class="o"><</span> <span class="n">max_iterations</span> <span class="ow">and</span> \
             <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">cond</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">),</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">"Return value of cond"</span><span class="p">):</span> <span class="c1"># loop condition</span>
         <span class="n">step_output</span><span class="p">,</span> <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>
+        <span class="n">step_output</span><span class="p">,</span> <span class="n">out_fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="s2">"while output"</span><span class="p">)</span>
         <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">steps</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -578,7 +606,11 @@
                 <span class="p">[</span><span class="s2">"Shapes of </span><span class="si">%d</span><span class="s2">-th elements in step_outputs are inconsistent, which are:"</span> <span class="o">%</span> <span class="n">i_th</span><span class="p">]</span> <span class="o">+</span>
                 <span class="p">[</span><span class="s2">"  Step </span><span class="si">%d</span><span class="s2">, shape is </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
             <span class="p">))</span>
-    <span class="k">return</span> <span class="n">stacked_outputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">out_fmt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">out_fmt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">not_loop_var_list</span><span class="p">:</span>
+        <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">loop_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">loop_vars</span></div>
 
 <div class="viewcode-block" id="cond"><a class="viewcode-back" href="../../../api/python/ndarray/contrib.html#mxnet.ndarray.contrib.cond">[docs]</a><span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">else_func</span><span class="p">):</span>
     <span class="sd">"""Run an if-then-else using user-defined condition and computation</span>
@@ -592,12 +624,12 @@
 <span class="sd">    `then_func` is a user-defined function, used as computation of the then branch.</span>
 <span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
 <span class="sd">    The signature of `then_func` should be</span>
-<span class="sd">    `then_func() => List[NDArray]`.</span>
+<span class="sd">    `then_func() => NDArray or nested List[NDArray]`.</span>
 
 <span class="sd">    `else_func` is a user-defined function, used as computation of the else branch.</span>
 <span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
 <span class="sd">    The signature of `else_func` should be</span>
-<span class="sd">    `else_func() => List[NDArray]`.</span>
+<span class="sd">    `else_func() => NDArray or nested List[NDArray]`.</span>
 
 <span class="sd">    The `outputs` produces by `then_func` and `else_func` should have the same number</span>
 <span class="sd">    of elements, all of which should be in the same shape, of the same dtype and stype.</span>
@@ -615,7 +647,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    outputs: a list of NDArrays, representing the result of computation.</span>
+<span class="sd">    outputs: an NDArray or nested lists of NDArrays, representing the result of computation.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -640,29 +672,11 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">inputs</span>
 
-    <span class="k">def</span> <span class="nf">_to_ndarray_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">"""Converts "inputs", possibly a single mxnet NDArray, a list of mxnet NDArray,</span>
-<span class="sd">        a tuple of mxnet NDArray, into a tuple of NDArray</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> must be an NDArray, or a tuple or list of NDArrays"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">))</span>
-        <span class="k">return</span> <span class="n">inputs</span>
-
     <span class="n">branch</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">"pred"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">branch</span><span class="p">:</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">then_func</span><span class="p">()</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"outputs of then_func"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">then_func</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">else_func</span><span class="p">()</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">_to_ndarray_tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"outputs of else_func"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">else_func</span><span class="p">()</span></div>
 </pre></div>
 </div>
 </div>

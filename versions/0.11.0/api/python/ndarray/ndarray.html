@@ -5984,7 +5984,7 @@ are returned.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.argsort">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">argsort</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>is_ascend=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.argsort" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">argsort</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>is_ascend=_Null</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.argsort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the indices that would sort an input array along the given axis.</p>
 <p>This function performs sorting along the given axis and returns an array of indices having same shape
 as an input array that index data in sorted order.</p>
@@ -6004,7 +6004,7 @@ as an input array that index data in sorted order.</p>
 <span class="n">argsort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/ordering_op.cc:L176</p>
+<p>Defined in src/operator/tensor/ordering_op.cc:L177</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6013,6 +6013,7 @@ as an input array that index data in sorted order.</p>
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array</li>
 <li><strong>axis</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Axis along which to sort the input tensor. If not given, the flattened array is used. Default is -1.</li>
 <li><strong>is_ascend</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to sort in ascending or descending order.</li>
+<li><strong>dtype</strong> (<em>{'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='float32'</em>) – DType of the output indices. It is only valid when ret_typ is “indices” or “both”. An error will be raised if the selected data type cannot precisely represent the indices.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -11920,7 +11921,7 @@ is 3.</p>
                         <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/ordering_op.cc:L126</p>
+<p>Defined in src/operator/tensor/ordering_op.cc:L127</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12658,8 +12659,11 @@ shape <code class="docutils literal"><span class="pre">(2,2)</span></code> array
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.topk">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">topk</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>k=_Null</em>, <em>ret_typ=_Null</em>, <em>is_ascend=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.topk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the top <em>k</em> elements in an input array along the given axis.</p>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">topk</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>k=_Null</em>, <em>ret_typ=_Null</em>, <em>is_ascend=_Null</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.topk" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns the top <em>k</em> elements in an input array along the given axis.</dt>
+<dd>The returned elements will be sorted.</dd>
+</dl>
 <p>Examples:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">0.3</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.4</span><span class="p">],</span>
      <span class="p">[</span> <span class="mf">0.1</span><span class="p">,</span>  <span class="mf">0.3</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">]]</span>
@@ -12684,7 +12688,7 @@ shape <code class="docutils literal"><span class="pre">(2,2)</span></code> array
 <span class="n">topk</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ret_typ</span><span class="o">=</span><span class="s1">'both'</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span> <span class="mf">0.4</span><span class="p">,</span>  <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span> <span class="mf">0.3</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">]]</span> <span class="p">,</span>  <span class="p">[[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/ordering_op.cc:L63</p>
+<p>Defined in src/operator/tensor/ordering_op.cc:L64</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12696,6 +12700,7 @@ shape <code class="docutils literal"><span class="pre">(2,2)</span></code> array
 <li><strong>ret_typ</strong> (<em>{'both'</em><em>, </em><em>'indices'</em><em>, </em><em>'mask'</em><em>, </em><em>'value'}</em><em>,</em><em>optional</em><em>, </em><em>default='indices'</em>) – The return type.
 “value” means to return the top k values, “indices” means to return the indices of the top k values, “mask” means to return a mask array containing 0 and 1. 1 means the top k values. “both” means to return a list of both values and indices of top k elements.</li>
 <li><strong>is_ascend</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to choose k largest or k smallest elements. Top K largest elements will be chosen if set to false.</li>
+<li><strong>dtype</strong> (<em>{'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='float32'</em>) – DType of the output indices when ret_typ is “indices” or “both”. An error will be raised if the selected data type cannot precisely represent the indices.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
