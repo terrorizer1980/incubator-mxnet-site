@@ -1263,7 +1263,7 @@ information such as learning rate and weight decay schedules.</td>
 <span class="target" id="module-mxnet.lr_scheduler"></span><p>Scheduling learning rate.</p>
 <dl class="class">
 <dt id="mxnet.lr_scheduler.LRScheduler">
-<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">LRScheduler</code><span class="sig-paren">(</span><em>base_lr=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#LRScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.LRScheduler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">LRScheduler</code><span class="sig-paren">(</span><em>base_lr=0.01</em>, <em>warmup_steps=0</em>, <em>warmup_begin_lr=0</em>, <em>warmup_mode='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#LRScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.LRScheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class of a learning rate scheduler.</p>
 <p>A scheduler returns a new learning rate based on the number of updates that have
 been performed.</p>
@@ -1271,14 +1271,22 @@ been performed.</p>
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base_lr</strong> (<em>float</em><em>, </em><em>optional</em>) – The initial learning rate.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base_lr</strong> (<em>float</em><em>, </em><em>optional</em>) – The initial learning rate.</li>
+<li><strong>warmup_steps</strong> (<em>int</em>) – number of warmup steps used before this scheduler starts decay</li>
+<li><strong>warmup_begin_lr</strong> (<em>float</em>) – if using warmup, the learning rate from which it starts warming up</li>
+<li><strong>warmup_mode</strong> (<em>string</em>) – warmup can be done in two modes.
+‘linear’ mode gradually increases lr with each step in equal increments
+‘constant’ mode keeps lr at warmup_begin_lr for warmup_steps</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.lr_scheduler.FactorScheduler">
-<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">FactorScheduler</code><span class="sig-paren">(</span><em>step</em>, <em>factor=1</em>, <em>stop_factor_lr=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#FactorScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.FactorScheduler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">FactorScheduler</code><span class="sig-paren">(</span><em>step</em>, <em>factor=1</em>, <em>stop_factor_lr=1e-08</em>, <em>base_lr=0.01</em>, <em>warmup_steps=0</em>, <em>warmup_begin_lr=0</em>, <em>warmup_mode='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#FactorScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.FactorScheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce the learning rate by a factor for every <em>n</em> steps.</p>
 <p>It returns a new learning rate by:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">base_lr</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">floor</span><span class="p">(</span><span class="n">num_update</span><span class="o">/</span><span class="n">step</span><span class="p">))</span>
@@ -1300,7 +1308,7 @@ been performed.</p>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.lr_scheduler.MultiFactorScheduler">
-<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">MultiFactorScheduler</code><span class="sig-paren">(</span><em>step</em>, <em>factor=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#MultiFactorScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.MultiFactorScheduler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">MultiFactorScheduler</code><span class="sig-paren">(</span><em>step</em>, <em>factor=1</em>, <em>base_lr=0.01</em>, <em>warmup_steps=0</em>, <em>warmup_begin_lr=0</em>, <em>warmup_mode='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#MultiFactorScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.MultiFactorScheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce the learning rate by given a list of steps.</p>
 <p>Assume there exists <em>k</em> such that:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">step</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o"><=</span> <span class="n">num_update</span> <span class="ow">and</span> <span class="n">num_update</span> <span class="o"><</span> <span class="n">step</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
@@ -1317,6 +1325,11 @@ been performed.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>step</strong> (<em>list of int</em>) – The list of steps to schedule a change</li>
 <li><strong>factor</strong> (<em>float</em>) – The factor to change the learning rate.</li>
+<li><strong>warmup_steps</strong> (<em>int</em>) – number of warmup steps used before this scheduler starts decay</li>
+<li><strong>warmup_begin_lr</strong> (<em>float</em>) – if using warmup, the learning rate from which it starts warming up</li>
+<li><strong>warmup_mode</strong> (<em>string</em>) – warmup can be done in two modes.
+‘linear’ mode gradually increases lr with each step in equal increments
+‘constant’ mode keeps lr at warmup_begin_lr for warmup_steps</li>
 </ul>
 </td>
 </tr>
@@ -1325,10 +1338,10 @@ been performed.</p>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.lr_scheduler.PolyScheduler">
-<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">PolyScheduler</code><span class="sig-paren">(</span><em>max_update</em>, <em>base_lr=0.01</em>, <em>pwr=2</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#PolyScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.PolyScheduler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reduce the learning rate by given a list of steps.</p>
-<p>Calculate the new learning rate by:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">base_lr</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">nup</span><span class="o">/</span><span class="n">max_nup</span><span class="p">)</span><span class="o">^</span><span class="n">pwr</span>
+<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">PolyScheduler</code><span class="sig-paren">(</span><em>max_update</em>, <em>base_lr=0.01</em>, <em>pwr=2</em>, <em>final_lr=0</em>, <em>warmup_steps=0</em>, <em>warmup_begin_lr=0</em>, <em>warmup_mode='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#PolyScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.PolyScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce the learning rate according to a polynomial of given power.</p>
+<p>Calculate the new learning rate, after warmup if any, by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">final_lr</span> <span class="o">+</span> <span class="p">(</span><span class="n">start_lr</span> <span class="o">-</span> <span class="n">final_lr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">nup</span><span class="o">/</span><span class="n">max_nup</span><span class="p">)</span><span class="o">^</span><span class="n">pwr</span>
 <span class="k">if</span> <span class="n">nup</span> <span class="o"><</span> <span class="n">max_nup</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span><span class="o">.</span>
 </pre></div>
 </div>
@@ -1337,9 +1350,43 @@ been performed.</p>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>max_update</strong> (<em>maximum number of updates before the decay reaches 0.</em>) – </li>
-<li><strong>base_lr</strong> (<em>base learning rate</em>) – </li>
-<li><strong>pwr</strong> (<em>power of the decay term as a funtion of the current number of updates.</em>) – </li>
+<li><strong>max_update</strong> (<em>int</em>) – maximum number of updates before the decay reaches final learning rate.</li>
+<li><strong>base_lr</strong> (<em>float</em>) – base learning rate to start from</li>
+<li><strong>pwr</strong> (<em>int</em>) – power of the decay term as a function of the current number of updates.</li>
+<li><strong>final_lr</strong> (<em>float</em>) – final learning rate after all steps</li>
+<li><strong>warmup_steps</strong> (<em>int</em>) – number of warmup steps used before this scheduler starts decay</li>
+<li><strong>warmup_begin_lr</strong> (<em>float</em>) – if using warmup, the learning rate from which it starts warming up</li>
+<li><strong>warmup_mode</strong> (<em>string</em>) – warmup can be done in two modes.
+‘linear’ mode gradually increases lr with each step in equal increments
+‘constant’ mode keeps lr at warmup_begin_lr for warmup_steps</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.lr_scheduler.CosineScheduler">
+<em class="property">class </em><code class="descclassname">mxnet.lr_scheduler.</code><code class="descname">CosineScheduler</code><span class="sig-paren">(</span><em>max_update</em>, <em>base_lr=0.01</em>, <em>final_lr=0</em>, <em>warmup_steps=0</em>, <em>warmup_begin_lr=0</em>, <em>warmup_mode='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/lr_scheduler.html#CosineScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.lr_scheduler.CosineScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce the learning rate according to a cosine function</p>
+<p>Calculate the new learning rate by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">final_lr</span> <span class="o">+</span> <span class="p">(</span><span class="n">start_lr</span> <span class="o">-</span> <span class="n">final_lr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">nup</span><span class="o">/</span><span class="n">max_nup</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+<span class="k">if</span> <span class="n">nup</span> <span class="o"><</span> <span class="n">max_nup</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span><span class="o">.</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_update</strong> (<em>int</em>) – maximum number of updates before the decay reaches 0</li>
+<li><strong>base_lr</strong> (<em>float</em>) – base learning rate</li>
+<li><strong>final_lr</strong> (<em>float</em>) – final learning rate after all steps</li>
+<li><strong>warmup_steps</strong> (<em>int</em>) – number of warmup steps used before this scheduler starts decay</li>
+<li><strong>warmup_begin_lr</strong> (<em>float</em>) – if using warmup, the learning rate from which it starts warming up</li>
+<li><strong>warmup_mode</strong> (<em>string</em>) – warmup can be done in two modes.
+‘linear’ mode gradually increases lr with each step in equal increments
+‘constant’ mode keeps lr at warmup_begin_lr for warmup_steps</li>
 </ul>
 </td>
 </tr>

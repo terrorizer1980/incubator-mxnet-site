@@ -234,6 +234,7 @@
 
 <span class="sd">"""Scheduling learning rate."""</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
 
 <div class="viewcode-block" id="LRScheduler"><a class="viewcode-back" href="../../api/python/optimization/optimization.html#mxnet.lr_scheduler.LRScheduler">[docs]</a><span class="k">class</span> <span class="nc">LRScheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">"""Base class of a learning rate scheduler.</span>
@@ -245,9 +246,41 @@
 <span class="sd">    ----------</span>
 <span class="sd">    base_lr : float, optional</span>
 <span class="sd">        The initial learning rate.</span>
+<span class="sd">    warmup_steps: int</span>
+<span class="sd">        number of warmup steps used before this scheduler starts decay</span>
+<span class="sd">    warmup_begin_lr: float</span>
+<span class="sd">        if using warmup, the learning rate from which it starts warming up</span>
+<span class="sd">    warmup_mode: string</span>
+<span class="sd">        warmup can be done in two modes.</span>
+<span class="sd">        'linear' mode gradually increases lr with each step in equal increments</span>
+<span class="sd">        'constant' mode keeps lr at warmup_begin_lr for warmup_steps</span>
 <span class="sd">    """</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="n">base_lr</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">warmup_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">=</span> <span class="n">warmup_steps</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_final_lr</span> <span class="o">=</span> <span class="n">base_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_begin_lr</span> <span class="o">=</span> <span class="n">warmup_begin_lr</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_begin_lr</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_final_lr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Base lr has to be higher than warmup_begin_lr"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o"><</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Warmup steps has to be positive or 0"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">warmup_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'linear'</span><span class="p">,</span> <span class="s1">'constant'</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supports only linear and constant modes of warmup"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_mode</span> <span class="o">=</span> <span class="n">warmup_mode</span>
+
+    <span class="k">def</span> <span class="nf">get_warmup_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">num_update</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_mode</span> <span class="o">==</span> <span class="s1">'linear'</span><span class="p">:</span>
+            <span class="n">increase</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warmup_final_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_begin_lr</span><span class="p">)</span> \
+                       <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_begin_lr</span> <span class="o">+</span> <span class="n">increase</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_mode</span> <span class="o">==</span> <span class="s1">'constant'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_begin_lr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid warmup mode </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">warmup_mode</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
         <span class="sd">"""Return a new learning rate.</span>
@@ -283,8 +316,9 @@
 <span class="sd">    stop_factor_lr : float, optional</span>
 <span class="sd">        Stop updating the learning rate if it is less than this value.</span>
 <span class="sd">    """</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop_factor_lr</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop_factor_lr</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">base_lr</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">step</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Schedule step must be greater or equal than 1 round"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">factor</span> <span class="o">></span> <span class="mf">1.0</span><span class="p">:</span>
@@ -295,6 +329,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_update</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_warmup_lr</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span>
+
         <span class="c1"># NOTE: use while rather than if  (for continuing training via load_epoch)</span>
         <span class="k">while</span> <span class="n">num_update</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span>
@@ -325,9 +362,19 @@
 <span class="sd">        The list of steps to schedule a change</span>
 <span class="sd">    factor: float</span>
 <span class="sd">        The factor to change the learning rate.</span>
+<span class="sd">    warmup_steps: int</span>
+<span class="sd">        number of warmup steps used before this scheduler starts decay</span>
+<span class="sd">    warmup_begin_lr: float</span>
+<span class="sd">        if using warmup, the learning rate from which it starts warming up</span>
+<span class="sd">    warmup_mode: string</span>
+<span class="sd">        warmup can be done in two modes.</span>
+<span class="sd">        'linear' mode gradually increases lr with each step in equal increments</span>
+<span class="sd">        'constant' mode keeps lr at warmup_begin_lr for warmup_steps</span>
 <span class="sd">    """</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MultiFactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">warmup_mode</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MultiFactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">base_lr</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="p">,</span>
+                                                   <span class="n">warmup_begin_lr</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">>=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">step</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o"><=</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
@@ -342,6 +389,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_update</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_warmup_lr</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span>
+
         <span class="c1"># NOTE: use while rather than if  (for continuing training via load_epoch)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span> <span class="o"><=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_update</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span><span class="p">]:</span>
@@ -355,35 +405,96 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span></div>
 
 <div class="viewcode-block" id="PolyScheduler"><a class="viewcode-back" href="../../api/python/optimization/optimization.html#mxnet.lr_scheduler.PolyScheduler">[docs]</a><span class="k">class</span> <span class="nc">PolyScheduler</span><span class="p">(</span><span class="n">LRScheduler</span><span class="p">):</span>
-    <span class="sd">""" Reduce the learning rate by given a list of steps.</span>
+    <span class="sd">""" Reduce the learning rate according to a polynomial of given power.</span>
 
-<span class="sd">    Calculate the new learning rate by::</span>
+<span class="sd">    Calculate the new learning rate, after warmup if any, by::</span>
 
-<span class="sd">       base_lr * (1-nup/max_nup)^pwr</span>
+<span class="sd">       final_lr + (start_lr - final_lr) * (1-nup/max_nup)^pwr</span>
 <span class="sd">       if nup < max_nup, 0 otherwise.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">       max_update: maximum number of updates before the decay reaches 0.</span>
-<span class="sd">       base_lr:    base learning rate</span>
-<span class="sd">       pwr:   power of the decay term as a funtion of the current number of updates.</span>
-
+<span class="sd">        max_update: int</span>
+<span class="sd">            maximum number of updates before the decay reaches final learning rate.</span>
+<span class="sd">        base_lr: float</span>
+<span class="sd">            base learning rate to start from</span>
+<span class="sd">        pwr:   int</span>
+<span class="sd">            power of the decay term as a function of the current number of updates.</span>
+<span class="sd">        final_lr:   float</span>
+<span class="sd">            final learning rate after all steps</span>
+<span class="sd">        warmup_steps: int</span>
+<span class="sd">            number of warmup steps used before this scheduler starts decay</span>
+<span class="sd">        warmup_begin_lr: float</span>
+<span class="sd">            if using warmup, the learning rate from which it starts warming up</span>
+<span class="sd">        warmup_mode: string</span>
+<span class="sd">            warmup can be done in two modes.</span>
+<span class="sd">            'linear' mode gradually increases lr with each step in equal increments</span>
+<span class="sd">            'constant' mode keeps lr at warmup_begin_lr for warmup_steps</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_update</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">pwr</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PolyScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">base_lr</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_update</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">pwr</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">final_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PolyScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">base_lr</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_update</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_update</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"maximum number of updates must be strictly positive"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">pwr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span> <span class="o">=</span> <span class="n">max_update</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">pwr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">=</span> <span class="n">final_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_update</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_warmup_lr</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_update</span> <span class="o"><=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_update</span><span class="p">),</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="nb">pow</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">num_update</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span></div>
+
+<div class="viewcode-block" id="CosineScheduler"><a class="viewcode-back" href="../../api/python/optimization/optimization.html#mxnet.lr_scheduler.CosineScheduler">[docs]</a><span class="k">class</span> <span class="nc">CosineScheduler</span><span class="p">(</span><span class="n">LRScheduler</span><span class="p">):</span>
+    <span class="sd">""" Reduce the learning rate according to a cosine function</span>
+
+<span class="sd">    Calculate the new learning rate by::</span>
+
+<span class="sd">       final_lr + (start_lr - final_lr) * (1+cos(pi * nup/max_nup))/2</span>
+<span class="sd">       if nup < max_nup, 0 otherwise.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        max_update: int</span>
+<span class="sd">            maximum number of updates before the decay reaches 0</span>
+<span class="sd">        base_lr: float</span>
+<span class="sd">            base learning rate</span>
+<span class="sd">        final_lr: float</span>
+<span class="sd">            final learning rate after all steps</span>
+<span class="sd">        warmup_steps: int</span>
+<span class="sd">            number of warmup steps used before this scheduler starts decay</span>
+<span class="sd">        warmup_begin_lr: float</span>
+<span class="sd">            if using warmup, the learning rate from which it starts warming up</span>
+<span class="sd">        warmup_mode: string</span>
+<span class="sd">            warmup can be done in two modes.</span>
+<span class="sd">            'linear' mode gradually increases lr with each step in equal increments</span>
+<span class="sd">            'constant' mode keeps lr at warmup_begin_lr for warmup_steps</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_update</span><span class="p">,</span> <span class="n">base_lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">final_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CosineScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">base_lr</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="p">,</span> <span class="n">warmup_begin_lr</span><span class="p">,</span> <span class="n">warmup_mode</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_update</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_update</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"maximum number of updates must be strictly positive"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span> <span class="o">=</span> <span class="n">base_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span> <span class="o">=</span> <span class="n">max_update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">=</span> <span class="n">final_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_update</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_warmup_lr</span><span class="p">(</span><span class="n">num_update</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_update</span> <span class="o"><=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_update</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_lr_orig</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">num_update</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span></div>
 </pre></div>
 </div>
