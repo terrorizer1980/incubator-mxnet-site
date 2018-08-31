@@ -10,6 +10,5 @@ var searchData=
   ['_7eoperatorproperty',['~OperatorProperty',['../classmxnet_1_1OperatorProperty.html#a610af8e9cb560104301ccd1efa2a96fd',1,'mxnet::OperatorProperty']]],
   ['_7eresourcemanager',['~ResourceManager',['../classmxnet_1_1ResourceManager.html#a2b53c0843ddbaf7ccb9e06f448b20cac',1,'mxnet::ResourceManager']]],
   ['_7esimpleopregentry',['~SimpleOpRegEntry',['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#a94815080350681ad70e7815da1bc0eae',1,'mxnet::op::SimpleOpRegEntry']]],
-  ['_7estorage',['~Storage',['../classmxnet_1_1Storage.html#af1e1bfea9236ccfba64344226416b04a',1,'mxnet::Storage']]],
-  ['_7evar',['~Var',['../structmxnet_1_1engine_1_1Var.html#af9884f59707511d65ecdb04a6dab0423',1,'mxnet::engine::Var']]]
+  ['_7estorage',['~Storage',['../classmxnet_1_1Storage.html#af1e1bfea9236ccfba64344226416b04a',1,'mxnet::Storage']]]
 ];

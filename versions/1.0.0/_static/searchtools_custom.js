@@ -458,16 +458,6 @@ var Search = {
             } else {
                 // normal html builders
                 var baseURL = 'https://' + window.location.hostname + '/';
-                var urlHref = window.location.href;
-                let urlSplits = urlHref.split("/");
-                let versionString = '';
-                for (var idx = 0; idx < urlSplits.length; ++idx) {
-                    if(urlSplits[idx] == 'versions') {
-                        versionString = 'versions/' + urlSplits[idx + 1] + '/';
-                        break;
-                    }
-                }
-                baseURL = baseURL.concat(versionString);
                 listItem.append($('<a/>').attr('href',
                 baseURL + item[0] + DOCUMENTATION_OPTIONS.FILE_SUFFIX +
                 highlightstring + item[2]).html(item[1]));
@@ -523,7 +513,7 @@ var Search = {
             displayNextItem();
           });
         } else if (DOCUMENTATION_OPTIONS.HAS_SOURCE) {
-          $.ajax({url: DOCUMENTATION_OPTIONS.URL_ROOT + '_sources/' + item[0] + '.md.txt',
+          $.ajax({url: DOCUMENTATION_OPTIONS.URL_ROOT + '_sources/' + item[0] + '.txt',
                   dataType: "text",
                   complete: function(jqxhr, textstatus) {
                     var data = jqxhr.responseText;

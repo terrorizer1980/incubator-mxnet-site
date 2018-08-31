@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 /* Generate url tracking for each page */
 var protocol = location.protocol.concat("//");
 var host = protocol.concat(window.location.host);
@@ -24,16 +43,15 @@ if (versionIDX > 0) {
 else lastUrl = host;
 
 for (var i = 1; i < pathArr.length; ++i) {
-    pathVal = pathArr[i]
-    if (pathVal == 'index.html' || pathVal.length == 0) continue;
-    if (pathVal.indexOf('#') != -1) pathVal = pathVal.substring(0, pathVal.indexOf('#'));
-    lastUrl += '/' + pathVal;
-    if (pathVal.endsWith('.html')) pathVal = pathVal.substring(0, pathVal.length - 5);
+    if (pathArr[i] == 'index.html' || pathArr[i].length == 0) continue;
+    if (pathArr[i].indexOf('#') != -1) pathArr[i] = pathArr[i].substring(0, pathArr[i].indexOf('#'));
+    lastUrl += '/' + pathArr[i];
+    if (pathArr[i].endsWith('.html')) pathArr[i] = pathArr[i].substring(0, pathArr[i].length - 5);
     if (i == pathArr.length - 1 || pathArr[i + 1].length == 0 || pathArr[i + 1] == 'index.html') {
-        if ( pathVal == 'faq' ){
-             pathVal = "FAQ";
+        if ( pathArr[i] == 'faq' ){
+             pathArr[i] = "FAQ";
         }
-        urlTracker += "<li>" + pathVal.replace(/_/g, ' ') + "</li>";
+        urlTracker += "<li>" + pathArr[i].replace(/_/g, ' ') + "</li>";
     }
     else {
         // Check whether current folder has index.html.
@@ -41,19 +59,16 @@ for (var i = 1; i < pathArr.length; ++i) {
         $.ajax(lastUrl + '/index.html', {
             type: "GET",
             statusCode: {
-                403: function (response) {
-                    if (pathVal == 'api') urlTracker += "<li>API" + icon + "</li>";
-                    else urlTracker += "<li>" + pathVal.replace(/_/g, ' ') + icon + "</li>";
-                },
                 404: function (response) {
-                    if (pathVal == 'api') urlTracker += "<li>API" + icon + "</li>";
-                    else urlTracker += "<li>" + pathVal.replace(/_/g, ' ') + icon + "</li>";
+                    if (pathArr[i] == 'api') urlTracker += "<li>API" + icon + "</li>";
+                    else urlTracker += "<li>" + pathArr[i].replace(/_/g, ' ') + icon + "</li>";
                 }
-            },
+            }, 
             success: function () {
-                item = pathVal == 'ndarray' ? "NDArray" : pathVal;
+                item = pathArr[i] == 'ndarray' ? "NDArray" : pathArr[i];
                 urlTracker += "<li><a href=" + lastUrl + '/index.html' + ">" + item.replace(/_/g, ' ') + "</a>" + icon + "</li>";
-            }
+            },
+            async: false
         });
     }
 }
