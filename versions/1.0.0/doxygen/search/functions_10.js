@@ -45,7 +45,7 @@ var searchData=
   ['shape',['shape',['../classmxnet_1_1NDArray.html#abfbb85eb84be64976417ed0b13b1d8ee',1,'mxnet::NDArray']]],
   ['sharedincrementrefcount',['SharedIncrementRefCount',['../classmxnet_1_1Storage.html#a3e3f3e3e3e3d867e77d0c3efd0e958b7',1,'mxnet::Storage']]],
   ['simplebind',['SimpleBind',['../classmxnet_1_1Executor.html#a2aca59fcb5aa76b1626b52bd14f0a32c',1,'mxnet::Executor']]],
-  ['size',['Size',['../classmxnet_1_1TBlob.html#a3b04db1348834e1576cfb2ed54959703',1,'mxnet::TBlob::Size(void) const '],['../classmxnet_1_1TBlob.html#a523fd58883de4b9cd0b1a2852daa64ae',1,'mxnet::TBlob::size(index_t idx) const ']]],
+  ['size',['size',['../classmxnet_1_1TBlob.html#a523fd58883de4b9cd0b1a2852daa64ae',1,'mxnet::TBlob::size(index_t idx) const '],['../classmxnet_1_1TBlob.html#a3b04db1348834e1576cfb2ed54959703',1,'mxnet::TBlob::Size(void) const ']]],
   ['slice',['Slice',['../classmxnet_1_1NDArray.html#a7acb6462c11e071949db2b0e1fbfd66e',1,'mxnet::NDArray']]],
   ['slicewithrecord',['SliceWithRecord',['../classmxnet_1_1NDArray.html#a0d868e5303669d6ce8a5ada1c34940ac',1,'mxnet::NDArray']]],
   ['smarch',['SMArch',['../cuda__utils_8h.html#a9779e3ad0efd0faec7fbe431c0db896d',1,'cuda_utils.h']]],
