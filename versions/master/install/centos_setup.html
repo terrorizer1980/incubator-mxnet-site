@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     
-    <meta property="og:title"              content="&lt;no title&gt;" />
+    <meta property="og:title"              content="Installing MXNet on CentOS and other non-Ubuntu Linux systems" />
     <meta property="og:image"              content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" />
     <meta property="og:image:secure_url"              content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" />
-    <meta property="og:description"        content="A flexible and efficient library for deep learning." />
-    <title>Install &mdash; mxnet  documentation</title>
+    <meta property="og:description"        content="Installing MXNet on CentOS and other non-Ubuntu Linux systems" />
+    <title>Installing MXNet on CentOS and other non-Ubuntu Linux systems &mdash; mxnet  documentation</title>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -235,16 +235,16 @@
           <div class="sphinxsidebarwrapper">
             
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../api/python/index.html">Python Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/r/index.html">R Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/julia/index.html">Julia Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/c++/index.html">C++ Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/scala/index.html">Scala Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/perl/index.html">Perl Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">HowTo Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../architecture/index.html">System Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">MXNet APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture/index.html">MXNet Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../community/index.html">MXNet Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">MXNet FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gluon/index.html">About Gluon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Installing MXNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#nvidia-jetson-tx-family">Nvidia Jetson TX family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#source-download">Source Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_zoo/index.html">MXNet Model Zoo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../community/contribute.html">Community</a></li>
 </ul>
 
           </div>
@@ -252,14 +252,97 @@
         <div class="content">
           <div class="page-tracker"></div>
           
-  <!-- This page should be deleted after sometime (Allowing search engines
-to update links) -->
-<meta http-equiv="refresh" content="3; url=http://mxnet.io/install/index.html" />
-<!-- Just in case redirection does not work -->
-<p>
-  <a href="http://mxnet.io/install/index.html">
-    This content is moved to a new MXNet install page. Redirecting... </a>
-</p>
+  <div class="section" id="installing-mxnet-on-centos-and-other-non-ubuntu-linux-systems">
+<span id="installing-mxnet-on-centos-and-other-non-ubuntu-linux-systems"></span><h1>Installing MXNet on CentOS and other non-Ubuntu Linux systems<a class="headerlink" href="#installing-mxnet-on-centos-and-other-non-ubuntu-linux-systems" title="Permalink to this headline">¶</a></h1>
+<ol class="simple">
+<li>Install build tools and git on <code class="docutils literal"><span class="pre">CentOS</span> <span class="pre">&gt;=</span> <span class="pre">7</span></code> and <code class="docutils literal"><span class="pre">Fedora</span> <span class="pre">&gt;=</span> <span class="pre">19</span></code>:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo yum groupinstall -y <span class="s2">&quot;Development Tools&quot;</span> <span class="o">&amp;&amp;</span> sudo yum install -y git
+</pre></div>
+</div>
+<ol class="simple">
+<li>Install Atlas:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo yum install atlas-devel
+</pre></div>
+</div>
+<p>Installing both <code class="docutils literal"><span class="pre">git</span></code> and <code class="docutils literal"><span class="pre">cmake</span></code> or <code class="docutils literal"><span class="pre">make</span></code> by following instructions on the websites is
+straightforward. Here we provide the instructions to build <code class="docutils literal"><span class="pre">gcc-4.8</span></code> from source codes.</p>
+<ol class="simple">
+<li>Install the 32-bit <code class="docutils literal"><span class="pre">libc</span></code> with one of the following system-specific commands:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt-get install libc6-dev-i386 <span class="c1"># In Ubuntu</span>
+sudo yum install glibc-devel.i686   <span class="c1"># In RHEL (Red Hat Linux)</span>
+sudo yum install glibc-devel.i386   <span class="c1"># In CentOS 5.8</span>
+sudo yum install glibc-devel.i686   <span class="c1"># In CentOS 6/7</span>
+</pre></div>
+</div>
+<ol class="simple">
+<li>Download and extract the <code class="docutils literal"><span class="pre">gcc</span></code> source code with the prerequisites:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget http://mirrors.concertpass.com/gcc/releases/gcc-4.8.5/gcc-4.8.5.tar.gz
+tar -zxf gcc-4.8.5.tar.gz
+<span class="nb">cd</span> gcc-4.8.5
+./contrib/download_prerequisites
+</pre></div>
+</div>
+<ol class="simple">
+<li>Build <code class="docutils literal"><span class="pre">gcc</span></code> by using 10 threads and then install to <code class="docutils literal"><span class="pre">/usr/local</span></code></li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>mkdir release <span class="o">&amp;&amp;</span> <span class="nb">cd</span> release
+../configure --prefix<span class="o">=</span>/usr/local --enable-languages<span class="o">=</span>c,c++
+make -j10
+sudo make install
+</pre></div>
+</div>
+<ol class="simple">
+<li>Add the lib path to your configure file such as <code class="docutils literal"><span class="pre">~/.bashrc</span></code>:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">LD_LIBRARY_PATH</span><span class="si">}</span>:/usr/local/lib64
+</pre></div>
+</div>
+<ol class="simple">
+<li>Build <a class="reference external" href="https://github.com/xianyi/OpenBLAS#installation-from-source">OpenBLAS from source</a>.</li>
+<li>Build OpenCV</li>
+</ol>
+<p>To build OpenCV from source code, you need the <a class="reference external" href="https://cmake.org">cmake</a> library.</p>
+<ul class="simple">
+<li>If you don&#8217;t have cmake or if your version of cmake is earlier than 3.6.1, run the following commands to install a newer version of cmake:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   wget https://cmake.org/files/v3.6/cmake-3.6.1-Linux-x86_64.tar.gz
+   tar -zxvf cmake-3.6.1-Linux-x86_64.tar.gz
+   <span class="nb">alias</span> <span class="nv">cmake</span><span class="o">=</span><span class="s2">&quot;cmake-3.6.1-Linux-x86_64/bin/cmake&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>To download and extract the OpenCV source code, run the following commands:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   wget https://codeload.github.com/opencv/opencv/zip/2.4.13
+   unzip <span class="m">2</span>.4.13
+   <span class="nb">cd</span> opencv-2.4.13
+   mkdir release
+   <span class="nb">cd</span> release/
+</pre></div>
+</div>
+<ul class="simple">
+<li>Build OpenCV. The following commands build OpenCV with 10 threads. We
+disabled GPU support, which might significantly slow down an MXNet program
+running on a GPU processor. It also disables 1394 which might generate a
+warning. Then install it on <code class="docutils literal"><span class="pre">/usr/local</span></code>.</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   cmake -D <span class="nv">BUILD_opencv_gpu</span><span class="o">=</span>OFF -D <span class="nv">WITH_CUDA</span><span class="o">=</span>OFF -D <span class="nv">WITH_1394</span><span class="o">=</span>OFF -D <span class="nv">CMAKE_BUILD_TYPE</span><span class="o">=</span>RELEASE -D <span class="nv">CMAKE_INSTALL_PREFIX</span><span class="o">=</span>/usr/local ..
+   make -j10
+   sudo make install
+</pre></div>
+</div>
+<ul class="simple">
+<li>Add the lib path to your configuration such as <code class="docutils literal"><span class="pre">~/.bashrc</span></code>.</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   <span class="nb">export</span> <span class="nv">PKG_CONFIG_PATH</span><span class="o">=</span><span class="nv">$PKG_CONFIG_PATH</span>:/usr/local/lib/pkgconfig/
+</pre></div>
+</div>
+</div>
+
 
         </div>
       </div>

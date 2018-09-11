@@ -99,7 +99,7 @@
 </ul>
 </span>
 <a class="main-nav-link" href="http://discuss.mxnet.io">Discuss</a>
-<span id="dropdown-menu-position-anchor-version" style="position: relative"><a href="#" class="main-nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Versions(0.12.1)<span class="caret"></span></a><ul id="package-dropdown-menu" class="dropdown-menu"><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/>master</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></span></nav>
+</nav>
 <script> function getRootPath(){ return "../" } </script>
 <div class="burgerIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">☰</a>
@@ -143,7 +143,7 @@
 </li>
 <li><a href="../architecture/index.html">Architecture</a></li>
 <li><a class="main-nav-link" href="https://github.com/dmlc/mxnet">Github</a></li>
-<li id="dropdown-menu-position-anchor-version-mobile" class="dropdown-submenu" style="position: relative"><a href="#" tabindex="-1">Versions(0.12.1)</a><ul class="dropdown-menu"><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/>master</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></li></ul>
+</ul>
 </div>
 <div class="plusIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span></a>
@@ -223,7 +223,7 @@ that the scan operator is implemented with a loop in Python
 that performs one iteration at a time:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span>    <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">fn</span>
 
-    <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o"><</span> <span class="n">n_steps</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cond</span><span class="p">:</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_steps</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cond</span><span class="p">:</span>
         <span class="c1"># ...</span>
         <span class="n">fn</span><span class="p">()</span>
 </pre></div>
@@ -264,18 +264,18 @@ that performs one iteration at a time:</p>
 <p>Recurrent networks are first-class citizens in CNTK. In section 5.2.1.8 of the CNTKBook, you can see an example of a customized computation node. The node needs to explicitly define the functions for standard forward and forward with a time index, which is used for RNN evaluation:</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span></span>    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">EvaluateThisNode</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="n">EvaluateThisNodeS</span><span class="p">(</span><span class="n">FunctionValues</span><span class="p">(),</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-></span>
-            <span class="n">FunctionValues</span><span class="p">(),</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-></span><span class="n">FunctionValues</span><span class="p">());</span>
+        <span class="n">EvaluateThisNodeS</span><span class="p">(</span><span class="n">FunctionValues</span><span class="p">(),</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span>
+            <span class="n">FunctionValues</span><span class="p">(),</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">FunctionValues</span><span class="p">());</span>
     <span class="p">}</span>
     <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">EvaluateThisNode</span><span class="p">(</span><span class="k">const</span> <span class="kt">size_t</span> <span class="n">timeIdxInSeq</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">Matrix</span><span class="o"><</span><span class="n">ElemType</span><span class="o">></span> <span class="n">sliceInputValue</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-></span>
+        <span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ElemType</span><span class="o">&gt;</span> <span class="n">sliceInputValue</span> <span class="o">=</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span>
             <span class="n">FunctionValues</span><span class="p">().</span><span class="n">ColumnSlice</span><span class="p">(</span><span class="n">timeIdxInSeq</span> <span class="o">*</span>
             <span class="n">m_samplesInRecurrentStep</span><span class="p">,</span> <span class="n">m_samplesInRecurrentStep</span><span class="p">);</span>
-        <span class="n">Matrix</span><span class="o"><</span><span class="n">ElemType</span><span class="o">></span> <span class="n">sliceOutputValue</span> <span class="o">=</span>    <span class="n">m_functionValues</span><span class="p">.</span>
+        <span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ElemType</span><span class="o">&gt;</span> <span class="n">sliceOutputValue</span> <span class="o">=</span>    <span class="n">m_functionValues</span><span class="p">.</span>
             <span class="n">ColumnSlice</span><span class="p">(</span><span class="n">timeIdxInSeq</span> <span class="o">*</span> <span class="n">m_samplesInRecurrentStep</span><span class="p">,</span>
             <span class="n">m_samplesInRecurrentStep</span><span class="p">);</span>
-        <span class="n">EvaluateThisNodeS</span><span class="p">(</span><span class="n">sliceOutputValue</span><span class="p">,</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-></span>
+        <span class="n">EvaluateThisNodeS</span><span class="p">(</span><span class="n">sliceOutputValue</span><span class="p">,</span> <span class="n">Inputs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span>
             <span class="n">FunctionValues</span><span class="p">(),</span> <span class="n">sliceInput1Value</span><span class="p">);</span>
     <span class="p">}</span>
 </pre></div>

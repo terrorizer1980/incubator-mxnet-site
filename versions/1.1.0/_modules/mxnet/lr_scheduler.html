@@ -100,7 +100,7 @@
 <li><a class="main-nav-link" href="http://discuss.mxnet.io">Discuss</a></li>
 </ul>
 </span>
-<span id="dropdown-menu-position-anchor-version" style="position: relative"><a href="#" class="main-nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Versions(1.1.0)<span class="caret"></span></a><ul id="package-dropdown-menu" class="dropdown-menu"><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/>master</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a class="main-nav-link" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></span></nav>
+</nav>
 <script> function getRootPath(){ return "../../" } </script>
 <div class="burgerIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">☰</a>
@@ -144,7 +144,7 @@
 </li>
 <li><a href="../../architecture/index.html">Architecture</a></li>
 <li><a class="main-nav-link" href="https://github.com/dmlc/mxnet">Github</a></li>
-<li id="dropdown-menu-position-anchor-version-mobile" class="dropdown-submenu" style="position: relative"><a href="#" tabindex="-1">Versions(1.1.0)</a><ul class="dropdown-menu"><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/>master</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.2.1/index.html>1.2.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.1.0/index.html>1.1.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/1.0.0/index.html>1.0.0</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.12.1/index.html>0.12.1</a></li><li><a tabindex="-1" href=http://mxnet.incubator.apache.org/versions/0.11.0/index.html>0.11.0</a></li></ul></li></ul>
+</ul>
 </div>
 <div class="plusIcon dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"><span aria-hidden="true" class="glyphicon glyphicon-plus"></span></a>
@@ -276,9 +276,9 @@
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop_factor_lr</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">step</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Schedule step must be greater or equal than 1 round"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">factor</span> <span class="o">></span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Factor must be no more than 1 to make lr reduce"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
@@ -287,10 +287,10 @@
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
         <span class="c1"># NOTE: use while rather than if  (for continuing training via load_epoch)</span>
-        <span class="k">while</span> <span class="n">num_update</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">num_update</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_factor_lr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_factor_lr</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_factor_lr</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Update[</span><span class="si">%d</span><span class="s2">]: now learning rate arrived at </span><span class="si">%0.5e</span><span class="s2">, will not "</span>
                              <span class="s2">"change in the future"</span><span class="p">,</span> <span class="n">num_update</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span><span class="p">)</span>
@@ -304,7 +304,7 @@
 
 <span class="sd">    Assume there exists *k* such that::</span>
 
-<span class="sd">       step[k] <= num_update and num_update < step[k+1]</span>
+<span class="sd">       step[k] &lt;= num_update and num_update &lt; step[k+1]</span>
 
 <span class="sd">    Then calculate the new learning rate by::</span>
 
@@ -319,13 +319,13 @@
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MultiFactorScheduler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">>=</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">step</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o"><=</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">step</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Schedule step must be an increasing integer list"</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">_step</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Schedule step must be greater or equal than 1 round"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">factor</span> <span class="o">></span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Factor must be no more than 1 to make lr reduce"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span> <span class="o">=</span> <span class="mi">0</span>
@@ -334,8 +334,8 @@
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_update</span><span class="p">):</span>
         <span class="c1"># NOTE: use while rather than if  (for continuing training via load_epoch)</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span> <span class="o"><=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">num_update</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span><span class="p">]:</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_update</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cur_step_ind</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>

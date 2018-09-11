@@ -405,18 +405,18 @@ Defined in src/operator/batch_norm_v1.cc:L95
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
 <li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolAPIBase#BilinearSampler" visbl="pub">
-<a id="BilinearSampler(data:Option[org.apache.mxnet.Symbol],grid:Option[org.apache.mxnet.Symbol],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol"></a>
-<a id="BilinearSampler(Option[Symbol],Option[Symbol],String,Map[String,String]):Symbol"></a>
+<a id="BilinearSampler(data:Option[org.apache.mxnet.Symbol],grid:Option[org.apache.mxnet.Symbol],cudnn_off:Option[Boolean],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol"></a>
+<a id="BilinearSampler(Option[Symbol],Option[Symbol],Option[Boolean],String,Map[String,String]):Symbol"></a>
 <h4 class="signature">
 <span class="modifier_kind">
 <span class="modifier">abstract </span>
 <span class="kind">def</span>
 </span>
 <span class="symbol">
-<span class="name">BilinearSampler</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="grid">grid: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a></span>
+<span class="name">BilinearSampler</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="grid">grid: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="cudnn_off">cudnn_off: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a></span>
 </span>
 </h4><span class="permalink">
-<a href="../../../index.html#org.apache.mxnet.SymbolAPIBase@BilinearSampler(data:Option[org.apache.mxnet.Symbol],grid:Option[org.apache.mxnet.Symbol],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol" target="_top" title="Permalink">
+<a href="../../../index.html#org.apache.mxnet.SymbolAPIBase@BilinearSampler(data:Option[org.apache.mxnet.Symbol],grid:Option[org.apache.mxnet.Symbol],cudnn_off:Option[Boolean],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol" target="_top" title="Permalink">
 <img src="../../../lib/permalink.png"/>
 </a>
 </span>
@@ -495,7 +495,7 @@ Example 2::
      [ 0,  1,  3,  0]]]
 
 
-Defined in src/operator/bilinear_sampler.cc:L245
+Defined in src/operator/bilinear_sampler.cc:L256
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Applies bilinear sampling to input feature map.
@@ -571,8 +571,8 @@ Example 2::
      [ 0,  1,  3,  0]]]
 
 
-Defined in src/operator/bilinear_sampler.cc:L245
-</pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input data to the BilinearsamplerOp.</p></dd><dt class="param">grid</dt><dd class="cmt"><p>Input grid to the BilinearsamplerOp.grid has two channels: x_src, y_src</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/bilinear_sampler.cc:L256
+</pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input data to the BilinearsamplerOp.</p></dd><dt class="param">grid</dt><dd class="cmt"><p>Input grid to the BilinearsamplerOp.grid has two channels: x_src, y_src</p></dd><dt class="param">cudnn_off</dt><dd class="cmt"><p>whether to turn cudnn off</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
@@ -13835,11 +13835,12 @@ where :math:`x` is an element of the tensor *lhs* and :math:`\sigma` is the scal
 
 Example::
 
+  smooth_l1([1, 2, 3, 4]) = [0.5, 1.5, 2.5, 3.5]
   smooth_l1([1, 2, 3, 4], scalar=1) = [0.5, 1.5, 2.5, 3.5]
 
 
 
-Defined in src/operator/tensor/elemwise_binary_scalar_op_extended.cc:L103
+Defined in src/operator/tensor/elemwise_binary_scalar_op_extended.cc:L104
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Calculate Smooth L1 Loss(lhs, scalar) by summing
@@ -13856,11 +13857,12 @@ where :math:`x` is an element of the tensor *lhs* and :math:`\sigma` is the scal
 
 Example::
 
+  smooth_l1([1, 2, 3, 4]) = [0.5, 1.5, 2.5, 3.5]
   smooth_l1([1, 2, 3, 4], scalar=1) = [0.5, 1.5, 2.5, 3.5]
 
 
 
-Defined in src/operator/tensor/elemwise_binary_scalar_op_extended.cc:L103
+Defined in src/operator/tensor/elemwise_binary_scalar_op_extended.cc:L104
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>source input</p></dd><dt class="param">scalar</dt><dd class="cmt"><p>scalar input</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
