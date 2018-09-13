@@ -60,7 +60,7 @@ var searchData=
   ['simpleopregoption',['SimpleOpRegOption',['../namespacemxnet_1_1op.html#a01bb0bb658bedb4d58bf7d11e4b17268',1,'mxnet::op']]],
   ['simpleopscalaroption',['SimpleOpScalarOption',['../namespacemxnet_1_1op.html#ae7310844fa858f1ec6b6428dd6977a13',1,'mxnet::op']]],
   ['singleobject',['SingleObject',['../structmxnet_1_1common_1_1helper_1_1UniqueIf.html#a98153aaeb43a71efa85b5cf753505cac',1,'mxnet::common::helper::UniqueIf']]],
-  ['size',['size',['../structmxnet_1_1Storage_1_1Handle.html#ab93b9db0c83e4ef3803fb587377a74a0',1,'mxnet::Storage::Handle::size()'],['../classmxnet_1_1TBlob.html#a523fd58883de4b9cd0b1a2852daa64ae',1,'mxnet::TBlob::size(index_t idx) const '],['../classmxnet_1_1TBlob.html#a3b04db1348834e1576cfb2ed54959703',1,'mxnet::TBlob::Size(void) const ']]],
+  ['size',['Size',['../classmxnet_1_1TBlob.html#a3b04db1348834e1576cfb2ed54959703',1,'mxnet::TBlob::Size()'],['../structmxnet_1_1Storage_1_1Handle.html#ab93b9db0c83e4ef3803fb587377a74a0',1,'mxnet::Storage::Handle::size()'],['../classmxnet_1_1TBlob.html#a523fd58883de4b9cd0b1a2852daa64ae',1,'mxnet::TBlob::size()']]],
   ['slice',['Slice',['../classmxnet_1_1NDArray.html#a7acb6462c11e071949db2b0e1fbfd66e',1,'mxnet::NDArray']]],
   ['slicewithrecord',['SliceWithRecord',['../classmxnet_1_1NDArray.html#a0d868e5303669d6ce8a5ada1c34940ac',1,'mxnet::NDArray']]],
   ['smarch',['SMArch',['../cuda__utils_8h.html#a9779e3ad0efd0faec7fbe431c0db896d',1,'cuda_utils.h']]],
