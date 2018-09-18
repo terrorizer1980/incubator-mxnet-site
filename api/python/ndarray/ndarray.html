@@ -7557,13 +7557,18 @@ and <span class="math">\(y\)</span> is the output tensor of layout <span class="
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.diag">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">diag</code><span class="sig-paren">(</span><em>data=None</em>, <em>k=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.diag" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">diag</code><span class="sig-paren">(</span><em>data=None</em>, <em>k=_Null</em>, <em>axis1=_Null</em>, <em>axis2=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts a diagonal or constructs a diagonal array.</p>
 <p><code class="docutils literal"><span class="pre">diag</span></code>‘s behavior depends on the input array dimensions:</p>
-<ul class="simple">
-<li>1-D arrays: constructs a 2-D array with the input as its diagonal, all other elements are zero</li>
-<li>2-D arrays: returns elements in the diagonal as a new 1-D array</li>
-<li>N-D arrays: not supported yet</li>
+<ul>
+<li><p class="first">1-D arrays: constructs a 2-D array with the input as its diagonal, all other elements are zero.</p>
+</li>
+<li><p class="first">N-D arrays: extracts the diagonals of the sub-arrays with axes specified by <code class="docutils literal"><span class="pre">axis1</span></code> and <code class="docutils literal"><span class="pre">axis2</span></code>.
+The output shape would be decided by removing the axes numbered <code class="docutils literal"><span class="pre">axis1</span></code> and <code class="docutils literal"><span class="pre">axis2</span></code> from the
+input shape and appending to the result a new axis with the size of the diagonals in question.</p>
+<p>For example, when the input shape is <cite>(2, 3, 4, 5)</cite>, <code class="docutils literal"><span class="pre">axis1</span></code> and <code class="docutils literal"><span class="pre">axis2</span></code> are 0 and 2
+respectively and <code class="docutils literal"><span class="pre">k</span></code> is 0, the resulting shape would be <cite>(3, 5, 2)</cite>.</p>
+</li>
 </ul>
 <p>Examples:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
@@ -7588,16 +7593,33 @@ and <span class="math">\(y\)</span> is the output tensor of layout <span class="
 <span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                  <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+      <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span>
+
+     <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+      <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+           <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">]]</span>
+
+<span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis1</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis2</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/diag_op.cc:L68</p>
+<p>Defined in src/operator/tensor/diag_op.cc:L87</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input ndarray</li>
-<li><strong>k</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Diagonal in question. The default is 0. Use k>0 for diagonals above the main diagonal, and k<0 for diagonals below the main diagonal. If input has shape (S0 S1) k must be between -S0 and S1</li>
+<li><strong>k</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Diagonal in question. The default is 0. Use k>0 for diagonals above the main diagonal, and k<0 for diagonals below the main diagonal. If input has shape (S0 S1) k must be between -S0 and S1</li>
+<li><strong>axis1</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The first axis of the sub-arrays of interest. Ignored when the input is a 1-D array.</li>
+<li><strong>axis2</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The second axis of the sub-arrays of interest. Ignored when the input is a 1-D array.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
