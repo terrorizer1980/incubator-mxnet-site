@@ -239,6 +239,7 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">metric</span>
@@ -724,6 +725,7 @@
             <span class="n">validation_metric</span> <span class="o">=</span> <span class="n">eval_metric</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">,</span> <span class="n">metric</span><span class="o">.</span><span class="n">EvalMetric</span><span class="p">):</span>
             <span class="n">eval_metric</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">)</span>
+        <span class="n">epoch_eval_metric</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">)</span>
 
         <span class="c1">################################################################################</span>
         <span class="c1"># training loop</span>
@@ -731,6 +733,7 @@
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">begin_epoch</span><span class="p">,</span> <span class="n">num_epoch</span><span class="p">):</span>
             <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">eval_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">epoch_eval_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="n">nbatch</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">data_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
             <span class="n">end_of_batch</span> <span class="o">=</span> <span class="kc">False</span>
@@ -746,8 +749,12 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">,</span>
                                        <span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">data_batch</span><span class="p">],</span>
                                        <span class="n">pre_sliced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">epoch_eval_metric</span><span class="p">,</span>
+                                       <span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">data_batch</span><span class="p">],</span>
+                                       <span class="n">pre_sliced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">eval_metric</span><span class="p">,</span> <span class="n">data_batch</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_metric</span><span class="p">(</span><span class="n">epoch_eval_metric</span><span class="p">,</span> <span class="n">data_batch</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># pre fetch next batch</span>
@@ -760,7 +767,7 @@
                     <span class="n">monitor</span><span class="o">.</span><span class="n">toc_print</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">end_of_batch</span><span class="p">:</span>
-                    <span class="n">eval_name_vals</span> <span class="o">=</span> <span class="n">eval_metric</span><span class="o">.</span><span class="n">get_name_value</span><span class="p">()</span>
+                    <span class="n">eval_name_vals</span> <span class="o">=</span> <span class="n">epoch_eval_metric</span><span class="o">.</span><span class="n">get_name_value</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">batch_end_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">batch_end_params</span> <span class="o">=</span> <span class="n">BatchEndParam</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">nbatch</span><span class="o">=</span><span class="n">nbatch</span><span class="p">,</span>
