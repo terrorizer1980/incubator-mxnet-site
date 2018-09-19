@@ -243,6 +243,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_real_t</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span>
@@ -1270,13 +1271,20 @@
                     <span class="s2">"SymbolBlock doesn't support Parameter '</span><span class="si">%s</span><span class="s2">' because its storage "</span> \
                     <span class="s2">"type is 'row_sparse'."</span> <span class="o">%</span> <span class="n">j</span><span class="o">.</span><span class="n">name</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Infer type of parameters. Without this, every parameter will be created with</span>
+        <span class="c1"># default type i.e., fp32</span>
+        <span class="n">arg_params</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()</span>
+        <span class="n">aux_params</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">'null'</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">arg_types</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">_infer_param_types</span><span class="p">(</span><span class="n">syms</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arg_params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">aux</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aux_params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">aux</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">'null'</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">syms</span><span class="p">,</span> <span class="n">out</span>
         <span class="n">len_prefix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_common_prefix</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
@@ -1301,8 +1309,74 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">tmp</span>
 
+    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<span class="k">def</span> <span class="nf">_infer_param_types</span><span class="p">(</span><span class="n">in_params</span><span class="p">,</span> <span class="n">out_params</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">,</span> <span class="n">default_dtype</span><span class="o">=</span><span class="n">mx_real_t</span><span class="p">):</span>
+    <span class="sd">"""Utility function that helps in inferring DType of args and auxs params</span>
+<span class="sd">    from given input param.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_params: List of Symbol</span>
+<span class="sd">        List of input symbol variables.</span>
+<span class="sd">    out_params: Symbol</span>
+<span class="sd">        Output symbol variable.</span>
+<span class="sd">    arg_params: List of Str</span>
+<span class="sd">        List of names of argument parametrs.</span>
+<span class="sd">    aux_params: List of Str</span>
+<span class="sd">        List of names of auxiliary parameters.</span>
+<span class="sd">    default_dtype: numpy.dtype or str, default 'float32'</span>
+<span class="sd">        Default data type for arg_params and aux_params, if unable to infer the type.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arg_types: List of numpy.dtype</span>
+<span class="sd">        List of arg_params type. Order is same as arg_params.</span>
+<span class="sd">        Defaults to 'float32', if unable to infer type.</span>
+<span class="sd">    aux_types: List of numpy.dtype</span>
+<span class="sd">        List of aux_params type. Order is same as aux_params.</span>
+<span class="sd">        Defaults to 'float32', if unable to infer type.</span>
+<span class="sd">    """</span>
+    <span class="n">arg_types</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">aux_types</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Get Input symbol details. This will be used to infer types of</span>
+    <span class="c1"># other parameters.</span>
+    <span class="n">input_sym_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">in_param</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">in_param</span> <span class="ow">in</span> <span class="n">in_params</span><span class="p">]</span>
+
+    <span class="c1"># Try to infer input types. If not successful, we will set default dtype.</span>
+    <span class="c1"># If successful, we will try to infer other params in the graph.</span>
+    <span class="n">input_sym_arg_types</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">can_infer_input_type</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">in_param</span> <span class="ow">in</span> <span class="n">in_params</span><span class="p">:</span>
+        <span class="n">input_sym_arg_type</span> <span class="o">=</span> <span class="n">in_param</span><span class="o">.</span><span class="n">infer_type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_sym_arg_type</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_sym_arg_type</span><span class="p">)</span> <span class="o"><</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">can_infer_input_type</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">input_sym_arg_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">in_param</span><span class="o">.</span><span class="n">infer_type</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Try to infer types of other parameters.</span>
+    <span class="k">if</span> <span class="n">can_infer_input_type</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_sym_names</span><span class="p">,</span> <span class="n">input_sym_arg_types</span><span class="p">)}</span>
+        <span class="n">arg_types</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">out_params</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">arg_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_types</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_params</span><span class="p">):</span>
+        <span class="n">arg_types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">arg_params</span><span class="p">:</span>
+            <span class="n">arg_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">default_dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">aux_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">aux_types</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">aux_params</span><span class="p">):</span>
+        <span class="n">aux_types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">aux_params</span><span class="p">:</span>
+            <span class="n">aux_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">default_dtype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">arg_types</span><span class="p">,</span> <span class="n">aux_types</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

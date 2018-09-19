@@ -161,6 +161,7 @@ var searchData=
   ['mxnotifyshutdown',['MXNotifyShutdown',['../c__api_8h.html#aa837df9930bbb46d0ca1674523f63e1c',1,'c_api.h']]],
   ['mxpartitiongraphbyopnames',['MXPartitionGraphByOpNames',['../c__api__test_8h.html#ae7f8d433fef54060af1c4ffd57fe0427',1,'c_api_test.h']]],
   ['mxpredcreate',['MXPredCreate',['../c__predict__api_8h.html#a2ce2bd607a3690b34f45491b040efb02',1,'c_predict_api.h']]],
+  ['mxpredcreatemultithread',['MXPredCreateMultiThread',['../c__predict__api_8h.html#aedff4c0789403f4474dec0d1d57348ca',1,'c_predict_api.h']]],
   ['mxpredcreatepartialout',['MXPredCreatePartialOut',['../c__predict__api_8h.html#ac61691812a6e910ab671d83a759b4209',1,'c_predict_api.h']]],
   ['mxpredforward',['MXPredForward',['../c__predict__api_8h.html#a1ce8a6c852f1ae11c2504b9bc186e723',1,'c_predict_api.h']]],
   ['mxpredfree',['MXPredFree',['../c__predict__api_8h.html#af21704e92e5b519bdcfef5fcb504195b',1,'c_predict_api.h']]],
