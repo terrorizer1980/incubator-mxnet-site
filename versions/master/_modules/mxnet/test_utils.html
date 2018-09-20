@@ -1045,6 +1045,9 @@
 <span class="sd">    ..[1] https://github.com/Theano/Theano/blob/master/theano/gradient.py</span>
 <span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="c1"># cannot use finite differences with small eps without high precision</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">numeric_eps</span> <span class="o">>=</span> <span class="mf">1e-5</span>
     <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">default_context</span><span class="p">()</span>
 

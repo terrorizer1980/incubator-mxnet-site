@@ -220,9 +220,9 @@ the basic data structure for manipulating data in MXNet.
 And just using NDArray by itself, we can execute a wide range of mathematical operations.
 In fact, we could define and update a full neural network just by using <code class="docutils literal"><span class="pre">NDArray</span></code>.
 <code class="docutils literal"><span class="pre">NDArray</span></code> allows you to write programs for scientific computation
-in an imperative fashion, making full use of the native control of any front-end language.
+in an imperative fashion, making full use of the native control of any front-end language. Gluon uses this approach under the hood (before hybridization) to allow for flexible and debugable networks.
 So you might wonder, why don’t we just use <code class="docutils literal"><span class="pre">NDArray</span></code> for all computation?</p>
-<p>MXNet provides the Symbol API, an interface for symbolic programming.
+<p>MXNet also provides the Symbol API, an interface for symbolic programming.
 With symbolic programming, rather than executing operations step by step,
 we first define a <em>computation graph</em>.
 This graph contains placeholders for inputs and designated outputs.
@@ -230,7 +230,7 @@ We can then compile the graph, yielding a function
 that can be bound to <code class="docutils literal"><span class="pre">NDArray</span></code>s and run.
 MXNet’s Symbol API is similar to the network configurations
 used by <a class="reference external" href="http://caffe.berkeleyvision.org/">Caffe</a>
-and the symbolic programming in <a class="reference external" href="http://deeplearning.net/software/theano/">Theano</a>.</p>
+and the symbolic programming in <a class="reference external" href="http://deeplearning.net/software/theano/">Theano</a>. And Gluon takes advantage of this approach under the hood after the network has been hybridized.</p>
 <p>Another advantage conferred by symbolic approach is that
 we can optimize our functions before using them.
 For example, when we execute mathematical computations in imperative fashion,
@@ -480,7 +480,7 @@ and libraries (numpy, ..).</li>
 <p>One important difference of <code class="docutils literal"><span class="pre">Symbol</span></code> compared to <code class="docutils literal"><span class="pre">NDArray</span></code> is that we first
 declare the computation and then bind the computation with data to run.</p>
 <p>In this section, we introduce the functions to manipulate a symbol directly. But
-note that, most of them are wrapped by the <code class="docutils literal"><span class="pre">module</span></code> package.</p>
+note that, most of them are wrapped by the high-level packages: <code class="docutils literal"><span class="pre">Module</span></code> and <code class="docutils literal"><span class="pre">Gluon</span></code>.</p>
 <div class="section" id="shape-and-type-inference">
 <span id="shape-and-type-inference"></span><h3>Shape and Type Inference<a class="headerlink" href="#shape-and-type-inference" title="Permalink to this headline">¶</a></h3>
 <p>For each symbol, we can query its arguments, auxiliary states and outputs.

@@ -224,29 +224,32 @@
 <li>Packing data together allows continuous reading on the disk.</li>
 <li>RecordIO has a simple way to partition, simplifying distributed setting. We provide an example later.</li>
 </ul>
-<p>We provide the <a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/tools/im2rec.cc">im2rec tool</a> so you can create an Image RecordIO dataset by yourself. The following walkthrough shows you how.</p>
+<p>We provide the <a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/tools/im2rec.cc">im2rec tool</a> so you can create an Image RecordIO dataset by yourself. The following walkthrough shows you how. Note that there is python version of <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/tools/im2rec.py">im2rec tool</a> and <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/basic/data.html">example</a> using real-world data.</p>
 <div class="section" id="prerequisites">
 <span id="prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>Download the data. You don’t need to resize the images manually. You can use <code class="docutils literal"><span class="pre">im2rec</span></code> to resize them automatically. For details, see the “Extension: Using Multiple Labels for a Single Image,” later in this topic.</p>
 </div>
 <div class="section" id="step-1-make-an-image-list-file">
 <span id="step-1-make-an-image-list-file"></span><h2>Step 1. Make an Image List File<a class="headerlink" href="#step-1-make-an-image-list-file" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Note that the im2rec.py provide a param <code class="docutils literal"><span class="pre">--list</span></code> to generate the list for you but im2rec.cc doesn’t support it.</li>
+</ul>
 <p>After you download the data, you need to make an image list file.  The format is:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">integer_image_index</span> \<span class="n">t</span> <span class="n">label_index</span> \<span class="n">t</span> <span class="n">path_to_image</span>
 </pre></div>
 </div>
-<p>Typically, the program takes the list of names of all of the images, shuffles them, then separates them into two lists: a training filename list and a testing filename list. Write the list in the right format.</p>
-<p>This is an example file:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="m">95099</span>  <span class="m">464</span>     n04467665_17283.JPEG
-<span class="m">10025081</span>        <span class="m">412</span>     ILSVRC2010_val_00025082.JPEG
-<span class="m">74181</span>   <span class="m">789</span>     n01915811_2739.JPEG
-<span class="m">10035553</span>        <span class="m">859</span>     ILSVRC2010_val_00035554.JPEG
-<span class="m">10048727</span>        <span class="m">929</span>     ILSVRC2010_val_00048728.JPEG
-<span class="m">94028</span>   <span class="m">924</span>     n01980166_4956.JPEG
-<span class="m">1080682</span> <span class="m">650</span>     n11807979_571.JPEG
-<span class="m">972457</span>  <span class="m">633</span>     n07723039_1627.JPEG
-<span class="m">7534</span>    <span class="m">11</span>      n01630670_4486.JPEG
-<span class="m">1191261</span> <span class="m">249</span>     n12407079_5106.JPEG
+<p>Typically, the program takes the list of names of all of the images, shuffles them, then separates them into two lists: a training filename list and a testing filename list. Write the list in the right format.
+This is an example file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="m">95099</span>  <span class="m">464</span>.000000     n04467665_17283.JPEG
+<span class="m">10025081</span>        <span class="m">412</span>.000000     ILSVRC2010_val_00025082.JPEG
+<span class="m">74181</span>   <span class="m">789</span>.000000     n01915811_2739.JPEG
+<span class="m">10035553</span>        <span class="m">859</span>.000000     ILSVRC2010_val_00035554.JPEG
+<span class="m">10048727</span>        <span class="m">929</span>.000000     ILSVRC2010_val_00048728.JPEG
+<span class="m">94028</span>   <span class="m">924</span>.000000     n01980166_4956.JPEG
+<span class="m">1080682</span> <span class="m">650</span>.000000     n11807979_571.JPEG
+<span class="m">972457</span>  <span class="m">633</span>.000000     n07723039_1627.JPEG
+<span class="m">7534</span>    <span class="m">11</span>.000000      n01630670_4486.JPEG
+<span class="m">1191261</span> <span class="m">249</span>.000000     n12407079_5106.JPEG
 </pre></div>
 </div>
 </div>
