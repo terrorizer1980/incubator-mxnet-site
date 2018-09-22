@@ -2973,6 +2973,63 @@ is cleared.</li>
 </tbody>
 </table>
 </dd></dl>
+<dl class="method">
+<dt id="mxnet.ndarray.NDArray.to_dlpack_for_read">
+<code class="descname">to_dlpack_for_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.to_dlpack_for_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.to_dlpack_for_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a reference view of NDArray that represents as DLManagedTensor until
+all previous write operations on the current array are finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a reference view of NDArray that represents as DLManagedTensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">PyCapsule (the pointer of DLManagedTensor)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_read</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">z</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">z</span>
+<span class="go">[[1. 1. 1.]</span>
+<span class="go"> [1. 1. 1.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.ndarray.NDArray.to_dlpack_for_write">
+<code class="descname">to_dlpack_for_write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.to_dlpack_for_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.to_dlpack_for_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a reference view of NDArray that represents as DLManagedTensor until
+all previous read/write operations on the current array are finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a reference view of NDArray that represents as DLManagedTensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">PyCapsule (the pointer of DLManagedTensor)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">w</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_write</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">>>> </span><span class="n">x</span>
+<span class="go">[[2. 2. 2.]</span>
+<span class="go"> [2. 2. 2.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
 </dd></dl>
 <span class="target" id="module-mxnet.ndarray"></span><p>NDArray API of MXNet.</p>
 <dl class="function">
@@ -14274,6 +14331,113 @@ be equally divided by the number of bins.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.to_dlpack_for_read">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">to_dlpack_for_read</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#to_dlpack_for_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.to_dlpack_for_read" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns a reference view of NDArray that represents as DLManagedTensor until</dt>
+<dd>all previous write operations on the current array are finished.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – input data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a reference view of NDArray that represents as DLManagedTensor.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">PyCapsule (the pointer of DLManagedTensor)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_read</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">z</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">z</span>
+<span class="go">[[1. 1. 1.]</span>
+<span class="go"> [1. 1. 1.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.to_dlpack_for_write">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">to_dlpack_for_write</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#to_dlpack_for_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.to_dlpack_for_write" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns a reference view of NDArray that represents as DLManagedTensor until</dt>
+<dd>all previous read/write operations on the current array are finished.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – input data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a reference view of NDArray that represents as DLManagedTensor.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">PyCapsule (the pointer of DLManagedTensor)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">w</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_write</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">>>> </span><span class="n">x</span>
+<span class="go">[[2. 2. 2.]</span>
+<span class="go"> [2. 2. 2.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.from_dlpack">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">from_dlpack</code><span class="sig-paren">(</span><em>dlpack</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#from_dlpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.from_dlpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NDArray backed by a dlpack tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dlpack</strong> (<em>PyCapsule</em><em> (</em><em>the pointer of DLManagedTensor</em><em>)</em>) – input data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a NDArray backed by a dlpack tensor</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_read</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">z</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="go"><class 'mxnet.ndarray.ndarray.NDArray'></span>
+<span class="gp">>>> </span><span class="n">z</span>
+<span class="go">[[ 1.  1.  1.]</span>
+<span class="go"> [ 1.  1.  1.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">w</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">to_dlpack_for_write</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">type</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go"><class 'PyCapsule'></span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">u</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">>>> </span><span class="n">x</span>
+<span class="go">[[2. 2. 2.]</span>
+<span class="go"> [2. 2. 2.]]</span>
+<span class="go"><NDArray 2x3 @cpu(0)></span>
+</pre></div>
+</div>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.zeros">

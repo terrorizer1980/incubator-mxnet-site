@@ -251,8 +251,8 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span> <span class="c1"># pylint: disable=redefined-builtin</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">,</span> <span class="n">integer_types</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">mx_real_t</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">check_call</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">mx_real_t</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">DLPackHandle</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">ctypes2buffer</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">current_context</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_internal</span>
@@ -263,7 +263,8 @@
            <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"add"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"divide"</span><span class="p">,</span> <span class="s2">"equal"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"greater"</span><span class="p">,</span> <span class="s2">"greater_equal"</span><span class="p">,</span>
            <span class="s2">"imdecode"</span><span class="p">,</span> <span class="s2">"lesser"</span><span class="p">,</span> <span class="s2">"lesser_equal"</span><span class="p">,</span> <span class="s2">"logical_and"</span><span class="p">,</span> <span class="s2">"logical_or"</span><span class="p">,</span> <span class="s2">"logical_xor"</span><span class="p">,</span>
            <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"moveaxis"</span><span class="p">,</span> <span class="s2">"modulo"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"not_equal"</span><span class="p">,</span> <span class="s2">"onehot_encode"</span><span class="p">,</span>
-           <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"true_divide"</span><span class="p">,</span> <span class="s2">"waitall"</span><span class="p">,</span> <span class="s2">"_new_empty_handle"</span><span class="p">,</span> <span class="s2">"histogram"</span><span class="p">]</span>
+           <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"true_divide"</span><span class="p">,</span> <span class="s2">"waitall"</span><span class="p">,</span> <span class="s2">"_new_empty_handle"</span><span class="p">,</span> <span class="s2">"histogram"</span><span class="p">,</span>
+           <span class="s2">"to_dlpack_for_read"</span><span class="p">,</span> <span class="s2">"to_dlpack_for_write"</span><span class="p">,</span> <span class="s2">"from_dlpack"</span><span class="p">]</span>
 
 <span class="n">_STORAGE_TYPE_UNDEFINED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">_STORAGE_TYPE_DEFAULT</span> <span class="o">=</span> <span class="mi">0</span>
@@ -395,7 +396,6 @@
     <span class="c1"># See C++ side of definition(kTVMNDArrayTypeCode) at include/mxmet/tensor_blob.h</span>
     <span class="n">_tvm_tcode</span> <span class="o">=</span> <span class="mi">19</span>
     <span class="c1"># pylint: disable= no-member, undefined-variable</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_tvm_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">value</span>
@@ -2428,8 +2428,54 @@
 <span class="sd">        NDArray, CSRNDArray or RowSparseNDArray</span>
 <span class="sd">            A copy of the array with the chosen storage stype</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">cast_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="n">stype</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">cast_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="n">stype</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="NDArray.to_dlpack_for_read"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.to_dlpack_for_read">[docs]</a>    <span class="k">def</span> <span class="nf">to_dlpack_for_read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns a reference view of NDArray that represents as DLManagedTensor until</span>
+<span class="sd">        all previous write operations on the current array are finished.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PyCapsule (the pointer of DLManagedTensor)</span>
+<span class="sd">            a reference view of NDArray that represents as DLManagedTensor.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> x = mx.nd.ones((2,3))</span>
+<span class="sd">        >>> y = mx.nd.to_dlpack_for_read(x)</span>
+<span class="sd">        >>> type(y)</span>
+<span class="sd">        <class 'PyCapsule'></span>
+<span class="sd">        >>> z = mx.nd.from_dlpack(y)</span>
+<span class="sd">        >>> z</span>
+<span class="sd">        [[1. 1. 1.]</span>
+<span class="sd">         [1. 1. 1.]]</span>
+<span class="sd">        <NDArray 2x3 @cpu(0)></span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">to_dlpack_for_read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NDArray.to_dlpack_for_write"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.to_dlpack_for_write">[docs]</a>    <span class="k">def</span> <span class="nf">to_dlpack_for_write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns a reference view of NDArray that represents as DLManagedTensor until</span>
+<span class="sd">        all previous read/write operations on the current array are finished.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PyCapsule (the pointer of DLManagedTensor)</span>
+<span class="sd">            a reference view of NDArray that represents as DLManagedTensor.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> x = mx.nd.ones((2,3))</span>
+<span class="sd">        >>> w = mx.nd.to_dlpack_for_write(x)</span>
+<span class="sd">        >>> type(w)</span>
+<span class="sd">        <class 'PyCapsule'></span>
+<span class="sd">        >>> u = mx.nd.from_dlpack(w)</span>
+<span class="sd">        >>> u += 1</span>
+<span class="sd">        >>> x</span>
+<span class="sd">        [[2. 2. 2.]</span>
+<span class="sd">         [2. 2. 2.]]</span>
+<span class="sd">        <NDArray 2x3 @cpu(0)></span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">to_dlpack_for_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
 <span class="k">def</span> <span class="nf">_get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">"""Returns a dispatch code for calling basic or advanced indexing functions."""</span>
@@ -4076,6 +4122,131 @@
         <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_histogram</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">bin_cnt</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">)</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"bins argument should be either an integer or an NDArray"</span><span class="p">)</span></div>
     <span class="c1"># pylint: enable= no-member, protected-access, redefined-builtin</span>
+
+<span class="n">PyCapsuleDestructor</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CFUNCTYPE</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>
+<span class="n">_c_str_dltensor</span> <span class="o">=</span> <span class="n">c_str</span><span class="p">(</span><span class="s1">'dltensor'</span><span class="p">)</span>
+<span class="n">_c_str_used_dltensor</span> <span class="o">=</span> <span class="n">c_str</span><span class="p">(</span><span class="s1">'used_dltensor'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_dlpack_deleter</span><span class="p">(</span><span class="n">pycapsule</span><span class="p">):</span>
+    <span class="n">pycapsule</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">(</span><span class="n">pycapsule</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">pycapsule</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">):</span>
+        <span class="n">ptr</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">(</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">pycapsule</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">))</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayCallDLPackDeleter</span><span class="p">(</span><span class="n">ptr</span><span class="p">))</span>
+
+<span class="n">_c_dlpack_deleter</span> <span class="o">=</span> <span class="n">PyCapsuleDestructor</span><span class="p">(</span><span class="n">_dlpack_deleter</span><span class="p">)</span>
+
+<div class="viewcode-block" id="to_dlpack_for_read"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.to_dlpack_for_read">[docs]</a><span class="k">def</span> <span class="nf">to_dlpack_for_read</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">"""Returns a reference view of NDArray that represents as DLManagedTensor until</span>
+<span class="sd">       all previous write operations on the current array are finished.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: NDArray</span>
+<span class="sd">        input data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PyCapsule (the pointer of DLManagedTensor)</span>
+<span class="sd">        a reference view of NDArray that represents as DLManagedTensor.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> x = mx.nd.ones((2,3))</span>
+<span class="sd">    >>> y = mx.nd.to_dlpack_for_read(x)</span>
+<span class="sd">    >>> type(y)</span>
+<span class="sd">    <class 'PyCapsule'></span>
+<span class="sd">    >>> z = mx.nd.from_dlpack(y)</span>
+<span class="sd">    >>> z</span>
+<span class="sd">    [[1. 1. 1.]</span>
+<span class="sd">     [1. 1. 1.]]</span>
+<span class="sd">    <NDArray 2x3 @cpu(0)></span>
+<span class="sd">    """</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">wait_to_read</span><span class="p">()</span>
+    <span class="n">dlpack</span> <span class="o">=</span> <span class="n">DLPackHandle</span><span class="p">()</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayToDLPack</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">dlpack</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_New</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">,</span> <span class="n">_c_dlpack_deleter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="to_dlpack_for_write"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.to_dlpack_for_write">[docs]</a><span class="k">def</span> <span class="nf">to_dlpack_for_write</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">"""Returns a reference view of NDArray that represents as DLManagedTensor until</span>
+<span class="sd">       all previous read/write operations on the current array are finished.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: NDArray</span>
+<span class="sd">        input data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PyCapsule (the pointer of DLManagedTensor)</span>
+<span class="sd">        a reference view of NDArray that represents as DLManagedTensor.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> x = mx.nd.ones((2,3))</span>
+<span class="sd">    >>> w = mx.nd.to_dlpack_for_write(x)</span>
+<span class="sd">    >>> type(w)</span>
+<span class="sd">    <class 'PyCapsule'></span>
+<span class="sd">    >>> u = mx.nd.from_dlpack(w)</span>
+<span class="sd">    >>> u += 1</span>
+<span class="sd">    >>> x</span>
+<span class="sd">    [[2. 2. 2.]</span>
+<span class="sd">     [2. 2. 2.]]</span>
+<span class="sd">    <NDArray 2x3 @cpu(0)></span>
+<span class="sd">    """</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayWaitToWrite</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
+    <span class="n">dlpack</span> <span class="o">=</span> <span class="n">DLPackHandle</span><span class="p">()</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayToDLPack</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">dlpack</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_New</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">,</span> <span class="n">_c_dlpack_deleter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="from_dlpack"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.from_dlpack">[docs]</a><span class="k">def</span> <span class="nf">from_dlpack</span><span class="p">(</span><span class="n">dlpack</span><span class="p">):</span>
+    <span class="sd">"""Returns a NDArray backed by a dlpack tensor.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dlpack: PyCapsule (the pointer of DLManagedTensor)</span>
+<span class="sd">        input data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NDArray</span>
+<span class="sd">        a NDArray backed by a dlpack tensor</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> x = mx.nd.ones((2,3))</span>
+<span class="sd">    >>> y = mx.nd.to_dlpack_for_read(x)</span>
+<span class="sd">    >>> type(y)</span>
+<span class="sd">    <class 'PyCapsule'></span>
+<span class="sd">    >>> z = mx.nd.from_dlpack(y)</span>
+<span class="sd">    >>> type(z)</span>
+<span class="sd">    <class 'mxnet.ndarray.ndarray.NDArray'></span>
+<span class="sd">    >>> z</span>
+<span class="sd">    [[ 1.  1.  1.]</span>
+<span class="sd">     [ 1.  1.  1.]]</span>
+<span class="sd">    <NDArray 2x3 @cpu(0)></span>
+
+<span class="sd">    >>> w = mx.nd.to_dlpack_for_write(x)</span>
+<span class="sd">    >>> type(w)</span>
+<span class="sd">    <class 'PyCapsule'></span>
+<span class="sd">    >>> u = mx.nd.from_dlpack(w)</span>
+<span class="sd">    >>> u += 1</span>
+<span class="sd">    >>> x</span>
+<span class="sd">    [[2. 2. 2.]</span>
+<span class="sd">     [2. 2. 2.]]</span>
+<span class="sd">    <NDArray 2x3 @cpu(0)></span>
+<span class="sd">    """</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
+    <span class="n">dlpack</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">(</span><span class="n">dlpack</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">),</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s1">'Invalid DLPack Tensor. DLTensor capsules can be consumed only once.'</span><span class="p">)</span>
+    <span class="n">dlpack_handle</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_dltensor</span><span class="p">))</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayFromDLPack</span><span class="p">(</span><span class="n">dlpack_handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+    <span class="c1"># Rename PyCapsule (DLPack)</span>
+    <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_SetName</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_used_dltensor</span><span class="p">)</span>
+    <span class="c1"># delete the deleter of the old dlpack</span>
+    <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_SetDestructor</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>

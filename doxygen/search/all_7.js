@@ -25,6 +25,7 @@ var searchData=
   ['fresh_5fout_5fgrad',['fresh_out_grad',['../classmxnet_1_1Imperative_1_1AGInfo.html#aa98f7d65123fb64697769cfb952de310',1,'mxnet::Imperative::AGInfo::fresh_out_grad()'],['../classmxnet_1_1NDArray.html#aee74980eb87bf7c482d15458f5194cbe',1,'mxnet::NDArray::fresh_out_grad()']]],
   ['fresourcerequest',['FResourceRequest',['../namespacemxnet.html#afaa687cbca9e992614be285711c1d72d',1,'mxnet']]],
   ['fresourcerequestex',['FResourceRequestEx',['../namespacemxnet.html#a45b0a850c44c45609adc320b04c7ac7f',1,'mxnet']]],
+  ['fromdlpack',['FromDLPack',['../classmxnet_1_1NDArray.html#a20da5e900221bc1951d06305236d535f',1,'mxnet::NDArray']]],
   ['fromstring',['FromString',['../structmxnet_1_1Context.html#a4b7e2c87496a90b6b0ed06eab61956c4',1,'mxnet::Context']]],
   ['fstatefulcompute',['FStatefulCompute',['../namespacemxnet.html#a9097a269dd76d833c014149ff3eaab9b',1,'mxnet']]],
   ['fstatefulcomputeex',['FStatefulComputeEx',['../namespacemxnet.html#ab12f1853179b1456152a563edff844a9',1,'mxnet']]],

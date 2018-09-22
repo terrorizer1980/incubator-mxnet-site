@@ -33,6 +33,7 @@ var searchData=
   ['dispatch_5fmode_5fstring',['dispatch_mode_string',['../namespacemxnet_1_1common.html#a4716f6044f678090af8ae7ef3ace3a31',1,'mxnet::common']]],
   ['dispatchmode',['DispatchMode',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2b',1,'mxnet']]],
   ['dispatchmodevector',['DispatchModeVector',['../namespacemxnet.html#a1183dd8b779392f7ddafe1b010a6a2fe',1,'mxnet']]],
+  ['dlmanagedtensorhandle',['DLManagedTensorHandle',['../c__api_8h.html#a0d448754f71eac77eb4fab46eb2f7ea4',1,'c_api.h']]],
   ['dltensor',['dltensor',['../classmxnet_1_1TBlob.html#a519111d4450efa8e58cc10cfc1dbeca7',1,'mxnet::TBlob']]],
   ['dmlc',['dmlc',['../namespacedmlc.html',1,'']]],
   ['dmlc_5fdeclare_5ftraits',['DMLC_DECLARE_TRAITS',['../namespacedmlc.html#a7272c846fa03dee55916aadce0165a46',1,'dmlc']]],
