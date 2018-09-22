@@ -224,7 +224,13 @@
 <li>Packing data together allows continuous reading on the disk.</li>
 <li>RecordIO has a simple way to partition, simplifying distributed setting. We provide an example later.</li>
 </ul>
-<p>We provide the <a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/tools/im2rec.cc">im2rec tool</a> so you can create an Image RecordIO dataset by yourself. The following walkthrough shows you how. Note that there is python version of <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/tools/im2rec.py">im2rec tool</a> and <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/basic/data.html">example</a> using real-world data.</p>
+<p>We provide two tools for creating a RecordIO dataset.</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/dmlc/mxnet/blob/master/tools/im2rec.cc">im2rec.cc</a> - implements the tool using the C++ API.</li>
+<li><a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/tools/im2rec.py">im2rec.py</a> - implements the tool using the Python API.</li>
+</ul>
+<p>Both provide the same output: a RecordIO dataset.
+You may want to also review the <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/basic/data.html#loading-data-using-image-iterators">example using real-world data with im2rec.py.</a></p>
 <div class="section" id="prerequisites">
 <span id="prerequisites"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>Download the data. You don’t need to resize the images manually. You can use <code class="docutils literal"><span class="pre">im2rec</span></code> to resize them automatically. For details, see the “Extension: Using Multiple Labels for a Single Image,” later in this topic.</p>
@@ -232,7 +238,7 @@
 <div class="section" id="step-1-make-an-image-list-file">
 <span id="step-1-make-an-image-list-file"></span><h2>Step 1. Make an Image List File<a class="headerlink" href="#step-1-make-an-image-list-file" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Note that the im2rec.py provide a param <code class="docutils literal"><span class="pre">--list</span></code> to generate the list for you but im2rec.cc doesn’t support it.</li>
+<li>Note that the im2rec.py provides a param <code class="docutils literal"><span class="pre">--list</span></code> to generate the list for you, but im2rec.cc doesn’t support it.</li>
 </ul>
 <p>After you download the data, you need to make an image list file.  The format is:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">integer_image_index</span> \<span class="n">t</span> <span class="n">label_index</span> \<span class="n">t</span> <span class="n">path_to_image</span>
@@ -255,7 +261,7 @@ This is an example file:</p>
 </div>
 <div class="section" id="step-2-create-the-binary-file">
 <span id="step-2-create-the-binary-file"></span><h2>Step 2. Create the Binary File<a class="headerlink" href="#step-2-create-the-binary-file" title="Permalink to this headline">¶</a></h2>
-<p>To generate a binary image, use <code class="docutils literal"><span class="pre">im2rec</span></code> in the tool folder. <code class="docutils literal"><span class="pre">im2rec</span></code> takes the path of the <code class="docutils literal"><span class="pre">_image</span> <span class="pre">list</span> <span class="pre">file_</span></code> you generated, the <code class="docutils literal"><span class="pre">_root</span> <span class="pre">path_</span></code> of the images, and the <code class="docutils literal"><span class="pre">_output</span> <span class="pre">file</span> <span class="pre">path_</span></code> as input. This process usually takes several hours, so be patient.</p>
+<p>To generate a binary image, use <code class="docutils literal"><span class="pre">im2rec</span></code> in the tool folder. <code class="docutils literal"><span class="pre">im2rec</span></code> takes the path of the <code class="docutils literal"><span class="pre">image</span> <span class="pre">list</span> <span class="pre">file</span></code> you generated, the <code class="docutils literal"><span class="pre">root</span> <span class="pre">path</span></code> of the images, and the <code class="docutils literal"><span class="pre">output</span> <span class="pre">file</span> <span class="pre">path</span></code> as input. This process usually takes several hours, so be patient.</p>
 <p>Sample command:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>./bin/im2rec image.lst image_root_dir output.bin <span class="nv">resize</span><span class="o">=</span><span class="m">256</span>
 </pre></div>
