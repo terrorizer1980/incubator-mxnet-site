@@ -392,7 +392,12 @@
 <span class="k">def</span> <span class="nf">worker_loop</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">key_queue</span><span class="p">,</span> <span class="n">data_queue</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">):</span>
     <span class="sd">"""Worker loop for multiprocessing DataLoader."""</span>
     <span class="c1"># re-fork a new recordio handler in new process if applicable</span>
-    <span class="n">_recursive_fork_recordio</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="c1"># for a dataset with transform function, the depth of MXRecordIO is 1</span>
+    <span class="c1"># for a lazy transformer, the depth is 2</span>
+    <span class="c1"># for a user defined transformer, the depth is unknown, try a reasonable depth</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrecursionlimit</span><span class="p">()</span>
+    <span class="n">max_recursion_depth</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">limit</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">_recursive_fork_recordio</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_recursion_depth</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">idx</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">key_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
