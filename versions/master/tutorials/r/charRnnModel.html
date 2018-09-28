@@ -5,11 +5,11 @@
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<meta content="Char RNN Example" property="og:title">
+<meta content="Character-level Language Model using RNN" property="og:title">
 <meta content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" property="og:image">
 <meta content="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/og-logo.png" property="og:image:secure_url">
-<meta content="Char RNN Example" property="og:description"/>
-<title>Char RNN Example — mxnet  documentation</title>
+<meta content="Character-level Language Model using RNN" property="og:description"/>
+<title>Character-level Language Model using RNN — mxnet  documentation</title>
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel="stylesheet"/>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"/>
 <link href="../../_static/basic.css" rel="stylesheet" type="text/css">
@@ -213,303 +213,280 @@
 </div>
 <div class="content">
 <div class="page-tracker"></div>
-<div class="section" id="char-rnn-example">
-<span id="char-rnn-example"></span><h1>Char RNN Example<a class="headerlink" href="#char-rnn-example" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial shows how to use an LSTM model to build a char-level language model, and generate text from it. For demonstration purposes, we use a Shakespearean text. You can find the data on <a class="reference external" href="https://github.com/dmlc/web-data/tree/master/mxnet/tinyshakespeare">GitHub</a>.</p>
-<div class="section" id="load-the-data">
-<span id="load-the-data"></span><h2>Load the Data<a class="headerlink" href="#load-the-data" title="Permalink to this headline">¶</a></h2>
-<p>Load in the data and preprocess it:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    <span class="kn">require</span><span class="p">(</span>mxnet<span class="p">)</span>
+<div class="section" id="character-level-language-model-using-rnn">
+<span id="character-level-language-model-using-rnn"></span><h1>Character-level Language Model using RNN<a class="headerlink" href="#character-level-language-model-using-rnn" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will demonstrate creating a language model using a character level RNN model using MXNet-R package. You will need the following R packages to run this tutorial -</p>
+<ul class="simple">
+<li>readr</li>
+<li>stringr</li>
+<li>stringi</li>
+<li>mxnet</li>
+</ul>
+<p>We will use the <a class="reference external" href="https://github.com/dmlc/web-data/tree/master/mxnet/tinyshakespeare">tinyshakespeare</a> dataset to build this model.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="kn">library</span><span class="p">(</span><span class="s">"readr"</span><span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span><span class="s">"stringr"</span><span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span><span class="s">"stringi"</span><span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span><span class="s">"mxnet"</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="c1">## Loading required package: mxnet</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="c1">## Loading required package: methods</span>
-</pre></div>
-</div>
-<p>Set the basic network parameters:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    batch.size <span class="o">=</span> <span class="m">32</span>
-    seq.len <span class="o">=</span> <span class="m">32</span>
-    num.hidden <span class="o">=</span> <span class="m">16</span>
-    num.embed <span class="o">=</span> <span class="m">16</span>
-    num.lstm.layer <span class="o">=</span> <span class="m">1</span>
-    num.round <span class="o">=</span> <span class="m">1</span>
-    learning.rate<span class="o">=</span> <span class="m">0.1</span>
-    wd<span class="o">=</span><span class="m">0.00001</span>
-    clip_gradient<span class="o">=</span><span class="m">1</span>
-    update.period <span class="o">=</span> <span class="m">1</span>
-</pre></div>
-</div>
+<div class="section" id="preprocess-and-prepare-the-data">
+<span id="preprocess-and-prepare-the-data"></span><h2>Preprocess and prepare the data<a class="headerlink" href="#preprocess-and-prepare-the-data" title="Permalink to this headline">¶</a></h2>
 <p>Download the data:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    download.data <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>data_dir<span class="p">)</span> <span class="p">{</span>
-        <span class="kp">dir.create</span><span class="p">(</span>data_dir<span class="p">,</span> showWarnings <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
-        <span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="kp">file.exists</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span>data_dir<span class="p">,</span><span class="s">'input.txt'</span><span class="p">)))</span> <span class="p">{</span>
-            download.file<span class="p">(</span>url<span class="o">=</span><span class="s">'https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tinyshakespeare/input.txt'</span><span class="p">,</span>
-                          destfile<span class="o">=</span><span class="kp">paste0</span><span class="p">(</span>data_dir<span class="p">,</span><span class="s">'input.txt'</span><span class="p">),</span> method<span class="o">=</span><span class="s">'wget'</span><span class="p">)</span>
-        <span class="p">}</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span>download.data <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>data_dir<span class="p">)</span> <span class="p">{</span>
+    <span class="kp">dir.create</span><span class="p">(</span>data_dir<span class="p">,</span> showWarnings <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="kp">file.exists</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span>data_dir<span class="p">,</span><span class="s">'input.txt'</span><span class="p">)))</span> <span class="p">{</span>
+        download.file<span class="p">(</span>url<span class="o">=</span><span class="s">'https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tinyshakespeare/input.txt'</span><span class="p">,</span>
+                      destfile<span class="o">=</span><span class="kp">paste0</span><span class="p">(</span>data_dir<span class="p">,</span><span class="s">'input.txt'</span><span class="p">),</span> method<span class="o">=</span><span class="s">'wget'</span><span class="p">)</span>
     <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>Make a dictionary from the text:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    make.dict <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>text<span class="p">,</span> max.vocab<span class="o">=</span><span class="m">10000</span><span class="p">)</span> <span class="p">{</span>
-        text <span class="o"><-</span> <span class="kp">strsplit</span><span class="p">(</span>text<span class="p">,</span> <span class="s">''</span><span class="p">)</span>
-        dic <span class="o"><-</span> <span class="kt">list</span><span class="p">()</span>
-        idx <span class="o"><-</span> <span class="m">1</span>
-        <span class="kr">for</span> <span class="p">(</span><span class="kt">c</span> <span class="kr">in</span> text<span class="p">[[</span><span class="m">1</span><span class="p">]])</span> <span class="p">{</span>
-            <span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="kt">c</span> <span class="o">%in%</span> <span class="kp">names</span><span class="p">(</span>dic<span class="p">)))</span> <span class="p">{</span>
-                dic<span class="p">[[</span><span class="kt">c</span><span class="p">]]</span> <span class="o"><-</span> idx
-                idx <span class="o"><-</span> idx <span class="o">+</span> <span class="m">1</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="kr">if</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span>dic<span class="p">)</span> <span class="o">==</span> max.vocab <span class="o">-</span> <span class="m">1</span><span class="p">)</span>
-            dic<span class="p">[[</span><span class="s">"UNKNOWN"</span><span class="p">]]</span> <span class="o"><-</span> idx
-        <span class="kp">cat</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="s">"Total unique char: "</span><span class="p">,</span> <span class="kp">length</span><span class="p">(</span>dic<span class="p">),</span> <span class="s">"\n"</span><span class="p">))</span>
-        <span class="kr">return</span> <span class="p">(</span>dic<span class="p">)</span>
-     <span class="p">}</span>
+<p>Next we transform the test into feature vectors that is fed into the RNN model. The <code class="docutils literal"><span class="pre">make_data</span></code> function reads the dataset, cleans it of any non-alphanumeric characters, splits it into individual characters and groups it into sequences of length <code class="docutils literal"><span class="pre">seq.len</span></code>.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span>make_data <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>path<span class="p">,</span> seq.len <span class="o">=</span> <span class="m">32</span><span class="p">,</span> dic<span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="p">{</span>
+  
+  text_vec <span class="o"><-</span> read_file<span class="p">(</span>file <span class="o">=</span> path<span class="p">)</span>
+  text_vec <span class="o"><-</span> stri_enc_toascii<span class="p">(</span>str <span class="o">=</span> text_vec<span class="p">)</span>
+  text_vec <span class="o"><-</span> str_replace_all<span class="p">(</span>string <span class="o">=</span> text_vec<span class="p">,</span> pattern <span class="o">=</span> <span class="s">"[^[:print:]]"</span><span class="p">,</span> replacement <span class="o">=</span> <span class="s">""</span><span class="p">)</span>
+  text_vec <span class="o"><-</span> <span class="kp">strsplit</span><span class="p">(</span>text_vec<span class="p">,</span> <span class="s">''</span><span class="p">)</span> <span class="o">%>%</span> <span class="kp">unlist</span>
+  
+  <span class="kr">if</span> <span class="p">(</span><span class="kp">is.null</span><span class="p">(</span>dic<span class="p">))</span> <span class="p">{</span>
+    char_keep <span class="o"><-</span> <span class="kp">sort</span><span class="p">(</span><span class="kp">unique</span><span class="p">(</span>text_vec<span class="p">))</span>
+  <span class="p">}</span> <span class="kr">else</span> char_keep <span class="o"><-</span> <span class="kp">names</span><span class="p">(</span>dic<span class="p">)[</span><span class="o">!</span>dic <span class="o">==</span> <span class="m">0</span><span class="p">]</span>
+  
+  <span class="c1"># Remove terms not part of dictionary</span>
+  text_vec <span class="o"><-</span> text_vec<span class="p">[</span>text_vec <span class="o">%in%</span> char_keep<span class="p">]</span>
+  
+  <span class="c1"># Build dictionary</span>
+  dic <span class="o"><-</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>char_keep<span class="p">)</span>
+  <span class="kp">names</span><span class="p">(</span>dic<span class="p">)</span> <span class="o"><-</span> char_keep
+  
+  <span class="c1"># reverse dictionary</span>
+  rev_dic <span class="o"><-</span> <span class="kp">names</span><span class="p">(</span>dic<span class="p">)</span>
+  <span class="kp">names</span><span class="p">(</span>rev_dic<span class="p">)</span> <span class="o"><-</span> dic
+  
+  <span class="c1"># Adjust by -1 to have a 1-lag for labels</span>
+  num.seq <span class="o"><-</span> <span class="p">(</span><span class="kp">length</span><span class="p">(</span>text_vec<span class="p">)</span> <span class="o">-</span> <span class="m">1</span><span class="p">)</span> <span class="o">%/%</span> seq.len
+  
+  features <span class="o"><-</span> dic<span class="p">[</span>text_vec<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>seq.len <span class="o">*</span> num.seq<span class="p">)]]</span> 
+  labels <span class="o"><-</span> dic<span class="p">[</span>text_vec<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>seq.len<span class="o">*</span>num.seq<span class="p">)</span> <span class="o">+</span> <span class="m">1</span><span class="p">]]</span>
+  
+  features_array <span class="o"><-</span> <span class="kt">array</span><span class="p">(</span>features<span class="p">,</span> dim <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>seq.len<span class="p">,</span> num.seq<span class="p">))</span>
+  labels_array <span class="o"><-</span> <span class="kt">array</span><span class="p">(</span><span class="kp">labels</span><span class="p">,</span> dim <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>seq.len<span class="p">,</span> num.seq<span class="p">))</span>
+  
+  <span class="kr">return</span> <span class="p">(</span><span class="kt">list</span><span class="p">(</span>features_array <span class="o">=</span> features_array<span class="p">,</span> labels_array <span class="o">=</span> labels_array<span class="p">,</span> dic <span class="o">=</span> dic<span class="p">,</span> rev_dic <span class="o">=</span> rev_dic<span class="p">))</span>
+<span class="p">}</span>
+
+
+seq.len <span class="o"><-</span> <span class="m">100</span>
+data_prep <span class="o"><-</span> make_data<span class="p">(</span>path <span class="o">=</span> <span class="s">"input.txt"</span><span class="p">,</span> seq.len <span class="o">=</span> seq.len<span class="p">,</span> dic<span class="o">=</span><span class="kc">NULL</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Transfer the text into a data feature:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    make.data <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span><span class="kp">file.path</span><span class="p">,</span> seq.len<span class="o">=</span><span class="m">32</span><span class="p">,</span> max.vocab<span class="o">=</span><span class="m">10000</span><span class="p">,</span> dic<span class="o">=</span><span class="kc">NULL</span><span class="p">)</span>      <span class="p">{</span>
-        fi <span class="o"><-</span> <span class="kp">file</span><span class="p">(</span><span class="kp">file.path</span><span class="p">,</span> <span class="s">"r"</span><span class="p">)</span>
-        text <span class="o"><-</span> <span class="kp">paste</span><span class="p">(</span><span class="kp">readLines</span><span class="p">(</span>fi<span class="p">),</span> collapse<span class="o">=</span><span class="s">"\n"</span><span class="p">)</span>
-        <span class="kp">close</span><span class="p">(</span>fi<span class="p">)</span>
+<p>Fetch the features and labels for training the model, and split the data into training and evaluation in 9:1 ratio.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span>X <span class="o"><-</span> data_prep<span class="o">$</span>features_array
+Y <span class="o"><-</span> data_prep<span class="o">$</span>labels_array
+dic <span class="o"><-</span> data_prep<span class="o">$</span>dic
+rev_dic <span class="o"><-</span> data_prep<span class="o">$</span>rev_dic
+vocab <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>dic<span class="p">)</span>
 
-        <span class="kr">if</span> <span class="p">(</span><span class="kp">is.null</span><span class="p">(</span>dic<span class="p">))</span>
-            dic <span class="o"><-</span> make.dict<span class="p">(</span>text<span class="p">,</span> max.vocab<span class="p">)</span>
-        lookup.table <span class="o"><-</span> <span class="kt">list</span><span class="p">()</span>
-        <span class="kr">for</span> <span class="p">(</span><span class="kt">c</span> <span class="kr">in</span> <span class="kp">names</span><span class="p">(</span>dic<span class="p">))</span> <span class="p">{</span>
-            idx <span class="o"><-</span> dic<span class="p">[[</span><span class="kt">c</span><span class="p">]]</span>
-            lookup.table<span class="p">[[</span>idx<span class="p">]]</span> <span class="o"><-</span> <span class="kt">c</span>
-         <span class="p">}</span>
+samples <span class="o"><-</span> <span class="kp">tail</span><span class="p">(</span><span class="kp">dim</span><span class="p">(</span>X<span class="p">),</span> <span class="m">1</span><span class="p">)</span>
+train.val.fraction <span class="o"><-</span> <span class="m">0.9</span>
 
-        char.lst <span class="o"><-</span> <span class="kp">strsplit</span><span class="p">(</span>text<span class="p">,</span> <span class="s">''</span><span class="p">)[[</span><span class="m">1</span><span class="p">]]</span>
-        num.seq <span class="o"><-</span> <span class="kp">as.integer</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>char.lst<span class="p">)</span> <span class="o">/</span> seq.len<span class="p">)</span>
-        char.lst <span class="o"><-</span> char.lst<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>num.seq <span class="o">*</span> seq.len<span class="p">)]</span>
-        data <span class="o"><-</span> <span class="kt">array</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> dim<span class="o">=</span><span class="kt">c</span><span class="p">(</span>seq.len<span class="p">,</span> num.seq<span class="p">))</span>
-        idx <span class="o"><-</span> <span class="m">1</span>
-        <span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>num.seq<span class="p">)</span> <span class="p">{</span>
-             <span class="kr">for</span> <span class="p">(</span>j <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>seq.len<span class="p">)</span> <span class="p">{</span>
-                 <span class="kr">if</span> <span class="p">(</span>char.lst<span class="p">[</span>idx<span class="p">]</span> <span class="o">%in%</span> <span class="kp">names</span><span class="p">(</span>dic<span class="p">))</span>
-                    data<span class="p">[</span>j<span class="p">,</span> i<span class="p">]</span> <span class="o"><-</span> dic<span class="p">[[</span> char.lst<span class="p">[</span>idx<span class="p">]</span> <span class="p">]]</span><span class="m">-1</span>
-                <span class="kr">else</span> <span class="p">{</span>
-                    data<span class="p">[</span>j<span class="p">,</span> i<span class="p">]</span> <span class="o"><-</span> dic<span class="p">[[</span><span class="s">"UNKNOWN"</span><span class="p">]]</span><span class="m">-1</span>
-                <span class="p">}</span>
-                idx <span class="o"><-</span> idx <span class="o">+</span> <span class="m">1</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-         <span class="kr">return</span> <span class="p">(</span><span class="kt">list</span><span class="p">(</span>data<span class="o">=</span>data<span class="p">,</span> dic<span class="o">=</span>dic<span class="p">,</span> lookup.table<span class="o">=</span>lookup.table<span class="p">))</span>
-    <span class="p">}</span>
+X.train.data <span class="o"><-</span> X<span class="p">[,</span> <span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>samples <span class="o">*</span> train.val.fraction<span class="p">)]</span>
+X.val.data <span class="o"><-</span> X<span class="p">[,</span> <span class="o">-</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>samples <span class="o">*</span> train.val.fraction<span class="p">))]</span>
+
+X.train.label <span class="o"><-</span> Y<span class="p">[,</span> <span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>samples <span class="o">*</span> train.val.fraction<span class="p">)]</span>
+X.val.label <span class="o"><-</span> Y<span class="p">[,</span> <span class="o">-</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>samples <span class="o">*</span> train.val.fraction<span class="p">))]</span>
+
+train_buckets <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span><span class="s">"100"</span> <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>data <span class="o">=</span> X.train.data<span class="p">,</span> label <span class="o">=</span> X.train.label<span class="p">))</span>
+eval_buckets <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span><span class="s">"100"</span> <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>data <span class="o">=</span> X.val.data<span class="p">,</span> label <span class="o">=</span> X.val.label<span class="p">))</span>
+
+train_buckets <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span>buckets <span class="o">=</span> train_buckets<span class="p">,</span> dic <span class="o">=</span> dic<span class="p">,</span> rev_dic <span class="o">=</span> rev_dic<span class="p">)</span>
+eval_buckets <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span>buckets <span class="o">=</span> eval_buckets<span class="p">,</span> dic <span class="o">=</span> dic<span class="p">,</span> rev_dic <span class="o">=</span> rev_dic<span class="p">)</span>
 </pre></div>
 </div>
-<p>Move the tail text:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    drop.tail <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>X<span class="p">,</span> batch.size<span class="p">)</span> <span class="p">{</span>
-        shape <span class="o"><-</span> <span class="kp">dim</span><span class="p">(</span>X<span class="p">)</span>
-        nstep <span class="o"><-</span> <span class="kp">as.integer</span><span class="p">(</span>shape<span class="p">[</span><span class="m">2</span><span class="p">]</span> <span class="o">/</span> batch.size<span class="p">)</span>
-        <span class="kr">return</span> <span class="p">(</span>X<span class="p">[,</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span>nstep <span class="o">*</span> batch.size<span class="p">)])</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-<p>Get the label of X:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    get.label <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>X<span class="p">)</span> <span class="p">{</span>
-        label <span class="o"><-</span> <span class="kt">array</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> dim<span class="o">=</span><span class="kp">dim</span><span class="p">(</span>X<span class="p">))</span>
-        d <span class="o"><-</span> <span class="kp">dim</span><span class="p">(</span>X<span class="p">)[</span><span class="m">1</span><span class="p">]</span>
-        w <span class="o"><-</span> <span class="kp">dim</span><span class="p">(</span>X<span class="p">)[</span><span class="m">2</span><span class="p">]</span>
-        <span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">0</span><span class="o">:</span><span class="p">(</span>w<span class="m">-1</span><span class="p">))</span> <span class="p">{</span>
-            <span class="kr">for</span> <span class="p">(</span>j <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>d<span class="p">)</span> <span class="p">{</span>
-                label<span class="p">[</span>i<span class="o">*</span>d<span class="o">+</span>j<span class="p">]</span> <span class="o"><-</span> X<span class="p">[(</span>i<span class="o">*</span>d<span class="o">+</span>j<span class="p">)</span><span class="o">%%</span><span class="p">(</span>w<span class="o">*</span>d<span class="p">)</span><span class="m">+1</span><span class="p">]</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="kr">return</span> <span class="p">(</span>label<span class="p">)</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-<p>Get the training data and evaluation data:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    download.data<span class="p">(</span><span class="s">"./data/"</span><span class="p">)</span>
-    ret <span class="o"><-</span> make.data<span class="p">(</span><span class="s">"./data/input.txt"</span><span class="p">,</span> seq.len<span class="o">=</span>seq.len<span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="c1">## Total unique char: 65</span>
-</pre></div>
-</div>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    X <span class="o"><-</span> ret<span class="o">$</span>data
-    dic <span class="o"><-</span> ret<span class="o">$</span>dic
-    lookup.table <span class="o"><-</span> ret<span class="o">$</span>lookup.table
+<p>Create iterators for training and evaluation datasets.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span>vocab <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>eval_buckets<span class="o">$</span>dic<span class="p">)</span>
 
-    vocab <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>dic<span class="p">)</span>
+batch.size <span class="o"><-</span> <span class="m">32</span>
 
-    shape <span class="o"><-</span> <span class="kp">dim</span><span class="p">(</span>X<span class="p">)</span>
-    train.val.fraction <span class="o"><-</span> <span class="m">0.9</span>
-    size <span class="o"><-</span> shape<span class="p">[</span><span class="m">2</span><span class="p">]</span>
+train.data <span class="o"><-</span> mx.io.bucket.iter<span class="p">(</span>buckets <span class="o">=</span> train_buckets<span class="o">$</span>buckets<span class="p">,</span> batch.size <span class="o">=</span> batch.size<span class="p">,</span> 
+                                data.mask.element <span class="o">=</span> <span class="m">0</span><span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
 
-    X.train.data <span class="o"><-</span> X<span class="p">[,</span> <span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>size <span class="o">*</span> train.val.fraction<span class="p">)]</span>
-    X.val.data <span class="o"><-</span> X<span class="p">[,</span> <span class="o">-</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">as.integer</span><span class="p">(</span>size <span class="o">*</span> train.val.fraction<span class="p">))]</span>
-    X.train.data <span class="o"><-</span> drop.tail<span class="p">(</span>X.train.data<span class="p">,</span> batch.size<span class="p">)</span>
-    X.val.data <span class="o"><-</span> drop.tail<span class="p">(</span>X.val.data<span class="p">,</span> batch.size<span class="p">)</span>
-
-    X.train.label <span class="o"><-</span> get.label<span class="p">(</span>X.train.data<span class="p">)</span>
-    X.val.label <span class="o"><-</span> get.label<span class="p">(</span>X.val.data<span class="p">)</span>
-
-    X.train <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span>data<span class="o">=</span>X.train.data<span class="p">,</span> label<span class="o">=</span>X.train.label<span class="p">)</span>
-    X.val <span class="o"><-</span> <span class="kt">list</span><span class="p">(</span>data<span class="o">=</span>X.val.data<span class="p">,</span> label<span class="o">=</span>X.val.label<span class="p">)</span>
+eval.data <span class="o"><-</span> mx.io.bucket.iter<span class="p">(</span>buckets <span class="o">=</span> eval_buckets<span class="o">$</span>buckets<span class="p">,</span> batch.size <span class="o">=</span> batch.size<span class="p">,</span>
+                               data.mask.element <span class="o">=</span> <span class="m">0</span><span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="train-the-model">
 <span id="train-the-model"></span><h2>Train the Model<a class="headerlink" href="#train-the-model" title="Permalink to this headline">¶</a></h2>
-<p>In <code class="docutils literal"><span class="pre">mxnet</span></code>, we have a function called <code class="docutils literal"><span class="pre">mx.lstm</span></code> so that users can build a general LSTM model:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    model <span class="o"><-</span> mx.lstm<span class="p">(</span>X.train<span class="p">,</span> X.val<span class="p">,</span>
-                     ctx<span class="o">=</span>mx.cpu<span class="p">(),</span>
-                     num.round<span class="o">=</span>num.round<span class="p">,</span>
-                     update.period<span class="o">=</span>update.period<span class="p">,</span>
-                     num.lstm.layer<span class="o">=</span>num.lstm.layer<span class="p">,</span>
-                     seq.len<span class="o">=</span>seq.len<span class="p">,</span>
-                     num.hidden<span class="o">=</span>num.hidden<span class="p">,</span>
-                     num.embed<span class="o">=</span>num.embed<span class="p">,</span>
-                     num.label<span class="o">=</span>vocab<span class="p">,</span>
-                     batch.size<span class="o">=</span>batch.size<span class="p">,</span>
-                     input.size<span class="o">=</span>vocab<span class="p">,</span>
-                     initializer<span class="o">=</span>mx.init.uniform<span class="p">(</span><span class="m">0.1</span><span class="p">),</span>
-                     learning.rate<span class="o">=</span>learning.rate<span class="p">,</span>
-                     wd<span class="o">=</span>wd<span class="p">,</span>
-                     clip_gradient<span class="o">=</span>clip_gradient<span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="c1">## Epoch [31] Train: NLL=3.53787130224343, Perp=34.3936275728271</span>
-   <span class="c1">## Epoch [62] Train: NLL=3.43087958036949, Perp=30.903813186055</span>
-   <span class="c1">## Epoch [93] Train: NLL=3.39771238228587, Perp=29.8956319855751</span>
-   <span class="c1">## Epoch [124] Train: NLL=3.37581711716687, Perp=29.2481732041015</span>
-   <span class="c1">## Epoch [155] Train: NLL=3.34523331338447, Perp=28.3671933405139</span>
-   <span class="c1">## Epoch [186] Train: NLL=3.30756356274787, Perp=27.31848454823</span>
-   <span class="c1">## Epoch [217] Train: NLL=3.25642968403829, Perp=25.9566978956055</span>
-   <span class="c1">## Epoch [248] Train: NLL=3.19825967486207, Perp=24.4898727477925</span>
-   <span class="c1">## Epoch [279] Train: NLL=3.14013971549828, Perp=23.1070950525017</span>
-   <span class="c1">## Epoch [310] Train: NLL=3.08747601837462, Perp=21.9216781782189</span>
-   <span class="c1">## Epoch [341] Train: NLL=3.04015595674863, Perp=20.9085038031042</span>
-   <span class="c1">## Epoch [372] Train: NLL=2.99839339255659, Perp=20.0532932584534</span>
-   <span class="c1">## Epoch [403] Train: NLL=2.95940091012609, Perp=19.2864139984503</span>
-   <span class="c1">## Epoch [434] Train: NLL=2.92603311380224, Perp=18.6534872738302</span>
-   <span class="c1">## Epoch [465] Train: NLL=2.89482756896395, Perp=18.0803835531869</span>
-   <span class="c1">## Epoch [496] Train: NLL=2.86668230478397, Perp=17.5786009078994</span>
-   <span class="c1">## Epoch [527] Train: NLL=2.84089368534943, Perp=17.1310684830416</span>
-   <span class="c1">## Epoch [558] Train: NLL=2.81725862932279, Perp=16.7309220880514</span>
-   <span class="c1">## Epoch [589] Train: NLL=2.79518870141492, Perp=16.3657166956952</span>
-   <span class="c1">## Epoch [620] Train: NLL=2.77445683225304, Perp=16.0299176962855</span>
-   <span class="c1">## Epoch [651] Train: NLL=2.75490970113174, Perp=15.719621374694</span>
-   <span class="c1">## Epoch [682] Train: NLL=2.73697900634351, Perp=15.4402696117257</span>
-   <span class="c1">## Epoch [713] Train: NLL=2.72059739336781, Perp=15.1893935780915</span>
-   <span class="c1">## Epoch [744] Train: NLL=2.70462837571585, Perp=14.948760335793</span>
-   <span class="c1">## Epoch [775] Train: NLL=2.68909904683828, Perp=14.7184093476224</span>
-   <span class="c1">## Epoch [806] Train: NLL=2.67460054451836, Perp=14.5065539595711</span>
-   <span class="c1">## Epoch [837] Train: NLL=2.66078997776751, Perp=14.3075873113043</span>
-   <span class="c1">## Epoch [868] Train: NLL=2.6476781639279, Perp=14.1212134100373</span>
-   <span class="c1">## Epoch [899] Train: NLL=2.63529039846876, Perp=13.9473621677371</span>
-   <span class="c1">## Epoch [930] Train: NLL=2.62367693518974, Perp=13.7863219168709</span>
-   <span class="c1">## Epoch [961] Train: NLL=2.61238282674384, Perp=13.6314936713501</span>
-   <span class="c1">## Iter [1] Train: Time: 10301.6818172932 sec, NLL=2.60536539345356, Perp=13.5361704272949</span>
-   <span class="c1">## Iter [1] Val: NLL=2.26093848746227, Perp=9.59208699731232</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="build-inference-from-the-model">
-<span id="build-inference-from-the-model"></span><h2>Build Inference from the Model<a class="headerlink" href="#build-inference-from-the-model" title="Permalink to this headline">¶</a></h2>
-<p>Use the helper function for random sample:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    cdf <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>weights<span class="p">)</span> <span class="p">{</span>
-        total <span class="o"><-</span> <span class="kp">sum</span><span class="p">(</span>weights<span class="p">)</span>
-        result <span class="o"><-</span> <span class="kt">c</span><span class="p">()</span>
-        cumsum <span class="o"><-</span> <span class="m">0</span>
-        <span class="kr">for</span> <span class="p">(</span>w <span class="kr">in</span> weights<span class="p">)</span> <span class="p">{</span>
-            cumsum <span class="o"><-</span> <span class="kp">cumsum</span><span class="o">+</span>w
-            result <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>result<span class="p">,</span> cumsum <span class="o">/</span> total<span class="p">)</span>
-        <span class="p">}</span>
-        <span class="kr">return</span> <span class="p">(</span>result<span class="p">)</span>
-    <span class="p">}</span>
+<p>This model is a multi-layer RNN for sampling from character-level language models. It has a one-to-one model configuration since for each character, we want to predict the next one. For a sequence of length 100, there are also 100 labels, corresponding the same sequence of characters but offset by a position of +1. The parameters output_last_state is set to TRUE in order to access the state of the RNN cells when performing inference.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span>rnn_graph_one_one <span class="o"><-</span> rnn.graph<span class="p">(</span>num_rnn_layer <span class="o">=</span> <span class="m">3</span><span class="p">,</span> 
+                               num_hidden <span class="o">=</span> <span class="m">96</span><span class="p">,</span>
+                               input_size <span class="o">=</span> vocab<span class="p">,</span>
+                               num_embed <span class="o">=</span> <span class="m">64</span><span class="p">,</span> 
+                               num_decode <span class="o">=</span> vocab<span class="p">,</span>
+                               dropout <span class="o">=</span> <span class="m">0.2</span><span class="p">,</span> 
+                               ignore_label <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+                               cell_type <span class="o">=</span> <span class="s">"lstm"</span><span class="p">,</span>
+                               masking <span class="o">=</span> <span class="bp">F</span><span class="p">,</span>
+                               output_last_state <span class="o">=</span> <span class="bp">T</span><span class="p">,</span>
+                               loss_output <span class="o">=</span> <span class="s">"softmax"</span><span class="p">,</span>
+                               config <span class="o">=</span> <span class="s">"one-to-one"</span><span class="p">)</span>
 
-    search.val <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>cdf<span class="p">,</span> x<span class="p">)</span> <span class="p">{</span>
-        l <span class="o"><-</span> <span class="m">1</span>
-        r <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>cdf<span class="p">)</span>
-        <span class="kr">while</span> <span class="p">(</span>l <span class="o"><=</span> r<span class="p">)</span> <span class="p">{</span>
-            m <span class="o"><-</span> <span class="kp">as.integer</span><span class="p">((</span>l<span class="o">+</span>r<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
-            <span class="kr">if</span> <span class="p">(</span>cdf<span class="p">[</span>m<span class="p">]</span> <span class="o"><</span> x<span class="p">)</span> <span class="p">{</span>
-                l <span class="o"><-</span> m<span class="m">+1</span>
-            <span class="p">}</span> <span class="kr">else</span> <span class="p">{</span>
-                r <span class="o"><-</span> m<span class="m">-1</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="kr">return</span> <span class="p">(</span>l<span class="p">)</span>
-    <span class="p">}</span>
-    choice <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>weights<span class="p">)</span> <span class="p">{</span>
-        cdf.vals <span class="o"><-</span> cdf<span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>weights<span class="p">))</span>
-        x <span class="o"><-</span> runif<span class="p">(</span><span class="m">1</span><span class="p">)</span>
-        idx <span class="o"><-</span> search.val<span class="p">(</span>cdf.vals<span class="p">,</span> x<span class="p">)</span>
-        <span class="kr">return</span> <span class="p">(</span>idx<span class="p">)</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-<p>Use random output or fixed output by choosing the greatest probability:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    make.output <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>prob<span class="p">,</span> sample<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="kp">sample</span><span class="p">)</span> <span class="p">{</span>
-            idx <span class="o"><-</span> <span class="kp">which.max</span><span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>prob<span class="p">))</span>
-        <span class="p">}</span>
-        <span class="kr">else</span> <span class="p">{</span>
-            idx <span class="o"><-</span> choice<span class="p">(</span>prob<span class="p">)</span>
-        <span class="p">}</span>
-        <span class="kr">return</span> <span class="p">(</span>idx<span class="p">)</span>
+graph.viz<span class="p">(</span>rnn_graph_one_one<span class="p">,</span> type <span class="o">=</span> <span class="s">"graph"</span><span class="p">,</span> direction <span class="o">=</span> <span class="s">"LR"</span><span class="p">,</span> 
+          graph.height.px <span class="o">=</span> <span class="m">180</span><span class="p">,</span> shape<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">64</span><span class="p">))</span>
 
-    <span class="p">}</span>
-</pre></div>
-</div>
-<p>In <code class="docutils literal"><span class="pre">mxnet</span></code>, we have a function called <code class="docutils literal"><span class="pre">mx.lstm.inference</span></code> so that users can build an inference from an LSTM model, and then use the <code class="docutils literal"><span class="pre">mx.lstm.forward</span></code> function to get forward output from the inference.</p>
-<p>Build an inference from the model:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    infer.model <span class="o"><-</span> mx.lstm.inference<span class="p">(</span>num.lstm.layer<span class="o">=</span>num.lstm.layer<span class="p">,</span>
-                                     input.size<span class="o">=</span>vocab<span class="p">,</span>
-                                     num.hidden<span class="o">=</span>num.hidden<span class="p">,</span>
-                                     num.embed<span class="o">=</span>num.embed<span class="p">,</span>
-                                     num.label<span class="o">=</span>vocab<span class="p">,</span>
-                                     arg.params<span class="o">=</span>model<span class="o">$</span>arg.params<span class="p">,</span>
-                                     ctx<span class="o">=</span>mx.cpu<span class="p">())</span>
-</pre></div>
-</div>
-<p>Generate a sequence of 75 characters using the  <code class="docutils literal"><span class="pre">mx.lstm.forward</span></code> function:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>    start <span class="o"><-</span> <span class="s">'a'</span>
-    seq.len <span class="o"><-</span> <span class="m">75</span>
-    random.sample <span class="o"><-</span> <span class="kc">TRUE</span>
+devices <span class="o"><-</span> mx.cpu<span class="p">()</span>
 
-    last.id <span class="o"><-</span> dic<span class="p">[[</span>start<span class="p">]]</span>
-    out <span class="o"><-</span> <span class="s">"a"</span>
-    <span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>seq.len<span class="m">-1</span><span class="p">)))</span> <span class="p">{</span>
-        input <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>last.id<span class="m">-1</span><span class="p">)</span>
-        ret <span class="o"><-</span> mx.lstm.forward<span class="p">(</span>infer.model<span class="p">,</span> input<span class="p">,</span> <span class="kc">FALSE</span><span class="p">)</span>
-        infer.model <span class="o"><-</span> ret<span class="o">$</span>model
-        prob <span class="o"><-</span> ret<span class="o">$</span>prob
-        last.id <span class="o"><-</span> make.output<span class="p">(</span>prob<span class="p">,</span> random.sample<span class="p">)</span>
-        out <span class="o"><-</span> <span class="kp">paste0</span><span class="p">(</span>out<span class="p">,</span> lookup.table<span class="p">[[</span>last.id<span class="p">]])</span>
-    <span class="p">}</span>
-    cat <span class="p">(</span><span class="kp">paste0</span><span class="p">(</span>out<span class="p">,</span> <span class="s">"\n"</span><span class="p">))</span>
+initializer <span class="o"><-</span> mx.init.Xavier<span class="p">(</span>rnd_type <span class="o">=</span> <span class="s">"gaussian"</span><span class="p">,</span> factor_type <span class="o">=</span> <span class="s">"avg"</span><span class="p">,</span> magnitude <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+
+optimizer <span class="o"><-</span> mx.opt.create<span class="p">(</span><span class="s">"adadelta"</span><span class="p">,</span> rho <span class="o">=</span> <span class="m">0.9</span><span class="p">,</span> eps <span class="o">=</span> <span class="m">1e-5</span><span class="p">,</span> wd <span class="o">=</span> <span class="m">1e-8</span><span class="p">,</span>
+                           clip_gradient <span class="o">=</span> <span class="m">5</span><span class="p">,</span> rescale.grad <span class="o">=</span> <span class="m">1</span><span class="o">/</span>batch.size<span class="p">)</span>
+
+logger <span class="o"><-</span> mx.metric.logger<span class="p">()</span>
+epoch.end.callback <span class="o"><-</span> mx.callback.log.train.metric<span class="p">(</span>period <span class="o">=</span> <span class="m">1</span><span class="p">,</span> logger <span class="o">=</span> logger<span class="p">)</span>
+batch.end.callback <span class="o"><-</span> mx.callback.log.train.metric<span class="p">(</span>period <span class="o">=</span> <span class="m">50</span><span class="p">)</span>
+
+mx.metric.custom_nd <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>name<span class="p">,</span> feval<span class="p">)</span> <span class="p">{</span>
+  init <span class="o"><-</span> <span class="kr">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+  <span class="p">}</span>
+  update <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>label<span class="p">,</span> pred<span class="p">,</span> state<span class="p">)</span> <span class="p">{</span>
+    m <span class="o"><-</span> feval<span class="p">(</span>label<span class="p">,</span> pred<span class="p">)</span>
+    state <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>state<span class="p">[[</span><span class="m">1</span><span class="p">]]</span> <span class="o">+</span> <span class="m">1</span><span class="p">,</span> state<span class="p">[[</span><span class="m">2</span><span class="p">]]</span> <span class="o">+</span> m<span class="p">)</span>
+    <span class="kr">return</span><span class="p">(</span>state<span class="p">)</span>
+  <span class="p">}</span>
+  get <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>state<span class="p">)</span> <span class="p">{</span>
+    <span class="kt">list</span><span class="p">(</span>name<span class="o">=</span>name<span class="p">,</span> value <span class="o">=</span> <span class="p">(</span>state<span class="p">[[</span><span class="m">2</span><span class="p">]]</span> <span class="o">/</span> state<span class="p">[[</span><span class="m">1</span><span class="p">]]))</span>
+  <span class="p">}</span>
+  ret <span class="o"><-</span> <span class="p">(</span><span class="kt">list</span><span class="p">(</span>init <span class="o">=</span> init<span class="p">,</span> update <span class="o">=</span> update<span class="p">,</span> get <span class="o">=</span> <span class="kp">get</span><span class="p">))</span>
+  <span class="kp">class</span><span class="p">(</span>ret<span class="p">)</span> <span class="o"><-</span> <span class="s">"mx.metric"</span>
+  <span class="kr">return</span><span class="p">(</span>ret<span class="p">)</span>
+<span class="p">}</span>
+
+mx.metric.Perplexity <span class="o"><-</span> mx.metric.custom_nd<span class="p">(</span><span class="s">"Perplexity"</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span>label<span class="p">,</span> pred<span class="p">)</span> <span class="p">{</span>
+  label <span class="o"><-</span> mx.nd.reshape<span class="p">(</span>label<span class="p">,</span> shape <span class="o">=</span> <span class="m">-1</span><span class="p">)</span>
+  label_probs <span class="o"><-</span> <span class="kp">as.array</span><span class="p">(</span>mx.nd.choose.element.0index<span class="p">(</span>pred<span class="p">,</span> label<span class="p">))</span>
+  batch <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>label_probs<span class="p">)</span>
+  NLL <span class="o"><-</span> <span class="o">-</span><span class="kp">sum</span><span class="p">(</span><span class="kp">log</span><span class="p">(</span><span class="kp">pmax</span><span class="p">(</span><span class="m">1e-15</span><span class="p">,</span> <span class="kp">as.array</span><span class="p">(</span>label_probs<span class="p">))))</span> <span class="o">/</span> batch
+  Perplexity <span class="o"><-</span> <span class="kp">exp</span><span class="p">(</span>NLL<span class="p">)</span>
+  <span class="kr">return</span><span class="p">(</span>Perplexity<span class="p">)</span>
+<span class="p">})</span>
+
+model <span class="o"><-</span> mx.model.buckets<span class="p">(</span>symbol <span class="o">=</span> rnn_graph_one_one<span class="p">,</span>
+                          train.data <span class="o">=</span> train.data<span class="p">,</span> eval.data <span class="o">=</span> eval.data<span class="p">,</span> 
+                          num.round <span class="o">=</span> <span class="m">20</span><span class="p">,</span> ctx <span class="o">=</span> devices<span class="p">,</span> verbose <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
+                          metric <span class="o">=</span> mx.metric.Perplexity<span class="p">,</span> 
+                          initializer <span class="o">=</span> initializer<span class="p">,</span> optimizer <span class="o">=</span> optimizer<span class="p">,</span> 
+                          batch.end.callback <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
+                          epoch.end.callback <span class="o">=</span> epoch.end.callback<span class="p">)</span>
+
+mx.model.save<span class="p">(</span>model<span class="p">,</span> prefix <span class="o">=</span> <span class="s">"one_to_one_seq_model"</span><span class="p">,</span> iteration <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The result:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">ah</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">drobl</span> <span class="n">greens</span>
-   <span class="n">Settled</span> <span class="n">asing</span> <span class="n">lately</span> <span class="n">sistering</span> <span class="n">sounted</span> <span class="n">to</span> <span class="n">their</span> <span class="n">hight</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Start</span> <span class="n">training</span> <span class="k">with</span> <span class="mi">1</span> <span class="n">devices</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">13.7040474322178</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">7.94617194460922</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">6.57039815554525</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">6.60806110658011</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.65360504501481</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">6.18932770630876</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.32547285727298</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">6.02198756798859</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.14373631472579</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.8095658243407</span>
+<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.03077673487379</span>
+<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.72582993567431</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.94453383291536</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.6445258528126</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.88635290100261</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.6730024536433</span>
+<span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.84205646230548</span>
+<span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.50960780230982</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.80441673535513</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.57002263750006</span>
+<span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.77763413242626</span>
+<span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.55152143269169</span>
+<span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.74937775290777</span>
+<span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.44968305351486</span>
+<span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.72824849541467</span>
+<span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.50889348298234</span>
+<span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.70980846981694</span>
+<span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.51473225859859</span>
+<span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.69685776886122</span>
+<span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.45391985233811</span>
+<span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.67837107034824</span>
+<span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.46636764997829</span>
+<span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.66866961934873</span>
+<span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.44267086113492</span>
+<span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.65611469144194</span>
+<span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.4290169469462</span>
+<span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.64614689879405</span>
+<span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.44221549833917</span>
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">4.63764001963654</span>
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="n">Validation</span><span class="o">-</span><span class="n">Perplexity</span><span class="o">=</span><span class="mf">5.42114250842862</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="create-other-rnn-models">
-<span id="create-other-rnn-models"></span><h2>Create Other RNN Models<a class="headerlink" href="#create-other-rnn-models" title="Permalink to this headline">¶</a></h2>
-<p>In <code class="docutils literal"><span class="pre">mxnet</span></code>, other RNN models, like custom RNN and GRU, are also provided:</p>
-<ul class="simple">
-<li>For a custom RNN model, you can replace <code class="docutils literal"><span class="pre">mx.lstm</span></code> with <code class="docutils literal"><span class="pre">mx.rnn</span></code> to train an RNN model. You can replace <code class="docutils literal"><span class="pre">mx.lstm.inference</span></code> and <code class="docutils literal"><span class="pre">mx.lstm.forward</span></code> with <code class="docutils literal"><span class="pre">mx.rnn.inference</span></code> and <code class="docutils literal"><span class="pre">mx.rnn.forward</span></code> to build inference from an RNN model and get the forward result from the inference model.</li>
-<li>For a GRU model, you can replace <code class="docutils literal"><span class="pre">mx.lstm</span></code> with <code class="docutils literal"><span class="pre">mx.gru</span></code> to train a GRU model. You can replace <code class="docutils literal"><span class="pre">mx.lstm.inference</span></code> and <code class="docutils literal"><span class="pre">mx.lstm.forward</span></code> with <code class="docutils literal"><span class="pre">mx.gru.inference</span></code> and <code class="docutils literal"><span class="pre">mx.gru.forward</span></code> to build inference from a GRU model and get the forward result from the inference model.</li>
-</ul>
+<div class="section" id="inference-on-the-model">
+<span id="inference-on-the-model"></span><h2>Inference on the Model<a class="headerlink" href="#inference-on-the-model" title="Permalink to this headline">¶</a></h2>
+<p>We now use the saved model to do inference and sample text character by character that will look like the original training data.</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+model <span class="o"><-</span> mx.model.load<span class="p">(</span>prefix <span class="o">=</span> <span class="s">"one_to_one_seq_model"</span><span class="p">,</span> iteration <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+
+internals <span class="o"><-</span> model<span class="o">$</span>symbol<span class="o">$</span>get.internals<span class="p">()</span>
+sym_state <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"RNN_state"</span><span class="p">))</span>
+sym_state_cell <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"RNN_state_cell"</span><span class="p">))</span>
+sym_output <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"loss_output"</span><span class="p">))</span>
+symbol <span class="o"><-</span> mx.symbol.Group<span class="p">(</span>sym_output<span class="p">,</span> sym_state<span class="p">,</span> sym_state_cell<span class="p">)</span>
+
+infer_raw <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Thou "</span><span class="p">)</span>
+infer_split <span class="o"><-</span> dic<span class="p">[</span><span class="kp">strsplit</span><span class="p">(</span>infer_raw<span class="p">,</span> <span class="s">''</span><span class="p">)</span> <span class="o">%>%</span> <span class="kp">unlist</span><span class="p">]</span>
+infer_length <span class="o"><-</span> <span class="kp">length</span><span class="p">(</span>infer_split<span class="p">)</span>
+
+infer.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span>infer_split<span class="p">),</span> label <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span>infer_split<span class="p">),</span>  
+                              batch.size <span class="o">=</span> <span class="m">1</span><span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+
+infer <span class="o"><-</span> mx.infer.rnn.one<span class="p">(</span>infer.data <span class="o">=</span> infer.data<span class="p">,</span> 
+                          symbol <span class="o">=</span> symbol<span class="p">,</span>
+                          arg.params <span class="o">=</span> model<span class="o">$</span>arg.params<span class="p">,</span>
+                          aux.params <span class="o">=</span> model<span class="o">$</span>aux.params<span class="p">,</span>
+                          input.params <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
+                          ctx <span class="o">=</span> devices<span class="p">)</span>
+
+pred_prob <span class="o"><-</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>mx.nd.slice.axis<span class="p">(</span>
+    infer<span class="o">$</span>loss_output<span class="p">,</span> axis <span class="o">=</span> <span class="m">0</span><span class="p">,</span> begin <span class="o">=</span> infer_length<span class="m">-1</span><span class="p">,</span> end <span class="o">=</span> infer_length<span class="p">)))</span>
+pred <span class="o"><-</span> <span class="kp">sample</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>pred_prob<span class="p">),</span> prob <span class="o">=</span> pred_prob<span class="p">,</span> size <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+predict <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>predict<span class="p">,</span> pred<span class="p">)</span>
+
+<span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="m">200</span><span class="p">)</span> <span class="p">{</span>
+  
+  infer.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>pred<span class="p">),</span> label <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>pred<span class="p">),</span>  
+                                batch.size <span class="o">=</span> <span class="m">1</span><span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+  
+  infer <span class="o"><-</span> mx.infer.rnn.one<span class="p">(</span>infer.data <span class="o">=</span> infer.data<span class="p">,</span> 
+                            symbol <span class="o">=</span> symbol<span class="p">,</span>
+                            arg.params <span class="o">=</span> model<span class="o">$</span>arg.params<span class="p">,</span>
+                            aux.params <span class="o">=</span> model<span class="o">$</span>aux.params<span class="p">,</span>
+                            input.params <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>rnn.state <span class="o">=</span> infer<span class="p">[[</span><span class="m">2</span><span class="p">]],</span> 
+                                                rnn.state.cell <span class="o">=</span> infer<span class="p">[[</span><span class="m">3</span><span class="p">]]),</span> 
+                            ctx <span class="o">=</span> devices<span class="p">)</span>
+  
+  pred_prob <span class="o"><-</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>infer<span class="o">$</span>loss_output<span class="p">))</span>
+  pred <span class="o"><-</span> <span class="kp">sample</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>pred_prob<span class="p">),</span> prob <span class="o">=</span> pred_prob<span class="p">,</span> size <span class="o">=</span> <span class="m">1</span><span class="p">,</span> replace <span class="o">=</span> <span class="bp">T</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+  predict <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>predict<span class="p">,</span> pred<span class="p">)</span>
+<span class="p">}</span>
+
+predict_txt <span class="o"><-</span> <span class="kp">paste0</span><span class="p">(</span>rev_dic<span class="p">[</span><span class="kp">as.character</span><span class="p">(</span>predict<span class="p">)],</span> collapse <span class="o">=</span> <span class="s">""</span><span class="p">)</span>
+predict_txt_tot <span class="o"><-</span> <span class="kp">paste0</span><span class="p">(</span>infer_raw<span class="p">,</span> predict_txt<span class="p">,</span> collapse <span class="o">=</span> <span class="s">""</span><span class="p">)</span>
+<span class="kp">print</span><span class="p">(</span>predict_txt_tot<span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="next-steps">
-<span id="next-steps"></span><h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/index.html">MXNet tutorials index</a></li>
-</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="s2">"Thou NAknowledge thee my Comfort and his late she.FRIAR LAURENCE:Nothing a groats waterd forth. The lend he thank that;When she I am brother draw London: and not hear that know.BENVOLIO:How along, makes your "</span>
+</pre></div>
 </div>
-</div>
+<div class="btn-group" role="group">
+<div class="download-btn"><a download="charRnnModel_r.ipynb" href="charRnnModel_r.ipynb"><span class="glyphicon glyphicon-download-alt"></span> charRnnModel_r.ipynb</a></div></div></div>
 </div>
 </div>
 </div>
@@ -517,12 +494,10 @@
 <div class="sphinxsidebarwrapper">
 <h3><a href="../../index.html">Table Of Contents</a></h3>
 <ul>
-<li><a class="reference internal" href="#">Char RNN Example</a><ul>
-<li><a class="reference internal" href="#load-the-data">Load the Data</a></li>
+<li><a class="reference internal" href="#">Character-level Language Model using RNN</a><ul>
+<li><a class="reference internal" href="#preprocess-and-prepare-the-data">Preprocess and prepare the data</a></li>
 <li><a class="reference internal" href="#train-the-model">Train the Model</a></li>
-<li><a class="reference internal" href="#build-inference-from-the-model">Build Inference from the Model</a></li>
-<li><a class="reference internal" href="#create-other-rnn-models">Create Other RNN Models</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li><a class="reference internal" href="#inference-on-the-model">Inference on the Model</a></li>
 </ul>
 </li>
 </ul>
