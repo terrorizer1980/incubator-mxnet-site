@@ -267,7 +267,7 @@
 <li><a class="reference external" href="#build-from-source">Build from Source</a></li>
 <li>Install MXNet with a Programming Language API<ul>
 <li><a class="reference external" href="#install-the-mxnet-package-for-python">Python</a></li>
-<li><a class="reference external" href="#install-mxnet-package-for-r">R</a></li>
+<li><a class="reference external" href="#install-the-mxnet-package-for-r">R</a></li>
 <li><a class="reference external" href="#install-the-mxnet-package-for-julia">Julia</a></li>
 </ul>
 </li>
@@ -391,14 +391,14 @@
 <ol class="simple">
 <li>Download and install <a class="reference external" href="https://cmake.org/download">CMake</a> if it is not already installed. <a class="reference external" href="https://cmake.org/files/v3.12/cmake-3.12.2-win64-x64.msi">CMake v3.12.2</a> has been tested with MXNet.</li>
 <li>Download and run the  <a class="reference external" href="https://sourceforge.net/projects/opencvlibrary/files/opencv-win/3.4.1/opencv-3.4.1-vc14_vc15.exe/download">OpenCV</a> package. There are more recent versions of OpenCV, so please create an issue/PR to update this info if you validate one of these later versions.</li>
-<li>This will unzip several files. You can place them in another directory if you wish.</li>
-<li>Set the environment variable <code class="docutils literal"><span class="pre">OpenCV_DIR</span></code> to point to the OpenCV build directory that you just unzipped (e.g., <code class="docutils literal"><span class="pre">OpenCV_DIR</span> <span class="pre">=</span> <span class="pre">C:\utils\opencv\build</span></code>).</li>
+<li>This will unzip several files. You can place them in another directory if you wish. We will use <code class="docutils literal"><span class="pre">C:\utils</span></code>(<code class="docutils literal"><span class="pre">mkdir</span> <span class="pre">C:\utils</span></code>) as our default path.</li>
+<li>Set the environment variable <code class="docutils literal"><span class="pre">OpenCV_DIR</span></code> to point to the OpenCV build directory that you just unzipped. Start <code class="docutils literal"><span class="pre">cmd</span></code> and type <code class="docutils literal"><span class="pre">set</span> <span class="pre">OpenCV_DIR=C:\utils\opencv\build</span></code>.</li>
 <li>If you don’t have the Intel Math Kernel Library (MKL) installed, you can install it and follow the <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/MKLDNN_README.md">MKLDNN_README</a> from here, or you can use OpenBLAS. These instructions will assume you&#8217;re using OpenBLAS.</li>
 <li>Download the <a class="reference external" href="https://sourceforge.net/projects/openblas/files/v0.2.19/OpenBLAS-v0.2.19-Win64-int32.zip/download">OpenBlas</a> package. Later versions of OpenBLAS are available, but you would need to build from source. v0.2.19 is the most recent version that ships with binaries. Contributions of more recent binaries would be appreciated.</li>
-<li>Unzip the file. You can place the unzipped files and folders in another directory if you wish.</li>
-<li>Set the environment variable <code class="docutils literal"><span class="pre">OpenBLAS_HOME</span></code> to point to the OpenBLAS directory that contains the <code class="docutils literal"><span class="pre">include</span></code> and <code class="docutils literal"><span class="pre">lib</span></code> directories (e.g., <code class="docutils literal"><span class="pre">OpenBLAS_HOME</span> <span class="pre">=</span> <span class="pre">C:\utils\OpenBLAS</span></code>).</li>
-<li>Download and install <a class="reference external" href="https://developer.nvidia.com/cuda-downloads?target_os=Windows&amp;target_arch=x86_64&amp;target_version=10&amp;target_type=exelocal">CUDA</a>. If you already had CUDA, then installed VS2017, you should reinstall CUDA now so that you get the CUDA toolkit components for VS2017 integration.</li>
-<li>Download and install cuDNN. To get access to the download link, register as an NVIDIA community user. Then Follow the <a class="reference external" href="http://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#install-windows">link</a> to install the cuDNN.</li>
+<li>Unzip the file, rename it to <code class="docutils literal"><span class="pre">OpenBLAS</span></code> and put it under <code class="docutils literal"><span class="pre">C:\utils</span></code>. You can place the unzipped files and folders in another directory if you wish.</li>
+<li>Set the environment variable <code class="docutils literal"><span class="pre">OpenBLAS_HOME</span></code> to point to the OpenBLAS directory that contains the <code class="docutils literal"><span class="pre">include</span></code> and <code class="docutils literal"><span class="pre">lib</span></code> directories and type <code class="docutils literal"><span class="pre">set</span> <span class="pre">OpenBLAS_HOME=C:\utils\OpenBLAS</span></code> on the command prompt(<code class="docutils literal"><span class="pre">cmd</span></code>).</li>
+<li>Download and install <a class="reference external" href="https://developer.nvidia.com/cuda-downloads?target_os=Windows&amp;target_arch=x86_64&amp;target_version=10&amp;target_type=exelocal">CUDA</a>. If you already had CUDA, then installed VS2017, you should reinstall CUDA now so that you get the CUDA toolkit components for VS2017 integration. Note that the latest CUDA version supported by MXNet is <a class="reference external" href="https://developer.nvidia.com/cuda-92-download-archive">9.2</a>. You might also want to find other CUDA verion on the <a class="reference external" href="https://developer.nvidia.com/cuda-toolkit-archive">Legacy Releases</a>.</li>
+<li>Download and install cuDNN. To get access to the download link, register as an NVIDIA community user. Then follow the <a class="reference external" href="http://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#install-windows">link</a> to install the cuDNN and put those libraries into <code class="docutils literal"><span class="pre">C:\cuda</span></code>.</li>
 <li>Download and install <a class="reference external" href="https://git-for-windows.github.io/">git</a> if you haven&#8217;t already.</li>
 </ol>
 <p>After you have installed all of the required dependencies, build the MXNet source code:</p>
@@ -414,8 +414,8 @@
 <li>Verify that the <code class="docutils literal"><span class="pre">DCUDNN_INCLUDE</span></code> and <code class="docutils literal"><span class="pre">DCUDNN_LIBRARY</span></code> environment variables are pointing to the <code class="docutils literal"><span class="pre">include</span></code> folder and <code class="docutils literal"><span class="pre">cudnn.lib</span></code> file of your CUDA installed location, and <code class="docutils literal"><span class="pre">C:\incubator-mxnet</span></code> is the location of the source code you just cloned in the previous step.</li>
 <li>Create a build dir using the following command and go to the directory, for example:</li>
 </ol>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">C</span><span class="p">:</span>\<span class="n">build</span>
-<span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">build</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">C</span><span class="p">:</span>\<span class="n">incubator</span><span class="o">-</span><span class="n">mxnet</span>\<span class="n">build</span>
+<span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">incubator</span><span class="o">-</span><span class="n">mxnet</span>\<span class="n">build</span>
 </pre></div>
 </div>
 <ol class="simple">
@@ -424,6 +424,9 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cmake</span> <span class="o">-</span><span class="n">G</span> <span class="s2">&quot;Visual Studio 15 2017 Win64&quot;</span> <span class="o">-</span><span class="n">T</span> <span class="n">cuda</span><span class="o">=</span><span class="mf">9.2</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">x64</span> <span class="o">-</span><span class="n">DUSE_CUDA</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_CUDNN</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_NVRTC</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_OPENCV</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_OPENMP</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_BLAS</span><span class="o">=</span><span class="nb">open</span> <span class="o">-</span><span class="n">DUSE_LAPACK</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">DUSE_DIST_KVSTORE</span><span class="o">=</span><span class="mi">0</span> <span class="o">-</span><span class="n">DCUDA_ARCH_LIST</span><span class="o">=</span><span class="n">Common</span> <span class="o">-</span><span class="n">DCUDA_TOOLSET</span><span class="o">=</span><span class="mf">9.2</span> <span class="o">-</span><span class="n">DCUDNN_INCLUDE</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">cuda</span>\<span class="n">include</span> <span class="o">-</span><span class="n">DCUDNN_LIBRARY</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">cuda</span>\<span class="n">lib</span>\<span class="n">x64</span>\<span class="n">cudnn</span><span class="o">.</span><span class="n">lib</span> <span class="s2">&quot;C:\incubator-mxnet&quot;</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li>Make sure you set the environment variables correctly (OpenBLAS_HOME, OpenCV_DIR) and change the version of the Visual studio 2017 to v14.11 before enter above command.</li>
+</ul>
 <ol class="simple">
 <li>After the CMake successfully completed, compile the the MXNet source code by using following command:</li>
 </ol>
@@ -468,13 +471,34 @@ Next, we install <code class="docutils literal"><span class="pre">graphviz</span
 <li><strong>Scala</strong> is not yet available for Windows</li>
 </ul>
 </div>
-<div class="section" id="install-mxnet-for-python">
-<span id="install-mxnet-for-python"></span><h2>Install MXNet for Python<a class="headerlink" href="#install-mxnet-for-python" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-the-mxnet-package-for-python">
+<span id="install-the-mxnet-package-for-python"></span><h2>Install the MXNet Package for Python<a class="headerlink" href="#install-the-mxnet-package-for-python" title="Permalink to this headline">¶</a></h2>
 <p>These steps are required after building from source. If you already installed MXNet by using pip, you do not need to do these steps to use MXNet with Python.</p>
 <ol class="simple">
 <li>Install <code class="docutils literal"><span class="pre">Python</span></code> using windows installer available <a class="reference external" href="https://www.python.org/downloads/release/python-2712/">here</a>.</li>
 <li>Install <code class="docutils literal"><span class="pre">Numpy</span></code> using windows installer available <a class="reference external" href="https://scipy.org/index.html">here</a>.</li>
-<li>Next, we install Python package interface for MXNet. You can find the Python interface package for <a class="reference external" href="https://github.com/dmlc/mxnet/tree/master/python/mxnet">MXNet on GitHub</a>.</li>
+<li>Start <code class="docutils literal"><span class="pre">cmd</span></code> and create a folder named <code class="docutils literal"><span class="pre">common</span></code>(<code class="docutils literal"><span class="pre">mkdir</span> <span class="pre">C:\common</span></code>)</li>
+<li>Download the <a class="reference external" href="https://sourceforge.net/projects/openblas/files/v0.2.12/mingw64_dll.zip/download">mingw64_dll.zip</a>, unzip and copy three libraries (.dll files) that openblas.dll depends on to <code class="docutils literal"><span class="pre">C:\common</span></code>.</li>
+<li>Copy the required .dll file to <code class="docutils literal"><span class="pre">C:\common</span></code> and make sure following libraries (.dll files) in the folder.</li>
+</ol>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">libgcc_s_seh</span><span class="o">-</span><span class="mf">1.</span><span class="n">dll</span> <span class="p">(</span><span class="ow">in</span> <span class="n">mingw64_dll</span><span class="p">)</span>
+<span class="n">libgfortran</span><span class="o">-</span><span class="mf">3.</span><span class="n">dll</span> <span class="p">(</span><span class="ow">in</span> <span class="n">mingw64_dll</span><span class="p">)</span>
+<span class="n">libquadmath</span><span class="o">-</span><span class="mf">0.</span><span class="n">dll</span> <span class="p">(</span><span class="ow">in</span> <span class="n">mingw64_dll</span><span class="p">)</span>
+<span class="n">libopenblas</span><span class="o">.</span><span class="n">dll</span> <span class="p">(</span><span class="ow">in</span> <span class="n">OpenBlas</span> <span class="n">folder</span> <span class="n">you</span> <span class="n">download</span><span class="p">)</span>
+<span class="n">opencv_world341</span><span class="o">.</span><span class="n">dll</span> <span class="p">(</span><span class="ow">in</span> <span class="n">OpenCV</span> <span class="n">folder</span> <span class="n">you</span> <span class="n">download</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="simple">
+<li>Add <code class="docutils literal"><span class="pre">C:\common</span></code> to Environment Variables.</li>
+</ol>
+<ul class="simple">
+<li>Type <code class="docutils literal"><span class="pre">control</span> <span class="pre">sysdm.cpl</span></code> on <code class="docutils literal"><span class="pre">cmp</span></code></li>
+<li>Select the <strong>Advanced tab</strong> and click <strong>Environment Variables</strong></li>
+<li>Double click the <strong>Path</strong> and click <strong>New</strong></li>
+<li>Add <code class="docutils literal"><span class="pre">C:\common</span></code> and click OK</li>
+</ul>
+<ol class="simple">
+<li>Use setup.py to install the package.</li>
 </ol>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    <span class="c1"># Assuming you are in root mxnet source code folder</span>
     <span class="nb">cd</span> python
@@ -753,7 +777,7 @@ R CMD INSTALL --build --no-multiarch R-package
 </ul>
 </li>
 <li><a class="reference internal" href="#build-from-source">Build from Source</a></li>
-<li><a class="reference internal" href="#install-mxnet-for-python">Install MXNet for Python</a></li>
+<li><a class="reference internal" href="#install-the-mxnet-package-for-python">Install the MXNet Package for Python</a></li>
 <li><a class="reference internal" href="#install-the-mxnet-package-for-r">Install the MXNet Package for R</a><ul>
 <li><a class="reference internal" href="#installing-mxnet-r-on-a-computer-with-a-cpu-processor">Installing MXNet-R on a Computer with a CPU Processor</a><ul>
 <li><a class="reference internal" href="#installing-mxnet-r-with-the-prebuilt-binary-package-cpu">Installing MXNet-R with the Prebuilt Binary Package(CPU)</a></li>
