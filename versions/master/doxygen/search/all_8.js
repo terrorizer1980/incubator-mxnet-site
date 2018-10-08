@@ -19,6 +19,7 @@ var searchData=
   ['get_5fvar',['get_var',['../classmxnet_1_1OpStatePtr.html#a77a1636269466569c0b6e32941ed7264',1,'mxnet::OpStatePtr']]],
   ['get_5fwith_5fshape',['get_with_shape',['../classmxnet_1_1TBlob.html#abbdbdc8d02c15e854cc7f5fe5dc09f61',1,'mxnet::TBlob']]],
   ['getenvallowtensorcore',['GetEnvAllowTensorCore',['../cuda__utils_8h.html#a464dee13053e3b0b1006c6307069196c',1,'cuda_utils.h']]],
+  ['getenvallowtensorcoreconversion',['GetEnvAllowTensorCoreConversion',['../cuda__utils_8h.html#ad77e70546b7f35ecba0098caa2d07523',1,'cuda_utils.h']]],
   ['getexecnummatchcolor',['GetExecNumMatchColor',['../namespacemxnet_1_1common.html#a56555edcc52c5b25bed90bd05e00b5fa',1,'mxnet::common']]],
   ['getfcompute',['GetFCompute',['../namespacemxnet_1_1common.html#a1abcb76ccd9022ebacdacd69c821cdc2',1,'mxnet::common']]],
   ['getgpucount',['GetGPUCount',['../structmxnet_1_1Context.html#adde995df8e2b9871151921a932788cd2',1,'mxnet::Context']]],
