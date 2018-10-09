@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['favoidquantizeinput',['FAvoidQuantizeInput',['../namespacemxnet.html#aa80f4ba59193c91fe9d168fbe4b0ea50',1,'mxnet']]],
   ['fcompute',['FCompute',['../namespacemxnet.html#ad77e2048b7e8db91a12e05b477aac13e',1,'mxnet']]],
   ['fcomputeex',['FComputeEx',['../namespacemxnet.html#a294d2660c065f8d229c27e65f0461e10',1,'mxnet']]],
   ['fcreateopstate',['FCreateOpState',['../namespacemxnet.html#acb83431b596f805fabcc4ba400c62e85',1,'mxnet']]],
