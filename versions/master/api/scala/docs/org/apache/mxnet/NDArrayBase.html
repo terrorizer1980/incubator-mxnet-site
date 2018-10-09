@@ -1188,6 +1188,230 @@ Example::
 Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L267
 </pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#CTCLoss" visbl="pub">
+<a id="CTCLoss(args:Any*):org.apache.mxnet.NDArrayFuncReturn"></a>
+<a id="CTCLoss(Any*):NDArrayFuncReturn"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">CTCLoss</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Any">Any</span>*</span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.NDArrayBase@CTCLoss(args:Any*):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
+</p></dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#CTCLoss" visbl="pub">
+<a id="CTCLoss(kwargs:Map[String,Any])(args:Any*):org.apache.mxnet.NDArrayFuncReturn"></a>
+<a id="CTCLoss(Map[String,Any])(Any*):NDArrayFuncReturn"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">CTCLoss</span><span class="params">(<span name="kwargs">kwargs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>] = <span class="symbol">null</span></span>)</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Any">Any</span>*</span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.NDArrayBase@CTCLoss(kwargs:Map[String,Any])(args:Any*):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
+</p></dd></dl></div>
 <li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#Cast" visbl="pub">
 <a id="Cast(args:Any*):org.apache.mxnet.NDArrayFuncReturn"></a>
 <a id="Cast(Any*):NDArrayFuncReturn"></a>
@@ -14246,6 +14470,230 @@ Example::
 
 
 Defined in src/operator/tensor/matrix_op.cc:L413
+</pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
+</p></dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#ctc_loss" visbl="pub">
+<a id="ctc_loss(args:Any*):org.apache.mxnet.NDArrayFuncReturn"></a>
+<a id="ctc_loss(Any*):NDArrayFuncReturn"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">ctc_loss</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Any">Any</span>*</span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.NDArrayBase@ctc_loss(args:Any*):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
+</p></dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#ctc_loss" visbl="pub">
+<a id="ctc_loss(kwargs:Map[String,Any])(args:Any*):org.apache.mxnet.NDArrayFuncReturn"></a>
+<a id="ctc_loss(Map[String,Any])(Any*):NDArrayFuncReturn"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">ctc_loss</span><span class="params">(<span name="kwargs">kwargs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>] = <span class="symbol">null</span></span>)</span><span class="params">(<span name="args">args: <span class="extype" name="scala.Any">Any</span>*</span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.NDArrayBase@ctc_loss(kwargs:Map[String,Any])(args:Any*):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
 </pre></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArray
 </p></dd></dl></div>
 <li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayBase#degrees" visbl="pub">

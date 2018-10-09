@@ -3331,6 +3331,72 @@ of its inputs to be taken into account for computing gradients.</p>
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.ndarray.CTCLoss">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">CTCLoss</code><span class="sig-paren">(</span><em>data=None</em>, <em>label=None</em>, <em>data_lengths=None</em>, <em>label_lengths=None</em>, <em>use_data_lengths=_Null</em>, <em>use_label_lengths=_Null</em>, <em>blank_label=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.CTCLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:</p>
+<ul class="simple">
+<li><strong>data</strong>: <cite>(sequence_length, batch_size, alphabet_size)</cite></li>
+<li><strong>label</strong>: <cite>(batch_size, label_sequence_length)</cite></li>
+<li><strong>out</strong>: <cite>(batch_size)</cite></li>
+</ul>
+<p>The <cite>data</cite> tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, the <code class="docutils literal"><span class="pre">0</span></code>-th channel is be reserved for
+activation of blank label, or otherwise if it is “last”, <code class="docutils literal"><span class="pre">(alphabet_size-1)</span></code>-th channel should be
+reserved for blank label.</p>
+<p><code class="docutils literal"><span class="pre">label</span></code> is an index matrix of integers. When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"last"</span></code>, the value <cite>(alphabet_size-1)</cite> is reserved for blank label.</p>
+<p>If a sequence of labels is shorter than <em>label_sequence_length</em>, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is <cite>0</cite> when <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, and <cite>-1</cite> otherwise.</p>
+<p>For example, suppose the vocabulary is <cite>[a, b, c]</cite>, and in one batch we have three sequences
+‘ba’, ‘cbb’, and ‘abac’. When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, we can index the labels as
+<cite>{‘a’: 1, ‘b’: 2, ‘c’: 3}</cite>, and we reserve the 0-th channel for blank label in data tensor.
+The resulting <cite>label</cite> tensor should be padded to be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"last"</span></code>, we can index the labels as
+<cite>{‘a’: 0, ‘b’: 1, ‘c’: 2}</cite>, and we reserve the channel index 3 for blank label in data tensor.
+The resulting <cite>label</cite> tensor should be padded to be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">out</span></code> is a list of CTC loss values, one per example in the batch.</p>
+<p>See <em>Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks</em>, A. Graves <em>et al</em>. for more
+information on the definition and the algorithm.</p>
+<p>Defined in src/operator/nn/ctc_loss.cc:L97</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input ndarray</li>
+<li><strong>label</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Ground-truth labels for the loss.</li>
+<li><strong>data_lengths</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lengths of data for each of the samples. Only required when use_data_lengths is true.</li>
+<li><strong>label_lengths</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lengths of labels for each of the samples. Only required when use_label_lengths is true.</li>
+<li><strong>use_data_lengths</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether the data lenghts are decided by <cite>data_lengths</cite>. If false, the lengths are equal to the max sequence length.</li>
+<li><strong>use_label_lengths</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether the label lenghts are decided by <cite>label_lengths</cite>, or derived from <cite>padding_mask</cite>. If false, the lengths are derived from the first occurrence of the value of <cite>padding_mask</cite>. The value of <cite>padding_mask</cite> is <code class="docutils literal"><span class="pre">0</span></code> when first CTC label is reserved for blank, and <code class="docutils literal"><span class="pre">-1</span></code> when last label is reserved for blank. See <cite>blank_label</cite>.</li>
+<li><strong>blank_label</strong> (<em>{'first'</em><em>, </em><em>'last'}</em><em>,</em><em>optional</em><em>, </em><em>default='first'</em>) – Set the label that is reserved for blank label.If “first”, 0-th label is reserved, and label values for tokens in the vocabulary are between <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">alphabet_size-1</span></code>, and the padding mask is <code class="docutils literal"><span class="pre">-1</span></code>. If “last”, last label value <code class="docutils literal"><span class="pre">alphabet_size-1</span></code> is reserved for blank label instead, and label values for tokens in the vocabulary are between <code class="docutils literal"><span class="pre">0</span></code> and <code class="docutils literal"><span class="pre">alphabet_size-2</span></code>, and the padding mask is <code class="docutils literal"><span class="pre">0</span></code>.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.ndarray.Cast">
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">Cast</code><span class="sig-paren">(</span><em>data=None</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.Cast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Casts all elements of the input to a new type.</p>
@@ -7519,6 +7585,72 @@ a dense tensor.</p>
 <li><strong>begin</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – starting indices for the slice operation, supports negative indices.</li>
 <li><strong>end</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – ending indices for the slice operation, supports negative indices.</li>
 <li><strong>step</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – step for the slice operation, supports negative values.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.ctc_loss">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">ctc_loss</code><span class="sig-paren">(</span><em>data=None</em>, <em>label=None</em>, <em>data_lengths=None</em>, <em>label_lengths=None</em>, <em>use_data_lengths=_Null</em>, <em>use_label_lengths=_Null</em>, <em>blank_label=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.ctc_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:</p>
+<ul class="simple">
+<li><strong>data</strong>: <cite>(sequence_length, batch_size, alphabet_size)</cite></li>
+<li><strong>label</strong>: <cite>(batch_size, label_sequence_length)</cite></li>
+<li><strong>out</strong>: <cite>(batch_size)</cite></li>
+</ul>
+<p>The <cite>data</cite> tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, the <code class="docutils literal"><span class="pre">0</span></code>-th channel is be reserved for
+activation of blank label, or otherwise if it is “last”, <code class="docutils literal"><span class="pre">(alphabet_size-1)</span></code>-th channel should be
+reserved for blank label.</p>
+<p><code class="docutils literal"><span class="pre">label</span></code> is an index matrix of integers. When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"last"</span></code>, the value <cite>(alphabet_size-1)</cite> is reserved for blank label.</p>
+<p>If a sequence of labels is shorter than <em>label_sequence_length</em>, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is <cite>0</cite> when <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, and <cite>-1</cite> otherwise.</p>
+<p>For example, suppose the vocabulary is <cite>[a, b, c]</cite>, and in one batch we have three sequences
+‘ba’, ‘cbb’, and ‘abac’. When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"first"</span></code>, we can index the labels as
+<cite>{‘a’: 1, ‘b’: 2, ‘c’: 3}</cite>, and we reserve the 0-th channel for blank label in data tensor.
+The resulting <cite>label</cite> tensor should be padded to be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>When <cite>blank_label</cite> is <code class="docutils literal"><span class="pre">"last"</span></code>, we can index the labels as
+<cite>{‘a’: 0, ‘b’: 1, ‘c’: 2}</cite>, and we reserve the channel index 3 for blank label in data tensor.
+The resulting <cite>label</cite> tensor should be padded to be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">out</span></code> is a list of CTC loss values, one per example in the batch.</p>
+<p>See <em>Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks</em>, A. Graves <em>et al</em>. for more
+information on the definition and the algorithm.</p>
+<p>Defined in src/operator/nn/ctc_loss.cc:L97</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input ndarray</li>
+<li><strong>label</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Ground-truth labels for the loss.</li>
+<li><strong>data_lengths</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lengths of data for each of the samples. Only required when use_data_lengths is true.</li>
+<li><strong>label_lengths</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lengths of labels for each of the samples. Only required when use_label_lengths is true.</li>
+<li><strong>use_data_lengths</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether the data lenghts are decided by <cite>data_lengths</cite>. If false, the lengths are equal to the max sequence length.</li>
+<li><strong>use_label_lengths</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether the label lenghts are decided by <cite>label_lengths</cite>, or derived from <cite>padding_mask</cite>. If false, the lengths are derived from the first occurrence of the value of <cite>padding_mask</cite>. The value of <cite>padding_mask</cite> is <code class="docutils literal"><span class="pre">0</span></code> when first CTC label is reserved for blank, and <code class="docutils literal"><span class="pre">-1</span></code> when last label is reserved for blank. See <cite>blank_label</cite>.</li>
+<li><strong>blank_label</strong> (<em>{'first'</em><em>, </em><em>'last'}</em><em>,</em><em>optional</em><em>, </em><em>default='first'</em>) – Set the label that is reserved for blank label.If “first”, 0-th label is reserved, and label values for tokens in the vocabulary are between <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">alphabet_size-1</span></code>, and the padding mask is <code class="docutils literal"><span class="pre">-1</span></code>. If “last”, last label value <code class="docutils literal"><span class="pre">alphabet_size-1</span></code> is reserved for blank label instead, and label values for tokens in the vocabulary are between <code class="docutils literal"><span class="pre">0</span></code> and <code class="docutils literal"><span class="pre">alphabet_size-2</span></code>, and the padding mask is <code class="docutils literal"><span class="pre">0</span></code>.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>

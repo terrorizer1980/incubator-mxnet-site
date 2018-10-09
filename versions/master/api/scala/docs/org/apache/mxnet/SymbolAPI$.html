@@ -633,6 +633,120 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L267
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolAPIBase#CTCLoss" visbl="pub">
+<a id="CTCLoss(data:Option[org.apache.mxnet.Symbol],label:Option[org.apache.mxnet.Symbol],data_lengths:Option[org.apache.mxnet.Symbol],label_lengths:Option[org.apache.mxnet.Symbol],use_data_lengths:Option[Boolean],use_label_lengths:Option[Boolean],blank_label:Option[String],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol"></a>
+<a id="CTCLoss(Option[Symbol],Option[Symbol],Option[Symbol],Option[Symbol],Option[Boolean],Option[Boolean],Option[String],String,Map[String,String]):Symbol"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">CTCLoss</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="label">label: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="data_lengths">data_lengths: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="label_lengths">label_lengths: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="use_data_lengths">use_data_lengths: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="use_label_lengths">use_label_lengths: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="blank_label">blank_label: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.SymbolAPI$@CTCLoss(data:Option[org.apache.mxnet.Symbol],label:Option[org.apache.mxnet.Symbol],data_lengths:Option[org.apache.mxnet.Symbol],label_lengths:Option[org.apache.mxnet.Symbol],use_data_lengths:Option[Boolean],use_label_lengths:Option[Boolean],blank_label:Option[String],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input ndarray</p></dd><dt class="param">label</dt><dd class="cmt"><p>Ground-truth labels for the loss.</p></dd><dt class="param">data_lengths</dt><dd class="cmt"><p>Lengths of data for each of the samples. Only required when use_data_lengths is true.</p></dd><dt class="param">label_lengths</dt><dd class="cmt"><p>Lengths of labels for each of the samples. Only required when use_label_lengths is true.</p></dd><dt class="param">use_data_lengths</dt><dd class="cmt"><p>Whether the data lenghts are decided by <code>data_lengths</code>. If false, the lengths are equal to the max sequence length.</p></dd><dt class="param">use_label_lengths</dt><dd class="cmt"><p>Whether the label lenghts are decided by <code>label_lengths</code>, or derived from <code>padding_mask</code>. If false, the lengths are derived from the first occurrence of the value of <code>padding_mask</code>. The value of <code>padding_mask</code> is <code><code>0</code></code> when first CTC label is reserved for blank, and <code><code>-1</code></code> when last label is reserved for blank. See <code>blank_label</code>.</p></dd><dt class="param">blank_label</dt><dd class="cmt"><p>Set the label that is reserved for blank label.If "first", 0-th label is reserved, and label values for tokens in the vocabulary are between <code><code>1</code></code> and <code><code>alphabet_size-1</code></code>, and the padding mask is <code><code>-1</code></code>. If "last", last label value <code><code>alphabet_size-1</code></code> is reserved for blank label instead, and label values for tokens in the vocabulary are between <code><code>0</code></code> and <code><code>alphabet_size-2</code></code>, and the padding mask is <code><code>0</code></code>.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
+<span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
+</dd></dl></div>
 <li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolAPIBase#Cast" visbl="pub">
 <a id="Cast(data:Option[org.apache.mxnet.Symbol],dtype:String,name:String,attr:Map[String,String]):org.apache.mxnet.Symbol"></a>
 <a id="Cast(Option[Symbol],String,String,Map[String,String]):Symbol"></a>
@@ -7308,6 +7422,120 @@ Example::
 
 Defined in src/operator/tensor/matrix_op.cc:L413
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Source input</p></dd><dt class="param">begin</dt><dd class="cmt"><p>starting indices for the slice operation, supports negative indices.</p></dd><dt class="param">end</dt><dd class="cmt"><p>ending indices for the slice operation, supports negative indices.</p></dd><dt class="param">step</dt><dd class="cmt"><p>step for the slice operation, supports negative values.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
+<span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
+</dd></dl></div>
+<li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolAPIBase#ctc_loss" visbl="pub">
+<a id="ctc_loss(data:Option[org.apache.mxnet.Symbol],label:Option[org.apache.mxnet.Symbol],data_lengths:Option[org.apache.mxnet.Symbol],label_lengths:Option[org.apache.mxnet.Symbol],use_data_lengths:Option[Boolean],use_label_lengths:Option[Boolean],blank_label:Option[String],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol"></a>
+<a id="ctc_loss(Option[Symbol],Option[Symbol],Option[Symbol],Option[Symbol],Option[Boolean],Option[Boolean],Option[String],String,Map[String,String]):Symbol"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">ctc_loss</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="label">label: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="data_lengths">data_lengths: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="label_lengths">label_lengths: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a>] = <span class="symbol">None</span></span>, <span name="use_data_lengths">use_data_lengths: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="use_label_lengths">use_label_lengths: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="blank_label">blank_label: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a class="extype" href="Symbol.html" name="org.apache.mxnet.Symbol">Symbol</a></span>
+</span>
+</h4><span class="permalink">
+<a href="../../../index.html#org.apache.mxnet.SymbolAPI$@ctc_loss(data:Option[org.apache.mxnet.Symbol],label:Option[org.apache.mxnet.Symbol],data_lengths:Option[org.apache.mxnet.Symbol],label_lengths:Option[org.apache.mxnet.Symbol],use_data_lengths:Option[Boolean],use_label_lengths:Option[Boolean],blank_label:Option[String],name:String,attr:Map[String,String]):org.apache.mxnet.Symbol" target="_top" title="Permalink">
+<img src="../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt">
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
+<pre>
+Connectionist Temporal Classification Loss.
+The shapes of the inputs and outputs:
+
+- **data**: `(sequence_length, batch_size, alphabet_size)`
+- **label**: `(batch_size, label_sequence_length)`
+- **out**: `(batch_size)`
+
+The `data` tensor consists of sequences of activation vectors (without applying softmax),
+with i-th channel in the last dimension corresponding to i-th label
+for i between 0 and alphabet_size-1 (i.e always 0-indexed).
+Alphabet size should include one additional value reserved for blank label.
+When `blank_label` is ``"first"``, the ``0``-th channel is be reserved for
+activation of blank label, or otherwise if it is "last", ``(alphabet_size-1)``-th channel should be
+reserved for blank label.
+
+``label`` is an index matrix of integers. When `blank_label` is ``"first"``,
+the value 0 is then reserved for blank label, and should not be passed in this matrix. Otherwise,
+when `blank_label` is ``"last"``, the value `(alphabet_size-1)` is reserved for blank label.
+
+If a sequence of labels is shorter than *label_sequence_length*, use the special
+padding value at the end of the sequence to conform it to the correct
+length. The padding value is `0` when `blank_label` is ``"first"``, and `-1` otherwise.
+
+For example, suppose the vocabulary is `[a, b, c]`, and in one batch we have three sequences
+'ba', 'cbb', and 'abac'. When `blank_label` is ``"first"``, we can index the labels as
+`{'a': 1, 'b': 2, 'c': 3}`, and we reserve the 0-th channel for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[2, 1, 0, 0], [3, 2, 2, 0], [1, 2, 1, 3]]
+
+When `blank_label` is ``"last"``, we can index the labels as
+`{'a': 0, 'b': 1, 'c': 2}`, and we reserve the channel index 3 for blank label in data tensor.
+The resulting `label` tensor should be padded to be::
+
+  [[1, 0, -1, -1], [2, 1, 1, -1], [0, 1, 0, 2]]
+
+``out`` is a list of CTC loss values, one per example in the batch.
+
+See *Connectionist Temporal Classification: Labelling Unsegmented
+Sequence Data with Recurrent Neural Networks*, A. Graves *et al*. for more
+information on the definition and the algorithm.
+
+
+
+Defined in src/operator/nn/ctc_loss.cc:L97
+</pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input ndarray</p></dd><dt class="param">label</dt><dd class="cmt"><p>Ground-truth labels for the loss.</p></dd><dt class="param">data_lengths</dt><dd class="cmt"><p>Lengths of data for each of the samples. Only required when use_data_lengths is true.</p></dd><dt class="param">label_lengths</dt><dd class="cmt"><p>Lengths of labels for each of the samples. Only required when use_label_lengths is true.</p></dd><dt class="param">use_data_lengths</dt><dd class="cmt"><p>Whether the data lenghts are decided by <code>data_lengths</code>. If false, the lengths are equal to the max sequence length.</p></dd><dt class="param">use_label_lengths</dt><dd class="cmt"><p>Whether the label lenghts are decided by <code>label_lengths</code>, or derived from <code>padding_mask</code>. If false, the lengths are derived from the first occurrence of the value of <code>padding_mask</code>. The value of <code>padding_mask</code> is <code><code>0</code></code> when first CTC label is reserved for blank, and <code><code>-1</code></code> when last label is reserved for blank. See <code>blank_label</code>.</p></dd><dt class="param">blank_label</dt><dd class="cmt"><p>Set the label that is reserved for blank label.If "first", 0-th label is reserved, and label values for tokens in the vocabulary are between <code><code>1</code></code> and <code><code>alphabet_size-1</code></code>, and the padding mask is <code><code>-1</code></code>. If "last", last label value <code><code>alphabet_size-1</code></code> is reserved for blank label instead, and label values for tokens in the vocabulary are between <code><code>0</code></code> and <code><code>alphabet_size-2</code></code>, and the padding mask is <code><code>0</code></code>.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
