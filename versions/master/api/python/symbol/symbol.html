@@ -3299,7 +3299,7 @@ this array as data.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.symbol.BatchNorm">
-<code class="descclassname">mxnet.symbol.</code><code class="descname">BatchNorm</code><span class="sig-paren">(</span><em>data=None</em>, <em>gamma=None</em>, <em>beta=None</em>, <em>moving_mean=None</em>, <em>moving_var=None</em>, <em>eps=_Null</em>, <em>momentum=_Null</em>, <em>fix_gamma=_Null</em>, <em>use_global_stats=_Null</em>, <em>output_mean_var=_Null</em>, <em>axis=_Null</em>, <em>cudnn_off=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.BatchNorm" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.symbol.</code><code class="descname">BatchNorm</code><span class="sig-paren">(</span><em>data=None</em>, <em>gamma=None</em>, <em>beta=None</em>, <em>moving_mean=None</em>, <em>moving_var=None</em>, <em>eps=_Null</em>, <em>momentum=_Null</em>, <em>fix_gamma=_Null</em>, <em>fix_beta=_Null</em>, <em>use_global_stats=_Null</em>, <em>output_mean_var=_Null</em>, <em>axis=_Null</em>, <em>cudnn_off=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.BatchNorm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch normalization.</p>
 <p>Normalizes a data batch by mean and variance, and applies a scale <code class="docutils literal"><span class="pre">gamma</span></code> as
 well as offset <code class="docutils literal"><span class="pre">beta</span></code>.</p>
@@ -3331,11 +3331,12 @@ the output. It is often used during inference.</p>
 the ‘channel’ (separately normalized groups).  The default is 1.  Specifying -1 sets the channel
 axis to be the last item in the input shape.</p>
 <p>Both <code class="docutils literal"><span class="pre">gamma</span></code> and <code class="docutils literal"><span class="pre">beta</span></code> are learnable parameters. But if <code class="docutils literal"><span class="pre">fix_gamma</span></code> is true,
-then set <code class="docutils literal"><span class="pre">gamma</span></code> to 1 and its gradient to 0.</p>
+then set <code class="docutils literal"><span class="pre">gamma</span></code> to 1 and its gradient to 0. If <code class="docutils literal"><span class="pre">fix_beta</span></code> is true, then set <code class="docutils literal"><span class="pre">beta</span></code> to 0
+and its gradient to 0.</p>
 <p>Note:</p>
-<p>When fix_gamma is set to True, no sparse support is provided. If fix_gamma is set to False,
+<p>When fix_gamma/fix_beta is set to True, no sparse support is provided. If fix_gamma/fix_beta is set to False,
 the sparse tensors will fallback.</p>
-<p>Defined in src/operator/nn/batch_norm.cc:L575</p>
+<p>Defined in src/operator/nn/batch_norm.cc:L582</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -3349,6 +3350,7 @@ the sparse tensors will fallback.</p>
 <li><strong>eps</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=0.001</em>) – Epsilon to prevent div 0. Must be no less than CUDNN_BN_MIN_EPSILON defined in cudnn.h when using cudnn (usually 1e-5)</li>
 <li><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.9</em>) – Momentum for moving average</li>
 <li><strong>fix_gamma</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Fix gamma while training</li>
+<li><strong>fix_beta</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Fix beta while training</li>
 <li><strong>use_global_stats</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether use global moving statistics instead of local batch-norm. This will force change batch-norm into a scale shift operator.</li>
 <li><strong>output_mean_var</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Output the mean and inverse std</li>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Specify which shape axis the channel is specified</li>
