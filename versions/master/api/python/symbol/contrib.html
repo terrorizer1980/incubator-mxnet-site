@@ -1663,6 +1663,48 @@ The output data has shape: (N, 2*d) or (N1, N2, N3, 2*d). The format is: [real0,
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.symbol.contrib.group_adagrad_update">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">group_adagrad_update</code><span class="sig-paren">(</span><em>weight=None</em>, <em>grad=None</em>, <em>history=None</em>, <em>lr=_Null</em>, <em>rescale_grad=_Null</em>, <em>clip_gradient=_Null</em>, <em>epsilon=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.group_adagrad_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update function for Group AdaGrad optimizer.</p>
+<p>Referenced from <em>Adaptive Subgradient Methods for Online Learning and Stochastic Optimization</em>,
+and available at <a class="reference external" href="http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf">http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf</a> but
+uses only a single learning rate for every row of the parameter array.</p>
+<p>Updates are applied by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">grad</span> <span class="o">=</span> <span class="n">clip</span><span class="p">(</span><span class="n">grad</span> <span class="o">*</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="p">)</span>
+<span class="n">history</span> <span class="o">+=</span> <span class="n">mean</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">grad</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">div</span> <span class="o">=</span> <span class="n">grad</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">history</span> <span class="o">+</span> <span class="n">float_stable_eps</span><span class="p">)</span>
+<span class="n">weight</span> <span class="o">-=</span> <span class="n">div</span> <span class="o">*</span> <span class="n">lr</span>
+</pre></div>
+</div>
+<p>Weights are updated lazily if the gradient is sparse.</p>
+<p>Note that non-zero values for the weight decay option are not supported.</p>
+<p>Defined in src/operator/contrib/optimizer_op.cc:L71</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weight</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Weight</li>
+<li><strong>grad</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Gradient</li>
+<li><strong>history</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – History</li>
+<li><strong>lr</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e-05</em>) – Epsilon for numerical stability</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.symbol.contrib.ifft">
 <code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">ifft</code><span class="sig-paren">(</span><em>data=None</em>, <em>compute_size=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.ifft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply 1D ifft to input”</p>
