@@ -307,6 +307,10 @@
     brew install openblas
     brew tap homebrew/core
     brew install opencv
+
+    <span class="c1"># If building with MKLDNN</span>
+    brew install llvm
+
     <span class="c1"># Get pip</span>
     easy_install pip
     <span class="c1"># For visualization of network graphs</span>
@@ -330,11 +334,15 @@
     make -j<span class="k">$(</span>sysctl -n hw.ncpu<span class="k">)</span>
 </pre></div>
 </div>
+<p>To build with MKLDNN</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nv">LIBRARY_PATH</span><span class="o">=</span><span class="k">$(</span>brew --prefix llvm<span class="k">)</span>/lib/ make -j <span class="k">$(</span>sysctl -n hw.ncpu<span class="k">)</span> <span class="nv">CC</span><span class="o">=</span><span class="k">$(</span>brew --prefix llvm<span class="k">)</span>/bin/clang++ <span class="nv">CXX</span><span class="o">=</span><span class="k">$(</span>brew --prefix llvm<span class="k">)</span>/bin/clang++ <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_OPENMP</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_MKLDNN</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>apple <span class="nv">USE_PROFILER</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
 <p>If building with <code class="docutils literal"><span class="pre">GPU</span></code> support, add the following configuration to config.mk and build:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    <span class="nb">echo</span> <span class="s2">&quot;USE_CUDA = 1&quot;</span> &gt;&gt; ./config.mk
     <span class="nb">echo</span> <span class="s2">&quot;USE_CUDA_PATH = /usr/local/cuda&quot;</span> &gt;&gt; ./config.mk
     <span class="nb">echo</span> <span class="s2">&quot;USE_CUDNN = 1&quot;</span> &gt;&gt; ./config.mk
-    make
+    make -j<span class="k">$(</span>sysctl -n hw.ncpu<span class="k">)</span>
 </pre></div>
 </div>
 <p><strong>Note:</strong> To change build parameters, edit <code class="docutils literal"><span class="pre">config.mk</span></code>.</p>
