@@ -281,7 +281,7 @@ and clearer hierarchy in the future.</p>
 for registering <code class="docutils literal"><span class="pre">a</span></code>, <code class="docutils literal"><span class="pre">b</span></code>, and <code class="docutils literal"><span class="pre">c</span></code> in <code class="docutils literal"><span class="pre">quadratic_op-inl.h</span></code>.</li>
 <li>Define type and shape inference functions in <code class="docutils literal"><span class="pre">quadratic_op-inl.h</span></code>.</li>
 <li>Define forward and backward functions in <code class="docutils literal"><span class="pre">quadratic_op-inl.h</span></code>.</li>
-<li>Register the operator using <a class="reference external" href="https://github.com/dmlc/nnvm">nnvm</a>
+<li>Register the operator using <a class="reference external" href="https://docs.tvm.ai/dev/nnvm_overview.html">nnvm</a>
 in <code class="docutils literal"><span class="pre">quadratic_op.cc</span></code> and <code class="docutils literal"><span class="pre">quadratic_op.cu</span></code> for
 CPU and GPU computing, respectively.</li>
 </ol>
@@ -543,7 +543,10 @@ parallel computation on both CPU and GPU. This allows most of
 the simple operators to share the same piece of code for CPU and GPU as
 parallelization approaches are often identical on both types of devices.
 The kernel function is defined as the following, where the function
-<code class="docutils literal"><span class="pre">Map</span></code> is executed by each thread for each input element. To explain a little
+<code class="docutils literal"><span class="pre">Map</span></code> is executed by each thread for each input element. The <code class="docutils literal"><span class="pre">out_data.Size()</span></code>,
+in the <code class="docutils literal"><span class="pre">Kernel::Launch</span></code> function corresponds to the factor by which the
+workload will get parallelized among the different threads, which here
+corresponds to the size of the output array. To explain a little
 bit more on the two macros used in the kernel struct: (1) <code class="docutils literal"><span class="pre">MSHADOW_XINLINE</span></code> is
 a consolidated macro for inlining functions compiled by both CPU and GPU
 compilers. It enables CPU and GPU computing to share the same piece of code.
@@ -773,21 +776,21 @@ If you use python, when you type <code class="docutils literal"><span class="pre
 functions for invoking your backend implementation are
 generated on the fly: one is for imperative programming
 registered as <code class="docutils literal"><span class="pre">mxnet.ndarray.quadratic</span></code> or <code class="docutils literal"><span class="pre">mx.nd.quadratic</span></code> for short;
-the other one is for symbolic
-programming registered under module <code class="docutils literal"><span class="pre">mxnet.symbol.quadratic</span></code>
-or <code class="docutils literal"><span class="pre">mx.sym.quadratic</span></code> for short.</p>
+the other one is for symbolic programming registered under
+module <code class="docutils literal"><span class="pre">mxnet.symbol.quadratic</span></code> or <code class="docutils literal"><span class="pre">mx.sym.quadratic</span></code> for short.</p>
 <p>In order to unit test it in frontend, we need to add the following code
-to the python file <code class="docutils literal"><span class="pre">test_operator.py</span></code>. Note that while testing the
-forward pass is straightforward using <code class="docutils literal"><span class="pre">mx.nd.quadratic</span></code>, testing
-the backward involves a bit of more efforts. We create a
-<code class="docutils literal"><span class="pre">quadratic</span></code> symbol and feed it into the utility function <code class="docutils literal"><span class="pre">check_numeric_gradient</span></code>.
-The utility function will perform a perturbation on the input
-and calculate the response rate of the output using the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Finite_difference_method">finite difference method</a>.
-Then it will compare the gradient from the backward pass with
-the values from the finite difference method. The test
-will be successful once the comparison satisfies user specified
-relative and absolute thresholds.</p>
+to the python file <code class="docutils literal"><span class="pre">test_operator.py</span></code>. A typical operator implementation
+tests for both the <code class="docutils literal"><span class="pre">symbol</span></code> API and the <code class="docutils literal"><span class="pre">ndarray</span></code> API. The following test
+has both these tests. The imperative API test, tests for the <code class="docutils literal"><span class="pre">ndarray</span></code> API,
+<code class="docutils literal"><span class="pre">mx.nd.contrib.quadratic</span></code>. The <code class="docutils literal"><span class="pre">symbol</span></code> API test, tests for the complete
+functionality of the operator - the forward pass and the backward
+pass. To facilitate the testing of these functionalities we use three
+helper functions available in the <code class="docutils literal"><span class="pre">mxnet.test_utils</span></code> module:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">check_symbolic_forward</span></code></li>
+<li><code class="docutils literal"><span class="pre">check_symbolic_backward</span></code></li>
+<li><code class="docutils literal"><span class="pre">check_numeric_gradient</span></code></li>
+</ul>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_quadratic_function</span><span class="p">():</span>
     <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span>
@@ -795,30 +798,69 @@ relative and absolute thresholds.</p>
     <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">ndim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
-        <span class="c1"># check forward</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">rand_shape_nd</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">rand_ndarray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="s1">'default'</span><span class="p">)</span>
-        <span class="n">data_np</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-        <span class="n">expected</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">data_np</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">quadratic</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">expected</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
+    <span class="n">quad_sym</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">quadratic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">ndim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">rand_shape_nd</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="n">data_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">data_np</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">backward_expected</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">data_np</span> <span class="o">+</span> <span class="n">b</span>
 
-        <span class="c1"># check backward using finite difference</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
-        <span class="n">quad_sym</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">quadratic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">check_numeric_gradient</span><span class="p">(</span><span class="n">quad_sym</span><span class="p">,</span> <span class="p">[</span><span class="n">data_np</span><span class="p">])</span>
+            <span class="c1"># check imperative forward</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">quadratic</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_np</span><span class="p">),</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span><span class="n">expected</span><span class="p">,</span>
+                                <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">,</span>
+                                <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">)</span>
+            <span class="c1"># check forward</span>
+            <span class="n">check_symbolic_forward</span><span class="p">(</span><span class="n">quad_sym</span><span class="p">,</span> <span class="p">[</span><span class="n">data_np</span><span class="p">],</span> <span class="p">[</span><span class="n">expected</span><span class="p">],</span>
+                                    <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">,</span>
+                                    <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">)</span>
+            <span class="c1"># check backward</span>
+            <span class="n">check_symbolic_backward</span><span class="p">(</span><span class="n">quad_sym</span><span class="p">,</span> <span class="p">[</span><span class="n">data_np</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">expected</span><span class="o">.</span><span class="n">shape</span><span class="p">)],</span>
+                                        <span class="p">[</span><span class="n">backward_expected</span><span class="p">],</span>
+                                        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">,</span>
+                                        <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span> <span class="k">else</span> <span class="mf">1e-5</span><span class="p">)</span>
+            <span class="c1"># check backward using finite difference</span>
+            <span class="n">check_numeric_gradient</span><span class="p">(</span><span class="n">quad_sym</span><span class="p">,</span> <span class="p">[</span><span class="n">data_np</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that here we used <code class="docutils literal"><span class="pre">mx.nd.quadratic</span></code> to test the forward function
-and <code class="docutils literal"><span class="pre">check_numeric_gradient</span></code> to test the backward function. In MXNet,
-two other utility functions are also commonly used: <code class="docutils literal"><span class="pre">check_symbolic_forward</span></code>
-and <code class="docutils literal"><span class="pre">check_symbolic_backward</span></code>. By using them in unit tests,
-users need to pass in the operator symbols and expected results
-for comparison. Please also note that
-we highly recommend adding <code class="docutils literal"><span class="pre">check_numeric_gradient</span></code> test for every operator
-with backward function implemented as it eliminates the possibility
-of passing incorrect expected results into <code class="docutils literal"><span class="pre">check_symbolic_backward</span></code>.</p>
+<p>In the above test we create a <code class="docutils literal"><span class="pre">quadratic</span></code> symbol and feed it into the three
+utility functions. The <code class="docutils literal"><span class="pre">check_symbolic_forward</span></code> and <code class="docutils literal"><span class="pre">check_symbolic_backward</span></code>
+tests the computed values against the expected values that we pass
+as an argument to the function. The <code class="docutils literal"><span class="pre">check_numeric_gradient</span></code> utility function
+performs <a class="reference external" href="http://ufldl.stanford.edu/tutorial/supervised/DebuggingGradientChecking/">gradient checking</a>
+to verify the implementation for the backward function of the operator.
+It will perform a perturbation on the input and calculate the response
+rate of the output using the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Finite_difference_method">finite difference method</a>.
+Then it will compare the gradient from the backward pass with the values
+from the finite difference method. All three of these tests will be successful
+once the comparison satisfies user specified <code class="docutils literal"><span class="pre">rtol</span></code> and <code class="docutils literal"><span class="pre">atol</span></code> values. Here <code class="docutils literal"><span class="pre">rtol</span></code>
+and <code class="docutils literal"><span class="pre">atol</span></code> expand to relative tolerance and absolute tolerance respectively. They
+are used to specify how far the computed values can deviate from the expected values.
+They are defined as follows</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">abs</span><span class="p">(</span><span class="n">Expected_Value</span> <span class="o">-</span> <span class="n">Computed_Value</span><span class="p">)</span> <span class="o"><</span> <span class="n">RTOL</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Expected_Value</span><span class="p">)</span> <span class="o">+</span> <span class="n">ATOL</span>
+</pre></div>
+</div>
+<p>For example, if <code class="docutils literal"><span class="pre">rtol</span></code> is <code class="docutils literal"><span class="pre">1e-5</span></code> and <code class="docutils literal"><span class="pre">atol</span></code> is <code class="docutils literal"><span class="pre">1e-5</span></code> and the expected value is
+<code class="docutils literal"><span class="pre">1.5623145</span></code>, then the computed value should lie within the range of
+<code class="docutils literal"><span class="pre">(1.562288876855,</span> <span class="pre">1.562340123145)</span></code> else the test will fail. Make sure you
+tune the <code class="docutils literal"><span class="pre">rtol</span></code> and <code class="docutils literal"><span class="pre">atol</span></code> values accordingly. Giving very low values for <code class="docutils literal"><span class="pre">rtol</span></code>
+and <code class="docutils literal"><span class="pre">atol</span></code> will likely make the test very flaky. It is recommended that you
+use the flakiness checker tool to check if the test you have written is flaky
+or not. You can run the flakiness checker tool for the above test with the
+following command -</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python tools/flakiness_checker.py test_operator.test_quadratic_function
+</pre></div>
+</div>
+<p>Please note that for <code class="docutils literal"><span class="pre">check_symbolic_forward</span></code> and <code class="docutils literal"><span class="pre">check_symbolic_backward</span></code> we pass
+both the operator symbols and expected results for comparison, for
+<code class="docutils literal"><span class="pre">check_numeric_gradient</span></code> we only pass the operator symbol, as the
+<code class="docutils literal"><span class="pre">check_numeric_gradient</span></code> computes the expected value using finite difference
+method. Which is why it is highly recommended to add <code class="docutils literal"><span class="pre">check_numeric_gradient</span></code>
+test for every operator with backward function implemented as it eliminates
+the possibility of passing incorrect expected results into <code class="docutils literal"><span class="pre">check_symbolic_backward</span></code>.</p>
 </div>
 </div>
 <div class="section" id="summary">
@@ -830,11 +872,11 @@ implemented forward and backward functions, and registered the operator
 using nnvm. Congratulations! You now know how to add operators.
 We welcome your contributions to MXNet.</p>
 <p><strong>Note</strong>: Source code in the tutorial can be found in
-<a class="reference external" href="https://github.com/reminisce/mxnet/blob/add_op_example_for_tutorial/src/operator/tensor/quadratic_op-inl.h">quadratic_op-inl.h</a>,
-<a class="reference external" href="https://github.com/reminisce/mxnet/blob/add_op_example_for_tutorial/src/operator/tensor/quadratic_op.cc">quadratic_op.cc</a>,
-<a class="reference external" href="https://github.com/reminisce/mxnet/blob/add_op_example_for_tutorial/src/operator/tensor/quadratic_op.cu">quadratic_op.cu</a>,
+<a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/src/operator/contrib/quadratic_op-inl.h">quadratic_op-inl.h</a>,
+<a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/src/operator/contrib/quadratic_op.cc">quadratic_op.cc</a>,
+<a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/src/operator/contrib/quadratic_op.cu">quadratic_op.cu</a>,
 and
-<a class="reference external" href="https://github.com/reminisce/mxnet/blob/add_op_example_for_tutorial/tests/python/unittest/test_operator.py#L4008">test_operator.py</a>.</p>
+<a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/tests/python/unittest/test_operator.py#L6514">test_operator.py</a>.</p>
 </div>
 </div>
 </div>
