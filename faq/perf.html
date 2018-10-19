@@ -250,13 +250,30 @@ In this document, we address some tips for improving <em>MXNet</em> performance.
 <div class="section" id="intel-cpu">
 <span id="intel-cpu"></span><h2>Intel CPU<a class="headerlink" href="#intel-cpu" title="Permalink to this headline">¶</a></h2>
 <p>For using Intel Xeon CPUs for training and inference, we suggest enabling
-<code class="docutils literal"><span class="pre">USE_MKLDNN</span> <span class="pre">=</span> <span class="pre">1</span></code> in<code class="docutils literal"><span class="pre">config.mk</span></code>.</p>
-<p>We also find that setting the following two environment variables can help:</p>
-<ul class="simple">
-<li><code class="docutils literal"><span class="pre">export</span> <span class="pre">KMP_AFFINITY=granularity=fine,compact,1,0</span></code> if there are two physical CPUs</li>
-<li><code class="docutils literal"><span class="pre">export</span> <span class="pre">OMP_NUM_THREADS=vCPUs</span> <span class="pre">/</span> <span class="pre">2</span></code> in which <code class="docutils literal"><span class="pre">vCPUs</span></code> is the number of virtual CPUs.
-Whe using Linux, we can access this information by running <code class="docutils literal"><span class="pre">cat</span> <span class="pre">/proc/cpuinfo</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">processor</span> <span class="pre">|</span> <span class="pre">wc</span> <span class="pre">-l</span></code></li>
-</ul>
+<code class="docutils literal"><span class="pre">USE_MKLDNN</span> <span class="pre">=</span> <span class="pre">1</span></code> in <code class="docutils literal"><span class="pre">config.mk</span></code>.</p>
+<p>We also find that setting the following environment variables can help:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%"/>
+<col width="50%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Variable</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">OMP_NUM_THREADS</span></code></td>
+<td>Suggested value: <code class="docutils literal"><span class="pre">vCPUs</span> <span class="pre">/</span> <span class="pre">2</span></code> in which <code class="docutils literal"><span class="pre">vCPUs</span></code> is the number of virtual CPUs. For more information, please see the guide for <a class="reference external" href="https://software.intel.com/en-us/mkl-windows-developer-guide-setting-the-number-of-threads-using-an-openmp-environment-variable">setting the number of threads using an OpenMP environment variable</a></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">KMP_AFFINITY</span></code></td>
+<td>Suggested value: <code class="docutils literal"><span class="pre">granularity=fine,compact,1,0</span></code>. For more information, please see the guide for <a class="reference external" href="https://software.intel.com/en-us/node/522691">Thread Affinity Interface (Linux* and Windows*)</a>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">MXNET_SUBGRAPH_BACKEND</span></code></td>
+<td>Set to MKLDNN to enable the <a class="reference external" href="https://cwiki.apache.org/confluence/display/MXNET/MXNet+Graph+Optimization+and+Quantization+based+on+subgraph+and+MKL-DNN">subgraph feature</a> for better performance. For more information please see <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/MKLDNN_README.md">Build/Install MXNet with MKL-DNN</a></td>
+</tr>
+</tbody>
+</table>
 <p>Note that <em>MXNet</em> treats all CPUs on a single machine as a single device.
 So whether you specify <code class="docutils literal"><span class="pre">cpu(0)</span></code> or <code class="docutils literal"><span class="pre">cpu()</span></code>, <em>MXNet</em> will use all CPU cores on the machine.</p>
 <div class="section" id="scoring-results">
