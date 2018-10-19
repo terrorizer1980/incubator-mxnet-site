@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['_7edevicestore',['~DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#a701d38ae493688ee2136995fe8611aa0',1,'mxnet::common::cuda::DeviceStore']]],
   ['_7eengine',['~Engine',['../classmxnet_1_1Engine.html#aff025321827e15096c02342225f2395b',1,'mxnet::Engine']]],
   ['_7eexecutor',['~Executor',['../classmxnet_1_1Executor.html#adf445ff665c954061889d6bbee3c1c2a',1,'mxnet::Executor']]],
   ['_7eiiterator',['~IIterator',['../classmxnet_1_1IIterator.html#a6e9049dca03b889bba0d18338e286070',1,'mxnet::IIterator']]],

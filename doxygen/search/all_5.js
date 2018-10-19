@@ -27,6 +27,8 @@ var searchData=
   ['dev_5fmask',['dev_mask',['../structmxnet_1_1Context.html#a07c6092f42393d543460f766a7a3b6df',1,'mxnet::Context::dev_mask()'],['../classmxnet_1_1TBlob.html#a613ad1f5ba31efcbecbd041e23cc61b2',1,'mxnet::TBlob::dev_mask()']]],
   ['dev_5ftype',['dev_type',['../structmxnet_1_1Context.html#a66040df23c2a5663f29bc50aa0bbace3',1,'mxnet::Context']]],
   ['dev_5ftype_5fstring',['dev_type_string',['../namespacemxnet_1_1common.html#a733ce35d109323dbf4ef1f4bc3094870',1,'mxnet::common']]],
+  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#adfa0dbabaa1adcb77a5d2beda2a7fb59',1,'mxnet::common::cuda::DeviceStore']]],
+  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html',1,'mxnet::common::cuda']]],
   ['devicetype',['DeviceType',['../structmxnet_1_1Context.html#a611c227b5e04a2777c3e4507bb76f60e',1,'mxnet::Context']]],
   ['dim_5ft',['dim_t',['../c__api_8h.html#ab15fcfeedbe50ea6db54a98b582d7eaf',1,'c_api.h']]],
   ['directfree',['DirectFree',['../classmxnet_1_1Storage.html#a098f8ebacd25f5203b2dc4c1796aec64',1,'mxnet::Storage']]],
