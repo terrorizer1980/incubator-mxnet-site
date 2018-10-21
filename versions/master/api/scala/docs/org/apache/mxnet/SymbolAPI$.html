@@ -1487,7 +1487,7 @@ The storage type of weight can be either row_sparse or default.
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L267
+Defined in src/operator/tensor/indexing_op.cc:L403
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Maps integer indices to vector representations (embeddings).
@@ -1542,7 +1542,7 @@ The storage type of weight can be either row_sparse or default.
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L267
+Defined in src/operator/tensor/indexing_op.cc:L403
 </pre></p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The input array to the embedding operator.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>The embedding weight matrix.</p></dd><dt class="param">input_dim</dt><dd class="cmt"><p>Vocabulary size of the input indices.</p></dd><dt class="param">output_dim</dt><dd class="cmt"><p>Dimension of the embedding vectors.</p></dd><dt class="param">dtype</dt><dd class="cmt"><p>Data type of weight.</p></dd><dt class="param">sparse_grad</dt><dd class="cmt"><p>Compute row sparse gradient in the backward calculation. If set to True, the grad's storage type is row_sparse.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -5208,7 +5208,7 @@ Examples::
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L490
+Defined in src/operator/tensor/indexing_op.cc:L634
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Takes elements from a data batch.
@@ -5232,7 +5232,7 @@ Examples::
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L490
+Defined in src/operator/tensor/indexing_op.cc:L634
 </pre></p></div><dl class="paramcmts block"><dt class="param">a</dt><dd class="cmt"><p>The input array</p></dd><dt class="param">indices</dt><dd class="cmt"><p>The index array</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -10675,7 +10675,7 @@ Examples::
                                       [ 1.  0.  0.]]]
 
 
-Defined in src/operator/tensor/indexing_op.cc:L536
+Defined in src/operator/tensor/indexing_op.cc:L680
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Returns a one-hot array.
@@ -10712,7 +10712,7 @@ Examples::
                                       [ 1.  0.  0.]]]
 
 
-Defined in src/operator/tensor/indexing_op.cc:L536
+Defined in src/operator/tensor/indexing_op.cc:L680
 </pre></p></div><dl class="paramcmts block"><dt class="param">indices</dt><dd class="cmt"><p>array of locations where to set on_value</p></dd><dt class="param">depth</dt><dd class="cmt"><p>Depth of the one hot dimension.</p></dd><dt class="param">on_value</dt><dd class="cmt"><p>The value assigned to the locations represented by indices.</p></dd><dt class="param">off_value</dt><dd class="cmt"><p>The value assigned to the locations not represented by indices.</p></dd><dt class="param">dtype</dt><dd class="cmt"><p>DType of the output</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
@@ -15311,6 +15311,7 @@ dimension of data (by default outer-most one as axis=0) indexed by indices, and 
 in an output tensor of rank q + (r - 1).
 
 Examples::
+
   x = [4.  5.  6.]
 
   // Trivial case, take the second element along the first axis.
@@ -15342,9 +15343,14 @@ Examples::
                                                       [[ 3.,  4.],
                                                        [ 5.,  6.]]]
 
+The storage type of ``take`` output depends upon the input storage type:
+
+   - take(default, default) = default
+   - take(csr, default, axis=0) = csr
 
 
-Defined in src/operator/tensor/indexing_op.cc:L434
+
+Defined in src/operator/tensor/indexing_op.cc:L576
 </pre></p></li><div class="fullcomment"><div class="comment cmt"><p>
 <pre>
 Takes elements from an input array along the given axis.
@@ -15356,6 +15362,7 @@ dimension of data (by default outer-most one as axis=0) indexed by indices, and 
 in an output tensor of rank q + (r - 1).
 
 Examples::
+
   x = [4.  5.  6.]
 
   // Trivial case, take the second element along the first axis.
@@ -15387,9 +15394,14 @@ Examples::
                                                       [[ 3.,  4.],
                                                        [ 5.,  6.]]]
 
+The storage type of ``take`` output depends upon the input storage type:
+
+   - take(default, default) = default
+   - take(csr, default, axis=0) = csr
 
 
-Defined in src/operator/tensor/indexing_op.cc:L434
+
+Defined in src/operator/tensor/indexing_op.cc:L576
 </pre></p></div><dl class="paramcmts block"><dt class="param">a</dt><dd class="cmt"><p>The input array.</p></dd><dt class="param">indices</dt><dd class="cmt"><p>The indices of the values to be extracted.</p></dd><dt class="param">axis</dt><dd class="cmt"><p>The axis of input array to be taken.For input tensor of rank r, it could be in the range of [-r, r-1]</p></dd><dt class="param">mode</dt><dd class="cmt"><p>Specify how out-of-bound indices bahave. Default is "clip". "clip" means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  "wrap" means to wrap around.  "raise" means to raise an error, not supported yet.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="SymbolAPIBase.html" name="org.apache.mxnet.SymbolAPIBase">SymbolAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>

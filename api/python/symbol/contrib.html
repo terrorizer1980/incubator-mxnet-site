@@ -1089,7 +1089,7 @@ When the operator is used on the GPU, the recommended value for <cite>determinis
                                <span class="p">[</span> <span class="mf">10.</span><span class="p">,</span>  <span class="mf">11.</span><span class="p">,</span>  <span class="mf">12.</span><span class="p">,</span>  <span class="mf">13.</span><span class="p">,</span>  <span class="mf">14.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L343</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L479</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1191,6 +1191,22 @@ then set <code class="docutils literal"><span class="pre">gamma</span></code> to
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.contrib.backward_index_copy">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">backward_index_copy</code><span class="sig-paren">(</span><em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.backward_index_copy" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result symbol.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></td>
 </tr>
 </tbody>
 </table>
@@ -1734,6 +1750,52 @@ The output data has shape: (N, d/2) or (N1, N2, N3, d/2). It is only the real pa
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Input data to the IFFTOp.</li>
 <li><strong>compute_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='128'</em>) – Maximum size of sub-batch to be forwarded at one time</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.contrib.index_copy">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">index_copy</code><span class="sig-paren">(</span><em>old_tensor=None</em>, <em>index_vector=None</em>, <em>new_tensor=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.index_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the elements of a <cite>new_tensor</cite> into the <cite>old_tensor</cite> by
+selecting the indices in the order given in <cite>index</cite>. The output will be a new tensor
+contains the rest elements of old tensor and the copied elements of new tensor.
+For example, if <cite>index[i] == j</cite>, then the <cite>i`th row of `new_tensor</cite> is copied to the
+<a href="#id7"><span class="problematic" id="id8">`</span></a>j`th row of output.</p>
+<p>The <cite>index</cite> must be a vector and it must have the same size with the <cite>0`th dimimention of
+`new_tensor</cite>. Also, the <cite>0`th dimimention of old_tensor must `>=</cite> the <cite>0`th dimimention of
+`new_tensor</cite>, or an error will be raised.</p>
+<p>Examples:</p>
+<p>x = mx.nd.zeros((5,3))
+t = mx.nd.array([[1,2,3],[4,5,6],[7,8,9]])
+index = mx.nd.array([0,4,2])</p>
+<p>mx.nd.contrib.index_copy(x, index, t)</p>
+<dl class="docutils">
+<dt>[[1. 2. 3.]</dt>
+<dd>[0. 0. 0.]
+[7. 8. 9.]
+[0. 0. 0.]
+[4. 5. 6.]]</dd>
+</dl>
+<p><NDArray 5x3 @cpu(0)></p>
+<p>Defined in src/operator/contrib/index_copy.cc:L55</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>old_tensor</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Old tensor</li>
+<li><strong>index_vector</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Index vector</li>
+<li><strong>new_tensor</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – New tensor to be copied</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>

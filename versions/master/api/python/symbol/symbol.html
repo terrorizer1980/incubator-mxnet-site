@@ -4194,7 +4194,7 @@ and Adam. Note that by default lazy updates is turned on, which may perform diff
 from standard updates. For more details, please check the Optimization API at:
 <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html">https://mxnet.incubator.apache.org/api/python/optimization/optimization.html</a></p>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L267</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L403</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6548,7 +6548,7 @@ an output array of shape <code class="docutils literal"><span class="pre">(i0,)<
 <span class="n">batch_take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">4.</span>  <span class="mf">5.</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L490</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L634</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10143,7 +10143,7 @@ in an output array of shape <code class="docutils literal"><span class="pre">(i0
                                     <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">0.</span>  <span class="mf">0.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L536</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L680</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13062,44 +13062,47 @@ NOT in axis instead.</p>
 <p>Given data tensor of rank r >= 1, and indices tensor of rank q, gather entries of the axis
 dimension of data (by default outer-most one as axis=0) indexed by indices, and concatenates them
 in an output tensor of rank q + (r - 1).</p>
-<dl class="docutils">
-<dt>Examples::</dt>
-<dd><p class="first">x = [4.  5.  6.]</p>
-<p>// Trivial case, take the second element along the first axis.</p>
-<p>take(x, [1]) = [ 5. ]</p>
-<p>// The other trivial case, axis=-1, take the third element along the first axis</p>
-<p>take(x, [3], axis=-1, mode=’clip’) = [ 6. ]</p>
-<dl class="docutils">
-<dt>x = [[ 1.,  2.],</dt>
-<dd>[ 3.,  4.],
-[ 5.,  6.]]</dd>
-</dl>
-<p>// In this case we will get rows 0 and 1, then 1 and 2. Along axis 0</p>
-<dl class="docutils">
-<dt>take(x, [[0,1],[1,2]]) = [[[ 1.,  2.],</dt>
-<dd><blockquote class="first">
-<div>[ 3.,  4.]],</div></blockquote>
-<dl class="last docutils">
-<dt>[[ 3.,  4.],</dt>
-<dd>[ 5.,  6.]]]</dd>
-</dl>
-</dd>
-</dl>
-<p>// In this case we will get rows 0 and 1, then 1 and 2 (calculated by wrapping around).
-// Along axis 1</p>
-<dl class="last docutils">
-<dt>take(x, [[0, 3], [-1, -2]], axis=1, mode=’wrap’) = [[[ 1.,  2.],</dt>
-<dd><blockquote class="first">
-<div>[ 3.,  4.]],</div></blockquote>
-<dl class="last docutils">
-<dt>[[ 3.,  4.],</dt>
-<dd>[ 5.,  6.]]]</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>Defined in src/operator/tensor/indexing_op.cc:L434</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.</span>  <span class="mf">5.</span>  <span class="mf">6.</span><span class="p">]</span>
+
+<span class="o">//</span> <span class="n">Trivial</span> <span class="n">case</span><span class="p">,</span> <span class="n">take</span> <span class="n">the</span> <span class="n">second</span> <span class="n">element</span> <span class="n">along</span> <span class="n">the</span> <span class="n">first</span> <span class="n">axis</span><span class="o">.</span>
+
+<span class="n">take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">5.</span> <span class="p">]</span>
+
+<span class="o">//</span> <span class="n">The</span> <span class="n">other</span> <span class="n">trivial</span> <span class="n">case</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">take</span> <span class="n">the</span> <span class="n">third</span> <span class="n">element</span> <span class="n">along</span> <span class="n">the</span> <span class="n">first</span> <span class="n">axis</span>
+
+<span class="n">take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'clip'</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">6.</span> <span class="p">]</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+     <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">],</span>
+     <span class="p">[</span> <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">]]</span>
+
+<span class="o">//</span> <span class="n">In</span> <span class="n">this</span> <span class="n">case</span> <span class="n">we</span> <span class="n">will</span> <span class="n">get</span> <span class="n">rows</span> <span class="mi">0</span> <span class="ow">and</span> <span class="mi">1</span><span class="p">,</span> <span class="n">then</span> <span class="mi">1</span> <span class="ow">and</span> <span class="mf">2.</span> <span class="n">Along</span> <span class="n">axis</span> <span class="mi">0</span>
+
+<span class="n">take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span> <span class="o">=</span> <span class="p">[[[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">]],</span>
+
+                          <span class="p">[[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">]]]</span>
+
+<span class="o">//</span> <span class="n">In</span> <span class="n">this</span> <span class="n">case</span> <span class="n">we</span> <span class="n">will</span> <span class="n">get</span> <span class="n">rows</span> <span class="mi">0</span> <span class="ow">and</span> <span class="mi">1</span><span class="p">,</span> <span class="n">then</span> <span class="mi">1</span> <span class="ow">and</span> <span class="mi">2</span> <span class="p">(</span><span class="n">calculated</span> <span class="n">by</span> <span class="n">wrapping</span> <span class="n">around</span><span class="p">)</span><span class="o">.</span>
+<span class="o">//</span> <span class="n">Along</span> <span class="n">axis</span> <span class="mi">1</span>
+
+<span class="n">take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'wrap'</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+                                                     <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">]],</span>
+
+                                                    <span class="p">[[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">],</span>
+                                                     <span class="p">[</span> <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">]]]</span>
+</pre></div>
+</div>
+<p>The storage type of <code class="docutils literal"><span class="pre">take</span></code> output depends upon the input storage type:</p>
+<blockquote>
+<div><ul class="simple">
+<li>take(default, default) = default</li>
+<li>take(csr, default, axis=0) = csr</li>
+</ul>
+</div></blockquote>
+<p>Defined in src/operator/tensor/indexing_op.cc:L576</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
