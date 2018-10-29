@@ -246,7 +246,7 @@
            <span class="s1">'SigmoidBinaryCrossEntropyLoss'</span><span class="p">,</span> <span class="s1">'SigmoidBCELoss'</span><span class="p">,</span>
            <span class="s1">'SoftmaxCrossEntropyLoss'</span><span class="p">,</span> <span class="s1">'SoftmaxCELoss'</span><span class="p">,</span>
            <span class="s1">'KLDivLoss'</span><span class="p">,</span> <span class="s1">'CTCLoss'</span><span class="p">,</span> <span class="s1">'HuberLoss'</span><span class="p">,</span> <span class="s1">'HingeLoss'</span><span class="p">,</span>
-           <span class="s1">'SquaredHingeLoss'</span><span class="p">,</span> <span class="s1">'LogisticLoss'</span><span class="p">,</span> <span class="s1">'TripletLoss'</span><span class="p">,</span> <span class="s1">'PoissonNLLLoss'</span><span class="p">]</span>
+           <span class="s1">'SquaredHingeLoss'</span><span class="p">,</span> <span class="s1">'LogisticLoss'</span><span class="p">,</span> <span class="s1">'TripletLoss'</span><span class="p">,</span> <span class="s1">'PoissonNLLLoss'</span><span class="p">,</span> <span class="s1">'CosineEmbeddingLoss'</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">ndarray</span>
@@ -990,6 +990,74 @@
             <span class="n">loss</span> <span class="o">+=</span> <span class="n">stirling_factor</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CosineEmbeddingLoss"><a class="viewcode-back" href="../../../api/python/gluon/loss.html#mxnet.gluon.loss.CosineEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">CosineEmbeddingLoss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">"""For a target label 1 or -1, vectors input1 and input2, the function computes the cosine distance</span>
+<span class="sd">    between the vectors. This can be interpreted as how similar/dissimilar two input vectors are.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        L = \sum_i \begin{cases} 1 - {cos\_sim({input1}_i, {input2}_i)} &amp; \text{ if } {label}_i = 1\\</span>
+<span class="sd">                         {cos\_sim({input1}_i, {input2}_i)} &amp; \text{ if } {label}_i = -1 \end{cases}\\</span>
+<span class="sd">        cos\_sim(input1, input2) = \frac{{input1}_i.{input2}_i}{||{input1}_i||.||{input2}_i||}</span>
+
+<span class="sd">    `input1`, `input2` can have arbitrary shape as long as they have the same number of elements.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    weight : float or None</span>
+<span class="sd">        Global scalar weight for loss.</span>
+<span class="sd">    batch_axis : int, default 0</span>
+<span class="sd">        The axis that represents mini-batch.</span>
+<span class="sd">    margin : float</span>
+<span class="sd">        Margin of separation between correct and incorrect pair.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **input1**: a tensor with arbitrary shape</span>
+<span class="sd">        - **input2**: another tensor with same shape as pred to which input1 is</span>
+<span class="sd">          compared for similarity and loss calculation</span>
+<span class="sd">        - **label**: A 1-D tensor indicating for each pair input1 and input2, target label is 1 or -1</span>
+<span class="sd">        - **sample_weight**: element-wise weighting tensor. Must be broadcastable</span>
+<span class="sd">          to the same shape as input1. For example, if input1 has shape (64, 10)</span>
+<span class="sd">          and you want to weigh each sample in the batch separately,</span>
+<span class="sd">          sample_weight should have shape (64, 1).</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **loss**: The loss tensor with shape (batch_size,).</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CosineEmbeddingLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span> <span class="o">=</span> <span class="n">margin</span>
+
+    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">input1</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">cos_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cosine_similarity</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">input1</span><span class="p">,</span> <span class="n">input2</span><span class="p">)</span>
+        <span class="n">y_1</span> <span class="o">=</span> <span class="n">label</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">y_minus_1</span> <span class="o">=</span> <span class="n">label</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">cos_sim_a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cos_sim</span><span class="p">)</span> <span class="o">*</span> <span class="n">y_1</span>
+
+        <span class="k">if</span> <span class="n">F</span> <span class="ow">is</span> <span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">z_array</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z_array</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">cos_sim_b</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_maximum</span><span class="p">(</span><span class="n">z_array</span><span class="p">,</span> <span class="n">y_minus_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">cos_sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">cos_sim_a</span> <span class="o">+</span> <span class="n">cos_sim_b</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span>
+
+    <span class="k">def</span> <span class="nf">_cosine_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># Calculates the cosine similarity between 2 vectors</span>
+        <span class="n">x_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x_dot_y</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">F</span> <span class="ow">is</span> <span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">eps_arr</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e-12</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eps_arr</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1e-12</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x_dot_y</span> <span class="o">/</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_maximum</span><span class="p">(</span><span class="n">x_norm</span> <span class="o">*</span> <span class="n">y_norm</span><span class="p">,</span> <span class="n">eps_arr</span><span class="p">))</span></div>
 </pre></div>
 </div>
 </div>

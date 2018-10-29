@@ -303,7 +303,10 @@
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.loss.CTCLoss" title="mxnet.gluon.loss.CTCLoss"><code class="xref py py-obj docutils literal"><span class="pre">CTCLoss</span></code></a></td>
 <td>Connectionist Temporal Classification Loss.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.loss.PoissonNLLLoss" title="mxnet.gluon.loss.PoissonNLLLoss"><code class="xref py py-obj docutils literal"><span class="pre">PoissonNLLLoss</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.loss.CosineEmbeddingLoss" title="mxnet.gluon.loss.CosineEmbeddingLoss"><code class="xref py py-obj docutils literal"><span class="pre">CosineEmbeddingLoss</span></code></a></td>
+<td>For a target label 1 or -1, vectors input1 and input2, the function computes the cosine distance between the vectors.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.loss.PoissonNLLLoss" title="mxnet.gluon.loss.PoissonNLLLoss"><code class="xref py py-obj docutils literal"><span class="pre">PoissonNLLLoss</span></code></a></td>
 <td>For a target (Random Variable) in a Poisson distribution, the function calculates the Negative Log likelihood loss.</td>
 </tr>
 </tbody>
@@ -907,6 +910,49 @@ sample_weight should have shape (64, 1).</li>
 <dt>Outputs:</dt>
 <dd><ul class="first last simple">
 <li><strong>loss</strong>: Average loss (shape=(1,1)) of the loss tensor with shape (batch_size,).</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.loss.CosineEmbeddingLoss">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.loss.</code><code class="descname">CosineEmbeddingLoss</code><span class="sig-paren">(</span><em>weight=None</em>, <em>batch_axis=0</em>, <em>margin=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#CosineEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.CosineEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a target label 1 or -1, vectors input1 and input2, the function computes the cosine distance
+between the vectors. This can be interpreted as how similar/dissimilar two input vectors are.</p>
+<div class="math">
+\[\begin{split}L = \sum_i \begin{cases} 1 - {cos\_sim({input1}_i, {input2}_i)} &amp; \text{ if } {label}_i = 1\\
+                 {cos\_sim({input1}_i, {input2}_i)} &amp; \text{ if } {label}_i = -1 \end{cases}\\
+cos\_sim(input1, input2) = \frac{{input1}_i.{input2}_i}{||{input1}_i||.||{input2}_i||}\end{split}\]</div>
+<p><cite>input1</cite>, <cite>input2</cite> can have arbitrary shape as long as they have the same number of elements.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>weight</strong> (<em>float</em><em> or </em><em>None</em>) – Global scalar weight for loss.</li>
+<li><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – The axis that represents mini-batch.</li>
+<li><strong>margin</strong> (<em>float</em>) – Margin of separation between correct and incorrect pair.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>input1</strong>: a tensor with arbitrary shape</li>
+<li><strong>input2</strong>: another tensor with same shape as pred to which input1 is
+compared for similarity and loss calculation</li>
+<li><strong>label</strong>: A 1-D tensor indicating for each pair input1 and input2, target label is 1 or -1</li>
+<li><strong>sample_weight</strong>: element-wise weighting tensor. Must be broadcastable
+to the same shape as input1. For example, if input1 has shape (64, 10)
+and you want to weigh each sample in the batch separately,
+sample_weight should have shape (64, 1).</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>loss</strong>: The loss tensor with shape (batch_size,).</li>
 </ul>
 </dd>
 </dl>
