@@ -220,7 +220,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#group-multiple-symbols">Group Multiple Symbols</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#serialization">Serialization</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#executing-symbols">Executing Symbols</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#multiple-outputs">Multiple Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
@@ -259,7 +258,6 @@
 <li><a class="reference external" href="#group-multiple-symbols">Group Multiple Symbols</a></li>
 <li><a class="reference external" href="#serialization">Serialization</a></li>
 <li><a class="reference external" href="#executing-symbols">Executing Symbols</a></li>
-<li><a class="reference external" href="#multiple-outputs">Multiple Outputs</a></li>
 <li><a class="reference external" href="http://mxnet.incubator.apache.org/api/clojure/docs/org.apache.clojure-mxnet.symbol.html">Symbol API Reference</a></li>
 </ul>
 <p>We also highly encourage you to read <a class="reference internal" href="symbol_in_pictures.html"><span class="doc">Symbolic Configuration and Execution in Pictures</span></a>.</p>
@@ -359,21 +357,6 @@ You can configure the graphs either at the level of neural network layer operati
 </pre></div>
 </div>
 </div>
-<div class="section" id="multiple-outputs">
-<span id="multiple-outputs"></span><h2>Multiple Outputs<a class="headerlink" href="#multiple-outputs" title="Permalink to this headline">¶</a></h2>
-<p>To construct neural networks with multiple loss layers, we can use mxnet.sym.Group to group multiple symbols together. The following example groups two outputs:</p>
-<div class="highlight-clojure"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">def </span><span class="nv">net</span> <span class="p">(</span><span class="nf">sym/variable</span> <span class="s">"data"</span><span class="p">))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">fc1</span> <span class="p">(</span><span class="nf">sym/fully-connected</span> <span class="p">{</span><span class="ss">:data</span> <span class="nv">net</span> <span class="ss">:num-hidden</span> <span class="mi">128</span><span class="p">}))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">net2</span> <span class="p">(</span><span class="nf">sym/activation</span> <span class="p">{</span><span class="ss">:data</span> <span class="nv">fc1</span> <span class="ss">:act-type</span> <span class="s">"relu"</span><span class="p">}))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">out1</span> <span class="p">(</span><span class="nf">sym/softmax-output</span> <span class="p">{</span><span class="ss">:data</span> <span class="nv">net2</span><span class="p">}))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">out2</span> <span class="p">(</span><span class="nf">sym/linear-regression-output</span> <span class="p">{</span><span class="ss">:data</span> <span class="nv">net2</span><span class="p">}))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">group</span> <span class="p">(</span><span class="nf">sym/group</span> <span class="p">[</span><span class="nv">out1</span> <span class="nv">out2</span><span class="p">]))</span>
-<span class="p">(</span><span class="nf">sym/list-outputs</span> <span class="nv">group</span><span class="p">)</span><span class="c1">;=> ["softmaxoutput0_output" "linearregressionoutput0_output"]</span>
-</pre></div>
-</div>
-<p>After you get the <code class="docutils literal"><span class="pre">group</span></code>, you can bind on <code class="docutils literal"><span class="pre">group</span></code> instead.
-The resulting executor will have two outputs, one for <code class="docutils literal"><span class="pre">linerarregressionoutput_output</span></code> and one for <code class="docutils literal"><span class="pre">softmax_output</span></code>.</p>
-</div>
 <div class="section" id="next-steps">
 <span id="next-steps"></span><h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -394,7 +377,6 @@ The resulting executor will have two outputs, one for <code class="docutils lite
 <li><a class="reference internal" href="#group-multiple-symbols">Group Multiple Symbols</a></li>
 <li><a class="reference internal" href="#serialization">Serialization</a></li>
 <li><a class="reference internal" href="#executing-symbols">Executing Symbols</a></li>
-<li><a class="reference internal" href="#multiple-outputs">Multiple Outputs</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
