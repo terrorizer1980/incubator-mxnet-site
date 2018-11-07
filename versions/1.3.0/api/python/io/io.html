@@ -218,7 +218,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#data-iterators">Data iterators</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#helper-classes-and-functions">Helper classes and functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#develop-a-new-iterator">Develop a new iterator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-develop-a-new-iterator">How to develop a new iterator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
 </ul>
 </li>
@@ -252,7 +252,7 @@
 <div class="section" id="overview">
 <span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>This document summarizes supported data formats and iterator APIs to read the
-data including</p>
+data including:</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%"/>
@@ -340,7 +340,8 @@ shapes and name.</p>
 </div>
 <div class="section" id="helper-classes-and-functions">
 <span id="helper-classes-and-functions"></span><h2>Helper classes and functions<a class="headerlink" href="#helper-classes-and-functions" title="Permalink to this headline">¶</a></h2>
-<p>Data structures and other iterators provided in the <code class="docutils literal"><span class="pre">mxnet.io</span></code> packages.</p>
+<div class="section" id="data-structures-and-other-iterators">
+<span id="data-structures-and-other-iterators"></span><h3>Data structures and other iterators<a class="headerlink" href="#data-structures-and-other-iterators" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%"/>
@@ -367,7 +368,9 @@ shapes and name.</p>
 </tr>
 </tbody>
 </table>
-<p>Functions to read and write RecordIO files.</p>
+</div>
+<div class="section" id="functions-to-read-and-write-recordio-files">
+<span id="functions-to-read-and-write-recordio-files"></span><h3>Functions to read and write RecordIO files<a class="headerlink" href="#functions-to-read-and-write-recordio-files" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%"/>
@@ -389,8 +392,9 @@ shapes and name.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="develop-a-new-iterator">
-<span id="develop-a-new-iterator"></span><h2>Develop a new iterator<a class="headerlink" href="#develop-a-new-iterator" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="how-to-develop-a-new-iterator">
+<span id="how-to-develop-a-new-iterator"></span><h2>How to develop a new iterator<a class="headerlink" href="#how-to-develop-a-new-iterator" title="Permalink to this headline">¶</a></h2>
 <p>Writing a new data iterator in Python is straightforward. Most MXNet
 training/inference programs accept an iterable object with <code class="docutils literal"><span class="pre">provide_data</span></code>
 and <code class="docutils literal"><span class="pre">provide_label</span></code> properties.
@@ -423,8 +427,8 @@ modality training such as image captioning, in which images are read by
 <p>Parsing and performing another pre-processing such as augmentation may be expensive.
 If performance is critical, we can implement a data iterator in C++. Refer to
 <a class="reference external" href="https://github.com/dmlc/mxnet/tree/master/src/io">src/io</a> for examples.</p>
-<div class="section" id="change-batch-layout">
-<span id="change-batch-layout"></span><h3>Change batch layout<a class="headerlink" href="#change-batch-layout" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="how-to-change-the-batch-layout">
+<span id="how-to-change-the-batch-layout"></span><h3>How to change the batch layout<a class="headerlink" href="#how-to-change-the-batch-layout" title="Permalink to this headline">¶</a></h3>
 <p>By default, the backend engine treats the first dimension of each data and label variable in data
 iterators as the batch size (i.e. <code class="docutils literal"><span class="pre">NCHW</span></code> or <code class="docutils literal"><span class="pre">NT</span></code> layout). In order to override the axis for batch size,
 the <code class="docutils literal"><span class="pre">provide_data</span></code> (and <code class="docutils literal"><span class="pre">provide_label</span></code> if there is label) properties should include the layouts. This
@@ -439,7 +443,558 @@ is especially useful in RNN since <code class="docutils literal"><span class="pr
 </div>
 <div class="section" id="api-reference">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
-<script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script><span class="target" id="module-mxnet.io"></span><p>Data iterators for common data formats.</p>
+<script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script><div class="section" id="module-mxnet.io">
+<span id="mxnet-io-data-iterators"></span><span id="mxnet-io-data-iterators"></span><h3>mxnet.io - Data Iterators<a class="headerlink" href="#module-mxnet.io" title="Permalink to this headline">¶</a></h3>
+<p>Data iterators for common data formats.</p>
+<dl class="class">
+<dt id="mxnet.io.NDArrayIter">
+<em class="property">class </em><code class="descclassname">mxnet.io.</code><code class="descname">NDArrayIter</code><span class="sig-paren">(</span><em>data</em>, <em>label=None</em>, <em>batch_size=1</em>, <em>shuffle=False</em>, <em>last_batch_handle='pad'</em>, <em>data_name='data'</em>, <em>label_name='softmax_label'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/io.html#NDArrayIter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.NDArrayIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator for <code class="docutils literal"><span class="pre">mx.nd.NDArray</span></code>, <code class="docutils literal"><span class="pre">numpy.ndarray</span></code>, <code class="docutils literal"><span class="pre">h5py.Dataset</span></code>
+<code class="docutils literal"><span class="pre">mx.nd.sparse.CSRNDArray</span></code> or <code class="docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="gp">...</span>
+<span class="go">[[[ 36.  37.]</span>
+<span class="go">  [ 38.  39.]]</span>
+<span class="go"> [[ 16.  17.]</span>
+<span class="go">  [ 18.  19.]]</span>
+<span class="go"> [[ 12.  13.]</span>
+<span class="go">  [ 14.  15.]]]</span>
+<span class="go">(3L, 2L, 2L)</span>
+<span class="go">[[[ 32.  33.]</span>
+<span class="go">  [ 34.  35.]]</span>
+<span class="go"> [[  4.   5.]</span>
+<span class="go">  [  6.   7.]]</span>
+<span class="go"> [[ 24.  25.]</span>
+<span class="go">  [ 26.  27.]]]</span>
+<span class="go">(3L, 2L, 2L)</span>
+<span class="go">[[[  8.   9.]</span>
+<span class="go">  [ 10.  11.]]</span>
+<span class="go"> [[ 20.  21.]</span>
+<span class="go">  [ 22.  23.]]</span>
+<span class="go"> [[ 28.  29.]</span>
+<span class="go">  [ 30.  31.]]]</span>
+<span class="go">(3L, 2L, 2L)</span>
+<span class="gp">>>> </span><span class="n">dataiter</span><span class="o">.</span><span class="n">provide_data</span> <span class="c1"># Returns a list of `DataDesc`</span>
+<span class="go">[DataDesc[data,(3, 2L, 2L),<type 'numpy.float32'>,NCHW]]</span>
+<span class="gp">>>> </span><span class="n">dataiter</span><span class="o">.</span><span class="n">provide_label</span> <span class="c1"># Returns a list of `DataDesc`</span>
+<span class="go">[DataDesc[softmax_label,(3, 1L),<type 'numpy.float32'>,NCHW]]</span>
+</pre></div>
+</div>
+<p>In the above example, data is shuffled as <cite>shuffle</cite> parameter is set to <cite>True</cite>
+and remaining examples are discarded as <cite>last_batch_handle</cite> parameter is set to <cite>discard</cite>.</p>
+<p>Usage of <cite>last_batch_handle</cite> parameter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'pad'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">batchidx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">batchidx</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">>>> </span><span class="n">batchidx</span>  <span class="c1"># Padding added after the examples read are over. So, 10/3+1 batches are created.</span>
+<span class="go">4</span>
+<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">batchidx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">batchidx</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">>>> </span><span class="n">batchidx</span> <span class="c1"># Remaining examples are discarded. So, 10/3 batches are created.</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p><cite>NDArrayIter</cite> also supports multiple input and labels.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'data1'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">'data2'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))}</span>
+<span class="gp">>>> </span><span class="n">label</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'label1'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="s1">'label2'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">))}</span>
+<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><cite>NDArrayIter</cite> also supports <code class="docutils literal"><span class="pre">mx.nd.sparse.CSRNDArray</span></code>
+with <cite>last_batch_handle</cite> set to <cite>discard</cite>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">csr_data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span><span class="o">.</span><span class="n">tostype</span><span class="p">(</span><span class="s1">'csr'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">csr_data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="p">[</span><span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">]</span>
+<span class="go">[</span>
+<span class="go"><CSRNDArray 3x4 @cpu(0)>,</span>
+<span class="go"><CSRNDArray 3x4 @cpu(0)>,</span>
+<span class="go"><CSRNDArray 3x4 @cpu(0)>]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.array" title="mxnet.ndarray.array"><em>array</em></a><em> or </em><em>list of array</em><em> or </em><em>dict of string to array</em>) – The input data.</li>
+<li><strong>label</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.array" title="mxnet.ndarray.array"><em>array</em></a><em> or </em><em>list of array</em><em> or </em><em>dict of string to array</em><em>, </em><em>optional</em>) – The input label.</li>
+<li><strong>batch_size</strong> (<em>int</em>) – Batch size of data.</li>
+<li><strong>shuffle</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to shuffle the data.
+Only supported if no h5py.Dataset inputs are used.</li>
+<li><strong>last_batch_handle</strong> (<em>str</em><em>, </em><em>optional</em>) – How to handle the last batch. This parameter can be ‘pad’, ‘discard’ or
+‘roll_over’. ‘roll_over’ is intended for training and can cause problems
+if used for prediction.</li>
+<li><strong>data_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The data name.</li>
+<li><strong>label_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The label name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="mxnet.io.NDArrayIter.provide_data">
+<code class="descname">provide_data</code><a class="headerlink" href="#mxnet.io.NDArrayIter.provide_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name and shape of data provided by this iterator.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="mxnet.io.NDArrayIter.provide_label">
+<code class="descname">provide_label</code><a class="headerlink" href="#mxnet.io.NDArrayIter.provide_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name and shape of label provided by this iterator.</p>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.io.NDArrayIter.hard_reset">
+<code class="descname">hard_reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/io.html#NDArrayIter.hard_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.NDArrayIter.hard_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore roll over data and set to start.</p>
+</dd></dl>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.io.CSVIter">
+<code class="descclassname">mxnet.io.</code><code class="descname">CSVIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.CSVIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the CSV file iterator.</p>
+<p>In this function, the <cite>data_shape</cite> parameter is used to set the shape of each line of the input data.
+If a row in an input file is <cite>1,2,3,4,5,6`</cite> and <cite>data_shape</cite> is (3,2), that row
+will be reshaped, yielding the array [[1,2],[3,4],[5,6]] of shape (3,2).</p>
+<p>By default, the <cite>CSVIter</cite> has <cite>round_batch</cite> parameter set to <code class="docutils literal"><span class="pre">True</span></code>. So, if <cite>batch_size</cite>
+is 3 and there are 4 total rows in CSV file, 2 more examples
+are consumed at the first round. If <cite>reset</cite> function is called after first round,
+the call is ignored and remaining examples are returned in the second round.</p>
+<p>If one wants all the instances in the second round after calling <cite>reset</cite>, make sure
+to set <cite>round_batch</cite> to False.</p>
+<p>If <code class="docutils literal"><span class="pre">data_csv</span> <span class="pre">=</span> <span class="pre">'data/'</span></code> is set, then all the files in this directory will be read.</p>
+<p><code class="docutils literal"><span class="pre">reset()</span></code> is expected to be called only after a complete pass of data.</p>
+<p>By default, the CSVIter parses all entries in the data file as float32 data type,
+if <cite>dtype</cite> argument is set to be ‘int32’ or ‘int64’ then CSVIter will parse all entries in the file
+as int32 or int64 data type accordingly.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>// Contents of CSV file ``data/data.csv``.
+1,2,3
+2,3,4
+3,4,5
+4,5,6
+
+// Creates a `CSVIter` with `batch_size`=2 and default `round_batch`=True.
+CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
+batch_size = 2)
+
+// Two batches read from the above iterator are as follows:
+[[ 1.  2.  3.]
+[ 2.  3.  4.]]
+[[ 3.  4.  5.]
+[ 4.  5.  6.]]
+
+// Creates a `CSVIter` with default `round_batch` set to True.
+CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
+batch_size = 3)
+
+// Two batches read from the above iterator in the first pass are as follows:
+[[1.  2.  3.]
+[2.  3.  4.]
+[3.  4.  5.]]
+
+[[4.  5.  6.]
+[1.  2.  3.]
+[2.  3.  4.]]
+
+// Now, `reset` method is called.
+CSVIter.reset()
+
+// Batch read from the above iterator in the second pass is as follows:
+[[ 3.  4.  5.]
+[ 4.  5.  6.]
+[ 1.  2.  3.]]
+
+// Creates a `CSVIter` with `round_batch`=False.
+CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
+batch_size = 3, round_batch=False)
+
+// Contents of two batches read from the above iterator in both passes, after calling
+// `reset` method before second pass, is as follows:
+[[1.  2.  3.]
+[2.  3.  4.]
+[3.  4.  5.]]
+
+[[4.  5.  6.]
+[2.  3.  4.]
+[3.  4.  5.]]
+
+// Creates a 'CSVIter' with `dtype`='int32'
+CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
+batch_size = 3, round_batch=False, dtype='int32')
+
+// Contents of two batches read from the above iterator in both passes, after calling
+// `reset` method before second pass, is as follows:
+[[1  2  3]
+[2  3  4]
+[3  4  5]]
+
+[[4  5  6]
+[2  3  4]
+[3  4  5]]
+</pre></div>
+</div>
+<p>Defined in src/io/iter_csv.cc:L308</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_csv</strong> (<em>string</em><em>, </em><em>required</em>) – The input CSV file or a directory path.</li>
+<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one example.</li>
+<li><strong>label_csv</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='NULL'</em>) – The input CSV file or a directory path. If NULL, all labels will be returned as 0.</li>
+<li><strong>label_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – The shape of one label.</li>
+<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
+<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
+<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.io.LibSVMIter">
+<code class="descclassname">mxnet.io.</code><code class="descname">LibSVMIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.LibSVMIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the LibSVM iterator which returns data with <cite>csr</cite>
+storage type. This iterator is experimental and should be used with care.</p>
+<p>The input data is stored in a format similar to LibSVM file format, except that the <strong>indices
+are expected to be zero-based instead of one-based, and the column indices for each row are
+expected to be sorted in ascending order</strong>. Details of the LibSVM format are available
+<a class="reference external" href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/">here.</a></p>
+<p>The <cite>data_shape</cite> parameter is used to set the shape of each line of the data.
+The dimension of both <cite>data_shape</cite> and <cite>label_shape</cite> are expected to be 1.</p>
+<p>The <cite>data_libsvm</cite> parameter is used to set the path input LibSVM file.
+When it is set to a directory, all the files in the directory will be read.</p>
+<p>When <cite>label_libsvm</cite> is set to <code class="docutils literal"><span class="pre">NULL</span></code>, both data and label are read from the file specified
+by <cite>data_libsvm</cite>. In this case, the data is stored in <cite>csr</cite> storage type, while the label is a 1D
+dense array.</p>
+<p>The <cite>LibSVMIter</cite> only support <cite>round_batch</cite> parameter set to <code class="docutils literal"><span class="pre">True</span></code>. Therefore, if <cite>batch_size</cite>
+is 3 and there are 4 total rows in libsvm file, 2 more examples are consumed at the first round.</p>
+<p>When <cite>num_parts</cite> and <cite>part_index</cite> are provided, the data is split into <cite>num_parts</cite> partitions,
+and the iterator only reads the <cite>part_index</cite>-th partition. However, the partitions are not
+guaranteed to be even.</p>
+<p><code class="docutils literal"><span class="pre">reset()</span></code> is expected to be called only after a complete pass of data.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Contents of libsvm file ``data.t``.</span>
+<span class="mf">1.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.5</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
+<span class="o">-</span><span class="mf">2.0</span>
+<span class="o">-</span><span class="mf">3.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.6</span> <span class="mi">1</span><span class="p">:</span><span class="mf">2.4</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
+<span class="mi">4</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mf">1.2</span>
+
+<span class="c1"># Creates a `LibSVMIter` with `batch_size`=3.</span>
+<span class="o">>>></span> <span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">LibSVMIter</span><span class="p">(</span><span class="n">data_libsvm</span> <span class="o">=</span> <span class="s1">'data.t'</span><span class="p">,</span> <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1"># The data of the first batch is stored in csr storage type</span>
+<span class="o">>>></span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="o">>>></span> <span class="n">csr</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+<span class="o">>>></span> <span class="n">csr</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="p">[[</span> <span class="mf">0.5</span>        <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>  <span class="p">]</span>
+<span class="p">[</span> <span class="mf">0.6</span>         <span class="mf">2.4</span>         <span class="mf">1.2</span><span class="p">]]</span>
+<span class="c1"># The label of first batch</span>
+<span class="o">>>></span> <span class="n">label</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">>>></span> <span class="n">label</span>
+<span class="p">[</span> <span class="mf">1.</span> <span class="o">-</span><span class="mf">2.</span> <span class="o">-</span><span class="mf">3.</span><span class="p">]</span>
+<span class="o"><</span><span class="n">NDArray</span> <span class="mi">3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+
+<span class="o">>>></span> <span class="n">second_batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="c1"># The data of the second batch</span>
+<span class="o">>>></span> <span class="n">second_batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="p">[[</span> <span class="mf">0.</span>          <span class="mf">0.</span>         <span class="o">-</span><span class="mf">1.2</span> <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.5</span>         <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span> <span class="p">]]</span>
+<span class="c1"># The label of the second batch</span>
+<span class="o">>>></span> <span class="n">second_batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="p">[</span> <span class="mf">4.</span>  <span class="mf">1.</span> <span class="o">-</span><span class="mf">2.</span><span class="p">]</span>
+
+<span class="o">>>></span> <span class="n">data_iter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="c1"># To restart the iterator for the second pass of the data</span>
+</pre></div>
+</div>
+<p>When <cite>label_libsvm</cite> is set to the path to another LibSVM file,
+data is read from <cite>data_libsvm</cite> and label from <cite>label_libsvm</cite>.
+In this case, both data and label are stored in the csr format.
+If the label column in the <cite>data_libsvm</cite> file is ignored.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Contents of libsvm file ``label.t``</span>
+<span class="mf">1.0</span>
+<span class="o">-</span><span class="mf">2.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.125</span>
+<span class="o">-</span><span class="mf">3.0</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
+<span class="mi">4</span> <span class="mi">1</span><span class="p">:</span><span class="mf">1.0</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mf">1.2</span>
+
+<span class="c1"># Creates a `LibSVMIter` with specified label file</span>
+<span class="o">>>></span> <span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">LibSVMIter</span><span class="p">(</span><span class="n">data_libsvm</span> <span class="o">=</span> <span class="s1">'data.t'</span><span class="p">,</span> <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span>
+                 <span class="n">label_libsvm</span> <span class="o">=</span> <span class="s1">'label.t'</span><span class="p">,</span> <span class="n">label_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Both data and label are in csr storage type</span>
+<span class="o">>>></span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="o">>>></span> <span class="n">csr_data</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+<span class="o">>>></span> <span class="n">csr_data</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="p">[[</span> <span class="mf">0.5</span>         <span class="mf">0.</span>          <span class="mf">1.2</span>  <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.6</span>         <span class="mf">2.4</span>         <span class="mf">1.2</span> <span class="p">]]</span>
+<span class="o">>>></span> <span class="n">csr_label</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+<span class="o">>>></span> <span class="n">csr_label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="p">[[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.125</span>       <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/io/iter_libsvm.cc:L298</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_libsvm</strong> (<em>string</em><em>, </em><em>required</em>) – The input zero-base indexed LibSVM data file or a directory path.</li>
+<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one example.</li>
+<li><strong>label_libsvm</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='NULL'</em>) – The input LibSVM label file or a directory path. If NULL, all labels will be read from <code class="docutils literal"><span class="pre">data_libsvm</span></code>.</li>
+<li><strong>label_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – The shape of one label.</li>
+<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
+<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
+<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
+<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
+<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.io.ImageRecordIter">
+<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates on image RecordIO files</p>
+<p>Reads batches of images from .rec RecordIO files. One can use <code class="docutils literal"><span class="pre">im2rec.py</span></code> tool
+(in tools/) to pack raw image files into RecordIO files. This iterator is less
+flexible to customization but is fast and has lot of language bindings. To
+iterate over raw images directly use <code class="docutils literal"><span class="pre">ImageIter</span></code> instead (in Python).</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ImageRecordIter</span><span class="p">(</span>
+  <span class="n">path_imgrec</span><span class="o">=</span><span class="s2">"./sample.rec"</span><span class="p">,</span> <span class="c1"># The target record file.</span>
+  <span class="n">data_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">227</span><span class="p">,</span> <span class="mi">227</span><span class="p">),</span> <span class="c1"># Output data shape; 227x227 region will be cropped from the original image.</span>
+  <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="c1"># Number of items per batch.</span>
+  <span class="n">resize</span><span class="o">=</span><span class="mi">256</span> <span class="c1"># Resize the shorter edge to 256 before cropping.</span>
+  <span class="c1"># You can specify more augmentation options. Use help(mx.io.ImageRecordIter) to see all the options.</span>
+  <span class="p">)</span>
+<span class="c1"># You can now use the data_iter to access batches of images.</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span> <span class="c1"># first batch.</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># This will contain 4 (=batch_size) images each of 3x227x227.</span>
+<span class="c1"># process the images</span>
+<span class="o">...</span>
+<span class="n">data_iter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="c1"># To restart the iterator from the beginning.</span>
+</pre></div>
+</div>
+<p>Defined in src/io/iter_image_recordio_2.cc:L751</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
+<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
+<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
+<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
+<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
+<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
+<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
+<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
+<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
+<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
+<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
+<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
+<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
+<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
+<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
+<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
+<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
+<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
+<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
+<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
+<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
+<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
+<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
+<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
+<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
+<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
+<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
+<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
+<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
+<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
+<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
+<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
+<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
+<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
+<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
+<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
+<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
+<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
+<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
+<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
+<li><strong>mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to mirror the image or not. If true, images are flipped along the horizontal axis.</li>
+<li><strong>rand_mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to randomly mirror images or not. If true, 50% of the images will be randomly mirrored (flipped along the horizontal axis)</li>
+<li><strong>mean_img</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Filename of the mean image.</li>
+<li><strong>mean_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the R channel</li>
+<li><strong>mean_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the G channel</li>
+<li><strong>mean_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the B channel</li>
+<li><strong>mean_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the alpha channel</li>
+<li><strong>std_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on R channel.</li>
+<li><strong>std_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on G channel.</li>
+<li><strong>std_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on B channel.</li>
+<li><strong>std_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on Alpha channel.</li>
+<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Multiply the image with a scale value.</li>
+<li><strong>max_random_contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the contrast with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_contrast,</span> <span class="pre">max_random_contrast]</span></code></li>
+<li><strong>max_random_illumination</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the illumination with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_illumination,</span> <span class="pre">max_random_illumination]</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.io.ImageRecordUInt8Iter">
+<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordUInt8Iter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordUInt8Iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterating on image RecordIO files</p>
+<p>This iterator is identical to <code class="docutils literal"><span class="pre">ImageRecordIter</span></code> except for using <code class="docutils literal"><span class="pre">uint8</span></code> as
+the data type instead of <code class="docutils literal"><span class="pre">float</span></code>.</p>
+<p>Defined in src/io/iter_image_recordio_2.cc:L768</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
+<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
+<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
+<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
+<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
+<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
+<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
+<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
+<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
+<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
+<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
+<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
+<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
+<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
+<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
+<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
+<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
+<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
+<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
+<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
+<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
+<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
+<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
+<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
+<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
+<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
+<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
+<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
+<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
+<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
+<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
+<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
+<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
+<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
+<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
+<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
+<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
+<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
+<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
+<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
+<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.io.MNISTIter">
+<code class="descclassname">mxnet.io.</code><code class="descname">MNISTIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.MNISTIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterating on the MNIST dataset.</p>
+<p>One can download the dataset from <a class="reference external" href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a></p>
+<p>Defined in src/io/iter_mnist.cc:L265</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='./train-images-idx3-ubyte'</em>) – Dataset Param: Mnist image path.</li>
+<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='./train-labels-idx1-ubyte'</em>) – Dataset Param: Mnist label path.</li>
+<li><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='128'</em>) – Batch Param: Batch Size.</li>
+<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Whether to shuffle data.</li>
+<li><strong>flat</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Whether to flat the data into 1D.</li>
+<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Random Seed.</li>
+<li><strong>silent</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Auxiliary Param: Whether to print out data info.</li>
+<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
+<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
+<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
+<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="module-mxnet.io">
+<span id="mxnet-io-helper-classes-functions"></span><span id="mxnet-io-helper-classes-functions"></span><h3>mxnet.io - Helper Classes &amp; Functions<a class="headerlink" href="#module-mxnet.io" title="Permalink to this headline">¶</a></h3>
+<p>Data iterators for common data formats.</p>
 <dl class="class">
 <dt id="mxnet.io.DataDesc">
 <em class="property">class </em><code class="descclassname">mxnet.io.</code><code class="descname">DataDesc</code><a class="reference internal" href="../../../_modules/mxnet/io.html#DataDesc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.DataDesc" title="Permalink to this definition">¶</a></dt>
@@ -496,8 +1051,8 @@ the whole array will be copied for each data-parallelism device.</p>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>shapes</strong> (<em>a tuple of</em><em> (</em><a class="reference internal" href="../symbol/symbol.html#mxnet.symbol.Symbol.name" title="mxnet.symbol.Symbol.name"><em>name</em></a><em>, </em><a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray.shape" title="mxnet.ndarray.NDArray.shape"><em>shape</em></a><em>)</em>) – </li>
-<li><strong>types</strong> (<em>a tuple of</em><em>  (</em><a class="reference internal" href="../symbol/symbol.html#mxnet.symbol.Symbol.name" title="mxnet.symbol.Symbol.name"><em>name</em></a><em>, </em><a class="reference internal" href="../kvstore/kvstore.html#mxnet.kvstore.KVStore.type" title="mxnet.kvstore.KVStore.type"><em>type</em></a><em>)</em>) – </li>
+<li><strong>shapes</strong> (a tuple of (<a class="reference external" href="mxnet.symbol.Symbol.name">name</a>, <a class="reference external" href="mxnet.ndarray.NDArray.shape">shape</a>)) – </li>
+<li><strong>types</strong> (a tuple of  (<a class="reference external" href="mxnet.symbol.Symbol.name">name</a>, np.dtype)) – </li>
 </ul>
 </td>
 </tr>
@@ -730,118 +1285,6 @@ in iter[i].provide_data.</li>
 </div>
 </dd></dl>
 <dl class="class">
-<dt id="mxnet.io.NDArrayIter">
-<em class="property">class </em><code class="descclassname">mxnet.io.</code><code class="descname">NDArrayIter</code><span class="sig-paren">(</span><em>data</em>, <em>label=None</em>, <em>batch_size=1</em>, <em>shuffle=False</em>, <em>last_batch_handle='pad'</em>, <em>data_name='data'</em>, <em>label_name='softmax_label'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/io.html#NDArrayIter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.NDArrayIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an iterator for <code class="docutils literal"><span class="pre">mx.nd.NDArray</span></code>, <code class="docutils literal"><span class="pre">numpy.ndarray</span></code>, <code class="docutils literal"><span class="pre">h5py.Dataset</span></code>
-<code class="docutils literal"><span class="pre">mx.nd.sparse.CSRNDArray</span></code> or <code class="docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-<span class="gp">>>> </span><span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
-<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="gp">...</span>
-<span class="go">[[[ 36.  37.]</span>
-<span class="go">  [ 38.  39.]]</span>
-<span class="go"> [[ 16.  17.]</span>
-<span class="go">  [ 18.  19.]]</span>
-<span class="go"> [[ 12.  13.]</span>
-<span class="go">  [ 14.  15.]]]</span>
-<span class="go">(3L, 2L, 2L)</span>
-<span class="go">[[[ 32.  33.]</span>
-<span class="go">  [ 34.  35.]]</span>
-<span class="go"> [[  4.   5.]</span>
-<span class="go">  [  6.   7.]]</span>
-<span class="go"> [[ 24.  25.]</span>
-<span class="go">  [ 26.  27.]]]</span>
-<span class="go">(3L, 2L, 2L)</span>
-<span class="go">[[[  8.   9.]</span>
-<span class="go">  [ 10.  11.]]</span>
-<span class="go"> [[ 20.  21.]</span>
-<span class="go">  [ 22.  23.]]</span>
-<span class="go"> [[ 28.  29.]</span>
-<span class="go">  [ 30.  31.]]]</span>
-<span class="go">(3L, 2L, 2L)</span>
-<span class="gp">>>> </span><span class="n">dataiter</span><span class="o">.</span><span class="n">provide_data</span> <span class="c1"># Returns a list of `DataDesc`</span>
-<span class="go">[DataDesc[data,(3, 2L, 2L),<type 'numpy.float32'>,NCHW]]</span>
-<span class="gp">>>> </span><span class="n">dataiter</span><span class="o">.</span><span class="n">provide_label</span> <span class="c1"># Returns a list of `DataDesc`</span>
-<span class="go">[DataDesc[softmax_label,(3, 1L),<type 'numpy.float32'>,NCHW]]</span>
-</pre></div>
-</div>
-<p>In the above example, data is shuffled as <cite>shuffle</cite> parameter is set to <cite>True</cite>
-and remaining examples are discarded as <cite>last_batch_handle</cite> parameter is set to <cite>discard</cite>.</p>
-<p>Usage of <cite>last_batch_handle</cite> parameter:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'pad'</span><span class="p">)</span>
-<span class="gp">>>> </span><span class="n">batchidx</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">batchidx</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="gp">...</span>
-<span class="gp">>>> </span><span class="n">batchidx</span>  <span class="c1"># Padding added after the examples read are over. So, 10/3+1 batches are created.</span>
-<span class="go">4</span>
-<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
-<span class="gp">>>> </span><span class="n">batchidx</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">>>> </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">batchidx</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="gp">...</span>
-<span class="gp">>>> </span><span class="n">batchidx</span> <span class="c1"># Remaining examples are discarded. So, 10/3 batches are created.</span>
-<span class="go">3</span>
-</pre></div>
-</div>
-<p><cite>NDArrayIter</cite> also supports multiple input and labels.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'data1'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">'data2'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))}</span>
-<span class="gp">>>> </span><span class="n">label</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'label1'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> <span class="s1">'label2'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">))}</span>
-<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><cite>NDArrayIter</cite> also supports <code class="docutils literal"><span class="pre">mx.nd.sparse.CSRNDArray</span></code>
-with <cite>last_batch_handle</cite> set to <cite>discard</cite>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">csr_data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span><span class="o">.</span><span class="n">tostype</span><span class="p">(</span><span class="s1">'csr'</span><span class="p">)</span>
-<span class="gp">>>> </span><span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="gp">>>> </span><span class="n">dataiter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">NDArrayIter</span><span class="p">(</span><span class="n">csr_data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">)</span>
-<span class="gp">>>> </span><span class="p">[</span><span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataiter</span><span class="p">]</span>
-<span class="go">[</span>
-<span class="go"><CSRNDArray 3x4 @cpu(0)>,</span>
-<span class="go"><CSRNDArray 3x4 @cpu(0)>,</span>
-<span class="go"><CSRNDArray 3x4 @cpu(0)>]</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.array" title="mxnet.ndarray.array"><em>array</em></a><em> or </em><em>list of array</em><em> or </em><em>dict of string to array</em>) – The input data.</li>
-<li><strong>label</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.array" title="mxnet.ndarray.array"><em>array</em></a><em> or </em><em>list of array</em><em> or </em><em>dict of string to array</em><em>, </em><em>optional</em>) – The input label.</li>
-<li><strong>batch_size</strong> (<em>int</em>) – Batch size of data.</li>
-<li><strong>shuffle</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to shuffle the data.
-Only supported if no h5py.Dataset inputs are used.</li>
-<li><strong>last_batch_handle</strong> (<em>str</em><em>, </em><em>optional</em>) – How to handle the last batch. This parameter can be ‘pad’, ‘discard’ or
-‘roll_over’. ‘roll_over’ is intended for training and can cause problems
-if used for prediction.</li>
-<li><strong>data_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The data name.</li>
-<li><strong>label_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The label name.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="mxnet.io.NDArrayIter.provide_data">
-<code class="descname">provide_data</code><a class="headerlink" href="#mxnet.io.NDArrayIter.provide_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name and shape of data provided by this iterator.</p>
-</dd></dl>
-<dl class="attribute">
-<dt id="mxnet.io.NDArrayIter.provide_label">
-<code class="descname">provide_label</code><a class="headerlink" href="#mxnet.io.NDArrayIter.provide_label" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name and shape of label provided by this iterator.</p>
-</dd></dl>
-<dl class="method">
-<dt id="mxnet.io.NDArrayIter.hard_reset">
-<code class="descname">hard_reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/io.html#NDArrayIter.hard_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.NDArrayIter.hard_reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ignore roll over data and set to start.</p>
-</dd></dl>
-</dd></dl>
-<dl class="class">
 <dt id="mxnet.io.MXDataIter">
 <em class="property">class </em><code class="descclassname">mxnet.io.</code><code class="descname">MXDataIter</code><span class="sig-paren">(</span><em>handle</em>, <em>data_name='data'</em>, <em>label_name='softmax_label'</em>, <em>**_</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/io.html#MXDataIter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.io.MXDataIter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A python wrapper a C++ data iterator.</p>
@@ -871,682 +1314,10 @@ examples under the <cite>src/io</cite> folder.</p>
 <p class="last">src/io : The underlying C++ data iterator implementation, e.g., <cite>CSVIter</cite>.</p>
 </div>
 </dd></dl>
-<dl class="function">
-<dt id="mxnet.io.CSVIter">
-<code class="descclassname">mxnet.io.</code><code class="descname">CSVIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.CSVIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the CSV file iterator.</p>
-<p>In this function, the <cite>data_shape</cite> parameter is used to set the shape of each line of the input data.
-If a row in an input file is <cite>1,2,3,4,5,6`</cite> and <cite>data_shape</cite> is (3,2), that row
-will be reshaped, yielding the array [[1,2],[3,4],[5,6]] of shape (3,2).</p>
-<p>By default, the <cite>CSVIter</cite> has <cite>round_batch</cite> parameter set to <code class="docutils literal"><span class="pre">True</span></code>. So, if <cite>batch_size</cite>
-is 3 and there are 4 total rows in CSV file, 2 more examples
-are consumed at the first round. If <cite>reset</cite> function is called after first round,
-the call is ignored and remaining examples are returned in the second round.</p>
-<p>If one wants all the instances in the second round after calling <cite>reset</cite>, make sure
-to set <cite>round_batch</cite> to False.</p>
-<p>If <code class="docutils literal"><span class="pre">data_csv</span> <span class="pre">=</span> <span class="pre">'data/'</span></code> is set, then all the files in this directory will be read.</p>
-<p><code class="docutils literal"><span class="pre">reset()</span></code> is expected to be called only after a complete pass of data.</p>
-<p>By default, the CSVIter parses all entries in the data file as float32 data type,
-if <cite>dtype</cite> argument is set to be ‘int32’ or ‘int64’ then CSVIter will parse all entries in the file
-as int32 or int64 data type accordingly.</p>
-<p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>// Contents of CSV file ``data/data.csv``.
-1,2,3
-2,3,4
-3,4,5
-4,5,6
-
-// Creates a `CSVIter` with `batch_size`=2 and default `round_batch`=True.
-CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
-batch_size = 2)
-
-// Two batches read from the above iterator are as follows:
-[[ 1.  2.  3.]
-[ 2.  3.  4.]]
-[[ 3.  4.  5.]
-[ 4.  5.  6.]]
-
-// Creates a `CSVIter` with default `round_batch` set to True.
-CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
-batch_size = 3)
-
-// Two batches read from the above iterator in the first pass are as follows:
-[[1.  2.  3.]
-[2.  3.  4.]
-[3.  4.  5.]]
-
-[[4.  5.  6.]
-[1.  2.  3.]
-[2.  3.  4.]]
-
-// Now, `reset` method is called.
-CSVIter.reset()
-
-// Batch read from the above iterator in the second pass is as follows:
-[[ 3.  4.  5.]
-[ 4.  5.  6.]
-[ 1.  2.  3.]]
-
-// Creates a `CSVIter` with `round_batch`=False.
-CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
-batch_size = 3, round_batch=False)
-
-// Contents of two batches read from the above iterator in both passes, after calling
-// `reset` method before second pass, is as follows:
-[[1.  2.  3.]
-[2.  3.  4.]
-[3.  4.  5.]]
-
-[[4.  5.  6.]
-[2.  3.  4.]
-[3.  4.  5.]]
-
-// Creates a 'CSVIter' with `dtype`='int32'
-CSVIter = mx.io.CSVIter(data_csv = 'data/data.csv', data_shape = (3,),
-batch_size = 3, round_batch=False, dtype='int32')
-
-// Contents of two batches read from the above iterator in both passes, after calling
-// `reset` method before second pass, is as follows:
-[[1  2  3]
-[2  3  4]
-[3  4  5]]
-
-[[4  5  6]
-[2  3  4]
-[3  4  5]]
-</pre></div>
 </div>
-<p>Defined in src/io/iter_csv.cc:L308</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data_csv</strong> (<em>string</em><em>, </em><em>required</em>) – The input CSV file or a directory path.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one example.</li>
-<li><strong>label_csv</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='NULL'</em>) – The input CSV file or a directory path. If NULL, all labels will be returned as 0.</li>
-<li><strong>label_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – The shape of one label.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.ImageDetRecordIter">
-<code class="descclassname">mxnet.io.</code><code class="descname">ImageDetRecordIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageDetRecordIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create iterator for image detection dataset packed in recordio.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Dataset Param: Path to image list.</li>
-<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='./data/imgrec.rec'</em>) – Dataset Param: Path to image record file.</li>
-<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='det_aug_default'</em>) – Augmentation Param: the augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters. Make sure you don’t use normal augmenters for detection tasks.</li>
-<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Dataset Param: How many labels for an image, -1 for variable label size.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – Dataset Param: Shape of each instance generated by the DataIter.</li>
-<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – Backend Param: Number of thread to do preprocessing.</li>
-<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Auxiliary Param: Whether to output parser information.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
-<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – the size(MB) of the shuffle chunk, used with shuffle=True, it can enable global shuffling</li>
-<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the seed for chunk shuffling</li>
-<li><strong>label_pad_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – pad output label width if set larger than 0, -1 for auto estimate</li>
-<li><strong>label_pad_value</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – label padding value if enabled</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Whether to shuffle data.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Random Seed.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Augmentation Param: scale shorter edge to size before applying other augmentations, -1 to disable.</li>
-<li><strong>rand_crop_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability of random cropping, <= 0 to disable</li>
-<li><strong>min_crop_scales</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>]</em>) – Augmentation Param: Min crop scales.</li>
-<li><strong>max_crop_scales</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Max crop scales.</li>
-<li><strong>min_crop_aspect_ratios</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Min crop aspect ratios.</li>
-<li><strong>max_crop_aspect_ratios</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Max crop aspect ratios.</li>
-<li><strong>min_crop_overlaps</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>]</em>) – Augmentation Param: Minimum crop IOU between crop_box and ground-truths.</li>
-<li><strong>max_crop_overlaps</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Maximum crop IOU between crop_box and ground-truth.</li>
-<li><strong>min_crop_sample_coverages</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>]</em>) – Augmentation Param: Minimum ratio of intersect/crop_area between crop box and ground-truths.</li>
-<li><strong>max_crop_sample_coverages</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Maximum ratio of intersect/crop_area between crop box and ground-truths.</li>
-<li><strong>min_crop_object_coverages</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>]</em>) – Augmentation Param: Minimum ratio of intersect/gt_area between crop box and ground-truths.</li>
-<li><strong>max_crop_object_coverages</strong> (<em>tuple of <float></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – Augmentation Param: Maximum ratio of intersect/gt_area between crop box and ground-truths.</li>
-<li><strong>num_crop_sampler</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Augmentation Param: Number of crop samplers.</li>
-<li><strong>crop_emit_mode</strong> (<em>{'center'</em><em>, </em><em>'overlap'}</em><em>,</em><em>optional</em><em>, </em><em>default='center'</em>) – Augmentation Param: Emition mode for invalid ground-truths after crop. center: emit if centroid of object is out of crop region; overlap: emit if overlap is less than emit_overlap_thresh.</li>
-<li><strong>emit_overlap_thresh</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.3</em>) – Augmentation Param: Emit overlap thresh for emit mode overlap only.</li>
-<li><strong>max_crop_trials</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>25</em><em>]</em>) – Augmentation Param: Skip cropping if fail crop trail count exceeds this number.</li>
-<li><strong>rand_pad_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability for random padding.</li>
-<li><strong>max_pad_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Maximum padding scale.</li>
-<li><strong>max_random_hue</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Maximum random value of H channel in HSL color space.</li>
-<li><strong>random_hue_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability to apply random hue.</li>
-<li><strong>max_random_saturation</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Maximum random value of S channel in HSL color space.</li>
-<li><strong>random_saturation_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability to apply random saturation.</li>
-<li><strong>max_random_illumination</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Maximum random value of L channel in HSL color space.</li>
-<li><strong>random_illumination_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability to apply random illumination.</li>
-<li><strong>max_random_contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Maximum random value of delta contrast.</li>
-<li><strong>random_contrast_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability to apply random contrast.</li>
-<li><strong>rand_mirror_prob</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Probability to apply horizontal flip aka. mirror.</li>
-<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='127'</em>) – Augmentation Param: Filled color value while padding.</li>
-<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Augmentation Param: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
-<li><strong>resize_mode</strong> (<em>{'fit'</em><em>, </em><em>'force'</em><em>, </em><em>'shrink'}</em><em>,</em><em>optional</em><em>, </em><em>default='force'</em>) – Augmentation Param: How image data fit in data_shape. force: force reshape to data_shape regardless of aspect ratio; shrink: ensure each side fit in data_shape, preserve aspect ratio; fit: fit image to data_shape, preserve ratio, will upscale if applicable.</li>
-<li><strong>mean_img</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Augmentation Param: Mean Image to be subtracted.</li>
-<li><strong>mean_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Mean value on R channel.</li>
-<li><strong>mean_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Mean value on G channel.</li>
-<li><strong>mean_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Mean value on B channel.</li>
-<li><strong>mean_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Mean value on Alpha channel.</li>
-<li><strong>std_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Standard deviation on R channel.</li>
-<li><strong>std_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Standard deviation on G channel.</li>
-<li><strong>std_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Standard deviation on B channel.</li>
-<li><strong>std_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Standard deviation on Alpha channel.</li>
-<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Scale in color space.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.ImageRecordIter">
-<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterates on image RecordIO files</p>
-<p>Reads batches of images from .rec RecordIO files. One can use <code class="docutils literal"><span class="pre">im2rec.py</span></code> tool
-(in tools/) to pack raw image files into RecordIO files. This iterator is less
-flexible to customization but is fast and has lot of language bindings. To
-iterate over raw images directly use <code class="docutils literal"><span class="pre">ImageIter</span></code> instead (in Python).</p>
-<p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ImageRecordIter</span><span class="p">(</span>
-  <span class="n">path_imgrec</span><span class="o">=</span><span class="s2">"./sample.rec"</span><span class="p">,</span> <span class="c1"># The target record file.</span>
-  <span class="n">data_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">227</span><span class="p">,</span> <span class="mi">227</span><span class="p">),</span> <span class="c1"># Output data shape; 227x227 region will be cropped from the original image.</span>
-  <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="c1"># Number of items per batch.</span>
-  <span class="n">resize</span><span class="o">=</span><span class="mi">256</span> <span class="c1"># Resize the shorter edge to 256 before cropping.</span>
-  <span class="c1"># You can specify more augmentation options. Use help(mx.io.ImageRecordIter) to see all the options.</span>
-  <span class="p">)</span>
-<span class="c1"># You can now use the data_iter to access batches of images.</span>
-<span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span> <span class="c1"># first batch.</span>
-<span class="n">images</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># This will contain 4 (=batch_size) images each of 3x227x227.</span>
-<span class="c1"># process the images</span>
-<span class="o">...</span>
-<span class="n">data_iter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="c1"># To restart the iterator from the beginning.</span>
-</pre></div>
-</div>
-<p>Defined in src/io/iter_image_recordio_2.cc:L751</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
-<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
-<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
-<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
-<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
-<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
-<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
-<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
-<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
-<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
-<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
-<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
-<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
-<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
-<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
-<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
-<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
-<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
-<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
-<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
-<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
-<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
-<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
-<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
-<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
-<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
-<li><strong>mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to mirror the image or not. If true, images are flipped along the horizontal axis.</li>
-<li><strong>rand_mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to randomly mirror images or not. If true, 50% of the images will be randomly mirrored (flipped along the horizontal axis)</li>
-<li><strong>mean_img</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Filename of the mean image.</li>
-<li><strong>mean_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the R channel</li>
-<li><strong>mean_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the G channel</li>
-<li><strong>mean_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the B channel</li>
-<li><strong>mean_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the alpha channel</li>
-<li><strong>std_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on R channel.</li>
-<li><strong>std_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on G channel.</li>
-<li><strong>std_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on B channel.</li>
-<li><strong>std_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on Alpha channel.</li>
-<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Multiply the image with a scale value.</li>
-<li><strong>max_random_contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the contrast with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_contrast,</span> <span class="pre">max_random_contrast]</span></code></li>
-<li><strong>max_random_illumination</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the illumination with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_illumination,</span> <span class="pre">max_random_illumination]</span></code></li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.ImageRecordIter_v1">
-<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordIter_v1</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordIter_v1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterating on image RecordIO files</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">ImageRecordIter_v1</span></code> is deprecated. Use <code class="docutils literal"><span class="pre">ImageRecordIter</span></code> instead.</p>
-</div>
-<p>Read images batches from RecordIO files with a rich of data augmentation
-options.</p>
-<p>One can use <code class="docutils literal"><span class="pre">tools/im2rec.py</span></code> to pack individual image files into RecordIO
-files.</p>
-<p>Defined in src/io/iter_image_recordio.cc:L352</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
-<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
-<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
-<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
-<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
-<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
-<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
-<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
-<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
-<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
-<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
-<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
-<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
-<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
-<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
-<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
-<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
-<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
-<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
-<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
-<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
-<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
-<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
-<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
-<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
-<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
-<li><strong>mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to mirror the image or not. If true, images are flipped along the horizontal axis.</li>
-<li><strong>rand_mirror</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to randomly mirror images or not. If true, 50% of the images will be randomly mirrored (flipped along the horizontal axis)</li>
-<li><strong>mean_img</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Filename of the mean image.</li>
-<li><strong>mean_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the R channel</li>
-<li><strong>mean_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the G channel</li>
-<li><strong>mean_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the B channel</li>
-<li><strong>mean_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The mean value to be subtracted on the alpha channel</li>
-<li><strong>std_r</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on R channel.</li>
-<li><strong>std_g</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on G channel.</li>
-<li><strong>std_b</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on B channel.</li>
-<li><strong>std_a</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Standard deviation on Alpha channel.</li>
-<li><strong>scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Multiply the image with a scale value.</li>
-<li><strong>max_random_contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the contrast with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_contrast,</span> <span class="pre">max_random_contrast]</span></code></li>
-<li><strong>max_random_illumination</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the illumination with a value randomly chosen from <code class="docutils literal"><span class="pre">[-max_random_illumination,</span> <span class="pre">max_random_illumination]</span></code></li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.ImageRecordUInt8Iter">
-<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordUInt8Iter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordUInt8Iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterating on image RecordIO files</p>
-<p>This iterator is identical to <code class="docutils literal"><span class="pre">ImageRecordIter</span></code> except for using <code class="docutils literal"><span class="pre">uint8</span></code> as
-the data type instead of <code class="docutils literal"><span class="pre">float</span></code>.</p>
-<p>Defined in src/io/iter_image_recordio_2.cc:L768</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
-<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
-<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
-<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
-<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
-<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
-<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
-<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
-<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
-<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
-<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
-<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
-<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
-<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
-<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
-<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
-<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
-<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
-<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
-<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
-<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
-<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
-<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
-<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
-<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
-<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.ImageRecordUInt8Iter_v1">
-<code class="descclassname">mxnet.io.</code><code class="descname">ImageRecordUInt8Iter_v1</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.ImageRecordUInt8Iter_v1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterating on image RecordIO files</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">ImageRecordUInt8Iter_v1</span></code> is deprecated. Use <code class="docutils literal"><span class="pre">ImageRecordUInt8Iter</span></code> instead.</p>
-</div>
-<p>This iterator is identical to <code class="docutils literal"><span class="pre">ImageRecordIter</span></code> except for using <code class="docutils literal"><span class="pre">uint8</span></code> as
-the data type instead of <code class="docutils literal"><span class="pre">float</span></code>.</p>
-<p>Defined in src/io/iter_image_recordio.cc:L377</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_imglist</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image list (.lst) file. Generally created with tools/im2rec.py. Format (Tab separated): <index of record>       <one or more labels>    <relative path from root folder>.</li>
-<li><strong>path_imgrec</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO (.rec) file or a directory path. Created with tools/im2rec.py.</li>
-<li><strong>path_imgidx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Path to the image RecordIO index (.idx) file. Created with tools/im2rec.py.</li>
-<li><strong>aug_seq</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='aug_default'</em>) – The augmenter names to represent sequence of augmenters to be applied, seperated by comma. Additional keyword parameters will be seen by these augmenters.</li>
-<li><strong>label_width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The number of labels per image.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one output image in (channels, height, width) format.</li>
-<li><strong>preprocess_threads</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='4'</em>) – The number of threads to do preprocessing.</li>
-<li><strong>verbose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If or not output verbose information.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Virtually partition the data into these many parts.</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The <em>i</em>-th virtual partition to be read.</li>
-<li><strong>shuffle_chunk_size</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The data shuffle buffer size in MB. Only valid if shuffle is true.</li>
-<li><strong>shuffle_chunk_seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed for shuffling</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to shuffle data randomly or not.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – The random seed.</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-<li><strong>resize</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Down scale the shorter edge to a new size  before applying other augmentations.</li>
-<li><strong>rand_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not randomly crop the image</li>
-<li><strong>random_resized_crop</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If or not perform random resized cropping on the image, as a standard preprocessing for resnet training on ImageNet data.</li>
-<li><strong>max_rotate_angle</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Rotate by a random degree in <code class="docutils literal"><span class="pre">[-v,</span> <span class="pre">v]</span></code></li>
-<li><strong>max_aspect_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Change the aspect (namely width/height) to a random value. If min_aspect_ratio is None then the aspect ratio ins sampled from [1 - max_aspect_ratio, 1 + max_aspect_ratio], else it is in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>min_aspect_ratio</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Change the aspect (namely width/height) to a random value in <code class="docutils literal"><span class="pre">[min_aspect_ratio,</span> <span class="pre">max_aspect_ratio]</span></code></li>
-<li><strong>max_shear_ratio</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Apply a shear transformation (namely <code class="docutils literal"><span class="pre">(x,y)->(x+my,y)</span></code>) with <code class="docutils literal"><span class="pre">m</span></code> randomly chose from <code class="docutils literal"><span class="pre">[-max_shear_ratio,</span> <span class="pre">max_shear_ratio]</span></code></li>
-<li><strong>max_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>min_crop_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Crop both width and height into a random size in <code class="docutils literal"><span class="pre">[min_crop_size,</span> <span class="pre">max_crop_size].``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is True.</li>
-<li><strong>min_random_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Resize into <code class="docutils literal"><span class="pre">[width*s,</span> <span class="pre">height*s]</span></code> with <code class="docutils literal"><span class="pre">s</span></code> randomly chosen from <code class="docutils literal"><span class="pre">[min_random_scale,</span> <span class="pre">max_random_scale]``Ignored</span> <span class="pre">if</span> <span class="pre">``random_resized_crop</span></code> is True.</li>
-<li><strong>max_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>min_random_area</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Change the area (namely width * height) to a random value in <code class="docutils literal"><span class="pre">[min_random_area,</span> <span class="pre">max_random_area]</span></code>. Ignored if <code class="docutils literal"><span class="pre">random_resized_crop</span></code> is False.</li>
-<li><strong>max_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e+10</em>) – Set the maximal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>min_img_size</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Set the minimal width and height after all resize and rotate argumentation  are applied</li>
-<li><strong>brightness</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-brightness,</span> <span class="pre">brightness]</span></code> to the brightness of image.</li>
-<li><strong>contrast</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-contrast,</span> <span class="pre">contrast]</span></code> to the contrast of image.</li>
-<li><strong>saturation</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-saturation,</span> <span class="pre">saturation]</span></code> to the saturation of image.</li>
-<li><strong>pca_noise</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Add PCA based noise to the image.</li>
-<li><strong>random_h</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_h,</span> <span class="pre">random_h]</span></code> to the H channel in HSL color space.</li>
-<li><strong>random_s</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_s,</span> <span class="pre">random_s]</span></code> to the S channel in HSL color space.</li>
-<li><strong>random_l</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Add a random value in <code class="docutils literal"><span class="pre">[-random_l,</span> <span class="pre">random_l]</span></code> to the L channel in HSL color space.</li>
-<li><strong>rotate</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Rotate by an angle. If set, it overwrites the <code class="docutils literal"><span class="pre">max_rotate_angle</span></code> option.</li>
-<li><strong>fill_value</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='255'</em>) – Set the padding pixels value to <code class="docutils literal"><span class="pre">fill_value</span></code>.</li>
-<li><strong>inter_method</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – The interpolation method: 0-NN 1-bilinear 2-cubic 3-area 4-lanczos4 9-auto 10-rand.</li>
-<li><strong>pad</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Change size from <code class="docutils literal"><span class="pre">[width,</span> <span class="pre">height]</span></code> into <code class="docutils literal"><span class="pre">[pad</span> <span class="pre">+</span> <span class="pre">width</span> <span class="pre">+</span> <span class="pre">pad,</span> <span class="pre">pad</span> <span class="pre">+</span> <span class="pre">height</span> <span class="pre">+</span> <span class="pre">pad]</span></code> by padding pixes</li>
-<li><strong>seed_aug</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Random seed for augmentations.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.LibSVMIter">
-<code class="descclassname">mxnet.io.</code><code class="descname">LibSVMIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.LibSVMIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the LibSVM iterator which returns data with <cite>csr</cite>
-storage type. This iterator is experimental and should be used with care.</p>
-<p>The input data is stored in a format similar to LibSVM file format, except that the <strong>indices
-are expected to be zero-based instead of one-based, and the column indices for each row are
-expected to be sorted in ascending order</strong>. Details of the LibSVM format are available
-<a class="reference external" href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/">here.</a></p>
-<p>The <cite>data_shape</cite> parameter is used to set the shape of each line of the data.
-The dimension of both <cite>data_shape</cite> and <cite>label_shape</cite> are expected to be 1.</p>
-<p>The <cite>data_libsvm</cite> parameter is used to set the path input LibSVM file.
-When it is set to a directory, all the files in the directory will be read.</p>
-<p>When <cite>label_libsvm</cite> is set to <code class="docutils literal"><span class="pre">NULL</span></code>, both data and label are read from the file specified
-by <cite>data_libsvm</cite>. In this case, the data is stored in <cite>csr</cite> storage type, while the label is a 1D
-dense array.</p>
-<p>The <cite>LibSVMIter</cite> only support <cite>round_batch</cite> parameter set to <code class="docutils literal"><span class="pre">True</span></code>. Therefore, if <cite>batch_size</cite>
-is 3 and there are 4 total rows in libsvm file, 2 more examples are consumed at the first round.</p>
-<p>When <cite>num_parts</cite> and <cite>part_index</cite> are provided, the data is split into <cite>num_parts</cite> partitions,
-and the iterator only reads the <cite>part_index</cite>-th partition. However, the partitions are not
-guaranteed to be even.</p>
-<p><code class="docutils literal"><span class="pre">reset()</span></code> is expected to be called only after a complete pass of data.</p>
-<p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Contents of libsvm file ``data.t``.</span>
-<span class="mf">1.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.5</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
-<span class="o">-</span><span class="mf">2.0</span>
-<span class="o">-</span><span class="mf">3.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.6</span> <span class="mi">1</span><span class="p">:</span><span class="mf">2.4</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
-<span class="mi">4</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mf">1.2</span>
-
-<span class="c1"># Creates a `LibSVMIter` with `batch_size`=3.</span>
-<span class="o">>>></span> <span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">LibSVMIter</span><span class="p">(</span><span class="n">data_libsvm</span> <span class="o">=</span> <span class="s1">'data.t'</span><span class="p">,</span> <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
-<span class="c1"># The data of the first batch is stored in csr storage type</span>
-<span class="o">>>></span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="o">>>></span> <span class="n">csr</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
-<span class="o">>>></span> <span class="n">csr</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="p">[[</span> <span class="mf">0.5</span>        <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]</span>
-<span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>  <span class="p">]</span>
-<span class="p">[</span> <span class="mf">0.6</span>         <span class="mf">2.4</span>         <span class="mf">1.2</span><span class="p">]]</span>
-<span class="c1"># The label of first batch</span>
-<span class="o">>>></span> <span class="n">label</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="o">>>></span> <span class="n">label</span>
-<span class="p">[</span> <span class="mf">1.</span> <span class="o">-</span><span class="mf">2.</span> <span class="o">-</span><span class="mf">3.</span><span class="p">]</span>
-<span class="o"><</span><span class="n">NDArray</span> <span class="mi">3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
-
-<span class="o">>>></span> <span class="n">second_batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="c1"># The data of the second batch</span>
-<span class="o">>>></span> <span class="n">second_batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="p">[[</span> <span class="mf">0.</span>          <span class="mf">0.</span>         <span class="o">-</span><span class="mf">1.2</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.5</span>         <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span> <span class="p">]]</span>
-<span class="c1"># The label of the second batch</span>
-<span class="o">>>></span> <span class="n">second_batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="p">[</span> <span class="mf">4.</span>  <span class="mf">1.</span> <span class="o">-</span><span class="mf">2.</span><span class="p">]</span>
-
-<span class="o">>>></span> <span class="n">data_iter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="c1"># To restart the iterator for the second pass of the data</span>
-</pre></div>
-</div>
-<p>When <cite>label_libsvm</cite> is set to the path to another LibSVM file,
-data is read from <cite>data_libsvm</cite> and label from <cite>label_libsvm</cite>.
-In this case, both data and label are stored in the csr format.
-If the label column in the <cite>data_libsvm</cite> file is ignored.</p>
-<p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Contents of libsvm file ``label.t``</span>
-<span class="mf">1.0</span>
-<span class="o">-</span><span class="mf">2.0</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.125</span>
-<span class="o">-</span><span class="mf">3.0</span> <span class="mi">2</span><span class="p">:</span><span class="mf">1.2</span>
-<span class="mi">4</span> <span class="mi">1</span><span class="p">:</span><span class="mf">1.0</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mf">1.2</span>
-
-<span class="c1"># Creates a `LibSVMIter` with specified label file</span>
-<span class="o">>>></span> <span class="n">data_iter</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">LibSVMIter</span><span class="p">(</span><span class="n">data_libsvm</span> <span class="o">=</span> <span class="s1">'data.t'</span><span class="p">,</span> <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span>
-                 <span class="n">label_libsvm</span> <span class="o">=</span> <span class="s1">'label.t'</span><span class="p">,</span> <span class="n">label_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
-
-<span class="c1"># Both data and label are in csr storage type</span>
-<span class="o">>>></span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="o">>>></span> <span class="n">csr_data</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
-<span class="o">>>></span> <span class="n">csr_data</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="p">[[</span> <span class="mf">0.5</span>         <span class="mf">0.</span>          <span class="mf">1.2</span>  <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.6</span>         <span class="mf">2.4</span>         <span class="mf">1.2</span> <span class="p">]]</span>
-<span class="o">>>></span> <span class="n">csr_label</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="o"><</span><span class="n">CSRNDArray</span> <span class="mi">3</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
-<span class="o">>>></span> <span class="n">csr_label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-<span class="p">[[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.125</span>       <span class="mf">0.</span>          <span class="mf">0.</span>   <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">1.2</span> <span class="p">]]</span>
-</pre></div>
-</div>
-<p>Defined in src/io/iter_libsvm.cc:L298</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data_libsvm</strong> (<em>string</em><em>, </em><em>required</em>) – The input zero-base indexed LibSVM data file or a directory path.</li>
-<li><strong>data_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – The shape of one example.</li>
-<li><strong>label_libsvm</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='NULL'</em>) – The input LibSVM label file or a directory path. If NULL, all labels will be read from <code class="docutils literal"><span class="pre">data_libsvm</span></code>.</li>
-<li><strong>label_shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>1</em><em>]</em>) – The shape of one label.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
-<li><strong>batch_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Batch size.</li>
-<li><strong>round_batch</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use round robin to handle overflow batch or not.</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<dl class="function">
-<dt id="mxnet.io.MNISTIter">
-<code class="descclassname">mxnet.io.</code><code class="descname">MNISTIter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.io.MNISTIter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterating on the MNIST dataset.</p>
-<p>One can download the dataset from <a class="reference external" href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a></p>
-<p>Defined in src/io/iter_mnist.cc:L265</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name"/>
-<col class="field-body"/>
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>image</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='./train-images-idx3-ubyte'</em>) – Dataset Param: Mnist image path.</li>
-<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default='./train-labels-idx1-ubyte'</em>) – Dataset Param: Mnist label path.</li>
-<li><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='128'</em>) – Batch Param: Batch Size.</li>
-<li><strong>shuffle</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Augmentation Param: Whether to shuffle data.</li>
-<li><strong>flat</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Augmentation Param: Whether to flat the data into 1D.</li>
-<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Augmentation Param: Random Seed.</li>
-<li><strong>silent</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Auxiliary Param: Whether to print out data info.</li>
-<li><strong>num_parts</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – partition the data into multiple parts</li>
-<li><strong>part_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – the index of the part will read</li>
-<li><strong>prefetch_buffer</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=4</em>) – Maximum number of batches to prefetch.</li>
-<li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Output data type. <code class="docutils literal"><span class="pre">None</span></code> means no change.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result iterator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.io.MXDataIter" title="mxnet.io.MXDataIter">MXDataIter</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-<span class="target" id="module-mxnet.recordio"></span><p>Read and write for the RecordIO data format.</p>
+<div class="section" id="module-mxnet.recordio">
+<span id="mxnet-recordio"></span><span id="mxnet-recordio"></span><h3>mxnet.recordio<a class="headerlink" href="#module-mxnet.recordio" title="Permalink to this headline">¶</a></h3>
+<p>Read and write for the RecordIO data format.</p>
 <dl class="class">
 <dt id="mxnet.recordio.MXRecordIO">
 <em class="property">class </em><code class="descclassname">mxnet.recordio.</code><code class="descname">MXRecordIO</code><span class="sig-paren">(</span><em>uri</em>, <em>flag</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/recordio.html#MXRecordIO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.recordio.MXRecordIO" title="Permalink to this definition">¶</a></dt>
@@ -1911,6 +1682,7 @@ See mxnet.recordio.pack and mxnet.recordio.pack_img for example uses.</p>
 </div>
 </div>
 </div>
+</div>
 <div aria-label="main navigation" class="sphinxsidebar rightsidebar" role="navigation">
 <div class="sphinxsidebarwrapper">
 <h3><a href="../../../index.html">Table Of Contents</a></h3>
@@ -1918,12 +1690,21 @@ See mxnet.recordio.pack and mxnet.recordio.pack_img for example uses.</p>
 <li><a class="reference internal" href="#">Data Loading API</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#data-iterators">Data iterators</a></li>
-<li><a class="reference internal" href="#helper-classes-and-functions">Helper classes and functions</a></li>
-<li><a class="reference internal" href="#develop-a-new-iterator">Develop a new iterator</a><ul>
-<li><a class="reference internal" href="#change-batch-layout">Change batch layout</a></li>
+<li><a class="reference internal" href="#helper-classes-and-functions">Helper classes and functions</a><ul>
+<li><a class="reference internal" href="#data-structures-and-other-iterators">Data structures and other iterators</a></li>
+<li><a class="reference internal" href="#functions-to-read-and-write-recordio-files">Functions to read and write RecordIO files</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#api-reference">API Reference</a></li>
+<li><a class="reference internal" href="#how-to-develop-a-new-iterator">How to develop a new iterator</a><ul>
+<li><a class="reference internal" href="#how-to-change-the-batch-layout">How to change the batch layout</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-reference">API Reference</a><ul>
+<li><a class="reference internal" href="#module-mxnet.io">mxnet.io - Data Iterators</a></li>
+<li><a class="reference internal" href="#module-mxnet.io">mxnet.io - Helper Classes &amp; Functions</a></li>
+<li><a class="reference internal" href="#module-mxnet.recordio">mxnet.recordio</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

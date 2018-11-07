@@ -3283,7 +3283,7 @@ of its inputs to be taken into account for computing gradients.</p>
 <span class="n">cast</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mf">11.1</span><span class="p">,</span> <span class="mf">10.9</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'uint8'</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">44</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">253</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L592</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L594</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -3343,7 +3343,7 @@ to the sum of the corresponding dimensions of the input arrays.</p>
                       <span class="p">[</span> <span class="mf">5.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/nn/concat.cc:L365</p>
+<p>Defined in src/operator/nn/concat.cc:L368</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -4661,7 +4661,7 @@ height, width)</em>.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.RNN">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">RNN</code><span class="sig-paren">(</span><em>data=None</em>, <em>parameters=None</em>, <em>state=None</em>, <em>state_cell=None</em>, <em>state_size=_Null</em>, <em>num_layers=_Null</em>, <em>bidirectional=_Null</em>, <em>mode=_Null</em>, <em>p=_Null</em>, <em>state_outputs=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.RNN" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">RNN</code><span class="sig-paren">(</span><em>data=None</em>, <em>parameters=None</em>, <em>state=None</em>, <em>state_cell=None</em>, <em>state_size=_Null</em>, <em>num_layers=_Null</em>, <em>bidirectional=_Null</em>, <em>mode=_Null</em>, <em>p=_Null</em>, <em>state_outputs=_Null</em>, <em>projection_size=_Null</em>, <em>lstm_state_clip_min=_Null</em>, <em>lstm_state_clip_max=_Null</em>, <em>lstm_state_clip_nan=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.RNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies recurrent layers to input data. Currently, vanilla RNN, LSTM and GRU are
 implemented, with both multi-layer and bidirectional support.</p>
 <p><strong>Vanilla RNN</strong></p>
@@ -4709,8 +4709,12 @@ ReLU and Tanh.</p>
 <li><strong>num_layers</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – number of stacked layers</li>
 <li><strong>bidirectional</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – whether to use bidirectional recurrent layers</li>
 <li><strong>mode</strong> (<em>{'gru'</em><em>, </em><em>'lstm'</em><em>, </em><em>'rnn_relu'</em><em>, </em><em>'rnn_tanh'}</em><em>, </em><em>required</em>) – the type of RNN to compute</li>
-<li><strong>p</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Dropout probability, fraction of the input that gets dropped out at training time</li>
+<li><strong>p</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – drop rate of the dropout on the outputs of each RNN layer, except the last layer.</li>
 <li><strong>state_outputs</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to have the states as symbol outputs.</li>
+<li><strong>projection_size</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – size of project size</li>
+<li><strong>lstm_state_clip_min</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Minimum clip value of LSTM states. This option must be used together with lstm_state_clip_max.</li>
+<li><strong>lstm_state_clip_max</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Maximum clip value of LSTM states. This option must be used together with lstm_state_clip_min.</li>
+<li><strong>lstm_state_clip_nan</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to stop NaN from propagating in state by clipping it to min/max. If clipping range is not specified, this option is ignored.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -5569,7 +5573,7 @@ The <cite>normalization</cite> mode can be set to the followings:</p>
 <li>abs(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L666</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L668</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7053,7 +7057,7 @@ So with <cite>shape=(2,0)</cite>, we will obtain the same result as in the above
 <span class="n">cast</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mf">11.1</span><span class="p">,</span> <span class="mf">10.9</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'uint8'</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">44</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">253</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L592</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L594</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7151,7 +7155,7 @@ the result is compact, which means:</p>
 <li>cbrt(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L887</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L889</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7188,7 +7192,7 @@ the result is compact, which means:</p>
 <li>ceil(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L744</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L746</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7320,7 +7324,7 @@ to the sum of the corresponding dimensions of the input arrays.</p>
                       <span class="p">[</span> <span class="mf">5.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/nn/concat.cc:L365</p>
+<p>Defined in src/operator/nn/concat.cc:L368</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7831,7 +7835,7 @@ from standard updates. For more details, please check the Optimization API at:
 </pre></div>
 </div>
 <p>The storage type of <code class="docutils literal"><span class="pre">exp</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L927</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L929</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7891,7 +7895,7 @@ will return a new array with shape <code class="docutils literal"><span class="p
 <li>expm1(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L1006</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L1008</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -7952,7 +7956,7 @@ will return a new array with shape <code class="docutils literal"><span class="p
 <li>fix(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L801</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L803</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8073,7 +8077,7 @@ which behaves similar to mxnet.ndarray.reshape((-1,)).</p>
 <li>floor(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L763</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L765</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8907,7 +8911,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <dd><p>Returns element-wise Natural logarithmic value of the input.</p>
 <p>The natural logarithm is logarithm in base <em>e</em>, so that <code class="docutils literal"><span class="pre">log(exp(x))</span> <span class="pre">=</span> <span class="pre">x</span></code></p>
 <p>The storage type of <code class="docutils literal"><span class="pre">log</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L939</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L941</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8933,7 +8937,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <dd><p>Returns element-wise Base-10 logarithmic value of the input.</p>
 <p><code class="docutils literal"><span class="pre">10**log10(x)</span> <span class="pre">=</span> <span class="pre">x</span></code></p>
 <p>The storage type of <code class="docutils literal"><span class="pre">log10</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L951</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L953</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8967,7 +8971,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <li>log1p(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L988</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L990</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8993,7 +8997,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <dd><p>Returns element-wise Base-2 logarithmic value of the input.</p>
 <p><code class="docutils literal"><span class="pre">2**log2(x)</span> <span class="pre">=</span> <span class="pre">x</span></code></p>
 <p>The storage type of <code class="docutils literal"><span class="pre">log2</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L963</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L965</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9537,13 +9541,14 @@ and the matrix norms of these matrices are computed.</dd>
 <p class="first admonition-title">Note</p>
 <p class="last">The existing alias <code class="docutils literal"><span class="pre">normal</span></code> is deprecated.</p>
 </div>
-<p>Samples are distributed according to a normal distribution parametrized by <em>loc</em> (mean) and <em>scale</em> (standard deviation).</p>
+<p>Samples are distributed according to a normal distribution parametrized by <em>loc</em> (mean) and <em>scale</em>
+(standard deviation).</p>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.89171135</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.16881478</span><span class="p">],</span>
                                        <span class="p">[</span><span class="o">-</span><span class="mf">1.23474145</span><span class="p">,</span>  <span class="mf">1.55807114</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L85</p>
+<p>Defined in src/operator/random/sample_op.cc:L112</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9909,7 +9914,7 @@ NOT in axis instead.</p>
                                    <span class="p">[</span> <span class="mf">0.04146638</span><span class="p">,</span>  <span class="mf">0.31715935</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L115</p>
+<p>Defined in src/operator/random/sample_op.cc:L136</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9942,7 +9947,7 @@ NOT in axis instead.</p>
                                          <span class="p">[</span> <span class="mf">3.91697288</span><span class="p">,</span>  <span class="mf">3.65933681</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L100</p>
+<p>Defined in src/operator/random/sample_op.cc:L124</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9979,7 +9984,7 @@ Samples will always be returned as a floating point data type.</p>
                                                                  <span class="p">[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L168</p>
+<p>Defined in src/operator/random/sample_op.cc:L178</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10015,7 +10020,7 @@ Samples will always be returned as a floating point data type.</p>
                                               <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L149</p>
+<p>Defined in src/operator/random/sample_op.cc:L163</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10047,13 +10052,14 @@ Samples will always be returned as a floating point data type.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">The existing alias <code class="docutils literal"><span class="pre">normal</span></code> is deprecated.</p>
 </div>
-<p>Samples are distributed according to a normal distribution parametrized by <em>loc</em> (mean) and <em>scale</em> (standard deviation).</p>
+<p>Samples are distributed according to a normal distribution parametrized by <em>loc</em> (mean) and <em>scale</em>
+(standard deviation).</p>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.89171135</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.16881478</span><span class="p">],</span>
                                        <span class="p">[</span><span class="o">-</span><span class="mf">1.23474145</span><span class="p">,</span>  <span class="mf">1.55807114</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L85</p>
+<p>Defined in src/operator/random/sample_op.cc:L112</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10088,7 +10094,7 @@ Samples will always be returned as a floating point data type.</p>
                                <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L132</p>
+<p>Defined in src/operator/random/sample_op.cc:L149</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10126,7 +10132,7 @@ Samples will always be returned as a floating point data type.</p>
                                        <span class="p">[</span> <span class="mf">0.54488319</span><span class="p">,</span>  <span class="mf">0.84725171</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L66</p>
+<p>Defined in src/operator/random/sample_op.cc:L95</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10190,7 +10196,7 @@ Samples will always be returned as a floating point data type.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rcbrt</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">125</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L904</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L906</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10219,7 +10225,7 @@ Samples will always be returned as a floating point data type.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">reciprocal</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.33333334</span><span class="p">,</span> <span class="mf">0.625</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L644</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L646</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10517,7 +10523,7 @@ At most one dimension of shape can be -1.</p>
 <li>rint(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L725</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L727</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10658,7 +10664,7 @@ to be 0.9 and the learning rate <span class="math">\(\eta\)</span> to be 0.0001.
 <li>round(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L704</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L706</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10689,7 +10695,7 @@ to be 0.9 and the learning rate <span class="math">\(\eta\)</span> to be 0.0001.
 </pre></div>
 </div>
 <p>The storage type of <code class="docutils literal"><span class="pre">rsqrt</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L864</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L866</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11264,7 +11270,7 @@ only the row slices whose indices appear in grad.indices are updated:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">shape_array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L503</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L504</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11358,7 +11364,7 @@ but the order of the elements in each row does not change.</p>
 <li>sign(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L685</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L687</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11545,7 +11551,7 @@ weight = weight - learning_rate * sign(state)</dd>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">size_array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L554</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L556</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12106,7 +12112,7 @@ Also <cite>squeeze_axis</cite> can be set to true only if <code class="docutils 
 <li>sqrt(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L844</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L846</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12144,7 +12150,7 @@ Also <cite>squeeze_axis</cite> can be set to true only if <code class="docutils 
 <li>square(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L821</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L823</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12791,7 +12797,7 @@ zero than x is. In short, the fractional part of the signed number x is discarde
 <li>trunc(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L783</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L785</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12826,7 +12832,7 @@ zero than x is. In short, the fractional part of the signed number x is discarde
                                        <span class="p">[</span> <span class="mf">0.54488319</span><span class="p">,</span>  <span class="mf">0.84725171</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/random/sample_op.cc:L66</p>
+<p>Defined in src/operator/random/sample_op.cc:L95</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13100,6 +13106,8 @@ but returns an <cite>NDArray</cite>.</p>
 <li><strong>stop</strong> (<em>number</em>) – End of interval.</li>
 <li><strong>step</strong> (<em>number</em><em>, </em><em>optional</em>) – Spacing between values. The default step size is 1.</li>
 <li><strong>repeat</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of times to repeat each element. The default repeat count is 1.</li>
+<li><strong>infer_range</strong> (<em>boolean</em><em>, </em><em>optional</em>) – When set to True, infer the stop position from the start, step,
+repeat, and output tensor size.</li>
 <li><strong>ctx</strong> (<em>Context</em><em>, </em><em>optional</em>) – Device context. Default context is the current default context.</li>
 <li><strong>dtype</strong> (<em>str</em><em> or </em><em>numpy.dtype</em><em>, </em><em>optional</em>) – The data type of the <cite>NDArray</cite>. The default datatype is <cite>np.float32</cite>.</li>
 </ul>

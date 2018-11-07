@@ -417,14 +417,18 @@
 
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">:</span>
                 <span class="n">kvstore</span><span class="o">.</span><span class="n">set_gradient_compression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span><span class="p">:</span>
                 <span class="c1"># kv.pull(row_sparse_grad) is not supported for dist kvstore</span>
+                <span class="c1"># Captures condition for dist_async, dist_device_sync or based on config for</span>
+                <span class="c1"># update_on_kvstore</span>
                 <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_weight</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_grad</span> \
-                                    <span class="ow">or</span> <span class="s1">'async'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span>
+                                    <span class="ow">or</span> <span class="s1">'device'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> <span class="ow">or</span> <span class="s1">'async'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> \
+                                    <span class="ow">or</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">update_on_kvstore</span><span class="p">:</span>
                 <span class="c1"># optimizer preferably needs to be set before init for multiprecision</span>
                 <span class="n">kvstore</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">)</span>
@@ -492,12 +496,19 @@
 <span class="sd">            If true, ignores Parameters with stale gradient (gradient that has not</span>
 <span class="sd">            been updated by `backward` after last step) and skip update.</span>
 <span class="sd">        """</span>
+        <span class="n">rescale_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">/</span> <span class="n">batch_size</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="ow">and</span> \
+           <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">!=</span> <span class="n">rescale_grad</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">'Possible change in the `batch_size` from previous `step` detected.'</span> \
+                            <span class="s1">'Optimizer gradient normalizing factor will not change w.r.t new batch_size when '</span> \
+                            <span class="s1">'update_on_kvstore=True and when distributed `kvstore` is used.'</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">rescale_grad</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_kvstore</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_to_init</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_params</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">/</span> <span class="n">batch_size</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_allreduce_grads</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">ignore_stale_grad</span><span class="p">)</span></div>

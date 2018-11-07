@@ -22,7 +22,7 @@ var searchData=
   ['getexecnummatchcolor',['GetExecNumMatchColor',['../namespacemxnet_1_1common.html#a56555edcc52c5b25bed90bd05e00b5fa',1,'mxnet::common']]],
   ['getfcompute',['GetFCompute',['../namespacemxnet_1_1common.html#a1abcb76ccd9022ebacdacd69c821cdc2',1,'mxnet::common']]],
   ['getgpucount',['GetGPUCount',['../structmxnet_1_1Context.html#adde995df8e2b9871151921a932788cd2',1,'mxnet::Context']]],
-  ['getgpumemoryinformation',['GetGPUMemoryInformation',['../structmxnet_1_1Context.html#a18263bc769c2a9196ca8efe44339d11b',1,'mxnet::Context']]],
+  ['getgpumemoryinformation',['GetGPUMemoryInformation',['../structmxnet_1_1Context.html#a7e1512621b22a14035f740703d3eb006',1,'mxnet::Context']]],
   ['getmutex',['GetMutex',['../classmxnet_1_1Storage.html#ac12e7740df4520d6267d250ca16404d4',1,'mxnet::Storage']]],
   ['getnumthreadspergpu',['GetNumThreadsPerGPU',['../namespacemxnet_1_1common.html#a467e8b51fc0d0a7266e9f3172b2ff7f1',1,'mxnet::common']]],
   ['getparams',['GetParams',['../classmxnet_1_1OperatorProperty.html#a704ae43181c8a88bfd0a47e8005f7cb8',1,'mxnet::OperatorProperty']]],

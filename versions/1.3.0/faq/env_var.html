@@ -299,6 +299,12 @@ library is in <code class="docutils literal"><span class="pre">python/mxnet/libi
 <li>If you see a strange out-of-memory error from the kernel launch, after multiple iterations, try setting this to a larger value.</li>
 </ul>
 </li>
+<li>MXNET_GPU_MEM_LARGE_ALLOC_ROUND_SIZE<ul>
+<li>Values: Int <code class="docutils literal"><span class="pre">(default=2097152)</span></code></li>
+<li>When using the naive pool type, memory allocations larger than this threshhold are rounded up to a multiple of this value.</li>
+<li>The default was chosen to minimize global memory fragmentation within the GPU driver.  Set this to 1 to disable.</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="engine-type">
@@ -456,6 +462,13 @@ when kvstore’s type is <code class="docutils literal"><span class="pre">device
 <li>Values: 0, 1 <code class="docutils literal"><span class="pre">(default=1)</span></code></li>
 <li>Flag to enable or disable MKLDNN accelerator. On by default.</li>
 <li>Only applies to mxnet that has been compiled with MKLDNN (<code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mxnet-mkl</span></code> or built from source with <code class="docutils literal"><span class="pre">USE_MKLDNN=1</span></code>)</li>
+</ul>
+</li>
+<li>MXNET_ENFORCE_DETERMINISM<ul>
+<li>Values: 0(false) or 1(true) <code class="docutils literal"><span class="pre">(default=0)</span></code></li>
+<li>If set to true, MXNet will only use deterministic algorithms in forward and backward computation.
+If no such algorithm exists given other constraints, MXNet will error out. This variable affects the choice
+of CUDNN convolution algorithms. Please see <a class="reference external" href="https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html">CUDNN developer guide</a> for more details.</li>
 </ul>
 </li>
 </ul>
