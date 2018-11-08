@@ -293,8 +293,7 @@
 </pre></div>
 </div>
 <p>We also adjust our <code class="docutils literal"><span class="pre">DataLoader</span></code> so that it continuously provides batches of data and doesn’t stop after a single epoch. We can then call <code class="docutils literal"><span class="pre">iteration</span></code> as many times as required for the loss to diverge as part of the Learning Rate Finder process. We implement a custom <code class="docutils literal"><span class="pre">BatchSampler</span></code> for this, that keeps returning random indices of samples to be included in the next batch. We use the CIFAR-10 dataset for image classification to test our Learning Rate Finder.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span>
-<span class="kn">from</span> <span class="nn">mxnet.gluon.data.vision</span> <span class="kn">import</span> <span class="n">transforms</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet.gluon.data.vision</span> <span class="kn">import</span> <span class="n">transforms</span>
 
 <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
     <span class="c1"># Switches HWC to CHW, and converts to `float32`</span>
@@ -322,7 +321,7 @@
 
 <span class="n">sampler</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
 <span class="n">batch_sampler</span> <span class="o">=</span> <span class="n">ContinuousBatchSampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">())</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">batch_sampler</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -354,7 +353,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">_init_kvstore</span><span class="p">()</span>
         <span class="c1"># Store params and optimizer state for restore after lr_finder procedure</span>
         <span class="c1"># Useful for applying the method partway through training, not just for initialization of lr.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">save_params</span><span class="p">(</span><span class="s2">"lr_finder.params"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">save_parameters</span><span class="p">(</span><span class="s2">"lr_finder.params"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">save_states</span><span class="p">(</span><span class="s2">"lr_finder.state"</span><span class="p">)</span>
         <span class="n">lr</span> <span class="o">=</span> <span class="n">lr_start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># List of (lr, loss) tuples</span>
@@ -367,7 +366,7 @@
                 <span class="k">break</span>
             <span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">lr_multiplier</span>
         <span class="c1"># Restore params (as finder changed them)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_params</span><span class="p">(</span><span class="s2">"lr_finder.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s2">"lr_finder.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">load_states</span><span class="p">(</span><span class="s2">"lr_finder.state"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
         
@@ -430,10 +429,10 @@
 </div>
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_finder/finder_plot.png"/> <!--notebook-skip-line--></p>
 <p>As discussed before, we should select a learning rate where the loss is falling (i.e. from 0.001 to 0.05) but before the loss starts to diverge (i.e. 0.1). We prefer higher learning rates where possible, so we select an initial learning rate of 0.05. Just as a test, we will run 500 epochs using this learning rate and evaluate the loss on the final batch. As we’re working with a single batch of 128 samples, the variance of the loss estimates will be reasonably high, but it will give us a general idea. We save the initialized parameters for a later comparison with other learning rates.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">save_params</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">save_parameters</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">)</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.05</span>
 
-<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
     <span class="n">learner</span><span class="o">.</span><span class="n">iteration</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">((</span><span class="n">iter_idx</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">"Iteration: {}, Loss: {:.5g}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iter_idx</span><span class="p">,</span> <span class="n">learner</span><span class="o">.</span><span class="n">iteration_loss</span><span class="p">))</span>
@@ -443,17 +442,15 @@
 <p>Iteration: 0, Loss: 2.785 <!--notebook-skip-line--></p>
 <p>Iteration: 100, Loss: 1.6653 <!--notebook-skip-line--></p>
 <p>Iteration: 200, Loss: 1.4891 <!--notebook-skip-line--></p>
-<p>Iteration: 300, Loss: 1.0846 <!--notebook-skip-line--></p>
-<p>Iteration: 400, Loss: 1.0633 <!--notebook-skip-line--></p>
 <p>Final Loss: 1.1812 <!--notebook-skip-line--></p>
 <p>We see a sizable drop in the loss from approx. 2.7 to 1.2.</p>
 <p>And now we have a baseline, let’s see what happens when we train with a learning rate that’s higher than advisable at 0.5.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v2</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">learner</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">data_loader</span><span class="o">=</span><span class="n">data_loader</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_params</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.5</span>
 
-<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
     <span class="n">learner</span><span class="o">.</span><span class="n">iteration</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">((</span><span class="n">iter_idx</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">"Iteration: {}, Loss: {:.5g}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iter_idx</span><span class="p">,</span> <span class="n">learner</span><span class="o">.</span><span class="n">iteration_loss</span><span class="p">))</span>
@@ -463,17 +460,15 @@
 <p>Iteration: 0, Loss: 2.6469 <!--notebook-skip-line--></p>
 <p>Iteration: 100, Loss: 1.9666 <!--notebook-skip-line--></p>
 <p>Iteration: 200, Loss: 1.6919 <!--notebook-skip-line--></p>
-<p>Iteration: 300, Loss: 1.3643 <!--notebook-skip-line--></p>
-<p>Iteration: 400, Loss: 1.4743 <!--notebook-skip-line--></p>
 <p>Final Loss: 1.366 <!--notebook-skip-line--></p>
 <p>We still observe a fall in the loss but aren’t able to reach as low as before.</p>
 <p>And lastly, we see how the model trains with a more conservative learning rate of 0.005.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v2</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">learner</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">data_loader</span><span class="o">=</span><span class="n">data_loader</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_params</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">learner</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s2">"net.params"</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.005</span>
 
-<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">iter_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
     <span class="n">learner</span><span class="o">.</span><span class="n">iteration</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">((</span><span class="n">iter_idx</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">"Iteration: {}, Loss: {:.5g}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iter_idx</span><span class="p">,</span> <span class="n">learner</span><span class="o">.</span><span class="n">iteration_loss</span><span class="p">))</span>
@@ -483,8 +478,6 @@
 <p>Iteration: 0, Loss: 2.605 <!--notebook-skip-line--></p>
 <p>Iteration: 100, Loss: 1.8621 <!--notebook-skip-line--></p>
 <p>Iteration: 200, Loss: 1.6316 <!--notebook-skip-line--></p>
-<p>Iteration: 300, Loss: 1.6295 <!--notebook-skip-line--></p>
-<p>Iteration: 400, Loss: 1.4019 <!--notebook-skip-line--></p>
 <p>Final Loss: 1.2919 <!--notebook-skip-line--></p>
 <p>Although we get quite similar results to when we set the learning rate at 0.05 (because we’re still in the region of falling loss on the Learning Rate Finder plot), we can still optimize our network faster using a slightly higher rate.</p>
 </div>

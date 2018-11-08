@@ -278,19 +278,23 @@
 <li class="toctree-l1"><a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/onnx/inference_on_onnx_model.html">Inference using an ONNX model on MXNet Gluon</a></li>
 </ul>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">nd</span><span class="p">,</span> <span class="n">autograd</span>
 <span class="kn">from</span> <span class="nn">mxnet.gluon.data.vision.datasets</span> <span class="kn">import</span> <span class="n">ImageFolderDataset</span>
 <span class="kn">from</span> <span class="nn">mxnet.gluon.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">import</span> <span class="nn">mxnet.contrib.onnx</span> <span class="kn">as</span> <span class="nn">onnx_mxnet</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">tarfile</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="downloading-supporting-files">
@@ -365,7 +369,7 @@ Based Vision. 2004</em></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">EDGE</span> <span class="o">=</span> <span class="mi">224</span>
 <span class="n">SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="n">EDGE</span><span class="p">,</span> <span class="n">EDGE</span><span class="p">)</span>
 <span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">NUM_WORKERS</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+<span class="n">NUM_WORKERS</span> <span class="o">=</span> <span class="mi">6</span>
 </pre></div>
 </div>
 <p>We transform the dataset images using the following operations:</p>
@@ -391,15 +395,15 @@ Based Vision. 2004</em></p>
 <span class="n">____image4</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">dataset_train</span> <span class="o">=</span> <span class="n">ImageFolderDataset</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">training_path</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
-<span class="n">dataset_test</span> <span class="o">=</span> <span class="n">ImageFolderDataset</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">testing_path</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">dataset_train</span> <span class="o">=</span> <span class="n">ImageFolderDataset</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">training_path</span><span class="p">)</span>
+<span class="n">dataset_test</span> <span class="o">=</span> <span class="n">ImageFolderDataset</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">testing_path</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We use num_workers=Number of CPU cores, which means the dataloading and pre-processing is going to be distributed across multiple processes. This will help preventing our GPU from starving and waiting for the data to be copied across</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">dataloader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">last_batch</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">,</span>
+<p>We use several worker processes, which means the dataloading and pre-processing is going to be distributed across multiple processes. This will help preventing our GPU from starving and waiting for the data to be copied across</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">dataloader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_train</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">last_batch</span><span class="o">=</span><span class="s1">'rollover'</span><span class="p">,</span>
                               <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">NUM_WORKERS</span><span class="p">)</span>
-<span class="n">dataloader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">last_batch</span><span class="o">=</span><span class="s1">'discard'</span><span class="p">,</span>
-                             <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">NUM_WORKERS</span><span class="p">)</span>
+<span class="n">dataloader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_test</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">last_batch</span><span class="o">=</span><span class="s1">'rollover'</span><span class="p">,</span>
+                             <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">NUM_WORKERS</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">"Train dataset: {} images, Test dataset: {} images"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -411,7 +415,7 @@ Based Vision. 2004</em></p>
 </div>
 <p>Let’s plot the 1000th image to test the dataset</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">((</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">categories</span><span class="p">[</span><span class="n">dataset_train</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
 </pre></div>
@@ -452,7 +456,7 @@ Based Vision. 2004</em></p>
 <span id="fine-tuning-in-gluon"></span><h3>Fine-tuning in gluon<a class="headerlink" href="#fine-tuning-in-gluon" title="Permalink to this headline">¶</a></h3>
 <p>We can now take advantage of the features and pattern detection knowledge that our network learnt training on ImageNet, and apply that to the new Caltech101 dataset.</p>
 <p>We pick a context, fine-tuning on CPU will be <strong>WAY</strong> slower.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">()</span> <span class="k">if</span> <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">list_gpus</span><span class="p">()</span> <span class="k">else</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">()</span> <span class="k">if</span> <span class="n">mx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">()</span> <span class="o">></span> <span class="mi">0</span> <span class="k">else</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>We create a symbol block that is going to hold all our pre-trained layers, and assign the weights of the different pre-trained layers to the newly created SymbolBlock</p>
@@ -473,8 +477,9 @@ Based Vision. 2004</em></p>
 </div>
 <p>We add the SymbolBlock and the new dense layer to a HybridSequential network</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">HybridSequential</span><span class="p">()</span>
-<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pre_trained</span><span class="p">)</span>
-<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dense_layer</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">net</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pre_trained</span><span class="p">)</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dense_layer</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -505,7 +510,7 @@ Based Vision. 2004</em></p>
 <span id="evaluation-loop"></span><h3>Evaluation loop<a class="headerlink" href="#evaluation-loop" title="Permalink to this headline">¶</a></h3>
 <p>We measure the accuracy in a non-blocking way, using <code class="docutils literal"><span class="pre">nd.array</span></code> to take care of the parallelisation that MXNet and Gluon offers.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span> <span class="k">def</span> <span class="nf">evaluate_accuracy_gluon</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">,</span> <span class="n">net</span><span class="p">):</span>
-    <span class="n">num_instance</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+    <span class="n">num_instance</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">sum_metric</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -514,7 +519,7 @@ Based Vision. 2004</em></p>
         <span class="n">prediction</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
         <span class="n">num_instance</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
         <span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">(</span><span class="n">prediction</span><span class="o">==</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">sum_metric</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">/</span><span class="n">num_instance</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">sum_metric</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">/</span><span class="n">num_instance</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">accuracy</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
 </pre></div>
 </div>
