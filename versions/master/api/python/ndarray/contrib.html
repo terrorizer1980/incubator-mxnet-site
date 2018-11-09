@@ -431,7 +431,9 @@ of the for loop. It runs the computation in body on each slice from the input
 NDArrays.</p>
 <p>body takes two arguments as input and outputs a tuple of two elements,
 as illustrated below:</p>
-<p>out, states = body(data1, states)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">out</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>data1 can be either an NDArray or a list of NDArrays. If data is an NDArray,
 data1 is an NDArray. Otherwise, data1 is a list of NDArrays and has the same
 size as data. states is a list of NDArrays and have the same size as init_states.
@@ -440,14 +442,15 @@ as the first output of foreach; states from the last execution of body
 are the second output of foreach.</p>
 <p>The computation done by this operator is equivalent to the pseudo code below
 when the input data is NDArray:</p>
-<p>states = init_states
-outs = []
-for i in data.shape[0]:</p>
-<blockquote>
-<div>s = data[i]
-out, states = body(s, states)
-outs.append(out)</div></blockquote>
-<p>outs = stack(<a href="#id1"><span class="problematic" id="id2">*</span></a>outs)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">states</span> <span class="o">=</span> <span class="n">init_states</span>
+<span class="n">outs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+    <span class="n">outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+<span class="n">outs</span> <span class="o">=</span> <span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">outs</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1238,9 +1241,9 @@ When the operator is used on the GPU, the recommended value for <cite>determinis
 <dd><p>Batch normalization.</p>
 <p>Normalizes a data batch by mean and variance, and applies a scale <code class="docutils literal"><span class="pre">gamma</span></code> as
 well as offset <code class="docutils literal"><span class="pre">beta</span></code>.
-Standard BN <a class="footnote-reference" href="#id5" id="id3">[1]</a> implementation only normalize the data within each device.
+Standard BN <a class="footnote-reference" href="#id3" id="id1">[1]</a> implementation only normalize the data within each device.
 SyncBN normalizes the input within the whole mini-batch.
-We follow the sync-onece implmentation described in the paper <a class="footnote-reference" href="#id6" id="id4">[2]</a>.</p>
+We follow the sync-onece implmentation described in the paper <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</p>
 <p>Assume the input has more than one dimension and we normalize along axis 1.
 We first compute the mean and variance along this axis:</p>
 <div class="math">
@@ -1268,16 +1271,16 @@ the output. It is often used during inference.</p>
 then set <code class="docutils literal"><span class="pre">gamma</span></code> to 1 and its gradient to 0.</p>
 <dl class="docutils">
 <dt>Reference:</dt>
-<dd><table class="first docutils footnote" frame="void" id="id5" rules="none">
+<dd><table class="first docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>Ioffe, Sergey, and Christian Szegedy. “Batch normalization: Accelerating deep network training by reducing internal covariate shift.” <em>ICML 2015</em></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Ioffe, Sergey, and Christian Szegedy. “Batch normalization: Accelerating deep network training by reducing internal covariate shift.” <em>ICML 2015</em></td></tr>
 </tbody>
 </table>
-<table class="last docutils footnote" frame="void" id="id6" rules="none">
+<table class="last docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label"/><col/></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>Hang Zhang, Kristin Dana, Jianping Shi, Zhongyue Zhang, Xiaogang Wang, Ambrish Tyagi, and Amit Agrawal. “Context Encoding for Semantic Segmentation.” <em>CVPR 2018</em></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Hang Zhang, Kristin Dana, Jianping Shi, Zhongyue Zhang, Xiaogang Wang, Ambrish Tyagi, and Amit Agrawal. “Context Encoding for Semantic Segmentation.” <em>CVPR 2018</em></td></tr>
 </tbody>
 </table>
 </dd>
@@ -1917,7 +1920,7 @@ The output data has shape: (N, d/2) or (N1, N2, N3, d/2). It is only the real pa
 selecting the indices in the order given in <cite>index</cite>. The output will be a new tensor
 contains the rest elements of old tensor and the copied elements of new tensor.
 For example, if <cite>index[i] == j</cite>, then the <cite>i`th row of `new_tensor</cite> is copied to the
-<a href="#id7"><span class="problematic" id="id8">`</span></a>j`th row of output.</p>
+<a href="#id5"><span class="problematic" id="id6">`</span></a>j`th row of output.</p>
 <p>The <cite>index</cite> must be a vector and it must have the same size with the <cite>0`th dimimention of
 `new_tensor</cite>. Also, the <cite>0`th dimimention of old_tensor must `>=</cite> the <cite>0`th dimimention of
 `new_tensor</cite>, or an error will be raised.</p>
