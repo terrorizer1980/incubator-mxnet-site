@@ -287,7 +287,6 @@ sudo ./ci/docker/install/ubuntu_scala.sh
 <div class="highlight-html"><div class="highlight"><pre><span></span><span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
   <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>org.apache.mxnet<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
   <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>mxnet-full_2.11-osx-x86_64-cpu<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
-  <span class="p"><</span><span class="nt">version</span><span class="p">></span>1.2.0<span class="p"></</span><span class="nt">version</span><span class="p">></span>
 <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
 </pre></div>
 </div>
@@ -352,7 +351,7 @@ The project’s <code class="docutils literal"><span class="pre">pom.xml</span><
 <p><strong>Step 3.</strong> Replace the pom file’s content with the following code. Changes include:</p>
 <ul class="simple">
 <li>Project properties: <code class="docutils literal"><span class="pre">scala.version</span></code>, upgrading from <code class="docutils literal"><span class="pre">2.11.5</span></code> to <code class="docutils literal"><span class="pre">2.11.8</span></code></li>
-<li>Project dependencies: adding the MXNet package from Maven and updating the dependency for JUnitRunner (specs2-junit_)</li>
+<li>Project dependencies: adding the MXNet package from Maven and updating the dependency for JUnitRunner (specs2-junit_) and logging</li>
 <li>Build options: removing ‘-make:transitive’</li>
 </ul>
 <div class="highlight-html"><div class="highlight"><pre><span></span><span class="p"><</span><span class="nt">project</span> <span class="na">xmlns</span><span class="o">=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span> <span class="na">xmlns:xsi</span><span class="o">=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:schemaLocation</span><span class="o">=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"</span><span class="p">></span>
@@ -396,18 +395,24 @@ The project’s <code class="docutils literal"><span class="pre">pom.xml</span><
     <span class="p"><</span><span class="nt">encoding</span><span class="p">></span>UTF-8<span class="p"></</span><span class="nt">encoding</span><span class="p">></span>
     <span class="p"><</span><span class="nt">scala.version</span><span class="p">></span>2.11.8<span class="p"></</span><span class="nt">scala.version</span><span class="p">></span>
     <span class="p"><</span><span class="nt">scala.compat.version</span><span class="p">></span>2.11<span class="p"></</span><span class="nt">scala.compat.version</span><span class="p">></span>
+    <span class="p"><</span><span class="nt">slf4jVersion</span><span class="p">></span>1.7.7<span class="p"></</span><span class="nt">slf4jVersion</span><span class="p">></span>
+    <span class="p"><</span><span class="nt">platform</span><span class="p">></span>osx-x86_64-cpu<span class="p"></</span><span class="nt">platform</span><span class="p">></span>
   <span class="p"></</span><span class="nt">properties</span><span class="p">></span>
 
   <span class="p"><</span><span class="nt">dependencies</span><span class="p">></span>
     <span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
       <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>org.apache.mxnet<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
       <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>mxnet-full_2.11-osx-x86_64-cpu<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
-      <span class="p"><</span><span class="nt">version</span><span class="p">></span>1.2.0<span class="p"></</span><span class="nt">version</span><span class="p">></span>
     <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
     <span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
       <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>org.scala-lang<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
       <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>scala-library<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
       <span class="p"><</span><span class="nt">version</span><span class="p">></span>${scala.version}<span class="p"></</span><span class="nt">version</span><span class="p">></span>
+    <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
+    <span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>args4j<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>args4j<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">version</span><span class="p">></span>2.0.29<span class="p"></</span><span class="nt">version</span><span class="p">></span>
     <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
 
     <span class="c"><!-- Test --></span>
@@ -428,6 +433,18 @@ The project’s <code class="docutils literal"><span class="pre">pom.xml</span><
       <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>scalatest_${scala.compat.version}<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
       <span class="p"><</span><span class="nt">version</span><span class="p">></span>2.2.4<span class="p"></</span><span class="nt">version</span><span class="p">></span>
       <span class="p"><</span><span class="nt">scope</span><span class="p">></span>test<span class="p"></</span><span class="nt">scope</span><span class="p">></span>
+    <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
+
+    <span class="c"><!-- Logging --></span>
+    <span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>org.slf4j<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>slf4j-api<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">version</span><span class="p">></span>${slf4jVersion}<span class="p"></</span><span class="nt">version</span><span class="p">></span>
+    <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
+    <span class="p"><</span><span class="nt">dependency</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">groupId</span><span class="p">></span>org.slf4j<span class="p"></</span><span class="nt">groupId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">artifactId</span><span class="p">></span>slf4j-log4j12<span class="p"></</span><span class="nt">artifactId</span><span class="p">></span>
+      <span class="p"><</span><span class="nt">version</span><span class="p">></span>${slf4jVersion}<span class="p"></</span><span class="nt">version</span><span class="p">></span>
     <span class="p"></</span><span class="nt">dependency</span><span class="p">></span>
   <span class="p"></</span><span class="nt">dependencies</span><span class="p">></span>
 
@@ -482,16 +499,26 @@ The project’s <code class="docutils literal"><span class="pre">pom.xml</span><
 </ul>
 <p><img alt="import dependencies" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/scala/intellij-project-import-changes.gif"/></p>
 <p>Click “Import Changes” in this prompt.</p>
-<p><strong>Step 5.</strong> Build the project:</p>
+<p><strong>Step 5.</strong> Setup log4j configuration</p>
+<p>Create a folder <code class="docutils literal"><span class="pre">src/main/resources</span></code> and a new file in it <code class="docutils literal"><span class="pre">src/main/resources/log4j.properties</span></code> with the contents:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">log4j</span><span class="o">.</span><span class="n">rootLogger</span> <span class="o">=</span> <span class="n">info</span><span class="p">,</span> <span class="n">stdout</span>
+
+<span class="n">log4j</span><span class="o">.</span><span class="n">appender</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span><span class="o">.</span><span class="n">ConsoleAppender</span>
+<span class="n">log4j</span><span class="o">.</span><span class="n">appender</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">Target</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="n">out</span>
+<span class="n">log4j</span><span class="o">.</span><span class="n">appender</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span><span class="o">.</span><span class="n">PatternLayout</span>
+<span class="n">log4j</span><span class="o">.</span><span class="n">appender</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">ConversionPattern</span><span class="o">=%</span><span class="n">d</span><span class="p">{</span><span class="n">yyyy</span><span class="o">-</span><span class="n">MM</span><span class="o">-</span><span class="n">dd</span> <span class="n">HH</span><span class="p">:</span><span class="n">mm</span><span class="p">:</span><span class="n">ss</span><span class="p">,</span><span class="n">SSS</span><span class="p">}</span> <span class="p">[</span><span class="o">%</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">%</span><span class="n">c</span><span class="p">]</span> <span class="p">[</span><span class="o">%</span><span class="n">p</span><span class="p">]</span> <span class="o">-</span> <span class="o">%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span>
+</pre></div>
+</div>
+<p><strong>Step 6.</strong> Build the project:</p>
 <ul class="simple">
 <li>To build the project, from the menu choose Build, and then choose Build Project.</li>
 </ul>
-<p><strong>Step 6.</strong> Run the Hello World App:</p>
+<p><strong>Step 7.</strong> Run the Hello World App:</p>
 <p><img alt="hello world app" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/scala/intellij-project-hello-world-app.png"/></p>
 <p>Navigate to the App included with the project.</p>
 <p><img alt="run hello world" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/scala/intellij-project-hello-world-run.png"/></p>
 <p>Run the App by clicking the green arrow, and verify the Hello World output</p>
-<p><strong>Step 7.</strong> Run Sample MXNet Code in the App:</p>
+<p><strong>Step 8.</strong> Run Sample MXNet Code in the App:</p>
 <p><img alt="run hello mxnet" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/scala/intellij-project-hello-mxnet.png"/></p>
 <p>Paste the following code in the App, overwriting the original hello world code. Then click the green arrow to run it.</p>
 <div class="highlight-scala"><div class="highlight"><pre><span></span><span class="k">object</span> <span class="nc">App</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
@@ -521,6 +548,25 @@ The project’s <code class="docutils literal"><span class="pre">pom.xml</span><
 </pre></div>
 </div>
 <p>This can be resolved be installing OpenCV.</p>
+</div>
+<div class="section" id="using-mxnet-from-source">
+<span id="using-mxnet-from-source"></span><h3>Using MXNet from source<a class="headerlink" href="#using-mxnet-from-source" title="Permalink to this headline">¶</a></h3>
+<p>If you chose to “Build from Source” when following the <a class="reference external" href="https://mxnet.incubator.apache.org/install/index.html">install instructions</a> (or the detailed <a class="reference external" href="https://mxnet.incubator.apache.org/install/build_from_source.html#installing-mxnet-language-bindings">build from source instructions</a>), you can use your custom build instead of the build from maven.  Use your build by editing the <code class="docutils literal"><span class="pre">pom.xml</span></code> file and replacing the <code class="docutils literal"><span class="pre">org.apache.mxnet</span></code> dependency with the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>      <groupId>org.apache.mxnet</groupId>
+      <artifactId>mxnet-core_${scala.version}-${platform}-sources</artifactId>
+      <scope>system</scope>
+      <systemPath>/PathToMXNetSource/incubator-mxnet/scala-package/assembly/osx-x86_64-cpu/target/mxnet-full_${scala.version}-osx-x86_64-cpu-1.3.1-SNAPSHOT-sources.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mxnet</groupId>
+      <artifactId>mxnet-full_${scala.version}-${platform}</artifactId>
+      <scope>system</scope>
+      <systemPath>/PathToMXNetSource/incubator-mxnet/scala-package/assembly/osx-x86_64-cpu/target/mxnet-full_${scala.version}-osx-x86_64-cpu-1.3.1-SNAPSHOT.jar</systemPath>
+    </dependency>
+</pre></div>
+</div>
+<p>Note that you have to edit both of the <code class="docutils literal"><span class="pre">systemPath</span></code> properties to point to your generated jar files.</p>
 </div>
 <div class="section" id="command-line-build-option">
 <span id="command-line-build-option"></span><h3>Command Line Build Option<a class="headerlink" href="#command-line-build-option" title="Permalink to this headline">¶</a></h3>
@@ -572,6 +618,7 @@ The <code class="docutils literal"><span class="pre">-e</span></code> will give 
 <li><a class="reference internal" href="#access-the-maven-package-for-mxnet">Access the Maven Package for MXNet</a></li>
 <li><a class="reference internal" href="#set-up-your-project">Set Up Your Project</a><ul>
 <li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#using-mxnet-from-source">Using MXNet from source</a></li>
 <li><a class="reference internal" href="#command-line-build-option">Command Line Build Option</a></li>
 </ul>
 </li>
