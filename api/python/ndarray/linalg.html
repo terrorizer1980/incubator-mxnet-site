@@ -365,7 +365,7 @@ inputs (batch mode).</p>
       <span class="p">[</span><span class="o">-</span><span class="mf">19.09768702</span><span class="p">,</span> <span class="mf">0.52758934</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L552</p>
+<p>Defined in src/operator/tensor/la_op.cc:L559</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -428,7 +428,7 @@ C = swapaxis(C, dim1=1, dim2=3)</div></blockquote>
         <span class="o">=</span> <span class="p">[[[</span><span class="mf">104.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.14</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L81</p>
+<p>Defined in src/operator/tensor/la_op.cc:L82</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -495,7 +495,7 @@ C = swapaxis(C, dim1=1, dim2=3)</div></blockquote>
         <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.04</span> <span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L151</p>
+<p>Defined in src/operator/tensor/la_op.cc:L152</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -525,11 +525,12 @@ C = swapaxis(C, dim1=1, dim2=3)</div></blockquote>
 <code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">potrf</code><span class="sig-paren">(</span><em>A=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.potrf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs Cholesky factorization of a symmetric positive-definite matrix.
 Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
-<p>If <em>n=2</em>, the Cholesky factor <em>L</em> of the symmetric, positive definite matrix <em>A</em> is
-computed. <em>L</em> is lower triangular (entries of upper triangle are all zero), has
+<p>If <em>n=2</em>, the Cholesky factor <em>B</em> of the symmetric, positive definite matrix <em>A</em> is
+computed. <em>B</em> is triangular (entries of upper or lower triangle are all zero), has
 positive diagonal entries, and:</p>
 <blockquote>
-<div><em>A</em> = <em>L</em> * <em>L</em><sup>T</sup></div></blockquote>
+<div><em>A</em> = <em>B</em> * <em>B</em><sup>T</sup>  if <em>lower</em> = <em>true</em>
+<em>A</em> = <em>B</em><sup>T</sup> * <em>B</em>  if <em>lower</em> = <em>false</em></div></blockquote>
 <p>If <em>n>2</em>, <em>potrf</em> is performed separately on the trailing two dimensions for all inputs
 (batch mode).</p>
 <div class="admonition note">
@@ -546,7 +547,7 @@ positive diagonal entries, and:</p>
 <span class="n">potrf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L201</p>
+<p>Defined in src/operator/tensor/la_op.cc:L203</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -571,10 +572,11 @@ positive diagonal entries, and:</p>
 <code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">potri</code><span class="sig-paren">(</span><em>A=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.potri" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs matrix inversion from a Cholesky factorization.
 Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
-<p>If <em>n=2</em>, <em>A</em> is a lower triangular matrix (entries of upper triangle are all zero)
+<p>If <em>n=2</em>, <em>A</em> is a triangular matrix (entries of upper or lower triangle are all zero)
 with positive diagonal. We compute:</p>
 <blockquote>
-<div><em>out</em> = <em>A</em><sup>-T</sup> * <em>A</em><sup>-1</sup></div></blockquote>
+<div><em>out</em> = <em>A</em><sup>-T</sup> * <em>A</em><sup>-1</sup> if <em>lower</em> = <em>true</em>
+<em>out</em> = <em>A</em><sup>-1</sup> * <em>A</em><sup>-T</sup> if <em>lower</em> = <em>false</em></div></blockquote>
 <p>In other words, if <em>A</em> is the Cholesky factor of a symmetric positive definite matrix
 <em>B</em> (obtained by <em>potrf</em>), then</p>
 <blockquote>
@@ -602,7 +604,7 @@ cannot use the Cholesky factor <em>A</em> (<em>potrf</em>), together with backsu
             <span class="p">[[</span><span class="mf">0.06641</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01562</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01562</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0625</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L259</p>
+<p>Defined in src/operator/tensor/la_op.cc:L264</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -645,7 +647,7 @@ inputs (batch mode).</p>
 <span class="n">sumlogdiag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.9459</span><span class="p">,</span> <span class="mf">3.9318</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L428</p>
+<p>Defined in src/operator/tensor/la_op.cc:L435</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -711,7 +713,7 @@ gradients, do not apply this operator to matrices with multiple eigenvalues.</p>
      <span class="p">[</span><span class="mf">0.17157288</span><span class="p">,</span> <span class="mf">5.82842712</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L621</p>
+<p>Defined in src/operator/tensor/la_op.cc:L628</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -765,7 +767,7 @@ inputs (batch mode).</p>
 <span class="n">syrk</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.04</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L484</p>
+<p>Defined in src/operator/tensor/la_op.cc:L491</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -789,11 +791,11 @@ inputs (batch mode).</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.linalg.trmm">
-<code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">trmm</code><span class="sig-paren">(</span><em>A=None</em>, <em>B=None</em>, <em>transpose=_Null</em>, <em>rightside=_Null</em>, <em>alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.trmm" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">trmm</code><span class="sig-paren">(</span><em>A=None</em>, <em>B=None</em>, <em>transpose=_Null</em>, <em>rightside=_Null</em>, <em>lower=_Null</em>, <em>alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.trmm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs multiplication with a lower triangular matrix.
 Input are tensors <em>A</em>, <em>B</em>, each of dimension <em>n >= 2</em> and having the same shape
 on the leading <em>n-2</em> dimensions.</p>
-<p>If <em>n=2</em>, <em>A</em> must be lower triangular. The operator performs the BLAS3 function
+<p>If <em>n=2</em>, <em>A</em> must be triangular. The operator performs the BLAS3 function
 <em>trmm</em>:</p>
 <blockquote>
 <div><em>out</em> = <em>alpha</em> * <em>op</em>(<em>A</em>) * <em>B</em></div></blockquote>
@@ -821,7 +823,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
                          <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L316</p>
+<p>Defined in src/operator/tensor/la_op.cc:L323</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -831,6 +833,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <li><strong>B</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Tensor of matrices</li>
 <li><strong>transpose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Use transposed of the triangular matrix</li>
 <li><strong>rightside</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Multiply triangular matrix from the right to non-triangular one.</li>
+<li><strong>lower</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – True if the triangular matrix is lower triangular, false if it is upper triangular.</li>
 <li><strong>alpha</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar factor to be applied to the result.</li>
 <li><strong>out</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
@@ -847,11 +850,11 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.linalg.trsm">
-<code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">trsm</code><span class="sig-paren">(</span><em>A=None</em>, <em>B=None</em>, <em>transpose=_Null</em>, <em>rightside=_Null</em>, <em>alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.trsm" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.linalg.</code><code class="descname">trsm</code><span class="sig-paren">(</span><em>A=None</em>, <em>B=None</em>, <em>transpose=_Null</em>, <em>rightside=_Null</em>, <em>lower=_Null</em>, <em>alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg.trsm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves matrix equation involving a lower triangular matrix.
 Input are tensors <em>A</em>, <em>B</em>, each of dimension <em>n >= 2</em> and having the same shape
 on the leading <em>n-2</em> dimensions.</p>
-<p>If <em>n=2</em>, <em>A</em> must be lower triangular. The operator performs the BLAS3 function
+<p>If <em>n=2</em>, <em>A</em> must be triangular. The operator performs the BLAS3 function
 <em>trsm</em>, solving for <em>out</em> in:</p>
 <blockquote>
 <div><em>op</em>(<em>A</em>) * <em>out</em> = <em>alpha</em> * <em>B</em></div></blockquote>
@@ -880,7 +883,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
                          <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L379</p>
+<p>Defined in src/operator/tensor/la_op.cc:L386</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -890,6 +893,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <li><strong>B</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Tensor of matrices</li>
 <li><strong>transpose</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Use transposed of the triangular matrix</li>
 <li><strong>rightside</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Multiply triangular matrix from the right to non-triangular one.</li>
+<li><strong>lower</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – True if the triangular matrix is lower triangular, false if it is upper triangular.</li>
 <li><strong>alpha</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar factor to be applied to the result.</li>
 <li><strong>out</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
