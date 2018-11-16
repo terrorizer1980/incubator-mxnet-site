@@ -1020,6 +1020,7 @@ performed on any coordinates involved in the RoI, its bins, or the sampling poin
 Bilinear interpolation is used to compute the exact values of the
 input features at four regularly sampled locations in each RoI bin.
 Then the feature map can be aggregated by avgpooling.</p>
+<p class="rubric">References</p>
 <p>He, Kaiming, et al. “Mask R-CNN.” ICCV, 2017</p>
 <p>Defined in src/operator/contrib/roi_align.cc:L522</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1692,7 +1693,7 @@ The output data has shape: (N, 2*d) or (N1, N2, N3, 2*d). The format is: [real0,
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.symbol.contrib.getnnz">
-<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">getnnz</code><span class="sig-paren">(</span><em>data=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.getnnz" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">getnnz</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.getnnz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of stored values for a sparse tensor, including explicit zeros.</p>
 <p>This operator only supports CSR matrix on CPU.</p>
 <p>Defined in src/operator/contrib/nnz.cc:L177</p>
@@ -1702,6 +1703,7 @@ The output data has shape: (N, 2*d) or (N1, N2, N3, 2*d). The format is: [real0,
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Input</li>
+<li><strong>axis</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Select between the number of values across the whole matrix, in each column, or in each row.</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>
@@ -1797,28 +1799,31 @@ The output data has shape: (N, d/2) or (N1, N2, N3, d/2). It is only the real pa
 <dl class="function">
 <dt id="mxnet.symbol.contrib.index_copy">
 <code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">index_copy</code><span class="sig-paren">(</span><em>old_tensor=None</em>, <em>index_vector=None</em>, <em>new_tensor=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.index_copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copies the elements of a <cite>new_tensor</cite> into the <cite>old_tensor</cite> by
-selecting the indices in the order given in <cite>index</cite>. The output will be a new tensor
-contains the rest elements of old tensor and the copied elements of new tensor.
-For example, if <cite>index[i] == j</cite>, then the <cite>i`th row of `new_tensor</cite> is copied to the
-<a href="#id7"><span class="problematic" id="id8">`</span></a>j`th row of output.</p>
-<p>The <cite>index</cite> must be a vector and it must have the same size with the <cite>0`th dimimention of
-`new_tensor</cite>. Also, the <cite>0`th dimimention of old_tensor must `>=</cite> the <cite>0`th dimimention of
-`new_tensor</cite>, or an error will be raised.</p>
+<dd><p>Copies the elements of a <cite>new_tensor</cite> into the <cite>old_tensor</cite>.</p>
+<p>This operator copies the elements by selecting the indices in the order given in <cite>index</cite>.
+The output will be a new tensor containing the rest elements of old tensor and
+the copied elements of new tensor.
+For example, if <cite>index[i] == j</cite>, then the <cite>i</cite> th row of <cite>new_tensor</cite> is copied to the
+<cite>j</cite> th row of output.</p>
+<p>The <cite>index</cite> must be a vector and it must have the same size with the <cite>0</cite> th dimension of
+<cite>new_tensor</cite>. Also, the <cite>0</cite> th dimension of old_tensor must <cite>>=</cite> the <cite>0</cite> th dimension of
+<cite>new_tensor</cite>, or an error will be raised.</p>
 <p>Examples:</p>
-<p>x = mx.nd.zeros((5,3))
-t = mx.nd.array([[1,2,3],[4,5,6],[7,8,9]])
-index = mx.nd.array([0,4,2])</p>
-<p>mx.nd.contrib.index_copy(x, index, t)</p>
-<dl class="docutils">
-<dt>[[1. 2. 3.]</dt>
-<dd>[0. 0. 0.]
-[7. 8. 9.]
-[0. 0. 0.]
-[4. 5. 6.]]</dd>
-</dl>
-<p><NDArray 5x3 @cpu(0)></p>
-<p>Defined in src/operator/contrib/index_copy.cc:L65</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]])</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">index_copy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="p">[[</span><span class="mf">1.</span> <span class="mf">2.</span> <span class="mf">3.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">7.</span> <span class="mf">8.</span> <span class="mf">9.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">4.</span> <span class="mf">5.</span> <span class="mf">6.</span><span class="p">]]</span>
+<span class="o"><</span><span class="n">NDArray</span> <span class="mi">5</span><span class="n">x3</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/index_copy.cc:L67</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1843,14 +1848,12 @@ index = mx.nd.array([0,4,2])</p>
 <dl class="function">
 <dt id="mxnet.symbol.contrib.quadratic">
 <code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">quadratic</code><span class="sig-paren">(</span><em>data=None</em>, <em>a=_Null</em>, <em>b=_Null</em>, <em>c=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.quadratic" title="Permalink to this definition">¶</a></dt>
-<dd><p>This operators implements the quadratic function:
-.. math:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">^</span><span class="mi">2</span><span class="o">+</span><span class="n">bx</span><span class="o">+</span><span class="n">c</span>
-</pre></div>
-</div>
+<dd><p>This operators implements the quadratic function.</p>
+<div class="math">
+\[f(x) = ax^2+bx+c\]</div>
 <p>where <span class="math">\(x\)</span> is an input tensor and all operations
-in the function are element-wise.
-Example:</p>
+in the function are element-wise.</p>
+<p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">quadratic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">27</span><span class="p">]]</span>
@@ -1864,7 +1867,7 @@ Example:</p>
 </ul>
 </dd>
 </dl>
-<p>Defined in src/operator/contrib/quadratic_op.cc:L46</p>
+<p>Defined in src/operator/contrib/quadratic_op.cc:L50</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
