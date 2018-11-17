@@ -1028,10 +1028,12 @@
 <span class="sd">    location : list or tuple or dict</span>
 <span class="sd">        Argument values used as location to compute gradient</span>
 
-<span class="sd">        - if type is list of numpy.ndarray</span>
+<span class="sd">        - if type is list of numpy.ndarray, \</span>
 <span class="sd">            inner elements should have the same order as mxnet.sym.list_arguments().</span>
-<span class="sd">        - if type is dict of str -> numpy.ndarray</span>
+
+<span class="sd">        - if type is dict of str -> numpy.ndarray, \</span>
 <span class="sd">            maps the name of arguments to the corresponding numpy.ndarray.</span>
+
 <span class="sd">        *In either case, value of all the arguments must be provided.*</span>
 <span class="sd">    aux_states : list or tuple or dict, optional</span>
 <span class="sd">        The auxiliary states required when generating the executor for the symbol.</span>
@@ -1052,7 +1054,7 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ---------</span>
-<span class="sd">    ..[1] https://github.com/Theano/Theano/blob/master/theano/gradient.py</span>
+<span class="sd">    [1] https://github.com/Theano/Theano/blob/master/theano/gradient.py</span>
 <span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="c1"># cannot use finite differences with small eps without high precision</span>
@@ -2067,21 +2069,23 @@
 
 <div class="viewcode-block" id="chi_square_check"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.chi_square_check">[docs]</a><span class="k">def</span> <span class="nf">chi_square_check</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">buckets</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">1000000</span><span class="p">):</span>
     <span class="sd">"""Run the chi-square test for the generator. The generator can be both continuous and discrete.</span>
-<span class="sd">    If the generator is continuous, the buckets should contain tuples of (range_min, range_max) and</span>
-<span class="sd">     the probs should be the corresponding ideal probability within the specific ranges.</span>
-<span class="sd">    Otherwise, the buckets should be the possible output of the discrete distribution and the probs</span>
-<span class="sd">     should be groud-truth probability.</span>
+
+<span class="sd">    If the generator is continuous, the buckets should contain tuples of (range_min, range_max) \</span>
+<span class="sd">    and the probs should be the corresponding ideal probability within the specific ranges. \</span>
+<span class="sd">    Otherwise, the buckets should be the possible output of the discrete distribution and the \</span>
+<span class="sd">    probs should be groud-truth probability.</span>
 
 <span class="sd">    Usually the user is required to specify the probs parameter.</span>
 
-<span class="sd">    After obtatining the p value, we could further use the standard p > 0.05 threshold to get</span>
-<span class="sd">     the final result.</span>
+<span class="sd">    After obtatining the p value, we could further use the standard p > 0.05 threshold to get \</span>
+<span class="sd">    the final result.</span>
 
 <span class="sd">    Examples::</span>
-<span class="sd">        buckets, probs = gen_buckets_probs_with_ppf(lambda x: ss.norm.ppf(x, 0, 1), 5)</span>
-<span class="sd">        generator = lambda x: np.random.normal(0, 1.0, size=x)</span>
-<span class="sd">        p = chi_square_check(generator=generator, buckets=buckets, probs=probs)</span>
-<span class="sd">        assert(p > 0.05)</span>
+
+<span class="sd">      buckets, probs = gen_buckets_probs_with_ppf(lambda x: ss.norm.ppf(x, 0, 1), 5)</span>
+<span class="sd">      generator = lambda x: np.random.normal(0, 1.0, size=x)</span>
+<span class="sd">      p = chi_square_check(generator=generator, buckets=buckets, probs=probs)</span>
+<span class="sd">      assert(p > 0.05)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2090,8 +2094,8 @@
 <span class="sd">        generator(N) should generate N random samples.</span>
 <span class="sd">    buckets: list of tuple or list of number</span>
 <span class="sd">        The buckets to run the chi-square the test. Make sure that the buckets cover</span>
-<span class="sd">         the whole range of the distribution. Also, the buckets must be in ascending order and have</span>
-<span class="sd">         no intersection</span>
+<span class="sd">        the whole range of the distribution. Also, the buckets must be in ascending order and have</span>
+<span class="sd">        no intersection</span>
 <span class="sd">    probs: list or tuple</span>
 <span class="sd">        The ground-truth probability of the random value fall in a specific bucket.</span>
 <span class="sd">    nsamples:int</span>

@@ -565,16 +565,8 @@ Value of all the auxiliary arguments must be provided.</li>
 <li><strong>sym</strong> (<a class="reference internal" href="../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Symbol containing op to test</li>
 <li><strong>location</strong> (<em>list</em><em> or </em><em>tuple</em><em> or </em><em>dict</em>) – <p>Argument values used as location to compute gradient</p>
 <ul>
-<li><dl class="first docutils">
-<dt>if type is list of numpy.ndarray</dt>
-<dd>inner elements should have the same order as mxnet.sym.list_arguments().</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>if type is dict of str -> numpy.ndarray</dt>
-<dd>maps the name of arguments to the corresponding numpy.ndarray.</dd>
-</dl>
-</li>
+<li>if type is list of numpy.ndarray,             inner elements should have the same order as mxnet.sym.list_arguments().</li>
+<li>if type is dict of str -> numpy.ndarray,             maps the name of arguments to the corresponding numpy.ndarray.</li>
 </ul>
 <p><em>In either case, value of all the arguments must be provided.</em></p>
 </li>
@@ -592,7 +584,7 @@ Value of all the auxiliary arguments must be provided.</li>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<p>..[1] <a class="reference external" href="https://github.com/Theano/Theano/blob/master/theano/gradient.py">https://github.com/Theano/Theano/blob/master/theano/gradient.py</a></p>
+<p>[1] <a class="reference external" href="https://github.com/Theano/Theano/blob/master/theano/gradient.py">https://github.com/Theano/Theano/blob/master/theano/gradient.py</a></p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.test_utils.check_symbolic_forward">
@@ -1172,24 +1164,17 @@ It will need a large number of samples and is not recommended to use</p>
 <dl class="function">
 <dt id="mxnet.test_utils.chi_square_check">
 <code class="descclassname">mxnet.test_utils.</code><code class="descname">chi_square_check</code><span class="sig-paren">(</span><em>generator</em>, <em>buckets</em>, <em>probs</em>, <em>nsamples=1000000</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/test_utils.html#chi_square_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.test_utils.chi_square_check" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the chi-square test for the generator. The generator can be both continuous and discrete.
-If the generator is continuous, the buckets should contain tuples of (range_min, range_max) and</p>
-<blockquote>
-<div>the probs should be the corresponding ideal probability within the specific ranges.</div></blockquote>
-<dl class="docutils">
-<dt>Otherwise, the buckets should be the possible output of the discrete distribution and the probs</dt>
-<dd>should be groud-truth probability.</dd>
-</dl>
+<dd><p>Run the chi-square test for the generator. The generator can be both continuous and discrete.</p>
+<p>If the generator is continuous, the buckets should contain tuples of (range_min, range_max)     and the probs should be the corresponding ideal probability within the specific ranges.     Otherwise, the buckets should be the possible output of the discrete distribution and the     probs should be groud-truth probability.</p>
 <p>Usually the user is required to specify the probs parameter.</p>
-<dl class="docutils">
-<dt>After obtatining the p value, we could further use the standard p > 0.05 threshold to get</dt>
-<dd>the final result.</dd>
-<dt>Examples::</dt>
-<dd>buckets, probs = gen_buckets_probs_with_ppf(lambda x: ss.norm.ppf(x, 0, 1), 5)
-generator = lambda x: np.random.normal(0, 1.0, size=x)
-p = chi_square_check(generator=generator, buckets=buckets, probs=probs)
-assert(p > 0.05)</dd>
-</dl>
+<p>After obtatining the p value, we could further use the standard p > 0.05 threshold to get     the final result.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">buckets</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="n">gen_buckets_probs_with_ppf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ss</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">generator</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">chi_square_check</span><span class="p">(</span><span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">buckets</span><span class="o">=</span><span class="n">buckets</span><span class="p">,</span> <span class="n">probs</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">></span> <span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1197,12 +1182,9 @@ assert(p > 0.05)</dd>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>generator</strong> (<em>function</em>) – A function that is assumed to generate i.i.d samples from a specific distribution.
 generator(N) should generate N random samples.</li>
-<li><strong>buckets</strong> (<em>list of tuple</em><em> or </em><em>list of number</em>) – <dl class="docutils">
-<dt>The buckets to run the chi-square the test. Make sure that the buckets cover</dt>
-<dd>the whole range of the distribution. Also, the buckets must be in ascending order and have
-no intersection</dd>
-</dl>
-</li>
+<li><strong>buckets</strong> (<em>list of tuple</em><em> or </em><em>list of number</em>) – The buckets to run the chi-square the test. Make sure that the buckets cover
+the whole range of the distribution. Also, the buckets must be in ascending order and have
+no intersection</li>
 <li><strong>probs</strong> (<em>list</em><em> or </em><em>tuple</em>) – The ground-truth probability of the random value fall in a specific bucket.</li>
 <li><strong>nsamples</strong> (<em>int</em>) – The number of samples to generate for the testing</li>
 </ul>
