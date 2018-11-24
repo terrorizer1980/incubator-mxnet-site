@@ -1684,6 +1684,53 @@ by keep zero centered for the quantized value:</p>
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.symbol.contrib.dgl_subgraph">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">dgl_subgraph</code><span class="sig-paren">(</span><em>*data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.dgl_subgraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operator constructs an induced subgraph for
+a given set of vertices from a graph. The operator accepts multiple
+sets of vertices as input. For each set of vertices, it returns a pair
+of CSR matrices if return_mapping is True: the first matrix contains edges
+with new edge Ids, the second matrix contains edges with the original
+edge Ids.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">dgl_subgraph</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">return_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">=</span>
+  <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
+  <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/dgl_graph.cc:L270
+This function support variable length of positional input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>graph</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Input graph where we sample vertices.</li>
+<li><strong>data</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em>[</em><em>]</em>) – The input arrays that include data arrays and states.</li>
+<li><strong>return_mapping</strong> (<em>boolean</em><em>, </em><em>required</em>) – Return mapping of vid and eid between the subgraph and the parent graph.</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.symbol.contrib.div_sqrt_dim">
 <code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">div_sqrt_dim</code><span class="sig-paren">(</span><em>data=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.div_sqrt_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rescale the input by the square root of the channel dimension.</p>
@@ -1696,6 +1743,52 @@ by keep zero centered for the quantized value:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – The input array.</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.contrib.edge_id">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">edge_id</code><span class="sig-paren">(</span><em>data=None</em>, <em>u=None</em>, <em>v=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.edge_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operator implements the edge_id function for a graph
+stored in a CSR matrix (the value of the CSR stores the edge Id of the graph).
+output[i] = input[u[i], v[i]] if there is an edge between u[i] and v[i]],
+otherwise output[i] will be -1. Both u and v should be 1D vectors.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>
+     <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span> <span class="p">],</span>
+     <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]]</span>
+<span class="n">u</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="n">v</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="n">edge_id</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>The storage type of <code class="docutils literal"><span class="pre">edge_id</span></code> output depends on storage types of inputs</dt>
+<dd><ul class="first last simple">
+<li>edge_id(csr, default, default) = default</li>
+<li>default and rsp inputs are not supported</li>
+</ul>
+</dd>
+</dl>
+<p>Defined in src/operator/contrib/dgl_graph.cc:L447</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Input ndarray</li>
+<li><strong>u</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – u ndarray</li>
+<li><strong>v</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – v ndarray</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>
