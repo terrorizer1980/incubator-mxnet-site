@@ -1,6 +1,7 @@
 var searchData=
 [
   ['rand',['rand',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#ab0c9e07876283262b448ba484695f1e0',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::rand()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#a1b93a653772f69ba2922d51f93612813',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::rand()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#a6b3157a5c54dffb36f0610242aa277a9',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::rand()']]],
+  ['rand_5fint64',['rand_int64',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#af275a432e8b6b8a05f7e5d0eeed426b4',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::rand_int64()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#a42abb5579954664341298cce84f586cf',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::rand_int64()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#ad881e5f172b84f7df1cbd13aa18fd028',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::rand_int64()']]],
   ['randgenerator',['RandGenerator',['../classmxnet_1_1common_1_1random_1_1RandGenerator.html',1,'mxnet::common::random']]],
   ['randgenerator_3c_20cpu_2c_20dtype_20_3e',['RandGenerator&lt; cpu, DType &gt;',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4.html',1,'mxnet::common::random']]],
   ['randgenerator_3c_20gpu_2c_20double_20_3e',['RandGenerator&lt; gpu, double &gt;',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4.html',1,'mxnet::common::random']]],
@@ -21,7 +22,7 @@ var searchData=
   ['reshapeorcreate',['ReshapeOrCreate',['../namespacemxnet_1_1common.html#a56117c409b10bfce6ecec6186d53941f',1,'mxnet::common']]],
   ['reshapewithrecord',['ReshapeWithRecord',['../classmxnet_1_1NDArray.html#a567712180a066b783907b30f1cb2248a',1,'mxnet::NDArray']]],
   ['resource',['Resource',['../structmxnet_1_1Resource.html',1,'mxnet']]],
-  ['resource',['Resource',['../structmxnet_1_1Resource.html#a76a2cc8f2a94b67b3533a048a80396aa',1,'mxnet::Resource::Resource()'],['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments::resource()']]],
+  ['resource',['resource',['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments::resource()'],['../structmxnet_1_1Resource.html#a76a2cc8f2a94b67b3533a048a80396aa',1,'mxnet::Resource::Resource()']]],
   ['resource_2eh',['resource.h',['../resource_8h.html',1,'']]],
   ['resourcemanager',['ResourceManager',['../classmxnet_1_1ResourceManager.html',1,'mxnet']]],
   ['resourcerequest',['ResourceRequest',['../structmxnet_1_1ResourceRequest.html',1,'mxnet']]],
