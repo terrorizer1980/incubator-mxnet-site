@@ -261,7 +261,6 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">sampler</span> <span class="k">as</span> <span class="n">_sampler</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">context</span>
-<span class="kn">from</span> <span class="nn">...recordio</span> <span class="k">import</span> <span class="n">MXRecordIO</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'darwin'</span> <span class="ow">or</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'win32'</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">rebuild_ndarray</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -384,29 +383,9 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">_as_in_context</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_recursive_fork_recordio</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-    <span class="sd">"""Recursively find instance of MXRecordIO and reset file handler.</span>
-<span class="sd">    This is required for MXRecordIO which holds a C pointer to a opened file after fork.</span>
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">depth</span> <span class="o">>=</span> <span class="n">max_depth</span><span class="p">:</span>
-        <span class="k">return</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MXRecordIO</span><span class="p">):</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>  <span class="c1"># re-obtain file hanlder in new process</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">'__dict__'</span><span class="p">)):</span>
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">_recursive_fork_recordio</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">worker_loop</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">key_queue</span><span class="p">,</span> <span class="n">data_queue</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">worker_loop_v1</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">key_queue</span><span class="p">,</span> <span class="n">data_queue</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">):</span>
     <span class="sd">"""Worker loop for multiprocessing DataLoader."""</span>
-    <span class="c1"># re-fork a new recordio handler in new process if applicable</span>
-    <span class="c1"># for a dataset with transform function, the depth of MXRecordIO is 1</span>
-    <span class="c1"># for a lazy transformer, the depth is 2</span>
-    <span class="c1"># for a user defined transformer, the depth is unknown, try a reasonable depth</span>
-    <span class="n">limit</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrecursionlimit</span><span class="p">()</span>
-    <span class="n">max_recursion_depth</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">limit</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="n">_recursive_fork_recordio</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_recursion_depth</span><span class="p">)</span>
-
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">idx</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">key_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -414,7 +393,7 @@
         <span class="n">batch</span> <span class="o">=</span> <span class="n">batchify_fn</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
         <span class="n">data_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">batch</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">fetcher_loop</span><span class="p">(</span><span class="n">data_queue</span><span class="p">,</span> <span class="n">data_buffer</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_buffer_lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">fetcher_loop_v1</span><span class="p">(</span><span class="n">data_queue</span><span class="p">,</span> <span class="n">data_buffer</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_buffer_lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""Fetcher loop for fetching data from queue and put in reorder dict."""</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">idx</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -431,10 +410,10 @@
             <span class="n">data_buffer</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
 
 
-<span class="k">class</span> <span class="nc">_MultiWorkerIter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">"""Interal multi-worker iterator for DataLoader."""</span>
+<span class="k">class</span> <span class="nc">_MultiWorkerIterV1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Internal multi-worker iterator for DataLoader."""</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">worker_fn</span><span class="o">=</span><span class="n">worker_loop</span><span class="p">):</span>
+                 <span class="n">worker_fn</span><span class="o">=</span><span class="n">worker_loop_v1</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">num_workers</span> <span class="o">></span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"_MultiWorkerIter is not for </span><span class="si">{}</span><span class="s2"> workers"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
@@ -462,7 +441,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="o">=</span> <span class="n">workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetcher</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
-            <span class="n">target</span><span class="o">=</span><span class="n">fetcher_loop</span><span class="p">,</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">fetcher_loop_v1</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="p">,</span> <span class="n">pin_memory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer_lock</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetcher</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetcher</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -524,7 +503,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_shutdown</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../../api/python/gluon/data.html#mxnet.gluon.data.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataLoaderV1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">"""Loads data from a dataset and returns mini-batches of data.</span>
 
 <span class="sd">    Parameters</span>
@@ -615,8 +594,190 @@
             <span class="k">return</span> <span class="n">same_process_iter</span><span class="p">()</span>
 
         <span class="c1"># multi-worker</span>
-        <span class="k">return</span> <span class="n">_MultiWorkerIter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_MultiWorkerIterV1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span>
+
+<span class="n">_worker_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">def</span> <span class="nf">_worker_initializer</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+    <span class="sd">"""Initialier for processing pool."""</span>
+    <span class="c1"># global dataset is per-process based and only available in worker processes</span>
+    <span class="c1"># this is only necessary to handle MXIndexedRecordIO because otherwise dataset</span>
+    <span class="c1"># can be passed as argument</span>
+    <span class="k">global</span> <span class="n">_worker_dataset</span>
+    <span class="n">_worker_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+
+<span class="k">def</span> <span class="nf">_worker_fn</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">):</span>
+    <span class="sd">"""Function for processing data in worker process."""</span>
+    <span class="c1"># it is required that each worker process has to fork a new MXIndexedRecordIO handle</span>
+    <span class="c1"># preserving dataset as global variable can save tons of overhead and is safe in new process</span>
+    <span class="k">global</span> <span class="n">_worker_dataset</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">batchify_fn</span><span class="p">([</span><span class="n">_worker_dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">])</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">ForkingPickler</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">_MultiWorkerIter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Internal multi-worker iterator for DataLoader."""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker_pool</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">worker_pool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_fn</span> <span class="o">=</span> <span class="n">worker_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
+        <span class="c1"># pre-fetch</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">prefetch</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_next</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_push_next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Assign next batch workload to workers."""</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">async_ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">async_ret</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_next</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="p">,</span> <span class="s2">"Data buffer should be empty at this moment"</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span><span class="p">,</span> <span class="s2">"rcvd_idx must be smaller than sent_idx"</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="p">,</span> <span class="s2">"fatal error with _push_next, rcvd_idx missing"</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">:</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">_as_in_context</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">cpu_pinned</span><span class="p">())</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">batch</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+
+<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../../api/python/gluon/data.html#mxnet.gluon.data.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""Loads data from a dataset and returns mini-batches of data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : Dataset</span>
+<span class="sd">        Source dataset. Note that numpy and mxnet arrays can be directly used</span>
+<span class="sd">        as a Dataset.</span>
+<span class="sd">    batch_size : int</span>
+<span class="sd">        Size of mini-batch.</span>
+<span class="sd">    shuffle : bool</span>
+<span class="sd">        Whether to shuffle the samples.</span>
+<span class="sd">    sampler : Sampler</span>
+<span class="sd">        The sampler to use. Either specify sampler or shuffle, not both.</span>
+<span class="sd">    last_batch : {'keep', 'discard', 'rollover'}</span>
+<span class="sd">        How to handle the last batch if batch_size does not evenly divide</span>
+<span class="sd">        `len(dataset)`.</span>
+
+<span class="sd">        keep - A batch with less samples than previous batches is returned.</span>
+<span class="sd">        discard - The last batch is discarded if its incomplete.</span>
+<span class="sd">        rollover - The remaining samples are rolled over to the next epoch.</span>
+<span class="sd">    batch_sampler : Sampler</span>
+<span class="sd">        A sampler that returns mini-batches. Do not specify batch_size,</span>
+<span class="sd">        shuffle, sampler, and last_batch if batch_sampler is specified.</span>
+<span class="sd">    batchify_fn : callable</span>
+<span class="sd">        Callback function to allow users to specify how to merge samples</span>
+<span class="sd">        into a batch. Defaults to `default_batchify_fn`::</span>
+
+<span class="sd">            def default_batchify_fn(data):</span>
+<span class="sd">                if isinstance(data[0], nd.NDArray):</span>
+<span class="sd">                    return nd.stack(*data)</span>
+<span class="sd">                elif isinstance(data[0], tuple):</span>
+<span class="sd">                    data = zip(*data)</span>
+<span class="sd">                    return [default_batchify_fn(i) for i in data]</span>
+<span class="sd">                else:</span>
+<span class="sd">                    data = np.asarray(data)</span>
+<span class="sd">                    return nd.array(data, dtype=data.dtype)</span>
+
+<span class="sd">    num_workers : int, default 0</span>
+<span class="sd">        The number of multiprocessing workers to use for data preprocessing.</span>
+<span class="sd">    pin_memory : boolean, default False</span>
+<span class="sd">        If ``True``, the dataloader will copy NDArrays into pinned memory</span>
+<span class="sd">        before returning them. Copying from CPU pinned memory to GPU is faster</span>
+<span class="sd">        than from normal CPU memory.</span>
+<span class="sd">    prefetch : int, default is `num_workers * 2`</span>
+<span class="sd">        The number of prefetching batches only works if `num_workers` > 0.</span>
+<span class="sd">        If `prefetch` > 0, it allow worker process to prefetch certain batches before</span>
+<span class="sd">        acquiring data from iterators.</span>
+<span class="sd">        Note that using large prefetching batch will provide smoother bootstrapping performance,</span>
+<span class="sd">        but will consume more shared_memory. Using smaller number may forfeit the purpose of using</span>
+<span class="sd">        multiple worker processes, try reduce `num_workers` in this case.</span>
+<span class="sd">        By default it defaults to `num_workers * 2`.</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">last_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
+
+        <span class="k">if</span> <span class="n">batch_sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"batch_size must be specified unless "</span> \
+                                 <span class="s2">"batch_sampler is specified"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+                    <span class="n">sampler</span> <span class="o">=</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sampler</span> <span class="o">=</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">SequentialSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">shuffle</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"shuffle must not be specified if sampler is specified"</span><span class="p">)</span>
+
+            <span class="n">batch_sampler</span> <span class="o">=</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">BatchSampler</span><span class="p">(</span>
+                <span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">last_batch</span> <span class="k">if</span> <span class="n">last_batch</span> <span class="k">else</span> <span class="s1">'keep'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">shuffle</span> <span class="ow">or</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> \
+                <span class="n">last_batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"batch_size, shuffle, sampler and last_batch must "</span> \
+                             <span class="s2">"not be specified if batch_sampler is specified."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span> <span class="k">if</span> <span class="n">num_workers</span> <span class="o">>=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">prefetch</span><span class="p">)</span> <span class="k">if</span> <span class="n">prefetch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_initializer</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">batchify_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_workers</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_mp_batchify_fn</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_batchify_fn</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">same_process_iter</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">:</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">:</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="n">_as_in_context</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">cpu_pinned</span><span class="p">())</span>
+                    <span class="k">yield</span> <span class="n">ret</span>
+            <span class="k">return</span> <span class="n">same_process_iter</span><span class="p">()</span>
+
+        <span class="c1"># multi-worker</span>
+        <span class="k">return</span> <span class="n">_MultiWorkerIter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">,</span>
+                                <span class="n">pin_memory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">,</span> <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span>
+                                <span class="n">prefetch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span></div>

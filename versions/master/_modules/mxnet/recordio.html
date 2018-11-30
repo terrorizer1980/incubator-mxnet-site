@@ -243,6 +243,7 @@
 <span class="sd">"""Read and write for the RecordIO data format."""</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">current_process</span>
 
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">struct</span>
@@ -290,6 +291,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">c_str</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="n">RecordIOHandle</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="n">flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 
@@ -303,6 +305,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">writable</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid flag </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">flag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span> <span class="o">=</span> <span class="kc">True</span></div>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -334,6 +337,14 @@
         <span class="k">if</span> <span class="n">is_open</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_check_pid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Check process id to ensure integrity, reset if in new process."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">==</span> <span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">pid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_reset</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Forbidden operation in multiple processes"</span><span class="p">)</span>
+
 <div class="viewcode-block" id="MXRecordIO.close"><a class="viewcode-back" href="../../api/python/io/io.html#mxnet.recordio.MXRecordIO.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Closes the record file."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span><span class="p">:</span>
@@ -342,7 +353,8 @@
             <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXRecordIOWriterFree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXRecordIOReaderFree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span> <span class="o">=</span> <span class="kc">False</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="MXRecordIO.reset"><a class="viewcode-back" href="../../api/python/io/io.html#mxnet.recordio.MXRecordIO.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Resets the pointer to first item.</span>
@@ -381,6 +393,7 @@
 <span class="sd">            Buffer to write.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">writable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_pid</span><span class="p">(</span><span class="n">allow_reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXRecordIOWriterWriteRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
                                                     <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">(</span><span class="n">buf</span><span class="p">),</span>
                                                     <span class="n">ctypes</span><span class="o">.</span><span class="n">c_size_t</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))))</span></div>
@@ -407,6 +420,9 @@
 <span class="sd">            Buffer read.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">writable</span>
+        <span class="c1"># trying to implicitly read from multiple processes is forbidden,</span>
+        <span class="c1"># there's no elegant way to handle unless lock is introduced</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_pid</span><span class="p">(</span><span class="n">allow_reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>
         <span class="n">size</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_size_t</span><span class="p">()</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXRecordIOReaderReadRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
@@ -480,6 +496,7 @@
 <span class="sd">        This function is internally called by `read_idx(idx)` to find the current</span>
 <span class="sd">        reader pointer position. It doesn't return anything."""</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">writable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_pid</span><span class="p">(</span><span class="n">allow_reset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_size_t</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXRecordIOReaderSeek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span></div>
 
