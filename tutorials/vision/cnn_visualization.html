@@ -226,12 +226,18 @@
 <div class="page-tracker"></div>
 <div class="section" id="visualizing-decisions-of-convolutional-neural-networks">
 <span id="visualizing-decisions-of-convolutional-neural-networks"></span><h1>Visualizing Decisions of Convolutional Neural Networks<a class="headerlink" href="#visualizing-decisions-of-convolutional-neural-networks" title="Permalink to this headline">¶</a></h1>
-<p>Convolutional Neural Networks have made a lot of progress in Computer Vision. Their accuracy is as good as humans in some tasks. However it remains hard to explain the predictions of convolutional neural networks, as they lack the interpretability offered by other models, for example decision trees.</p>
-<p>It is often helpful to be able to explain why a model made the prediction it made. For example when a model misclassifies an image, it is hard to say why without visualizing the network’s decision.</p>
+<p>Convolutional Neural Networks have made a lot of progress in Computer Vision. Their accuracy is as good as humans in some tasks. However, it remains difficult to explain the predictions of convolutional neural networks, as they lack the interpretability offered by other models such as decision trees.</p>
+<p>It is often helpful to be able to explain why a model made the prediction it made. For example, when a model misclassifies an image, without visualizing the network’s decision, it is hard to say why the misclassification was made.</p>
 <p><img align="right" alt="Explaining the misclassification of volcano as spider" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/example/cnn_visualization/volcano_barn_spider.png" width="500px/"/></p>
-<p>Visualizations also help build confidence about the predictions of a model. For example, even if a model correctly predicts birds as birds, we would want to confirm that the model bases its decision on the features of bird and not on the features of some other object that might occur together with birds in the dataset (like leaves).</p>
-<p>In this tutorial, we show how to visualize the predictions made by convolutional neural networks using <a class="reference external" href="https://arxiv.org/abs/1610.02391">Gradient-weighted Class Activation Mapping</a>. Unlike many other visualization methods, Grad-CAM can be used on a wide variety of CNN model families - CNNs with fully connected layers, CNNs used for structural outputs (e.g. captioning), CNNs used in tasks with multi-model input (e.g. VQA) or reinforcement learning without architectural changes or re-training.</p>
-<p>In the rest of this notebook, we will explain how to visualize predictions made by <a class="reference external" href="https://arxiv.org/abs/1409.1556">VGG-16</a>. We begin by importing the required dependencies. <code class="docutils literal"><span class="pre">gradcam</span></code> module contains the implementation of visualization techniques used in this notebook.</p>
+<p>Visualizations can also build confidence about the predictions of a model. For example, even if a model correctly predicts birds as birds, we would want to confirm that the model bases its decision on the features of bird and not on the features of some other object that might occur together with birds in the dataset (like leaves).</p>
+<p>In this tutorial we show how to visualize the predictions made by convolutional neural networks using <a class="reference external" href="https://arxiv.org/abs/1610.02391">Gradient-weighted Class Activation Mapping</a>. Unlike many other visualization methods, Grad-CAM can be used on a wide variety of CNN model families - CNNs with fully connected layers, CNNs used for structural outputs (e.g. captioning), CNNs used in tasks with multi-model input (e.g. VQA) or reinforcement learning without architectural changes or re-training.</p>
+<p>In the rest of this notebook, we will explain how to visualize predictions made by <a class="reference external" href="https://arxiv.org/abs/1409.1556">VGG-16</a>. We begin by importing the required dependencies.</p>
+<div class="section" id="prerequesites">
+<span id="prerequesites"></span><h2>Prerequesites<a class="headerlink" href="#prerequesites" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>OpenCV is required by <code class="docutils literal"><span class="pre">gradcam</span></code> (below) and can be installed with pip using <code class="docutils literal"><span class="pre">pip</span> <span class="pre">opencv-python</span></code>.</li>
+<li>the <code class="docutils literal"><span class="pre">gradcam</span></code> module contains the implementation of visualization techniques used in this notebook. <code class="docutils literal"><span class="pre">gradcam</span></code> can be installed to a temporary directory by executing the following code block.</li>
+</ul>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
@@ -245,6 +251,7 @@
 <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">base_url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gradcam_file</span><span class="p">),</span> <span class="n">fname</span><span class="o">=</span><span class="n">gradcam_file</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">gradcam</span>
 </pre></div>
+</div>
 </div>
 <div class="section" id="building-the-network-to-visualize">
 <span id="building-the-network-to-visualize"></span><h2>Building the network to visualize<a class="headerlink" href="#building-the-network-to-visualize" title="Permalink to this headline">¶</a></h2>
@@ -450,6 +457,7 @@
 <h3><a href="../../index.html">Table Of Contents</a></h3>
 <ul>
 <li><a class="reference internal" href="#">Visualizing Decisions of Convolutional Neural Networks</a><ul>
+<li><a class="reference internal" href="#prerequesites">Prerequesites</a></li>
 <li><a class="reference internal" href="#building-the-network-to-visualize">Building the network to visualize</a></li>
 <li><a class="reference internal" href="#loading-pretrained-weights">Loading pretrained weights</a></li>
 <li><a class="reference internal" href="#preprocessing-and-other-helpers">Preprocessing and other helpers</a></li>
