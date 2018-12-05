@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['iiterator',['IIterator',['../classmxnet_1_1IIterator.html',1,'mxnet']]],
-  ['imperative',['Imperative',['../classmxnet_1_1Imperative.html',1,'mxnet']]],
-  ['impl',['Impl',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;']]],
-  ['impl',['Impl',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;']]],
-  ['impl',['Impl',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;']]],
-  ['input0',['Input0',['../structmxnet_1_1op_1_1Input0.html',1,'mxnet::op']]],
-  ['input1',['Input1',['../structmxnet_1_1op_1_1Input1.html',1,'mxnet::op']]],
-  ['is_5fcontainer',['is_container',['../structmxnet_1_1common_1_1is__container.html',1,'mxnet::common']]]
+  ['handle',['Handle',['../structmxnet_1_1Storage_1_1Handle.html',1,'mxnet::Storage']]],
+  ['handler',['Handler',['../structdmlc_1_1lua__stack_1_1Handler.html',1,'dmlc::lua_stack']]],
+  ['handler',['Handler',['../structdmlc_1_1serializer_1_1Handler.html',1,'dmlc::serializer']]],
+  ['has_5fsaveload',['has_saveload',['../structdmlc_1_1has__saveload.html',1,'dmlc']]],
+  ['hash_3c_20dmlc_3a_3aoptional_3c_20t_20_3e_20_3e',['hash&lt; dmlc::optional&lt; T &gt; &gt;',['../structstd_1_1hash_3_01dmlc_1_1optional_3_01T_01_4_01_4.html',1,'std']]],
+  ['hash_3c_20nnvm_3a_3atshape_20_3e',['hash&lt; nnvm::TShape &gt;',['../structstd_1_1hash_3_01nnvm_1_1TShape_01_4.html',1,'std']]],
+  ['hash_3c_20nnvm_3a_3atuple_3c_20t_20_3e_20_3e',['hash&lt; nnvm::Tuple&lt; T &gt; &gt;',['../structstd_1_1hash_3_01nnvm_1_1Tuple_3_01T_01_4_01_4.html',1,'std']]]
 ];

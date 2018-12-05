@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mxcallbacklist',['MXCallbackList',['../structMXCallbackList.html',1,'']]]
+  ['kvstore',['KVStore',['../classmxnet_1_1KVStore.html',1,'mxnet']]]
 ];

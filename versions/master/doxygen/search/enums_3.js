@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fnproperty',['FnProperty',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3b',1,'mxnet']]]
+  ['exectype',['ExecType',['../namespacemxnet.html#ad7801fb2dd68294d4c7a9e289bc071ad',1,'mxnet']]]
 ];

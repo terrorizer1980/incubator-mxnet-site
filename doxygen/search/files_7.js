@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['ndarray_2eh',['ndarray.h',['../ndarray_8h.html',1,'']]]
+  ['half_2eh',['half.h',['../half_8h.html',1,'']]],
+  ['half2_2eh',['half2.h',['../half2_8h.html',1,'']]]
 ];

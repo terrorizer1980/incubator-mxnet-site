@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rowsparseauxtype',['RowSparseAuxType',['../namespacemxnet_1_1rowsparse.html#a0ad4c619684fa4d442c7076c18fef232',1,'mxnet::rowsparse']]]
+  ['kvstoreserverprofilercommand',['KVStoreServerProfilerCommand',['../namespacemxnet.html#a691b662ef3ae22904fc7d7d63db4c14e',1,'mxnet']]]
 ];

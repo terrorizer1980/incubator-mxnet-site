@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['opreqtype',['OpReqType',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398',1,'mxnet']]]
+  ['indicatorruleflag',['IndicatorRuleFlag',['../namespacennvm_1_1top.html#a1fa37df6a97f62ced312de5da3e55842',1,'nnvm::top']]]
 ];

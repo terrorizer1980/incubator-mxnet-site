@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['name',['name',['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#a02c180f08b215e9553d3c93fa783f9a4',1,'mxnet::op::SimpleOpRegEntry']]],
-  ['need_5fgrad',['need_grad',['../structmxnet_1_1OpContext.html#adffa555a95b50893b5fe7a2930a71d62',1,'mxnet::OpContext']]],
-  ['num_5fbatch_5fpadd',['num_batch_padd',['../structmxnet_1_1DataBatch.html#aad93df826690100bb16689952fc83558',1,'mxnet::DataBatch']]],
-  ['num_5fcallbacks',['num_callbacks',['../structMXCallbackList.html#aa593dcc4096dcc38a2af477e057d8861',1,'MXCallbackList']]],
-  ['num_5fmutate_5fvars',['num_mutate_vars',['../structmxnet_1_1NDArrayFunctionReg.html#ad7881779b7807c6357902bdaccfccde2',1,'mxnet::NDArrayFunctionReg']]],
-  ['num_5fscalars',['num_scalars',['../structmxnet_1_1NDArrayFunctionReg.html#a9591e2abf6cbca0903aec582b96b4d95',1,'mxnet::NDArrayFunctionReg']]],
-  ['num_5fuse_5fvars',['num_use_vars',['../structmxnet_1_1NDArrayFunctionReg.html#aa0847438b4f3f600ec61d6d544755a29',1,'mxnet::NDArrayFunctionReg']]]
+  ['manager_5fctx',['manager_ctx',['../structDLManagedTensor.html#af9bfa572555bd0b7855c5ae74ff96929',1,'DLManagedTensor']]],
+  ['method',['method',['../structnnvm_1_1top_1_1UpSamplingParam.html#aecdb0b1ebe078a99fd2e591b5b713dd7',1,'nnvm::top::UpSamplingParam']]],
+  ['momentum',['momentum',['../structnnvm_1_1top_1_1BatchNormParam.html#afefd394fb1429a6e91c4c7e5e78dcce2',1,'nnvm::top::BatchNormParam']]],
+  ['mutex_5f',['mutex_',['../classdmlc_1_1LuaState.html#aa745e60787db0b7d33894bb234352a19',1,'dmlc::LuaState']]]
 ];

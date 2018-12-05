@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['imperative',['Imperative',['../classmxnet_1_1NDArray.html#add286ab9a359eb017008c9a3ff53701f',1,'mxnet::NDArray']]]
+  ['config',['Config',['../classdmlc_1_1Config_1_1ConfigIterator.html#ac3da7e21a05bf8852638db7e4dd1b81a',1,'dmlc::Config::ConfigIterator']]]
 ];

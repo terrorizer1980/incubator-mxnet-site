@@ -1,9 +1,23 @@
 var searchData=
 [
-  ['databatch',['DataBatch',['../structmxnet_1_1DataBatch.html',1,'mxnet']]],
-  ['datainst',['DataInst',['../structmxnet_1_1DataInst.html',1,'mxnet']]],
-  ['dataiteratorreg',['DataIteratorReg',['../structmxnet_1_1DataIteratorReg.html',1,'mxnet']]],
-  ['deserialize_5ftuple',['deserialize_tuple',['../structmxnet_1_1common_1_1deserialize__tuple.html',1,'mxnet::common']]],
-  ['deserialize_5ftuple_3c_200_20_3e',['deserialize_tuple&lt; 0 &gt;',['../structmxnet_1_1common_1_1deserialize__tuple_3_010_01_4.html',1,'mxnet::common']]],
-  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html',1,'mxnet::common::cuda']]]
+  ['callbackoncomplete',['CallbackOnComplete',['../classmxnet_1_1engine_1_1CallbackOnComplete.html',1,'mxnet::engine']]],
+  ['castparam',['CastParam',['../structnnvm_1_1top_1_1CastParam.html',1,'nnvm::top']]],
+  ['channelpoolingexp',['ChannelPoolingExp',['../structmshadow_1_1expr_1_1ChannelPoolingExp.html',1,'mshadow::expr']]],
+  ['channelunpoolingexp',['ChannelUnpoolingExp',['../structmshadow_1_1expr_1_1ChannelUnpoolingExp.html',1,'mshadow::expr']]],
+  ['clipparam',['ClipParam',['../structnnvm_1_1top_1_1ClipParam.html',1,'nnvm::top']]],
+  ['complexbinarymapexp',['ComplexBinaryMapExp',['../structmshadow_1_1expr_1_1ComplexBinaryMapExp.html',1,'mshadow::expr']]],
+  ['complexunitaryexp',['ComplexUnitaryExp',['../structmshadow_1_1expr_1_1ComplexUnitaryExp.html',1,'mshadow::expr']]],
+  ['concatenateparam',['ConcatenateParam',['../structnnvm_1_1top_1_1ConcatenateParam.html',1,'nnvm::top']]],
+  ['concatexp',['ConcatExp',['../structmshadow_1_1expr_1_1ConcatExp.html',1,'mshadow::expr']]],
+  ['concurrentblockingqueue',['ConcurrentBlockingQueue',['../classdmlc_1_1ConcurrentBlockingQueue.html',1,'dmlc']]],
+  ['config',['Config',['../classdmlc_1_1Config.html',1,'dmlc']]],
+  ['configiterator',['ConfigIterator',['../classdmlc_1_1Config_1_1ConfigIterator.html',1,'dmlc::Config']]],
+  ['conjugate',['conjugate',['../structmshadow_1_1op_1_1complex_1_1conjugate.html',1,'mshadow::op::complex']]],
+  ['context',['Context',['../structmxnet_1_1Context.html',1,'mxnet']]],
+  ['conv2dparam',['Conv2DParam',['../structnnvm_1_1top_1_1Conv2DParam.html',1,'nnvm::top']]],
+  ['conv2dtransposeparam',['Conv2DTransposeParam',['../structnnvm_1_1top_1_1Conv2DTransposeParam.html',1,'nnvm::top']]],
+  ['cpu',['cpu',['../structmshadow_1_1cpu.html',1,'mshadow']]],
+  ['croppingexp',['CroppingExp',['../structmshadow_1_1expr_1_1CroppingExp.html',1,'mshadow::expr']]],
+  ['csr_5fidx_5fcheck',['csr_idx_check',['../structmxnet_1_1common_1_1csr__idx__check.html',1,'mxnet::common']]],
+  ['csr_5findptr_5fcheck',['csr_indptr_check',['../structmxnet_1_1common_1_1csr__indptr__check.html',1,'mxnet::common']]]
 ];
