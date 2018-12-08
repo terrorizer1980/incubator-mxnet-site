@@ -883,19 +883,26 @@
 <span class="sd">        Data name for provided symbols.</span>
 <span class="sd">    label_name : str</span>
 <span class="sd">        Name for detection labels</span>
+<span class="sd">    last_batch_handle : str, optional</span>
+<span class="sd">        How to handle the last batch.</span>
+<span class="sd">        This parameter can be 'pad'(default), 'discard' or 'roll_over'.</span>
+<span class="sd">        If 'pad', the last batch will be padded with data starting from the begining</span>
+<span class="sd">        If 'discard', the last batch will be discarded</span>
+<span class="sd">        If 'roll_over', the remaining elements will be rolled over to the next iteration</span>
 <span class="sd">    kwargs : ...</span>
 <span class="sd">        More arguments for creating augmenter. See mx.image.CreateDetAugmenter.</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span>
                  <span class="n">path_imgrec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_imglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_imgidx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">part_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_parts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aug_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">imglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_name</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="s1">'label'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                 <span class="n">data_name</span><span class="o">=</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="s1">'label'</span><span class="p">,</span> <span class="n">last_batch_handle</span><span class="o">=</span><span class="s1">'pad'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImageDetIter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_shape</span><span class="o">=</span><span class="n">data_shape</span><span class="p">,</span>
                                            <span class="n">path_imgrec</span><span class="o">=</span><span class="n">path_imgrec</span><span class="p">,</span> <span class="n">path_imglist</span><span class="o">=</span><span class="n">path_imglist</span><span class="p">,</span>
                                            <span class="n">path_root</span><span class="o">=</span><span class="n">path_root</span><span class="p">,</span> <span class="n">path_imgidx</span><span class="o">=</span><span class="n">path_imgidx</span><span class="p">,</span>
                                            <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">part_index</span><span class="o">=</span><span class="n">part_index</span><span class="p">,</span>
                                            <span class="n">num_parts</span><span class="o">=</span><span class="n">num_parts</span><span class="p">,</span> <span class="n">aug_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">imglist</span><span class="o">=</span><span class="n">imglist</span><span class="p">,</span>
-                                           <span class="n">data_name</span><span class="o">=</span><span class="n">data_name</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">)</span>
+                                           <span class="n">data_name</span><span class="o">=</span><span class="n">data_name</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span>
+                                           <span class="n">last_batch_handle</span><span class="o">=</span><span class="n">last_batch_handle</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">aug_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">auglist</span> <span class="o">=</span> <span class="n">CreateDetAugmenter</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -976,14 +983,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,)</span> <span class="o">+</span> <span class="n">label_shape</span><span class="p">)]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label_shape</span> <span class="o">=</span> <span class="n">label_shape</span></div>
 
-<div class="viewcode-block" id="ImageDetIter.next"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageDetIter.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Override the function for returning next batch."""</span>
+    <span class="k">def</span> <span class="nf">_batchify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">"""Override the helper function for batchifying data"""</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">start</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
-        <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span>
-        <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
-        <span class="n">batch_label</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">batch_label</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="n">i</span> <span class="o"><</span> <span class="n">batch_size</span><span class="p">:</span>
                 <span class="n">label</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_sample</span><span class="p">()</span>
@@ -1008,7 +1011,48 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">([</span><span class="n">batch_data</span><span class="p">],</span> <span class="p">[</span><span class="n">batch_label</span><span class="p">],</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">i</span>
+
+<div class="viewcode-block" id="ImageDetIter.next"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageDetIter.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Override the function for returning next batch."""</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span>
+        <span class="c1"># if last batch data is rolled over</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># check both the data and label have values</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"_cache_label didn't have values"</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"_cache_idx didn't have values"</span>
+            <span class="n">batch_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span>
+            <span class="n">batch_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">batch_label</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">batch_label</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify</span><span class="p">(</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">)</span>
+        <span class="c1"># calculate the padding</span>
+        <span class="n">pad</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="c1"># handle padding for the last batch</span>
+        <span class="k">if</span> <span class="n">pad</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'discard'</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">StopIteration</span>
+            <span class="c1"># if the option is 'roll_over', throw StopIteration and cache the data</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'roll_over'</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="n">batch_data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="n">batch_label</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">raise</span> <span class="ne">StopIteration</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify</span><span class="p">(</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_batch_handle</span> <span class="o">==</span> <span class="s1">'pad'</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_allow_read</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">([</span><span class="n">batch_data</span><span class="p">],</span> <span class="p">[</span><span class="n">batch_label</span><span class="p">],</span> <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageDetIter.augmentation_transform"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageDetIter.augmentation_transform">[docs]</a>    <span class="k">def</span> <span class="nf">augmentation_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="sd">"""Override Transforms input data with specified augmentations."""</span>

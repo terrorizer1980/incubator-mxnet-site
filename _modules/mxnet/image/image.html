@@ -1370,7 +1370,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgrec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">imgkeys</span>
-        <span class="k">elif</span> <span class="n">shuffle</span> <span class="ow">or</span> <span class="n">num_parts</span> <span class="o">></span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">shuffle</span> <span class="ow">or</span> <span class="n">num_parts</span> <span class="o">></span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">path_imgidx</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgidx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgidx</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1486,7 +1486,7 @@
             <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span>
             <span class="c1"># clear the cache data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">batch_data</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
             <span class="n">batch_label</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">provide_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify</span><span class="p">(</span><span class="n">batch_data</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">)</span>
         <span class="c1"># calculate the padding</span>
@@ -1510,6 +1510,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_cache_label</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_cache_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">([</span><span class="n">batch_data</span><span class="p">],</span> <span class="p">[</span><span class="n">batch_label</span><span class="p">],</span> <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageIter.check_data_shape"><a class="viewcode-back" href="../../../api/python/image/image.html#mxnet.image.ImageIter.check_data_shape">[docs]</a>    <span class="k">def</span> <span class="nf">check_data_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">):</span>
