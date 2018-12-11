@@ -287,8 +287,14 @@ images provided in</p>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.image.imdecode" title="mxnet.image.imdecode"><code class="xref py py-obj docutils literal"><span class="pre">image.imdecode</span></code></a></td>
 <td>Decode an image to an NDArray.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#mxnet.image.scale_down" title="mxnet.image.scale_down"><code class="xref py py-obj docutils literal"><span class="pre">image.scale_down</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.image.imresize" title="mxnet.image.imresize"><code class="xref py py-obj docutils literal"><span class="pre">image.imresize</span></code></a></td>
+<td>Resize image with OpenCV.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.image.scale_down" title="mxnet.image.scale_down"><code class="xref py py-obj docutils literal"><span class="pre">image.scale_down</span></code></a></td>
 <td>Scales down crop size if it’s larger than image size.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.image.copyMakeBorder" title="mxnet.image.copyMakeBorder"><code class="xref py py-obj docutils literal"><span class="pre">image.copyMakeBorder</span></code></a></td>
+<td>Pad image border with OpenCV.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.image.resize_short" title="mxnet.image.resize_short"><code class="xref py py-obj docutils literal"><span class="pre">image.resize_short</span></code></a></td>
 <td>Resizes shorter edge to size.</td>
@@ -613,8 +619,11 @@ See mx.img.imdecode for more details.</p>
 <dt id="mxnet.image.imread">
 <code class="descclassname">image.</code><code class="descname">imread</code><span class="sig-paren">(</span><em>filename</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.imread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read and decode an image to an NDArray.</p>
-<p>Note: <cite>imread</cite> uses OpenCV (not the CV2 Python library).
-MXNet must have been built with USE_OPENCV=1 for <cite>imdecode</cite> to work.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>imread</cite> uses OpenCV (not the CV2 Python library).</p>
+</div>
+<p>MXNet must have been built with USE_OPENCV=1 for <cite>imdecode</cite> to work.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -656,8 +665,11 @@ False for BGR formatted output (OpenCV default).</li>
 <dt id="mxnet.image.imdecode">
 <code class="descclassname">image.</code><code class="descname">imdecode</code><span class="sig-paren">(</span><em>buf</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.imdecode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decode an image to an NDArray.</p>
-<p>Note: <cite>imdecode</cite> uses OpenCV (not the CV2 Python library).
-MXNet must have been built with USE_OPENCV=1 for <cite>imdecode</cite> to work.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>imdecode</cite> uses OpenCV (not the CV2 Python library).</p>
+</div>
+<p>MXNet must have been built with USE_OPENCV=1 for <cite>imdecode</cite> to work.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -707,6 +719,66 @@ MXNet must have been built with USE_OPENCV=1 for <cite>imdecode</cite> to work.<
 </div>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.image.imresize">
+<code class="descclassname">image.</code><code class="descname">imresize</code><span class="sig-paren">(</span><em>src</em>, <em>w</em>, <em>h</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.imresize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resize image with OpenCV.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>imresize</cite> uses OpenCV (not the CV2 Python library). MXNet must have been built</p>
+</div>
+<p>with USE_OPENCV=1 for <cite>imresize</cite> to work.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – source image</li>
+<li><strong>w</strong> (<em>int</em><em>, </em><em>required</em>) – Width of resized image.</li>
+<li><strong>h</strong> (<em>int</em><em>, </em><em>required</em>) – Height of resized image.</li>
+<li><strong>interp</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Interpolation method (default=cv2.INTER_LINEAR).
+Possible values:
+0: Nearest Neighbors Interpolation.
+1: Bilinear interpolation.
+2: Area-based (resampling using pixel area relation). It may be a
+preferred method for image decimation, as it gives moire-free
+results. But when the image is zoomed, it is similar to the Nearest
+Neighbors method. (used by default).
+3: Bicubic interpolation over 4x4 pixel neighborhood.
+4: Lanczos interpolation over 8x8 pixel neighborhood.
+9: Cubic for enlarge, area for shrink, bilinear for others
+10: Random select from interpolation method metioned above.
+Note:
+When shrinking an image, it will generally look best with AREA-based
+interpolation, whereas, when enlarging an image, it will generally look best
+with Bicubic (slow) or Bilinear (faster but still looks OK).
+More details can be found in the documentation of OpenCV, please refer to
+<a class="reference external" href="http://docs.opencv.org/master/da/d54/group__imgproc__transform.html">http://docs.opencv.org/master/da/d54/group__imgproc__transform.html</a>.</li>
+<li><strong>out</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"flower.jpeg"</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">str_image</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">str_image</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">image</span>
+<span class="go"><NDArray 2321x3482x3 @cpu(0)></span>
+<span class="gp">>>> </span><span class="n">new_image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">new_image</span>
+<span class="go"><NDArray 240x360x3 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.image.scale_down">
 <code class="descclassname">image.</code><code class="descname">scale_down</code><span class="sig-paren">(</span><em>src_size</em>, <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.scale_down" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scales down crop size if it’s larger than image size.</p>
@@ -740,11 +812,44 @@ sets the width/height to the width/height of the image.</p>
 </div>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.image.copyMakeBorder">
+<code class="descclassname">image.</code><code class="descname">copyMakeBorder</code><span class="sig-paren">(</span><em>src=None</em>, <em>top=_Null</em>, <em>bot=_Null</em>, <em>left=_Null</em>, <em>right=_Null</em>, <em>type=_Null</em>, <em>value=_Null</em>, <em>values=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.copyMakeBorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pad image border with OpenCV.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – source image</li>
+<li><strong>top</strong> (<em>int</em><em>, </em><em>required</em>) – Top margin.</li>
+<li><strong>bot</strong> (<em>int</em><em>, </em><em>required</em>) – Bottom margin.</li>
+<li><strong>left</strong> (<em>int</em><em>, </em><em>required</em>) – Left margin.</li>
+<li><strong>right</strong> (<em>int</em><em>, </em><em>required</em>) – Right margin.</li>
+<li><strong>type</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='0'</em>) – Filling type (default=cv2.BORDER_CONSTANT).</li>
+<li><strong>value</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – (Deprecated! Use <code class="docutils literal"><span class="pre">values</span></code> instead.) Fill with single value.</li>
+<li><strong>values</strong> (<em>tuple of <double></em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Fill with value(RGB[A] or gray), up to 4 channels.</li>
+<li><strong>out</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.image.resize_short">
 <code class="descclassname">image.</code><code class="descname">resize_short</code><span class="sig-paren">(</span><em>src</em>, <em>size</em>, <em>interp=2</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.image.resize_short" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resizes shorter edge to size.</p>
-<p>Note: <cite>resize_short</cite> uses OpenCV (not the CV2 Python library).
-MXNet must have been built with OpenCV for <cite>resize_short</cite> to work.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>resize_short</cite> uses OpenCV (not the CV2 Python library).</p>
+</div>
+<p>MXNet must have been built with OpenCV for <cite>resize_short</cite> to work.</p>
 <p>Resizes the original image by setting the shorter edge to size
 and setting the longer edge accordingly.
 Resizing function is called from OpenCV.</p>
