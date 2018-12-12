@@ -377,19 +377,30 @@ sudo ./ubuntu_python.sh
 <p>If building on CPU and using OpenBLAS:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
     <span class="nb">cd</span> incubator-mxnet
-    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas
+    <span class="nb">echo</span> <span class="s2">&quot;USE_OPENCV = 1&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_BLAS = openblas&quot;</span> &gt;&gt; ./config.mk
+    make -j <span class="k">$(</span>nproc<span class="k">)</span>
 </pre></div>
 </div>
 <p>If building on CPU and using MKL and MKL-DNN (make sure MKL is installed according to <a class="reference external" href="http://mxnet.io/install/build_from_source.html#math-library-selection">Math Library Selection</a> and <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/MKLDNN_README.md">MKL-DNN README</a>):</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
     <span class="nb">cd</span> incubator-mxnet
-    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>mkl <span class="nv">USE_MKLDNN</span><span class="o">=</span><span class="m">1</span>
+    <span class="nb">echo</span> <span class="s2">&quot;USE_OPENCV = 1&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_BLAS = openblas&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_CUDA = 0&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_MKLDNN = 1&quot;</span> &gt;&gt; ./config.mk
+    make -j <span class="k">$(</span>nproc<span class="k">)</span>
 </pre></div>
 </div>
 <p>If building on GPU and you want OpenCV and OpenBLAS (make sure you have installed the <a class="reference external" href="#cuda-dependencies">CUDA dependencies first</a>):</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
     <span class="nb">cd</span> incubator-mxnet
-    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas <span class="nv">USE_CUDA</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_CUDA_PATH</span><span class="o">=</span>/usr/local/cuda <span class="nv">USE_CUDNN</span><span class="o">=</span><span class="m">1</span>
+    <span class="nb">echo</span> <span class="s2">&quot;USE_OPENCV = 1&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_BLAS = openblas&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_CUDA = 1&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_CUDA_PATH = /usr/local/cuda&quot;</span> &gt;&gt; ./config.mk
+    <span class="nb">echo</span> <span class="s2">&quot;USE_CUDNN = 1&quot;</span> &gt;&gt; ./config.mk
+    make -j <span class="k">$(</span>nproc<span class="k">)</span>
 </pre></div>
 </div>
 <p><em>Note</em> - USE_OPENCV and USE_BLAS are make file flags to set compilation options to use OpenCV and BLAS library. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code> and also review common <a class="reference external" href="http://mxnet.io/install/build_from_source.html#usage-examples">usage examples</a>.</p>
@@ -525,7 +536,9 @@ $ sudo apt-get install -y build-essential git
 <p><strong>Step 4</strong> Download MXNet sources and build MXNet core shared library. You can clone the repository as described in the following code block, or you may try the <a href="download.html">download links</a> for your desired MXNet version.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone --recursive https://github.com/apache/incubator-mxnet
 $ <span class="nb">cd</span> incubator-mxnet
-$ make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas
+$ <span class="nb">echo</span> <span class="s2">&quot;USE_OPENCV = 1&quot;</span> &gt;&gt; ./config.mk
+$ <span class="nb">echo</span> <span class="s2">&quot;USE_BLAS = openblas&quot;</span> &gt;&gt; ./config.mk
+$ make -j <span class="k">$(</span>nproc<span class="k">)</span>
 </pre></div>
 </div>
 <p><em>Note</em> - USE_OPENCV and USE_BLAS are make file flags to set compilation options to use OpenCV and BLAS library. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code>.</p>
