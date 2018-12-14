@@ -315,6 +315,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_names</span> <span class="o">=</span> <span class="n">output_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_names</span> <span class="o">=</span> <span class="n">label_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_global_stats</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"has_global_stats"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -372,6 +373,14 @@
 <div class="viewcode-block" id="EvalMetric.reset"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="EvalMetric.reset_local"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.reset_local">[docs]</a>    <span class="k">def</span> <span class="nf">reset_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the local portion of the internal evaluation results</span>
+<span class="sd">        to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span></div>
 
 <div class="viewcode-block" id="EvalMetric.get"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -389,6 +398,24 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="EvalMetric.get_global"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.get_global">[docs]</a>    <span class="k">def</span> <span class="nf">get_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Gets the current global evaluation result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        names : list of str</span>
+<span class="sd">           Name of the metrics.</span>
+<span class="sd">        values : list of float</span>
+<span class="sd">           Value of the evaluations.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_global_stats</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'nan'</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="EvalMetric.get_name_value"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.get_name_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_name_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Returns zipped name and value pairs.</span>
 
@@ -402,7 +429,25 @@
             <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="EvalMetric.get_global_name_value"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.EvalMetric.get_global_name_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_global_name_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns zipped name and value pairs for global results.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of tuples</span>
+<span class="sd">            A (name, value) tuple list.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_global_stats</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_global</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name_value</span><span class="p">()</span></div></div>
 
 <span class="c1"># pylint: disable=invalid-name</span>
 <span class="n">register</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_register_func</span><span class="p">(</span><span class="n">EvalMetric</span><span class="p">,</span> <span class="s1">'metric'</span><span class="p">)</span>
@@ -488,7 +533,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'composite'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CompositeEvalMetric</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">create</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">]</span>
@@ -550,6 +596,15 @@
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
+<div class="viewcode-block" id="CompositeEvalMetric.reset_local"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.CompositeEvalMetric.reset_local">[docs]</a>    <span class="k">def</span> <span class="nf">reset_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the local portion of the internal evaluation results</span>
+<span class="sd">        to initial state."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+                <span class="n">metric</span><span class="o">.</span><span class="n">reset_local</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="CompositeEvalMetric.get"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.CompositeEvalMetric.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Returns the current evaluation result.</span>
 
@@ -564,6 +619,28 @@
         <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CompositeEvalMetric.get_global"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.CompositeEvalMetric.get_global">[docs]</a>    <span class="k">def</span> <span class="nf">get_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns the current evaluation result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        names : list of str</span>
+<span class="sd">           Name of the metrics.</span>
+<span class="sd">        values : list of float</span>
+<span class="sd">           Value of the evaluations.</span>
+<span class="sd">        """</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">get_global</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
@@ -620,7 +697,8 @@
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Accuracy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span>
 
 <div class="viewcode-block" id="Accuracy.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.Accuracy.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
@@ -648,8 +726,11 @@
 
             <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred_label</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_label</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_label</span><span class="p">)</span></div></div>
+            <span class="n">num_correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_label</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">num_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">num_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_label</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_label</span><span class="p">)</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -692,7 +773,8 @@
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TopKAccuracy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>
         <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">></span> <span class="mi">1</span><span class="p">),</span> <span class="s1">'Please use Accuracy if top_k is no more than 1'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+=</span> <span class="s1">'_</span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span>
@@ -712,7 +794,11 @@
 
         <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred_label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
             <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pred_label</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o"><=</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">'Predictions should be no more than 2 dims'</span>
-            <span class="n">pred_label</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">pred_label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'float32'</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Using argpartition here instead of argsort is safe because</span>
+            <span class="c1"># we do not care about the order of top k elements. It is</span>
+            <span class="c1"># much faster, which is important since that computation is</span>
+            <span class="c1"># single-threaded due to Python GIL.</span>
+            <span class="n">pred_label</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">pred_label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'float32'</span><span class="p">),</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">)</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int32'</span><span class="p">)</span>
             <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred_label</span><span class="p">)</span>
             <span class="n">num_samples</span> <span class="o">=</span> <span class="n">pred_label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -723,8 +809,11 @@
                 <span class="n">num_classes</span> <span class="o">=</span> <span class="n">pred_label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">top_k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">top_k</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_label</span><span class="p">[:,</span> <span class="n">num_classes</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">flat</span> <span class="o">==</span> <span class="n">label</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num_samples</span></div></div>
+                    <span class="n">num_correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_label</span><span class="p">[:,</span> <span class="n">num_classes</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">flat</span> <span class="o">==</span> <span class="n">label</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">num_correct</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">num_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num_samples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">num_samples</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">_BinaryClassificationMetrics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -740,6 +829,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_negatives</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">update_binary_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
         <span class="sd">"""</span>
@@ -767,15 +860,30 @@
         <span class="n">label_true</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">label_false</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">label_true</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_true</span> <span class="o">*</span> <span class="n">label_true</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_true</span> <span class="o">*</span> <span class="n">label_false</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_false</span> <span class="o">*</span> <span class="n">label_true</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_false</span> <span class="o">*</span> <span class="n">label_false</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">true_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_true</span> <span class="o">*</span> <span class="n">label_true</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">false_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_true</span> <span class="o">*</span> <span class="n">label_false</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">false_neg</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_false</span> <span class="o">*</span> <span class="n">label_true</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">true_neg</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_false</span> <span class="o">*</span> <span class="n">label_false</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">+=</span> <span class="n">true_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">+=</span> <span class="n">true_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">+=</span> <span class="n">false_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span> <span class="o">+=</span> <span class="n">false_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">+=</span> <span class="n">false_neg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span> <span class="o">+=</span> <span class="n">false_neg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">+=</span> <span class="n">true_neg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_negatives</span> <span class="o">+=</span> <span class="n">true_neg</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_precision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.</span>
 
@@ -787,6 +895,13 @@
             <span class="k">return</span> <span class="mf">0.</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_recall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fscore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">recall</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">recall</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">recall</span><span class="p">)</span>
@@ -794,17 +909,33 @@
             <span class="k">return</span> <span class="mf">0.</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">matthewscc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">global_fscore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_precision</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_recall</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_precision</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_recall</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_precision</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_recall</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.</span>
+
+    <span class="k">def</span> <span class="nf">matthewscc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_global</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""</span>
 <span class="sd">        Calculate the Matthew's Correlation Coefficent</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_examples</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">use_global</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_total_examples</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.</span>
 
-        <span class="n">true_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span><span class="p">)</span>
-        <span class="n">false_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span><span class="p">)</span>
-        <span class="n">false_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span><span class="p">)</span>
-        <span class="n">true_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span><span class="p">)</span>
+            <span class="n">true_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span><span class="p">)</span>
+            <span class="n">false_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span><span class="p">)</span>
+            <span class="n">false_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span><span class="p">)</span>
+            <span class="n">true_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_true_negatives</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_examples</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.</span>
+
+            <span class="n">true_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span><span class="p">)</span>
+            <span class="n">false_pos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span><span class="p">)</span>
+            <span class="n">false_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span><span class="p">)</span>
+            <span class="n">true_neg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span><span class="p">)</span>
+
         <span class="n">terms</span> <span class="o">=</span> <span class="p">[(</span><span class="n">true_pos</span> <span class="o">+</span> <span class="n">false_pos</span><span class="p">),</span>
                  <span class="p">(</span><span class="n">true_pos</span> <span class="o">+</span> <span class="n">false_neg</span><span class="p">),</span>
                  <span class="p">(</span><span class="n">true_neg</span> <span class="o">+</span> <span class="n">false_pos</span><span class="p">),</span>
@@ -819,11 +950,26 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">+</span> \
                <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_total_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">global_true_negatives</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span>
+
+    <span class="k">def</span> <span class="nf">local_reset_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+
     <span class="k">def</span> <span class="nf">reset_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">false_positives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">false_negatives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_positives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">true_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_false_negatives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_positives</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_true_negatives</span> <span class="o">=</span> <span class="mi">0</span>
 
 
 <span class="nd">@register</span>
@@ -874,7 +1020,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">_BinaryClassificationMetrics</span><span class="p">()</span>
         <span class="n">EvalMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+                            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+                            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="F1.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.F1.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -894,17 +1041,29 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">==</span> <span class="s2">"macro"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">fscore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">global_fscore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">fscore</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">total_examples</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">total_examples</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">global_fscore</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">global_total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">global_total_examples</span></div>
 
 <div class="viewcode-block" id="F1.reset"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.F1.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="F1.reset_local"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.F1.reset_local">[docs]</a>    <span class="k">def</span> <span class="nf">reset_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">local_reset_stats</span><span class="p">()</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -975,7 +1134,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="n">_BinaryClassificationMetrics</span><span class="p">()</span>
         <span class="n">EvalMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+                            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+                            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MCC.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.MCC.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -994,18 +1154,31 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">update_binary_stats</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">==</span> <span class="s2">"macro"</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span><span class="p">(</span><span class="n">use_global</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">matthewscc</span><span class="p">(</span><span class="n">use_global</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> \
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">global_total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">total_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">global_total_examples</span></div>
 
 <div class="viewcode-block" id="MCC.reset"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.MCC.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">reset_stats</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MCC.reset_local"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.MCC.reset_local">[docs]</a>    <span class="k">def</span> <span class="nf">reset_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">local_reset_stats</span><span class="p">()</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -1066,7 +1239,8 @@
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Perplexity</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">ignore_label</span><span class="o">=</span><span class="n">ignore_label</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore_label</span> <span class="o">=</span> <span class="n">ignore_label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span>
 
@@ -1096,7 +1270,9 @@
             <span class="n">loss</span> <span class="o">-=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">pred</span><span class="p">)))</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
             <span class="n">num</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">loss</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">num</span></div>
 
 <div class="viewcode-block" id="Perplexity.get"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.Perplexity.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Returns the current evaluation result.</span>
@@ -1106,7 +1282,23 @@
 <span class="sd">        Tuple of (str, float)</span>
 <span class="sd">            Representing name of the metric and evaluation result.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span><span class="p">))</span></div></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'nan'</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Perplexity.get_global"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.Perplexity.get_global">[docs]</a>    <span class="k">def</span> <span class="nf">get_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns the current global evaluation result.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple of (str, float)</span>
+<span class="sd">            Representing name of the metric and evaluation result.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'nan'</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span><span class="p">))</span></div></div>
 
 <span class="c1">####################</span>
 <span class="c1"># REGRESSION METRICS</span>
@@ -1146,7 +1338,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'mae'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MAE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MAE.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.MAE.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -1170,8 +1363,11 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span></div></div>
+            <span class="n">mae</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">mae</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">mae</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -1206,7 +1402,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'mse'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MSE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MSE.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.MSE.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -1230,8 +1427,11 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">((</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span></div></div>
+            <span class="n">mse</span> <span class="o">=</span> <span class="p">((</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">mse</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">mse</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># numpy.prod(label.shape)</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -1266,7 +1466,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'rmse'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RMSE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RMSE.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.RMSE.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -1290,8 +1491,11 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+            <span class="n">rmse</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">rmse</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">rmse</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -1335,7 +1539,8 @@
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CrossEntropy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
 
 <div class="viewcode-block" id="CrossEntropy.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.CrossEntropy.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
@@ -1359,8 +1564,11 @@
             <span class="k">assert</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="n">prob</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">label</span><span class="p">)]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">(</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
+            <span class="n">cross_entropy</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">cross_entropy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">cross_entropy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
 
 <span class="nd">@register</span>
 <span class="nd">@alias</span><span class="p">(</span><span class="s1">'nll_loss'</span><span class="p">)</span>
@@ -1403,7 +1611,8 @@
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NegativeLogLikelihood</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
 
 <div class="viewcode-block" id="NegativeLogLikelihood.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.NegativeLogLikelihood.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
@@ -1427,8 +1636,11 @@
             <span class="n">num_examples</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">assert</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_examples</span><span class="p">,</span> <span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_examples</span><span class="p">)</span>
             <span class="n">prob</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_examples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">label</span><span class="p">)]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="p">(</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num_examples</span></div></div>
+            <span class="n">nll</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">nll</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">nll</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num_examples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">num_examples</span></div></div>
 
 <span class="nd">@register</span>
 <span class="nd">@alias</span><span class="p">(</span><span class="s1">'pearsonr'</span><span class="p">)</span>
@@ -1463,7 +1675,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'pearsonr'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PearsonCorrelation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PearsonCorrelation.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.PearsonCorrelation.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">"""Updates the internal evaluation result.</span>
@@ -1481,8 +1694,11 @@
             <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">label</span><span class="o">.</span><span class="n">ravel</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+            <span class="n">pearson_corr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">label</span><span class="o">.</span><span class="n">ravel</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
 
 
 <span class="nd">@register</span>
@@ -1503,7 +1719,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'loss'</span><span class="p">,</span>
                  <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
 
@@ -1511,8 +1728,11 @@
             <span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="n">preds</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">preds</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">size</span></div>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">size</span></div>
 
 
 <span class="nd">@register</span>
@@ -1578,7 +1798,8 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">CustomMetric</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">feval</span><span class="o">=</span><span class="n">feval</span><span class="p">,</span>
             <span class="n">allow_extra_outputs</span><span class="o">=</span><span class="n">allow_extra_outputs</span><span class="p">,</span>
-            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">)</span>
+            <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_feval</span> <span class="o">=</span> <span class="n">feval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_allow_extra_outputs</span> <span class="o">=</span> <span class="n">allow_extra_outputs</span>
 
@@ -1604,10 +1825,14 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reval</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="p">(</span><span class="n">sum_metric</span><span class="p">,</span> <span class="n">num_inst</span><span class="p">)</span> <span class="o">=</span> <span class="n">reval</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">sum_metric</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">sum_metric</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="n">num_inst</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="n">num_inst</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">reval</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">reval</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
     <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"CustomMetric cannot be serialized"</span><span class="p">)</span></div>
