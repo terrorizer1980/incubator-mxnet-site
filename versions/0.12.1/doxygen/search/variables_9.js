@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['list_5farguments',['list_arguments',['../structNativeOpInfo.html#af25c58d65a2350cab76403f1ce21922e',1,'NativeOpInfo::list_arguments()'],['../structNDArrayOpInfo.html#abc701d8c032a1c5b9358de8ab060d9c2',1,'NDArrayOpInfo::list_arguments()']]],
-  ['list_5foutputs',['list_outputs',['../structNativeOpInfo.html#a6a324c4b74a64b295c404ff235fac1e1',1,'NativeOpInfo::list_outputs()'],['../structNDArrayOpInfo.html#ab99abece52b77824dde5df98837f4f7b',1,'NDArrayOpInfo::list_outputs()']]]
+  ['key_5fvar_5fnum_5fargs',['key_var_num_args',['../structmxnet_1_1OperatorPropertyReg.html#af3aee96c6a2289e7554d7503186a540c',1,'mxnet::OperatorPropertyReg']]],
+  ['kmaxdevid',['kMaxDevID',['../structmxnet_1_1Context.html#a958219ae412395685ef1d82af0dbbe67',1,'mxnet::Context']]],
+  ['kmaxdevtype',['kMaxDevType',['../structmxnet_1_1Context.html#a7433936d1daf38f7dced0de49fbe6a4b',1,'mxnet::Context']]],
+  ['kwargs',['kwargs',['../structmxnet_1_1op_1_1EnvArguments.html#a9dc6ddeef01eb50bc77517bec1195d5d',1,'mxnet::op::EnvArguments']]]
 ];

@@ -1,9 +1,12 @@
 var searchData=
 [
-  ['packetarch',['PacketArch',['../namespacemshadow_1_1expr.html#aa68ead86d70bad4ab69608aecb852fdd',1,'mshadow::expr']]],
-  ['parent',['Parent',['../classdmlc_1_1parameter_1_1FieldEntry_3_01mxnet_1_1TShape_01_4.html#ac6a42c993f66fceb5022b330e5672b6c',1,'dmlc::parameter::FieldEntry&lt; mxnet::TShape &gt;']]],
-  ['passfunction',['PassFunction',['../namespacennvm.html#ac2b287a170f9c63ddccb53a7f93bb8ed',1,'nnvm']]],
-  ['pointer',['pointer',['../classdmlc_1_1ThreadlocalAllocator.html#aa9509829a2b96a97eca105cfc918f8ee',1,'dmlc::ThreadlocalAllocator']]],
-  ['predictorhandle',['PredictorHandle',['../c__predict__api_8h.html#a0aacfd245edcae2dcd19e01192fcd7a2',1,'c_predict_api.h']]],
-  ['profilehandle',['ProfileHandle',['../include_2mxnet_2c__api_8h.html#a2f6ad8b0cc1e894f64b5ecad2ceb1aa7',1,'c_api.h']]]
+  ['singleobject',['SingleObject',['../structmxnet_1_1common_1_1helper_1_1UniqueIf.html#a98153aaeb43a71efa85b5cf753505cac',1,'mxnet::common::helper::UniqueIf']]],
+  ['sourcefunction',['SourceFunction',['../namespacemxnet_1_1op.html#a65e8bade5ae0539689b705b921ed9a9d',1,'mxnet::op']]],
+  ['sourceshapefunction',['SourceShapeFunction',['../namespacemxnet_1_1op.html#a3419f1ab0d1a62068a5e6c59efdc0fc9',1,'mxnet::op']]],
+  ['stat',['Stat',['../classmxnet_1_1cpp_1_1Monitor.html#a9fbd53081c207c3262e5b0576dd3f934',1,'mxnet::cpp::Monitor']]],
+  ['statfunc',['StatFunc',['../classmxnet_1_1cpp_1_1Monitor.html#a64cc3d2dc311b10e3a11664b67929bab',1,'mxnet::cpp::Monitor']]],
+  ['storagetypevector',['StorageTypeVector',['../namespacemxnet.html#a6606bef15f41cccade14c9400e8447cf',1,'mxnet']]],
+  ['strupdater',['StrUpdater',['../classmxnet_1_1KVStore.html#abe6963a386cc6dc579029349a447d1cb',1,'mxnet::KVStore']]],
+  ['symbolhandle',['SymbolHandle',['../c__api_8h.html#a301e9a7722b326126defdd39ccd99b37',1,'c_api.h']]],
+  ['syncfn',['SyncFn',['../classmxnet_1_1Engine.html#a07f30ab85fca436e1bbcc72cd4d8bb35',1,'mxnet::Engine']]]
 ];

@@ -1,15 +1,7 @@
 var searchData=
 [
-  ['unarymapexp',['UnaryMapExp',['../structmshadow_1_1expr_1_1UnaryMapExp.html#a2979e6396e5b22d347cd785f14e3675a',1,'mshadow::expr::UnaryMapExp']]],
-  ['undef',['Undef',['../classnnvm_1_1Layout.html#a25f899cd1463c234085fe5a27612caba',1,'nnvm::Layout']]],
-  ['uniform',['uniform',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a4eae04b06525d65b839f2c9c5428c436',1,'mshadow::Random&lt; cpu, DType &gt;::uniform()'],['../classmshadow_1_1Random_3_01gpu_00_01DType_01_4.html#ac46b0e134798166fc9d7abd92e8511ed',1,'mshadow::Random&lt; gpu, DType &gt;::uniform()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#ac408747c825e9fa68523bd53c22f4720',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::uniform()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#a139a4902915fcdc052d71d9c33dda23b',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::uniform()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#a85a67d18b9e78cdb1c03346583bc9487',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::uniform()']]],
-  ['unique',['unique',['../structdmlc_1_1ThreadlocalSharedPtr.html#a2d7d772e2e1eb132d3cec454f123dd96',1,'dmlc::ThreadlocalSharedPtr::unique()'],['../classmxnet_1_1OpStatePtr.html#a12df6d3fed27fba90db272527579c0df',1,'mxnet::OpStatePtr::unique()']]],
-  ['unlock',['unlock',['../classdmlc_1_1Spinlock.html#a4838f60a973007f28abd5e2eb6a5be8a',1,'dmlc::Spinlock']]],
-  ['unpack_5fpatch2col',['unpack_patch2col',['../namespacemshadow_1_1expr.html#accfbe166febbee4c0bfb13a893479626',1,'mshadow::expr::unpack_patch2col(const Exp&lt; SrcExp, DType, etype &gt; &amp;img, index_t psize_y, index_t psize_x, index_t pstride, index_t pdilate)'],['../namespacemshadow_1_1expr.html#a7a5e417277eb5b0d42416ebe37c46627',1,'mshadow::expr::unpack_patch2col(const Exp&lt; SrcExp, DType, etype &gt; &amp;img, index_t psize_y, index_t psize_x, index_t pstride_y_, index_t pstride_x_, index_t pdilate_y_, index_t pdilate_x_)']]],
-  ['unpackpatchtocolxexp',['UnpackPatchToColXExp',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a5d11b3090d2d0d8e3fc063a1fc9ac34e',1,'mshadow::expr::UnpackPatchToColXExp']]],
-  ['unpool',['unpool',['../namespacemshadow_1_1expr.html#a97ebe62780c3f35287a9d91eca852326',1,'mshadow::expr']]],
-  ['unpoolingexp',['UnPoolingExp',['../structmshadow_1_1expr_1_1UnPoolingExp.html#a5b2ffb45ec06319d5fd5a836e0b241c5',1,'mshadow::expr::UnPoolingExp']]],
-  ['upperalign',['UpperAlign',['../namespacemshadow_1_1packet.html#a3673b9721702cf91bb412810357417a7',1,'mshadow::packet']]],
-  ['upsampling_5fnearest',['upsampling_nearest',['../namespacemshadow_1_1expr.html#aea67859f148180cd6bbd0b6e571785f0',1,'mshadow::expr']]],
-  ['upsamplingnearestexp',['UpSamplingNearestExp',['../structmshadow_1_1expr_1_1UpSamplingNearestExp.html#abd56fff3699654fe8dd5a4e529f557ce',1,'mshadow::expr::UpSamplingNearestExp']]]
+  ['value',['Value',['../classmxnet_1_1IIterator.html#aef2e0b74766cd0283849300c8a081929',1,'mxnet::IIterator']]],
+  ['var',['var',['../classmxnet_1_1NDArray.html#a35c9b5da0852b480e0114f0865338cbc',1,'mxnet::NDArray']]],
+  ['variable',['Variable',['../classmxnet_1_1cpp_1_1Symbol.html#ae848e0f5dfe16b8a150824fd93baca5c',1,'mxnet::cpp::Symbol']]],
+  ['version',['version',['../structmxnet_1_1engine_1_1Var.html#a5ae9f575784f18598df8824ccd421c18',1,'mxnet::engine::Var::version()'],['../classmxnet_1_1NDArray.html#ae650c3f9c9a8b4adeecf747b2fd99141',1,'mxnet::NDArray::version()']]]
 ];

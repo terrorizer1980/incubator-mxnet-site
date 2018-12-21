@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['_5f_5fdmlc_5fcomma',['__DMLC_COMMA',['../data_8h.html#a5b1cc6161f39c0f11f6a871eed6b018b',1,'data.h']]],
-  ['_5f_5fgomp_5fnothrow',['__GOMP_NOTHROW',['../omp_8h.html#afe37f54d49b771c371b2acca483e526f',1,'omp.h']]]
+  ['assign_5fdispatch',['ASSIGN_DISPATCH',['../operator__util_8h.html#a0e0ffc581a0c4a40815110163625b517',1,'operator_util.h']]]
 ];

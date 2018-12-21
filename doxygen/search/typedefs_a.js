@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['layoutdim',['LayoutDim',['../classnnvm_1_1Layout.html#ac8b8f4ea758b7e1dcb60f79e5e5044b6',1,'nnvm::Layout']]],
-  ['layoutvector',['LayoutVector',['../namespacennvm.html#a64589af0262bef2f459d1570628b85da',1,'nnvm']]]
+  ['ndarrayapifunction',['NDArrayAPIFunction',['../namespacemxnet.html#ab0d55b0edf98cf8f3caeb050662ae9ec',1,'mxnet']]],
+  ['ndarrayhandle',['NDArrayHandle',['../c__api_8h.html#a99c2939783499d2a5ce0d76881dce9df',1,'c_api.h']]],
+  ['ndlisthandle',['NDListHandle',['../c__predict__api_8h.html#a3058aee7831edae29e9ac39556e5fe5c',1,'c_predict_api.h']]]
 ];

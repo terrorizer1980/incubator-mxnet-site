@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['data',['data',['../classmxnet_1_1NDArray.html#aebd03e900ec7664a99b780a0cb1efea6',1,'mxnet::NDArray']]],
+  ['data',['data',['../classmxnet_1_1NDArray.html#aebd03e900ec7664a99b780a0cb1efea6',1,'mxnet::NDArray::data()'],['../structmxnet_1_1cpp_1_1Shape.html#a36c309163aafa73d7d00596bce2f33b2',1,'mxnet::cpp::Shape::data() const '],['../structmxnet_1_1cpp_1_1Shape.html#a3b1ab42010d804d352e363cf85c823c8',1,'mxnet::cpp::Shape::data()']]],
   ['data_5fndarray',['data_ndarray',['../classmxnet_1_1NDArray.html#af6d456d1e9f105fe913b696fe88efdc3',1,'mxnet::NDArray']]],
+  ['debugstr',['DebugStr',['../classmxnet_1_1cpp_1_1Executor.html#aa9ffb2228d9a552a43277704dcf2ad64',1,'mxnet::cpp::Executor']]],
   ['declarebackwarddependency',['DeclareBackwardDependency',['../classmxnet_1_1OperatorProperty.html#abf9e6a8d40750f3ee81fe30cbe3e2aae',1,'mxnet::OperatorProperty']]],
   ['deduplicatevarhandle',['DeduplicateVarHandle',['../classmxnet_1_1Engine.html#a9d8ac1987a6844dba9b0463030fb3430',1,'mxnet::Engine']]],
   ['delete',['Delete',['../classmxnet_1_1common_1_1ObjectPool.html#a7dcdcbe9b6764cedc28a1de2fbc8dd6f',1,'mxnet::common::ObjectPool::Delete()'],['../structmxnet_1_1common_1_1ObjectPoolAllocatable.html#a68ed487cb6de6194a4798fdbbfd04597',1,'mxnet::common::ObjectPoolAllocatable::Delete()']]],

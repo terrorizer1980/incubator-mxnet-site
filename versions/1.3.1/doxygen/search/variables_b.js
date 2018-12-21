@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['out_5fgrads',['out_grads',['../classmxnet_1_1Imperative_1_1AGInfo.html#a694cd90f3a43ac0014fa4913da56c499',1,'mxnet::Imperative::AGInfo']]],
-  ['outputs',['outputs',['../classmxnet_1_1Imperative_1_1AGInfo.html#a2ca114d69098860adc900ba5f54c4cb5',1,'mxnet::Imperative::AGInfo']]]
+  ['magnitude',['magnitude',['../classmxnet_1_1cpp_1_1Xavier.html#a8366452e9667182aab80138920b904a7',1,'mxnet::cpp::Xavier']]],
+  ['mu',['mu',['../classmxnet_1_1cpp_1_1Normal.html#a7c1f820c0cb79618b2b7340bbb3fb741',1,'mxnet::cpp::Normal']]]
 ];

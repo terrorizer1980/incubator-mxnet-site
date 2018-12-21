@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['graph',['Graph',['../classnnvm_1_1IndexedGraph.html#afab89afd724f1b07b1aaad6bdc61c47a',1,'nnvm::IndexedGraph']]]
+  ['ndarray',['NDArray',['../classmxnet_1_1Imperative.html#ad41557e205cf8f4d6ef70b60587c37cb',1,'mxnet::Imperative::NDArray()'],['../classmxnet_1_1TBlob.html#ad41557e205cf8f4d6ef70b60587c37cb',1,'mxnet::TBlob::NDArray()']]]
 ];

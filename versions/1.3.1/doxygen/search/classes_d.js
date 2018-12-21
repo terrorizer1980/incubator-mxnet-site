@@ -1,12 +1,17 @@
 var searchData=
 [
-  ['randgenerator',['RandGenerator',['../classmxnet_1_1common_1_1random_1_1RandGenerator.html',1,'mxnet::common::random']]],
-  ['randgenerator_3c_20cpu_2c_20dtype_20_3e',['RandGenerator&lt; cpu, DType &gt;',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4.html',1,'mxnet::common::random']]],
-  ['randgenerator_3c_20gpu_2c_20double_20_3e',['RandGenerator&lt; gpu, double &gt;',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4.html',1,'mxnet::common::random']]],
-  ['randgenerator_3c_20gpu_2c_20dtype_20_3e',['RandGenerator&lt; gpu, DType &gt;',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4.html',1,'mxnet::common::random']]],
-  ['resource',['Resource',['../structmxnet_1_1Resource.html',1,'mxnet']]],
-  ['resourcemanager',['ResourceManager',['../classmxnet_1_1ResourceManager.html',1,'mxnet']]],
-  ['resourcerequest',['ResourceRequest',['../structmxnet_1_1ResourceRequest.html',1,'mxnet']]],
-  ['rsp_5fidx_5fcheck',['rsp_idx_check',['../structmxnet_1_1common_1_1rsp__idx__check.html',1,'mxnet::common']]],
-  ['runcontext',['RunContext',['../structmxnet_1_1RunContext.html',1,'mxnet']]]
+  ['objectpool',['ObjectPool',['../classmxnet_1_1common_1_1ObjectPool.html',1,'mxnet::common']]],
+  ['objectpoolallocatable',['ObjectPoolAllocatable',['../structmxnet_1_1common_1_1ObjectPoolAllocatable.html',1,'mxnet::common']]],
+  ['one',['One',['../classmxnet_1_1cpp_1_1One.html',1,'mxnet::cpp']]],
+  ['opcontext',['OpContext',['../structmxnet_1_1OpContext.html',1,'mxnet']]],
+  ['operator',['Operator',['../classmxnet_1_1Operator.html',1,'mxnet']]],
+  ['operator',['Operator',['../classmxnet_1_1cpp_1_1Operator.html',1,'mxnet::cpp']]],
+  ['operatorproperty',['OperatorProperty',['../classmxnet_1_1OperatorProperty.html',1,'mxnet']]],
+  ['operatorpropertyreg',['OperatorPropertyReg',['../structmxnet_1_1OperatorPropertyReg.html',1,'mxnet']]],
+  ['opmap',['OpMap',['../classmxnet_1_1cpp_1_1OpMap.html',1,'mxnet::cpp']]],
+  ['opstateptr',['OpStatePtr',['../classmxnet_1_1OpStatePtr.html',1,'mxnet']]],
+  ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html',1,'mxnet::cpp']]],
+  ['optimizerregistry',['OptimizerRegistry',['../classmxnet_1_1cpp_1_1OptimizerRegistry.html',1,'mxnet::cpp']]],
+  ['outputgrad',['OutputGrad',['../structmxnet_1_1op_1_1OutputGrad.html',1,'mxnet::op']]],
+  ['outputvalue',['OutputValue',['../structmxnet_1_1op_1_1OutputValue.html',1,'mxnet::op']]]
 ];

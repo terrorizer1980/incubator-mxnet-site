@@ -1,6 +1,9 @@
 var searchData=
 [
+  ['mae',['MAE',['../classmxnet_1_1cpp_1_1MAE.html#a659d6c490a2c9445bde8ee21889e5a02',1,'mxnet::cpp::MAE']]],
   ['makeunique',['MakeUnique',['../namespacemxnet_1_1common.html#a9d9abe40c84b9924e51d5d57b3f0b7d6',1,'mxnet::common::MakeUnique(Args &amp;&amp;...args)'],['../namespacemxnet_1_1common.html#a39b3453302aa3aa56230fbc88005861d',1,'mxnet::common::MakeUnique(size_t n)'],['../namespacemxnet_1_1common.html#a6ca270747bb7ab942c61d364f14f3042',1,'mxnet::common::MakeUnique(Args &amp;&amp;...args)=delete']]],
+  ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html#a1e08421a5f777de6005ff5f2876a49a0',1,'mxnet::cpp::Monitor']]],
+  ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html#a482b0a676aa338cc5d38d7378ad6ff24',1,'mxnet::cpp::MSE']]],
   ['mxautogradbackward',['MXAutogradBackward',['../c__api_8h.html#a133d10a566764530bf3172e52afbe561',1,'c_api.h']]],
   ['mxautogradbackwardex',['MXAutogradBackwardEx',['../c__api_8h.html#a57a5d1ed585f9f431a31f921b4ca00ab',1,'c_api.h']]],
   ['mxautogradcomputegradient',['MXAutogradComputeGradient',['../c__api_8h.html#a4ea5441aa16bff2121855a5afb7be84e',1,'c_api.h']]],
@@ -13,7 +16,9 @@ var searchData=
   ['mxcreatecachedop',['MXCreateCachedOp',['../c__api_8h.html#a46d056bad70ea014110923da41524cfc',1,'c_api.h']]],
   ['mxcustomfunctionrecord',['MXCustomFunctionRecord',['../c__api_8h.html#a31b1a1fa46d1127e8dd39a39a86f2f24',1,'c_api.h']]],
   ['mxcustomopregister',['MXCustomOpRegister',['../c__api_8h.html#a92233cd9477ce12458bbd2b3e628dec9',1,'c_api.h']]],
+  ['mxdataiter',['MXDataIter',['../classmxnet_1_1cpp_1_1MXDataIter.html#aa4ca276f3f007d16b3a6d8ccb31022fd',1,'mxnet::cpp::MXDataIter::MXDataIter(const std::string &amp;mxdataiter_type)'],['../classmxnet_1_1cpp_1_1MXDataIter.html#afe4be15da6b1dd0e3516b587d58a610c',1,'mxnet::cpp::MXDataIter::MXDataIter(const MXDataIter &amp;other)']]],
   ['mxdataiterbeforefirst',['MXDataIterBeforeFirst',['../c__api_8h.html#a21df19f3242a68d1c536783fcf35968a',1,'c_api.h']]],
+  ['mxdataiterblob',['MXDataIterBlob',['../structmxnet_1_1cpp_1_1MXDataIterBlob.html#a893915f0151a10b623c3358d3b735bcb',1,'mxnet::cpp::MXDataIterBlob::MXDataIterBlob()'],['../structmxnet_1_1cpp_1_1MXDataIterBlob.html#a1762f84e036988f1745f9720af85e9e2',1,'mxnet::cpp::MXDataIterBlob::MXDataIterBlob(DataIterHandle handle)']]],
   ['mxdataitercreateiter',['MXDataIterCreateIter',['../c__api_8h.html#a361c4a5360734e430c54a754cc581354',1,'c_api.h']]],
   ['mxdataiterfree',['MXDataIterFree',['../c__api_8h.html#a29e117922acfbc95828433e736bcc3af',1,'c_api.h']]],
   ['mxdataitergetdata',['MXDataIterGetData',['../c__api_8h.html#a0920d095f423b8bb34095406ea93a697',1,'c_api.h']]],
@@ -21,6 +26,7 @@ var searchData=
   ['mxdataitergetiterinfo',['MXDataIterGetIterInfo',['../c__api_8h.html#a795614eb68a4fead826202a5b5ba9517',1,'c_api.h']]],
   ['mxdataitergetlabel',['MXDataIterGetLabel',['../c__api_8h.html#a0c36af502d2a5746d841f50e1b0e71c0',1,'c_api.h']]],
   ['mxdataitergetpadnum',['MXDataIterGetPadNum',['../c__api_8h.html#aec6d0d5055719576337687fc3702a899',1,'c_api.h']]],
+  ['mxdataitermap',['MXDataIterMap',['../classmxnet_1_1cpp_1_1MXDataIterMap.html#a72c1176296d403c81bada8982f4a64a9',1,'mxnet::cpp::MXDataIterMap']]],
   ['mxdataiternext',['MXDataIterNext',['../c__api_8h.html#a8be0adeef4b87243a5eda12f17e64e67',1,'c_api.h']]],
   ['mxdumpprofile',['MXDumpProfile',['../c__api_8h.html#a51716c7a38d1b02d26da4d84d6307025',1,'c_api.h']]],
   ['mxexecutorbackward',['MXExecutorBackward',['../c__api_8h.html#ad8f92bb15e11058abe12959cfc4dcbb3',1,'c_api.h']]],

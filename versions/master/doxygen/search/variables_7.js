@@ -1,20 +1,4 @@
 var searchData=
 [
-  ['i_5fchannel_5f',['i_channel_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a235dfd748d7f056854984b52feead132',1,'mshadow::expr::UnpackPatchToColXExp']]],
-  ['i_5fheight_5f',['i_height_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#ac9154015985191c99545acc3a7efd2e3',1,'mshadow::expr::UnpackPatchToColXExp']]],
-  ['i_5fwidth_5f',['i_width_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a16648a89c281647958dfe4f69a36ffe1',1,'mshadow::expr::UnpackPatchToColXExp']]],
-  ['id',['id',['../structmxnet_1_1Resource.html#aa1fc8578c0fa849afe7da29c1cf1308b',1,'mxnet::Resource']]],
-  ['img_5f',['img_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a4b34aa00bd935e573caa339448f53e18',1,'mshadow::expr::UnpackPatchToColXExp']]],
-  ['index',['index',['../classdmlc_1_1Row.html#a485965d516f8d7e236c03cb5e415006a',1,'dmlc::Row::index()'],['../structdmlc_1_1RowBlock.html#a503383e0f0465903f729afef4e572e67',1,'dmlc::RowBlock::index()'],['../structmxnet_1_1DataInst.html#a548411c4a3dc77475c5ae6bfa6ee3564',1,'mxnet::DataInst::index()'],['../structmxnet_1_1DataBatch.html#a26a2ca473161c2c2a914cbc7ae4eb74e',1,'mxnet::DataBatch::index()'],['../structnnvm_1_1IndexedGraph_1_1NodeEntry.html#afb64f4be9e59c21f76c775495e7030c5',1,'nnvm::IndexedGraph::NodeEntry::index()'],['../structnnvm_1_1NodeEntry.html#a5f231fbd1854ee182696b023be6ff5f8',1,'nnvm::NodeEntry::index()']]],
-  ['index_5f',['index_',['../structmshadow_1_1expr_1_1MatChooseRowElementExp.html#a537087b7889253250265dbfcd79d1a48',1,'mshadow::expr::MatChooseRowElementExp::index_()'],['../structmshadow_1_1expr_1_1MatFillRowElementExp.html#ab600ad0e0bf2815002d0d38aa47648d8',1,'mshadow::expr::MatFillRowElementExp::index_()'],['../structmshadow_1_1expr_1_1MaskExp.html#af50eeecb9a62e5ab9f0053ff2d7511ad',1,'mshadow::expr::MaskExp::index_()'],['../structmshadow_1_1expr_1_1OneHotEncodeExp.html#a0e24c558d92e662a6d403ab4e7cf3c8d',1,'mshadow::expr::OneHotEncodeExp::index_()'],['../structmshadow_1_1expr_1_1TakeExp.html#a9e689d25a40822fa922be8d630f7b8e7',1,'mshadow::expr::TakeExp::index_()'],['../structmshadow_1_1expr_1_1TakeGradExp.html#a7107477e31e27194e99302908963cc14',1,'mshadow::expr::TakeGradExp::index_()']]],
-  ['indices_5for_5fsections',['indices_or_sections',['../structnnvm_1_1top_1_1SplitParam.html#a214b69a28e3bbee7bc30e5f3721b64a4',1,'nnvm::top::SplitParam']]],
-  ['infer_5fshape',['infer_shape',['../structNativeOpInfo.html#a2d8f03e8586a1a1cb6b46ab8872a214a',1,'NativeOpInfo::infer_shape()'],['../structNDArrayOpInfo.html#a526a6092e581aea808b180758c2c4610',1,'NDArrayOpInfo::infer_shape()']]],
-  ['info',['info',['../classnnvm_1_1Node.html#a7a4239e82c7a4163edfad83e9533fc1a',1,'nnvm::Node']]],
-  ['input_5fdim_5f',['input_dim_',['../structmshadow_1_1expr_1_1TakeGradExp.html#a73ea635cf5c185db47fb2260171bc7a9',1,'mshadow::expr::TakeGradExp']]],
-  ['inputs',['inputs',['../structnnvm_1_1IndexedGraph_1_1Node.html#af5528f74fa38dc455701eb415571fb2a',1,'nnvm::IndexedGraph::Node::inputs()'],['../classnnvm_1_1Node.html#a1be3a2e4759dc6239332cb9657c5c11d',1,'nnvm::Node::inputs()']]],
-  ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#a2d550bd138ed08333bebed8dd876644f',1,'mxnet::OpContext']]],
-  ['ishapex_5f',['ishapex_',['../structmshadow_1_1expr_1_1ReshapeExp.html#a5baedf65a93e073525f7ecfba579b70c',1,'mshadow::expr::ReshapeExp']]],
-  ['item1_5f',['item1_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#a2c0e60dca07dc380daaf466bf3865d50',1,'mshadow::expr::TernaryMapExp']]],
-  ['item2_5f',['item2_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#a357cad3472616e53a72e8fdd789ae2be',1,'mshadow::expr::TernaryMapExp']]],
-  ['item3_5f',['item3_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#af59015a8e257dc844f30cd57b864490f',1,'mshadow::expr::TernaryMapExp']]]
+  ['handle_5f',['handle_',['../structmxnet_1_1cpp_1_1MXDataIterBlob.html#a90d3f6381459e542e865be2e010b3b27',1,'mxnet::cpp::MXDataIterBlob::handle_()'],['../structmxnet_1_1cpp_1_1NDBlob.html#a5003302311ab4ac51f2fa71445d181be',1,'mxnet::cpp::NDBlob::handle_()'],['../structmxnet_1_1cpp_1_1SymBlob.html#a32924152dd1a19a98ea18b273ffa54d5',1,'mxnet::cpp::SymBlob::handle_()']]]
 ];

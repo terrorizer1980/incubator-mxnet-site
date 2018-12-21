@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['jsonobjectreadhelper',['JSONObjectReadHelper',['../classdmlc_1_1JSONObjectReadHelper.html',1,'dmlc']]],
-  ['jsonreader',['JSONReader',['../classdmlc_1_1JSONReader.html',1,'dmlc']]],
-  ['jsonwriter',['JSONWriter',['../classdmlc_1_1JSONWriter.html',1,'dmlc']]]
+  ['kvstore',['KVStore',['../classmxnet_1_1KVStore.html',1,'mxnet']]],
+  ['kvstore',['KVStore',['../classmxnet_1_1cpp_1_1KVStore.html',1,'mxnet::cpp']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['var',['Var',['../structmxnet_1_1engine_1_1Var.html',1,'mxnet::engine']]]
+  ['xavier',['Xavier',['../classmxnet_1_1cpp_1_1Xavier.html',1,'mxnet::cpp']]]
 ];

@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['ndarrayapifunction',['NDArrayAPIFunction',['../namespacemxnet.html#ab0d55b0edf98cf8f3caeb050662ae9ec',1,'mxnet']]],
-  ['ndarrayhandle',['NDArrayHandle',['../include_2mxnet_2c__api_8h.html#a99c2939783499d2a5ce0d76881dce9df',1,'c_api.h']]],
-  ['ndlisthandle',['NDListHandle',['../c__predict__api_8h.html#a3058aee7831edae29e9ac39556e5fe5c',1,'c_predict_api.h']]],
-  ['nn_5fuint',['nn_uint',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#a830ae32828b06eab796e2f76852591ab',1,'c_api.h']]],
-  ['nodeentrymap',['NodeEntryMap',['../namespacennvm.html#a90679a7e880dbf3f009d8d5bfc99c8d4',1,'nnvm']]],
-  ['nodeptr',['NodePtr',['../namespacennvm.html#a4259d4f89d9f0feb94111a1c8cb5a1ae',1,'nnvm']]]
+  ['parent',['Parent',['../classdmlc_1_1parameter_1_1FieldEntry_3_01mxnet_1_1TShape_01_4.html#ac6a42c993f66fceb5022b330e5672b6c',1,'dmlc::parameter::FieldEntry&lt; mxnet::TShape &gt;']]],
+  ['predictorhandle',['PredictorHandle',['../c__predict__api_8h.html#a0aacfd245edcae2dcd19e01192fcd7a2',1,'c_predict_api.h']]],
+  ['profilehandle',['ProfileHandle',['../c__api_8h.html#a2f6ad8b0cc1e894f64b5ecad2ceb1aa7',1,'c_api.h']]]
 ];

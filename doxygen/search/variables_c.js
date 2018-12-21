@@ -1,13 +1,14 @@
 var searchData=
 [
-  ['offset',['offset',['../structdmlc_1_1RowBlock.html#ae3c81282e6a2531aaaa9f9ec94a8ab80',1,'dmlc::RowBlock']]],
-  ['offsets',['offsets',['../structnnvm_1_1top_1_1MultiBoxPriorParam.html#a493804ddf0e486b0f6cc9a4090ef15be',1,'nnvm::top::MultiBoxPriorParam']]],
-  ['op',['op',['../structnnvm_1_1NodeAttrs.html#a3ac836e9058e02f4f365a7b95bf995a6',1,'nnvm::NodeAttrs']]],
-  ['op_5fattr_5fdependency',['op_attr_dependency',['../structnnvm_1_1PassFunctionReg.html#a93583ae9a177f1e496d16c33ad58292d',1,'nnvm::PassFunctionReg']]],
-  ['option_5f',['option_',['../classdmlc_1_1LuaState.html#a99241e18fc7e404a97b405deebb95927',1,'dmlc::LuaState']]],
-  ['out_5fdtype',['out_dtype',['../structnnvm_1_1top_1_1Conv2DParam.html#a51bbe028021cc7243eec780a407d3a14',1,'nnvm::top::Conv2DParam::out_dtype()'],['../structnnvm_1_1top_1_1WinogradConv2DParam.html#ae84695c133d261ddac68b19ec29d40ab',1,'nnvm::top::WinogradConv2DParam::out_dtype()'],['../structnnvm_1_1top_1_1Conv2DTransposeParam.html#a6cbe2f84f0d50b77d0b84754df532353',1,'nnvm::top::Conv2DTransposeParam::out_dtype()']]],
-  ['out_5fgrads',['out_grads',['../classmxnet_1_1Imperative_1_1AGInfo.html#a694cd90f3a43ac0014fa4913da56c499',1,'mxnet::Imperative::AGInfo']]],
-  ['out_5flayout',['out_layout',['../structnnvm_1_1top_1_1Conv2DParam.html#aeedac1cc31fbfe3e3960c1f376baa8d4',1,'nnvm::top::Conv2DParam::out_layout()'],['../structnnvm_1_1top_1_1WinogradConv2DParam.html#aeb022f061b67060eb70b15bba2c246a5',1,'nnvm::top::WinogradConv2DParam::out_layout()']]],
-  ['output_5fpadding',['output_padding',['../structnnvm_1_1top_1_1Conv2DTransposeParam.html#a67b81320760d65b31b6d7fc6640903a7',1,'nnvm::top::Conv2DTransposeParam']]],
-  ['outputs',['outputs',['../classmxnet_1_1Imperative_1_1AGInfo.html#a2ca114d69098860adc900ba5f54c4cb5',1,'mxnet::Imperative::AGInfo::outputs()'],['../classnnvm_1_1Graph.html#a1be6cd069643a2608625df12f49423eb',1,'nnvm::Graph::outputs()'],['../classnnvm_1_1Symbol.html#ae274e2f7479e0d90cefd3a4481c9cbf2',1,'nnvm::Symbol::outputs()']]]
+  ['name',['name',['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#a02c180f08b215e9553d3c93fa783f9a4',1,'mxnet::op::SimpleOpRegEntry::name()'],['../classmxnet_1_1cpp_1_1EvalMetric.html#aa6c5fffe252895a404f0d1016897805a',1,'mxnet::cpp::EvalMetric::name()']]],
+  ['need_5fgrad',['need_grad',['../structmxnet_1_1OpContext.html#adffa555a95b50893b5fe7a2930a71d62',1,'mxnet::OpContext']]],
+  ['num',['num',['../classmxnet_1_1cpp_1_1EvalMetric.html#aec5f85b4dbf7132efca0755cad5a58d8',1,'mxnet::cpp::EvalMetric']]],
+  ['num_5fbatch_5fpadd',['num_batch_padd',['../structmxnet_1_1DataBatch.html#aad93df826690100bb16689952fc83558',1,'mxnet::DataBatch']]],
+  ['num_5fcallbacks',['num_callbacks',['../structMXCallbackList.html#aa593dcc4096dcc38a2af477e057d8861',1,'MXCallbackList']]],
+  ['num_5fepoch',['num_epoch',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#ab7844d6f4b8e611274531c1b2b95ec4b',1,'mxnet::cpp::FeedForwardConfig']]],
+  ['num_5finst',['num_inst',['../classmxnet_1_1cpp_1_1EvalMetric.html#a8fe15b123022e22ddadc3ccddd7b4d01',1,'mxnet::cpp::EvalMetric']]],
+  ['num_5fmutate_5fvars',['num_mutate_vars',['../structmxnet_1_1NDArrayFunctionReg.html#ad7881779b7807c6357902bdaccfccde2',1,'mxnet::NDArrayFunctionReg']]],
+  ['num_5fscalars',['num_scalars',['../structmxnet_1_1NDArrayFunctionReg.html#a9591e2abf6cbca0903aec582b96b4d95',1,'mxnet::NDArrayFunctionReg']]],
+  ['num_5fupdate_5f',['num_update_',['../classmxnet_1_1cpp_1_1Optimizer.html#a1d681d2c3fe689bf9014efdd5216abf3',1,'mxnet::cpp::Optimizer']]],
+  ['num_5fuse_5fvars',['num_use_vars',['../structmxnet_1_1NDArrayFunctionReg.html#aa0847438b4f3f600ec61d6d544755a29',1,'mxnet::NDArrayFunctionReg']]]
 ];

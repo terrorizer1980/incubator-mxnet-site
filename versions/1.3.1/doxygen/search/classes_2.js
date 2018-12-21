@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['databatch',['DataBatch',['../structmxnet_1_1DataBatch.html',1,'mxnet']]],
-  ['datainst',['DataInst',['../structmxnet_1_1DataInst.html',1,'mxnet']]],
-  ['dataiteratorreg',['DataIteratorReg',['../structmxnet_1_1DataIteratorReg.html',1,'mxnet']]],
-  ['deserialize_5ftuple',['deserialize_tuple',['../structmxnet_1_1common_1_1deserialize__tuple.html',1,'mxnet::common']]],
-  ['deserialize_5ftuple_3c_200_20_3e',['deserialize_tuple&lt; 0 &gt;',['../structmxnet_1_1common_1_1deserialize__tuple_3_010_01_4.html',1,'mxnet::common']]]
+  ['callbackoncomplete',['CallbackOnComplete',['../classmxnet_1_1engine_1_1CallbackOnComplete.html',1,'mxnet::engine']]],
+  ['constant',['Constant',['../classmxnet_1_1cpp_1_1Constant.html',1,'mxnet::cpp']]],
+  ['context',['Context',['../structmxnet_1_1Context.html',1,'mxnet']]],
+  ['context',['Context',['../classmxnet_1_1cpp_1_1Context.html',1,'mxnet::cpp']]],
+  ['csr_5fidx_5fcheck',['csr_idx_check',['../structmxnet_1_1common_1_1csr__idx__check.html',1,'mxnet::common']]],
+  ['csr_5findptr_5fcheck',['csr_indptr_check',['../structmxnet_1_1common_1_1csr__indptr__check.html',1,'mxnet::common']]]
 ];

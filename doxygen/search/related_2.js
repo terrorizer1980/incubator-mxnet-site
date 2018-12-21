@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['registry_3c_20op_20_3e',['Registry&lt; Op &gt;',['../classnnvm_1_1Op.html#ac27d3a3a32f9258272ec64e446b539eb',1,'nnvm::Op']]]
+  ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Executor.html#a1aceee49824f6ba6ea0d4b26a8ebe1d4',1,'mxnet::cpp::Executor']]]
 ];
