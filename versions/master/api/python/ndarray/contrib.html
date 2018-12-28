@@ -1335,6 +1335,55 @@ then set <code class="docutils literal"><span class="pre">gamma</span></code> to
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.ndarray.contrib.adamw_update">
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">adamw_update</code><span class="sig-paren">(</span><em>weight=None</em>, <em>grad=None</em>, <em>mean=None</em>, <em>var=None</em>, <em>lr=_Null</em>, <em>beta1=_Null</em>, <em>beta2=_Null</em>, <em>epsilon=_Null</em>, <em>wd=_Null</em>, <em>eta=_Null</em>, <em>rescale_grad=_Null</em>, <em>clip_gradient=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.adamw_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update function for AdamW optimizer. AdamW is seen as a modification of
+Adam by decoupling the weight decay from the optimization steps taken w.r.t. the loss function.</p>
+<p>Adam update consists of the following steps, where g represents gradient and m, v
+are 1st and 2nd order moment estimates (mean and variance).</p>
+<div class="math">
+\[\begin{split}g_t = \nabla J(W_{t-1})\\
+m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t\\
+v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2\\
+W_t = W_{t-1} - \eta_t (\alpha \frac{ m_t }{ \sqrt{ v_t } + \epsilon } + wd W_{t-1})\end{split}\]</div>
+<p>It updates the weights using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">beta1</span><span class="o">*</span><span class="n">m</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta1</span><span class="p">)</span><span class="o">*</span><span class="n">grad</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">beta2</span><span class="o">*</span><span class="n">v</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">grad</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">-=</span> <span class="n">eta</span> <span class="o">*</span> <span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="n">wd</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/adamw.cc:L53</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weight</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Weight</li>
+<li><strong>grad</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Gradient</li>
+<li><strong>mean</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Moving mean</li>
+<li><strong>var</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Moving variance</li>
+<li><strong>lr</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate</li>
+<li><strong>beta1</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.9</em>) – The decay rate for the 1st moment estimates.</li>
+<li><strong>beta2</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.999</em>) – The decay rate for the 2nd moment estimates.</li>
+<li><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e-08</em>) – A small constant for numerical stability.</li>
+<li><strong>wd</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</li>
+<li><strong>eta</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate schedule multiplier</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>out</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.ndarray.contrib.backward_index_copy">
 <code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">backward_index_copy</code><span class="sig-paren">(</span><em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.backward_index_copy" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
