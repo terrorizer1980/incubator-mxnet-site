@@ -231,20 +231,20 @@ The tutorial is an illustration of how to use LSTM models with MXNet-R. We are f
 <p>Dataset Attribution:
 “PM2.5 data of US Embassy in Beijing”
 We want to predict pollution levels(PM2.5 concentration) in the city given the above dataset.</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>Dataset description<span class="o">:</span>
-No<span class="o">:</span> row number
-year<span class="o">:</span> year of data <span class="kr">in</span> this <span class="kp">row</span>
-month<span class="o">:</span> month of data <span class="kr">in</span> this <span class="kp">row</span>
-day<span class="o">:</span> day of data <span class="kr">in</span> this <span class="kp">row</span>
-hour<span class="o">:</span> hour of data <span class="kr">in</span> this <span class="kp">row</span>
-pm2.5<span class="o">:</span> PM2.5 concentration
-DEWP<span class="o">:</span> Dew Point
-TEMP<span class="o">:</span> Temperature
-PRES<span class="o">:</span> Pressure
-cbwd<span class="o">:</span> Combined wind direction
-Iws<span class="o">:</span> Cumulated wind speed
-Is<span class="o">:</span> Cumulated hours of snow
-Ir<span class="o">:</span> Cumulated hours of rain
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">Dataset</span> <span class="n">description</span><span class="o">:</span>
+<span class="n">No</span><span class="o">:</span> <span class="n">row</span> <span class="n">number</span>
+<span class="n">year</span><span class="o">:</span> <span class="n">year</span> <span class="n">of</span> <span class="n">data</span> <span class="n">in</span> <span class="n">this</span> <span class="n">row</span>
+<span class="n">month</span><span class="o">:</span> <span class="n">month</span> <span class="n">of</span> <span class="n">data</span> <span class="n">in</span> <span class="n">this</span> <span class="n">row</span>
+<span class="n">day</span><span class="o">:</span> <span class="n">day</span> <span class="n">of</span> <span class="n">data</span> <span class="n">in</span> <span class="n">this</span> <span class="n">row</span>
+<span class="n">hour</span><span class="o">:</span> <span class="n">hour</span> <span class="n">of</span> <span class="n">data</span> <span class="n">in</span> <span class="n">this</span> <span class="n">row</span>
+<span class="n">pm2.5</span><span class="o">:</span> <span class="n">PM2.5</span> <span class="n">concentration</span>
+<span class="n">DEWP</span><span class="o">:</span> <span class="n">Dew</span> <span class="n">Point</span>
+<span class="n">TEMP</span><span class="o">:</span> <span class="n">Temperature</span>
+<span class="n">PRES</span><span class="o">:</span> <span class="n">Pressure</span>
+<span class="n">cbwd</span><span class="o">:</span> <span class="n">Combined</span> <span class="n">wind</span> <span class="n">direction</span>
+<span class="n">Iws</span><span class="o">:</span> <span class="n">Cumulated</span> <span class="n">wind</span> <span class="n">speed</span>
+<span class="n">Is</span><span class="o">:</span> <span class="n">Cumulated</span> <span class="n">hours</span> <span class="n">of</span> <span class="n">snow</span>
+<span class="n">Ir</span><span class="o">:</span> <span class="n">Cumulated</span> <span class="n">hours</span> <span class="n">of</span> <span class="n">rain</span>
 </pre></div>
 </div>
 <p>We use past PM2.5 concentration, dew point, temperature, pressure, wind speed, snow and rain to predict
@@ -253,134 +253,134 @@ PM2.5 concentration levels.</p>
 <span id="load-and-pre-process-the-data"></span><h2>Load and pre-process the data<a class="headerlink" href="#load-and-pre-process-the-data" title="Permalink to this headline">¶</a></h2>
 <p>The first step is to load in the data and preprocess it. It is assumed that the data has been downloaded in a .csv file: data.csv from the <a class="reference external" href="https://archive.ics.uci.edu/ml/datasets/Beijing+PM2.5+Data">pollution dataset</a></p>
 <div class="highlight-r"><div class="highlight"><pre><span></span><span class="c1">## Loading required packages</span>
-<span class="kn">library</span><span class="p">(</span><span class="s">"readr"</span><span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span><span class="s">"dplyr"</span><span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span><span class="s">"mxnet"</span><span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span><span class="s">"abind"</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="s">"readr"</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="s">"dplyr"</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="s">"mxnet"</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="s">"abind"</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-r"><div class="highlight"><pre><span></span><span class="c1">## Preprocessing steps</span>
-Data <span class="o"><-</span> read.csv<span class="p">(</span>file <span class="o">=</span> <span class="s">"/Users/khedia/Downloads/data.csv"</span><span class="p">,</span>
-                 header <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                 sep <span class="o">=</span> <span class="s">","</span><span class="p">)</span>
+<span class="n">Data</span> <span class="o"><-</span> <span class="nf">read.csv</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="s">"/Users/khedia/Downloads/data.csv"</span><span class="p">,</span>
+                 <span class="n">header</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
+                 <span class="n">sep</span> <span class="o">=</span> <span class="s">","</span><span class="p">)</span>
 
 <span class="c1">## Extracting specific features from the dataset as variables for time series We extract</span>
 <span class="c1">## pollution, temperature, pressue, windspeed, snowfall and rainfall information from dataset</span>
-df <span class="o"><-</span> <span class="kt">data.frame</span><span class="p">(</span>Data<span class="o">$</span>pm2.5<span class="p">,</span>
-                 Data<span class="o">$</span>DEWP<span class="p">,</span>
-                 Data<span class="o">$</span>TEMP<span class="p">,</span>
-                 Data<span class="o">$</span>PRES<span class="p">,</span>
-                 Data<span class="o">$</span>Iws<span class="p">,</span>
-                 Data<span class="o">$</span>Is<span class="p">,</span>
-                 Data<span class="o">$</span>Ir<span class="p">)</span>
-df<span class="p">[</span><span class="kp">is.na</span><span class="p">(</span>df<span class="p">)]</span> <span class="o"><-</span> <span class="m">0</span>
+<span class="n">df</span> <span class="o"><-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">Data</span><span class="o">$</span><span class="n">pm2.5</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">DEWP</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">TEMP</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">PRES</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">Iws</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">Is</span><span class="p">,</span>
+                 <span class="n">Data</span><span class="o">$</span><span class="n">Ir</span><span class="p">)</span>
+<span class="n">df</span><span class="nf">[is.na</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="n">]</span> <span class="o"><-</span> <span class="m">0</span>
 
 <span class="c1">## Now we normalise each of the feature set to a range(0,1)</span>
-df <span class="o"><-</span> <span class="kt">matrix</span><span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>df<span class="p">),</span>
-             ncol <span class="o">=</span> <span class="kp">ncol</span><span class="p">(</span>df<span class="p">),</span>
-             dimnames <span class="o">=</span> <span class="kc">NULL</span><span class="p">)</span>
+<span class="n">df</span> <span class="o"><-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">df</span><span class="p">),</span>
+             <span class="n">ncol</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">df</span><span class="p">),</span>
+             <span class="n">dimnames</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">)</span>
 
-rangenorm <span class="o"><-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
-    <span class="p">(</span>x <span class="o">-</span> <span class="kp">min</span><span class="p">(</span>x<span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="kp">max</span><span class="p">(</span>x<span class="p">)</span> <span class="o">-</span> <span class="kp">min</span><span class="p">(</span>x<span class="p">))</span>
+<span class="n">rangenorm</span> <span class="o"><-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="nf">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nf">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 <span class="p">}</span>
-df <span class="o"><-</span> <span class="kp">apply</span><span class="p">(</span>df<span class="p">,</span> <span class="m">2</span><span class="p">,</span> rangenorm<span class="p">)</span>
-df <span class="o"><-</span> <span class="kp">t</span><span class="p">(</span>df<span class="p">)</span>
+<span class="n">df</span> <span class="o"><-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="n">rangenorm</span><span class="p">)</span>
+<span class="n">df</span> <span class="o"><-</span> <span class="nf">t</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For using multidimesional data with MXNet-R, we need to convert training data to the form
 (n_dim x seq_len x num_samples). For one-to-one RNN flavours labels should be of the form (seq_len x num_samples) while for many-to-one flavour, the labels should be of the form (1 x num_samples). Please note that MXNet-R currently supports only these two flavours of RNN.
 We have used n_dim = 7, seq_len = 100,  and num_samples = 430 because the dataset has 430 samples, each the length of 100 timestamps, we have seven time series as input features so each input has dimesnion of seven at each time step.</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>n_dim <span class="o"><-</span> <span class="m">7</span>
-seq_len <span class="o"><-</span> <span class="m">100</span>
-num_samples <span class="o"><-</span> <span class="m">430</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">n_dim</span> <span class="o"><-</span> <span class="m">7</span>
+<span class="n">seq_len</span> <span class="o"><-</span> <span class="m">100</span>
+<span class="n">num_samples</span> <span class="o"><-</span> <span class="m">430</span>
 
 <span class="c1">## extract only required data from dataset</span>
-trX <span class="o"><-</span> df<span class="p">[</span><span class="m">1</span><span class="o">:</span>n_dim<span class="p">,</span> <span class="m">25</span><span class="o">:</span><span class="p">(</span><span class="m">24</span> <span class="o">+</span> <span class="p">(</span>seq_len <span class="o">*</span> num_samples<span class="p">))]</span>
+<span class="n">trX</span> <span class="o"><-</span> <span class="n">df[1</span><span class="o">:</span><span class="n">n_dim</span><span class="p">,</span> <span class="m">25</span><span class="o">:</span><span class="p">(</span><span class="m">24</span> <span class="o">+</span> <span class="p">(</span><span class="n">seq_len</span> <span class="o">*</span> <span class="n">num_samples</span><span class="p">))</span><span class="n">]</span>
 
 <span class="c1">## the label data(next PM2.5 concentration) should be one time step</span>
 <span class="c1">## ahead of the current PM2.5 concentration</span>
-trY <span class="o"><-</span> df<span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">26</span><span class="o">:</span><span class="p">(</span><span class="m">25</span> <span class="o">+</span> <span class="p">(</span>seq_len <span class="o">*</span> num_samples<span class="p">))]</span>
+<span class="n">trY</span> <span class="o"><-</span> <span class="n">df[1</span><span class="p">,</span> <span class="m">26</span><span class="o">:</span><span class="p">(</span><span class="m">25</span> <span class="o">+</span> <span class="p">(</span><span class="n">seq_len</span> <span class="o">*</span> <span class="n">num_samples</span><span class="p">))</span><span class="n">]</span>
 
 <span class="c1">## reshape the matrices in the format acceptable by MXNetR RNNs</span>
-trainX <span class="o"><-</span> trX
-<span class="kp">dim</span><span class="p">(</span>trainX<span class="p">)</span> <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>n_dim<span class="p">,</span> <span class="kp">seq_len</span><span class="p">,</span> num_samples<span class="p">)</span>
-trainY <span class="o"><-</span> trY
-<span class="kp">dim</span><span class="p">(</span>trainY<span class="p">)</span> <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span><span class="kp">seq_len</span><span class="p">,</span> num_samples<span class="p">)</span>
+<span class="n">trainX</span> <span class="o"><-</span> <span class="n">trX</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">trainX</span><span class="p">)</span> <span class="o"><-</span> <span class="nf">c</span><span class="p">(</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
+<span class="n">trainY</span> <span class="o"><-</span> <span class="n">trY</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">trainY</span><span class="p">)</span> <span class="o"><-</span> <span class="nf">c</span><span class="p">(</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="defining-and-training-the-network">
 <span id="defining-and-training-the-network"></span><h2>Defining and training the network<a class="headerlink" href="#defining-and-training-the-network" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-r"><div class="highlight"><pre><span></span>batch.size <span class="o"><-</span> <span class="m">32</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">batch.size</span> <span class="o"><-</span> <span class="m">32</span>
 
 <span class="c1"># take first 300 samples for training - remaining 100 for evaluation</span>
-train_ids <span class="o"><-</span> <span class="m">1</span><span class="o">:</span><span class="m">300</span>
-eval_ids <span class="o"><-</span> <span class="m">301</span><span class="o">:</span><span class="m">400</span>
+<span class="n">train_ids</span> <span class="o"><-</span> <span class="m">1</span><span class="o">:</span><span class="m">300</span>
+<span class="n">eval_ids</span> <span class="o"><-</span> <span class="m">301</span><span class="o">:</span><span class="m">400</span>
 
 <span class="c1">## The number of samples used for training and evaluation is arbitrary.  I have kept aside few</span>
 <span class="c1">## samples for testing purposes create dataiterators</span>
-train.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> trainX<span class="p">[,</span> <span class="p">,</span> train_ids<span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">],</span> 
-                              label <span class="o">=</span> trainY<span class="p">[,</span> train_ids<span class="p">],</span>
-                              batch.size <span class="o">=</span> batch.size<span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">train.data</span> <span class="o"><-</span> <span class="nf">mx.io.arrayiter</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">trainX[</span><span class="p">,</span> <span class="p">,</span> <span class="n">train_ids</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">,</span> 
+                              <span class="n">label</span> <span class="o">=</span> <span class="n">trainY[</span><span class="p">,</span> <span class="n">train_ids]</span><span class="p">,</span>
+                              <span class="n">batch.size</span> <span class="o">=</span> <span class="n">batch.size</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
 
-eval.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> trainX<span class="p">[,</span> <span class="p">,</span> eval_ids<span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">],</span> 
-                             label <span class="o">=</span> trainY<span class="p">[,</span> eval_ids<span class="p">],</span>
-                             batch.size <span class="o">=</span> batch.size<span class="p">,</span> shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">eval.data</span> <span class="o"><-</span> <span class="nf">mx.io.arrayiter</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">trainX[</span><span class="p">,</span> <span class="p">,</span> <span class="n">eval_ids</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">,</span> 
+                             <span class="n">label</span> <span class="o">=</span> <span class="n">trainY[</span><span class="p">,</span> <span class="n">eval_ids]</span><span class="p">,</span>
+                             <span class="n">batch.size</span> <span class="o">=</span> <span class="n">batch.size</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
 
 <span class="c1">## Create the symbol for RNN</span>
-symbol <span class="o"><-</span> rnn.graph<span class="p">(</span>num_rnn_layer <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
-                    num_hidden <span class="o">=</span> <span class="m">5</span><span class="p">,</span>
-                    input_size <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span>
-                    num_embed <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span>
-                    num_decode <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
-                    masking <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> 
-                    loss_output <span class="o">=</span> <span class="s">"linear"</span><span class="p">,</span>
-                    dropout <span class="o">=</span> <span class="m">0.2</span><span class="p">,</span> 
-                    ignore_label <span class="o">=</span> <span class="m">-1</span><span class="p">,</span> 
-                    cell_type <span class="o">=</span> <span class="s">"lstm"</span><span class="p">,</span> 
-                    output_last_state <span class="o">=</span> <span class="bp">T</span><span class="p">,</span>
-                    config <span class="o">=</span> <span class="s">"one-to-one"</span><span class="p">)</span>
+<span class="n">symbol</span> <span class="o"><-</span> <span class="nf">rnn.graph</span><span class="p">(</span><span class="n">num_rnn_layer</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+                    <span class="n">num_hidden</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span>
+                    <span class="n">input_size</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span>
+                    <span class="n">num_embed</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span>
+                    <span class="n">num_decode</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+                    <span class="n">masking</span> <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> 
+                    <span class="n">loss_output</span> <span class="o">=</span> <span class="s">"linear"</span><span class="p">,</span>
+                    <span class="n">dropout</span> <span class="o">=</span> <span class="m">0.2</span><span class="p">,</span> 
+                    <span class="n">ignore_label</span> <span class="o">=</span> <span class="m">-1</span><span class="p">,</span> 
+                    <span class="n">cell_type</span> <span class="o">=</span> <span class="s">"lstm"</span><span class="p">,</span> 
+                    <span class="n">output_last_state</span> <span class="o">=</span> <span class="bp">T</span><span class="p">,</span>
+                    <span class="n">config</span> <span class="o">=</span> <span class="s">"one-to-one"</span><span class="p">)</span>
 
 
 
-mx.metric.mse.seq <span class="o"><-</span> mx.metric.custom<span class="p">(</span><span class="s">"MSE"</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span>label<span class="p">,</span> pred<span class="p">)</span> <span class="p">{</span>
-    label <span class="o">=</span> mx.nd.reshape<span class="p">(</span>label<span class="p">,</span> shape <span class="o">=</span> <span class="m">-1</span><span class="p">)</span>
-    pred <span class="o">=</span> mx.nd.reshape<span class="p">(</span>pred<span class="p">,</span> shape <span class="o">=</span> <span class="m">-1</span><span class="p">)</span>
-    res <span class="o"><-</span> mx.nd.mean<span class="p">(</span>mx.nd.square<span class="p">(</span>label <span class="o">-</span> pred<span class="p">))</span>
-    <span class="kr">return</span><span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>res<span class="p">))</span>
+<span class="n">mx.metric.mse.seq</span> <span class="o"><-</span> <span class="nf">mx.metric.custom</span><span class="p">(</span><span class="s">"MSE"</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="nf">mx.nd.reshape</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="m">-1</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="nf">mx.nd.reshape</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="m">-1</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o"><-</span> <span class="nf">mx.nd.mean</span><span class="p">(</span><span class="nf">mx.nd.square</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">))</span>
+    <span class="nf">return</span><span class="p">(</span><span class="nf">as.array</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
 <span class="p">})</span>
 
 
 
-ctx <span class="o"><-</span> mx.cpu<span class="p">()</span>
+<span class="n">ctx</span> <span class="o"><-</span> <span class="nf">mx.cpu</span><span class="p">()</span>
 
-initializer <span class="o"><-</span> mx.init.Xavier<span class="p">(</span>rnd_type <span class="o">=</span> <span class="s">"gaussian"</span><span class="p">,</span>
-                              factor_type <span class="o">=</span> <span class="s">"avg"</span><span class="p">,</span> 
-                              magnitude <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">initializer</span> <span class="o"><-</span> <span class="nf">mx.init.Xavier</span><span class="p">(</span><span class="n">rnd_type</span> <span class="o">=</span> <span class="s">"gaussian"</span><span class="p">,</span>
+                              <span class="n">factor_type</span> <span class="o">=</span> <span class="s">"avg"</span><span class="p">,</span> 
+                              <span class="n">magnitude</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
 
-optimizer <span class="o"><-</span> mx.opt.create<span class="p">(</span><span class="s">"adadelta"</span><span class="p">,</span>
-                           rho <span class="o">=</span> <span class="m">0.9</span><span class="p">,</span> 
-                           eps <span class="o">=</span> <span class="m">1e-05</span><span class="p">,</span> 
-                           wd <span class="o">=</span> <span class="m">1e-06</span><span class="p">,</span> 
-                           clip_gradient <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
-                           rescale.grad <span class="o">=</span> <span class="m">1</span><span class="o">/</span>batch.size<span class="p">)</span>
+<span class="n">optimizer</span> <span class="o"><-</span> <span class="nf">mx.opt.create</span><span class="p">(</span><span class="s">"adadelta"</span><span class="p">,</span>
+                           <span class="n">rho</span> <span class="o">=</span> <span class="m">0.9</span><span class="p">,</span> 
+                           <span class="n">eps</span> <span class="o">=</span> <span class="m">1e-05</span><span class="p">,</span> 
+                           <span class="n">wd</span> <span class="o">=</span> <span class="m">1e-06</span><span class="p">,</span> 
+                           <span class="n">clip_gradient</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
+                           <span class="n">rescale.grad</span> <span class="o">=</span> <span class="m">1</span><span class="o">/</span><span class="n">batch.size</span><span class="p">)</span>
 
-logger <span class="o"><-</span> mx.metric.logger<span class="p">()</span>
-epoch.end.callback <span class="o"><-</span> mx.callback.log.train.metric<span class="p">(</span>period <span class="o">=</span> <span class="m">10</span><span class="p">,</span> 
-                                                   logger <span class="o">=</span> logger<span class="p">)</span>
+<span class="n">logger</span> <span class="o"><-</span> <span class="nf">mx.metric.logger</span><span class="p">()</span>
+<span class="n">epoch.end.callback</span> <span class="o"><-</span> <span class="nf">mx.callback.log.train.metric</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span> 
+                                                   <span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span><span class="p">)</span>
 
 <span class="c1">## train the network</span>
-<span class="kp">system.time</span><span class="p">(</span>model <span class="o"><-</span> mx.model.buckets<span class="p">(</span>symbol <span class="o">=</span> symbol<span class="p">,</span> 
-                                      train.data <span class="o">=</span> train.data<span class="p">,</span> 
-                                      eval.data <span class="o">=</span> eval.data<span class="p">,</span>
-                                      num.round <span class="o">=</span> <span class="m">100</span><span class="p">,</span> 
-                                      ctx <span class="o">=</span> ctx<span class="p">,</span> 
-                                      verbose <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> 
-                                      metric <span class="o">=</span> mx.metric.mse.seq<span class="p">,</span> 
-                                      initializer <span class="o">=</span> initializer<span class="p">,</span>
-                                      optimizer <span class="o">=</span> optimizer<span class="p">,</span> 
-                                      batch.end.callback <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
-                                      epoch.end.callback <span class="o">=</span> epoch.end.callback<span class="p">))</span>
+<span class="nf">system.time</span><span class="p">(</span><span class="n">model</span> <span class="o"><-</span> <span class="nf">mx.model.buckets</span><span class="p">(</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">,</span> 
+                                      <span class="n">train.data</span> <span class="o">=</span> <span class="n">train.data</span><span class="p">,</span> 
+                                      <span class="n">eval.data</span> <span class="o">=</span> <span class="n">eval.data</span><span class="p">,</span>
+                                      <span class="n">num.round</span> <span class="o">=</span> <span class="m">100</span><span class="p">,</span> 
+                                      <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span> 
+                                      <span class="n">verbose</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> 
+                                      <span class="n">metric</span> <span class="o">=</span> <span class="n">mx.metric.mse.seq</span><span class="p">,</span> 
+                                      <span class="n">initializer</span> <span class="o">=</span> <span class="n">initializer</span><span class="p">,</span>
+                                      <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> 
+                                      <span class="n">batch.end.callback</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
+                                      <span class="n">epoch.end.callback</span> <span class="o">=</span> <span class="n">epoch.end.callback</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Output:</p>
@@ -439,61 +439,61 @@ epoch.end.callback <span class="o"><-</span> mx.callback.log.train.metric<span c
 <span id="inference-on-the-network"></span><h2>Inference on the network<a class="headerlink" href="#inference-on-the-network" title="Permalink to this headline">¶</a></h2>
 <p>Now we have trained the network. Let’s use it for inference.</p>
 <div class="highlight-r"><div class="highlight"><pre><span></span><span class="c1">## We extract the state symbols for RNN</span>
-internals <span class="o"><-</span> model<span class="o">$</span>symbol<span class="o">$</span>get.internals<span class="p">()</span>
-sym_state <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"RNN_state"</span><span class="p">))</span>
-sym_state_cell <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"RNN_state_cell"</span><span class="p">))</span>
-sym_output <span class="o"><-</span> internals<span class="o">$</span>get.output<span class="p">(</span><span class="kp">which</span><span class="p">(</span>internals<span class="o">$</span>outputs <span class="o">%in%</span> <span class="s">"loss_output"</span><span class="p">))</span>
-symbol <span class="o"><-</span> mx.symbol.Group<span class="p">(</span>sym_output<span class="p">,</span> sym_state<span class="p">,</span> sym_state_cell<span class="p">)</span>
+<span class="n">internals</span> <span class="o"><-</span> <span class="n">model</span><span class="o">$</span><span class="n">symbol</span><span class="o">$</span><span class="nf">get.internals</span><span class="p">()</span>
+<span class="n">sym_state</span> <span class="o"><-</span> <span class="n">internals</span><span class="o">$</span><span class="nf">get.output</span><span class="p">(</span><span class="nf">which</span><span class="p">(</span><span class="n">internals</span><span class="o">$</span><span class="n">outputs</span> <span class="o">%in%</span> <span class="s">"RNN_state"</span><span class="p">))</span>
+<span class="n">sym_state_cell</span> <span class="o"><-</span> <span class="n">internals</span><span class="o">$</span><span class="nf">get.output</span><span class="p">(</span><span class="nf">which</span><span class="p">(</span><span class="n">internals</span><span class="o">$</span><span class="n">outputs</span> <span class="o">%in%</span> <span class="s">"RNN_state_cell"</span><span class="p">))</span>
+<span class="n">sym_output</span> <span class="o"><-</span> <span class="n">internals</span><span class="o">$</span><span class="nf">get.output</span><span class="p">(</span><span class="nf">which</span><span class="p">(</span><span class="n">internals</span><span class="o">$</span><span class="n">outputs</span> <span class="o">%in%</span> <span class="s">"loss_output"</span><span class="p">))</span>
+<span class="n">symbol</span> <span class="o"><-</span> <span class="nf">mx.symbol.Group</span><span class="p">(</span><span class="n">sym_output</span><span class="p">,</span> <span class="n">sym_state</span><span class="p">,</span> <span class="n">sym_state_cell</span><span class="p">)</span>
 
 <span class="c1">## We will predict 100 timestamps for 401st sample (first sample from the test samples)</span>
-pred_length <span class="o"><-</span> <span class="m">100</span>
-predicted <span class="o"><-</span> <span class="kt">numeric</span><span class="p">()</span>
+<span class="n">pred_length</span> <span class="o"><-</span> <span class="m">100</span>
+<span class="n">predicted</span> <span class="o"><-</span> <span class="nf">numeric</span><span class="p">()</span>
 
 <span class="c1">## We pass the 400th sample through the network to get the weights and use it for predicting next</span>
 <span class="c1">## 100 time stamps.</span>
-data <span class="o"><-</span> mx.nd.array<span class="p">(</span>trainX<span class="p">[,</span> <span class="p">,</span> <span class="m">400</span><span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">])</span>
-label <span class="o"><-</span> mx.nd.array<span class="p">(</span>trainY<span class="p">[,</span> <span class="m">400</span><span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">])</span>
+<span class="n">data</span> <span class="o"><-</span> <span class="nf">mx.nd.array</span><span class="p">(</span><span class="n">trainX[</span><span class="p">,</span> <span class="p">,</span> <span class="m">400</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">)</span>
+<span class="n">label</span> <span class="o"><-</span> <span class="nf">mx.nd.array</span><span class="p">(</span><span class="n">trainY[</span><span class="p">,</span> <span class="m">400</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">)</span>
 
 
 <span class="c1">## We create dataiterators for the input, please note that the label is required to create</span>
 <span class="c1">## iterator and will not be used in the inference. You can use dummy values too in the label.</span>
-infer.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> data<span class="p">,</span> 
-                              label <span class="o">=</span> label<span class="p">,</span> 
-                              batch.size <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
-                              shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">infer.data</span> <span class="o"><-</span> <span class="nf">mx.io.arrayiter</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> 
+                              <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="p">,</span> 
+                              <span class="n">batch.size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
+                              <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
 
-infer <span class="o"><-</span> mx.infer.rnn.one<span class="p">(</span>infer.data <span class="o">=</span> infer.data<span class="p">,</span> 
-                          symbol <span class="o">=</span> symbol<span class="p">,</span> 
-                          arg.params <span class="o">=</span> model<span class="o">$</span>arg.params<span class="p">,</span>
-                          aux.params <span class="o">=</span> model<span class="o">$</span>aux.params<span class="p">,</span> 
-                          input.params <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
-                          ctx <span class="o">=</span> ctx<span class="p">)</span>
+<span class="n">infer</span> <span class="o"><-</span> <span class="nf">mx.infer.rnn.one</span><span class="p">(</span><span class="n">infer.data</span> <span class="o">=</span> <span class="n">infer.data</span><span class="p">,</span> 
+                          <span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">,</span> 
+                          <span class="n">arg.params</span> <span class="o">=</span> <span class="n">model</span><span class="o">$</span><span class="n">arg.params</span><span class="p">,</span>
+                          <span class="n">aux.params</span> <span class="o">=</span> <span class="n">model</span><span class="o">$</span><span class="n">aux.params</span><span class="p">,</span> 
+                          <span class="n">input.params</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">,</span> 
+                          <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">)</span>
 <span class="c1">## Once we get the weights for the above time series, we try to predict the next 100 steps for</span>
 <span class="c1">## this time series, which is technically our 401st time series.</span>
 
-actual <span class="o"><-</span> trainY<span class="p">[,</span> <span class="m">401</span><span class="p">]</span>
+<span class="n">actual</span> <span class="o"><-</span> <span class="n">trainY[</span><span class="p">,</span> <span class="m">401</span><span class="n">]</span>
 
 <span class="c1">## Now we iterate one by one to generate each of the next timestamp pollution values</span>
 
-<span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>pred_length<span class="p">)</span> <span class="p">{</span>
+<span class="nf">for </span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">pred_length</span><span class="p">)</span> <span class="p">{</span>
 
-    data <span class="o"><-</span> mx.nd.array<span class="p">(</span>trainX<span class="p">[,</span> i<span class="p">,</span> <span class="m">401</span><span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">])</span>
-    label <span class="o"><-</span> mx.nd.array<span class="p">(</span>trainY<span class="p">[</span>i<span class="p">,</span> <span class="m">401</span><span class="p">,</span> drop <span class="o">=</span> <span class="bp">F</span><span class="p">])</span>
-    infer.data <span class="o"><-</span> mx.io.arrayiter<span class="p">(</span>data <span class="o">=</span> data<span class="p">,</span> 
-                                  label <span class="o">=</span> label<span class="p">,</span> 
-                                  batch.size <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
-                                  shuffle <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o"><-</span> <span class="nf">mx.nd.array</span><span class="p">(</span><span class="n">trainX[</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="m">401</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o"><-</span> <span class="nf">mx.nd.array</span><span class="p">(</span><span class="n">trainY[i</span><span class="p">,</span> <span class="m">401</span><span class="p">,</span> <span class="n">drop</span> <span class="o">=</span> <span class="bp">F</span><span class="n">]</span><span class="p">)</span>
+    <span class="n">infer.data</span> <span class="o"><-</span> <span class="nf">mx.io.arrayiter</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> 
+                                  <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="p">,</span> 
+                                  <span class="n">batch.size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> 
+                                  <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
     <span class="c1">## note that we use rnn state values from previous iterations here</span>
-    infer <span class="o"><-</span> mx.infer.rnn.one<span class="p">(</span>infer.data <span class="o">=</span> infer.data<span class="p">,</span>
-                              symbol <span class="o">=</span> symbol<span class="p">,</span>
-                              ctx <span class="o">=</span> ctx<span class="p">,</span> 
-                              arg.params <span class="o">=</span> model<span class="o">$</span>arg.params<span class="p">,</span>
-                              aux.params <span class="o">=</span> model<span class="o">$</span>aux.params<span class="p">,</span> 
-                              input.params <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>rnn.state <span class="o">=</span> infer<span class="p">[[</span><span class="m">2</span><span class="p">]],</span> 
-                                                  rnn.state.cell <span class="o">=</span> infer<span class="p">[[</span><span class="m">3</span><span class="p">]]))</span>
+    <span class="n">infer</span> <span class="o"><-</span> <span class="nf">mx.infer.rnn.one</span><span class="p">(</span><span class="n">infer.data</span> <span class="o">=</span> <span class="n">infer.data</span><span class="p">,</span>
+                              <span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">,</span>
+                              <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span> 
+                              <span class="n">arg.params</span> <span class="o">=</span> <span class="n">model</span><span class="o">$</span><span class="n">arg.params</span><span class="p">,</span>
+                              <span class="n">aux.params</span> <span class="o">=</span> <span class="n">model</span><span class="o">$</span><span class="n">aux.params</span><span class="p">,</span> 
+                              <span class="n">input.params</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">rnn.state</span> <span class="o">=</span> <span class="n">infer[[2]]</span><span class="p">,</span> 
+                                                  <span class="n">rnn.state.cell</span> <span class="o">=</span> <span class="n">infer[[3]]</span><span class="p">))</span>
 
-    pred <span class="o"><-</span> infer<span class="p">[[</span><span class="m">1</span><span class="p">]]</span>
-    predicted <span class="o"><-</span> <span class="kt">c</span><span class="p">(</span>predicted<span class="p">,</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">as.array</span><span class="p">(</span>pred<span class="p">)))</span>
+    <span class="n">pred</span> <span class="o"><-</span> <span class="n">infer[[1]]</span>
+    <span class="n">predicted</span> <span class="o"><-</span> <span class="nf">c</span><span class="p">(</span><span class="n">predicted</span><span class="p">,</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">as.array</span><span class="p">(</span><span class="n">pred</span><span class="p">)))</span>
 
 <span class="p">}</span>
 </pre></div>

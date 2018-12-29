@@ -230,13 +230,13 @@
 <div class="section" id="basic-composition-of-symbols">
 <span id="basic-composition-of-symbols"></span><h2>Basic Composition of Symbols<a class="headerlink" href="#basic-composition-of-symbols" title="Permalink to this headline">¶</a></h2>
 <p>The following code creates a two-layer perceptron network:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span><span class="kn">require</span><span class="p">(</span>mxnet<span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>net<span class="p">,</span> name<span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">128</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.Activation<span class="p">(</span>data<span class="o">=</span>net<span class="p">,</span> name<span class="o">=</span><span class="s">"relu1"</span><span class="p">,</span> act_type<span class="o">=</span><span class="s">"relu"</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>net<span class="p">,</span> name<span class="o">=</span><span class="s">"fc2"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">64</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.Softmax<span class="p">(</span>data<span class="o">=</span>net<span class="p">,</span> name<span class="o">=</span><span class="s">"out"</span><span class="p">)</span>
-<span class="kp">class</span><span class="p">(</span>net<span class="p">)</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="nf">require</span><span class="p">(</span><span class="n">mxnet</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.Activation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"relu1"</span><span class="p">,</span> <span class="n">act_type</span><span class="o">=</span><span class="s">"relu"</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"fc2"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">64</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.Softmax</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"out"</span><span class="p">)</span>
+<span class="nf">class</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## [1] "Rcpp_MXSymbol"</span>
@@ -250,7 +250,7 @@ and may accept other hyper parameters, such as the number of hidden neurons (<em
 or the activation type (<em>act_type</em>).</p>
 <p>A symbol can be viewed as a function that takes several arguments, whose
 names are automatically generated and can be retrieved with the following command:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>arguments<span class="p">(</span>net<span class="p">)</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="nf">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## [1] "data"       "fc1_weight" "fc1_bias"   "fc2_weight" "fc2_bias"</span>
@@ -265,10 +265,10 @@ names are automatically generated and can be retrieved with the following comman
 <li><em>out_label</em>: The label needed by the loss</li>
 </ul>
 <p>We can also specify the automatically generated names explicitly:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>data <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
-w <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"myweight"</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>data<span class="p">,</span> weight<span class="o">=</span>w<span class="p">,</span> name<span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">128</span><span class="p">)</span>
-arguments<span class="p">(</span>net<span class="p">)</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
+<span class="n">w</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"myweight"</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span>
+<span class="nf">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## [1] "data"     "myweight" "fc1_bias"</span>
@@ -281,10 +281,10 @@ arguments<span class="p">(</span>net<span class="p">)</span>
 commonly used layers in deep learning. You can also define new operators
 in Python. The following example first performs an element-wise add between two
 symbols, then feeds them to the fully connected operator:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>lhs <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data1"</span><span class="p">)</span>
-rhs <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data2"</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>lhs <span class="o">+</span> rhs<span class="p">,</span> name<span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">128</span><span class="p">)</span>
-arguments<span class="p">(</span>net<span class="p">)</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">lhs</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data1"</span><span class="p">)</span>
+<span class="n">rhs</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data2"</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">lhs</span> <span class="o">+</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span>
+<span class="nf">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## [1] "data1"      "data2"      "fc1_weight" "fc1_bias"</span>
@@ -292,12 +292,12 @@ arguments<span class="p">(</span>net<span class="p">)</span>
 </div>
 <p>We can construct a symbol more flexibly than by using the single
 forward composition, for example:</p>
-<div class="highlight-r"><div class="highlight"><pre><span></span>net <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
-net <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>net<span class="p">,</span> name<span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">128</span><span class="p">)</span>
-net2 <span class="o"><-</span> mx.symbol.Variable<span class="p">(</span><span class="s">"data2"</span><span class="p">)</span>
-net2 <span class="o"><-</span> mx.symbol.FullyConnected<span class="p">(</span>data<span class="o">=</span>net2<span class="p">,</span> name<span class="o">=</span><span class="s">"net2"</span><span class="p">,</span> num_hidden<span class="o">=</span><span class="m">128</span><span class="p">)</span>
-composed.net <span class="o"><-</span> mx.apply<span class="p">(</span>net<span class="p">,</span> data<span class="o">=</span>net2<span class="p">,</span> name<span class="o">=</span><span class="s">"compose"</span><span class="p">)</span>
-arguments<span class="p">(</span>composed.net<span class="p">)</span>
+<div class="highlight-r"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data"</span><span class="p">)</span>
+<span class="n">net</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"fc1"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span>
+<span class="n">net2</span> <span class="o"><-</span> <span class="nf">mx.symbol.Variable</span><span class="p">(</span><span class="s">"data2"</span><span class="p">)</span>
+<span class="n">net2</span> <span class="o"><-</span> <span class="nf">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"net2"</span><span class="p">,</span> <span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span>
+<span class="n">composed.net</span> <span class="o"><-</span> <span class="nf">mx.apply</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">net2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"compose"</span><span class="p">)</span>
+<span class="nf">arguments</span><span class="p">(</span><span class="n">composed.net</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## [1] "data2"       "net2_weight" "net2_bias"   "fc1_weight"  "fc1_bias"</span>
