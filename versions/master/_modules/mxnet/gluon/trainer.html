@@ -253,6 +253,15 @@
     <span class="sd">"""Applies an `Optimizer` on a set of Parameters. Trainer should</span>
 <span class="sd">    be used together with `autograd`.</span>
 
+<span class="sd">    .. note::</span>
+
+<span class="sd">        For the following cases, updates will always happen on kvstore,</span>
+<span class="sd">        i.e., you cannot set update_on_kvstore=False.</span>
+
+<span class="sd">        - dist kvstore with sparse weights or sparse gradients</span>
+<span class="sd">        - dist async kvstore</span>
+<span class="sd">        - `optimizer.lr_scheduler` is not None</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    params : ParameterDict</span>
@@ -340,11 +349,12 @@
                 <span class="s2">"optimizer_params must be None if optimizer is an instance of "</span> \
                 <span class="s2">"Optimizer instead of str"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+            <span class="c1"># param_dict must not be deep copied, so that if user mutate the lr_mult</span>
+            <span class="c1"># or wd_mult of some parameters, it takes effect.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">param_dict</span> <span class="o">=</span> <span class="n">param_dict</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span>
                                          <span class="o">**</span><span class="n">optimizer_params</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">get_updater</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">)</span> \
                             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">]</span>
 
@@ -383,59 +393,82 @@
     <span class="k">def</span> <span class="nf">_init_kvstore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Create kvstore."""</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore_params</span>
-        <span class="c1"># if weight is sparse, the weight must be updated on KVStore.</span>
-        <span class="c1"># training loop contains:</span>
-        <span class="c1">#    - row_sparse_pull(sparse_weight)</span>
-        <span class="c1">#    - forward()</span>
-        <span class="c1">#    - backward()</span>
-        <span class="c1">#    - push(sparse_grad), push(dense_grad)</span>
-        <span class="c1">#    - pull(dense_weight)</span>
+        <span class="c1"># configure kvstore, update_on_kvstore and self._distributed on three cases:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_weight</span><span class="p">:</span>
+            <span class="c1"># If weight is sparse, kvstore must be present and the weight must be updated on kvstore.</span>
+            <span class="c1"># The training loop is the following:</span>
+            <span class="c1">#    - row_sparse_pull(sparse_weight)</span>
+            <span class="c1">#    - forward()</span>
+            <span class="c1">#    - backward()</span>
+            <span class="c1">#    - push_and_update(grad)</span>
+            <span class="c1">#    - pull(weight)</span>
             <span class="n">kvstore</span><span class="p">,</span> <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">_create_sparse_kvstore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">'kvstore'</span><span class="p">])</span>
-            <span class="c1"># raise Error if update_on_kvstore is set to False by the user</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span>
+            <span class="c1"># raise err if user provides unsupported configs</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot set update_on_kvstore to False when sparse weights "</span>
-                                   <span class="s2">"are present."</span><span class="p">)</span>
-        <span class="c1"># if weight is dense and grad is sparse, the weight better not be updated on KVStore.</span>
-        <span class="c1"># training loop contains:</span>
-        <span class="c1">#    - forward()</span>
-        <span class="c1">#    - backward()</span>
-        <span class="c1">#    - push(grad)</span>
-        <span class="c1">#    - pull(grad)</span>
-        <span class="c1">#    - update(grad, weight)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot set update_on_kvstore=False when sparse weights "</span>
+                                 <span class="s2">"are present."</span><span class="p">)</span>
+
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_grad</span><span class="p">:</span>
+            <span class="c1"># For single node training with dense weight and sparse grad,</span>
+            <span class="c1"># we prefer update_on_kvstore=False because this is usually faster.</span>
+            <span class="c1"># This means we push and pull sparse gradients, and we do not store weight in kvstore.</span>
+            <span class="c1"># The training loop is the following:</span>
+            <span class="c1">#    - forward()</span>
+            <span class="c1">#    - backward()</span>
+            <span class="c1">#    - push(grad)</span>
+            <span class="c1">#    - pull(grad)</span>
+            <span class="c1">#    - update(grad, weight)</span>
+            <span class="c1">#</span>
+            <span class="c1"># For multi-node training with dense weight and sparse grad,</span>
+            <span class="c1"># only update_on_kvstore=True is supported, due to the fact that</span>
+            <span class="c1"># kv.row_sparse_pull(grad) is not implemented.</span>
+            <span class="c1"># Therefore, we push sparse gradients and pull dense weights.</span>
+            <span class="c1"># The training loop contains:</span>
+            <span class="c1">#    - forward()</span>
+            <span class="c1">#    - backward()</span>
+            <span class="c1">#    - push_and_update(grad)</span>
+            <span class="c1">#    - pull(weight)</span>
             <span class="n">arg_arrays</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">}</span>
             <span class="n">kvstore</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_create_kvstore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">'kvstore'</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">),</span> <span class="n">arg_arrays</span><span class="p">)</span>
-            <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="c1"># normal case</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> <span class="k">if</span> <span class="n">kvstore</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span>
+            <span class="c1"># raise err if user provides unsupported configs</span>
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot set update_on_kvstore=False on dist kvstore "</span>
+                                     <span class="s2">"when sparse gradients are present."</span><span class="p">)</span>
+                <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span>
+
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Training with dense weight and dense gradients.</span>
+            <span class="c1"># The only unsupported mode is async with update_on_kvstore=False</span>
             <span class="n">arg_arrays</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">}</span>
             <span class="n">kvstore</span><span class="p">,</span> <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">_create_kvstore</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">'kvstore'</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contexts</span><span class="p">),</span>
                                                          <span class="n">arg_arrays</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">kvstore</span> <span class="ow">and</span> <span class="s1">'async'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> <span class="ow">and</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>\
-                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Please set update_on_kvstore to true "</span>
-                                 <span class="s2">"when training in async mode."</span><span class="p">)</span>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> <span class="k">if</span> <span class="n">kvstore</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="ow">and</span> <span class="s1">'async'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+                <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># raise err if user provides unsupported configs</span>
+                <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Please set update_on_kvstore=True "</span>
+                                     <span class="s2">"when training in async mode."</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span>
 
+        <span class="c1"># set grad compression and optimizers</span>
         <span class="k">if</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">:</span>
                 <span class="n">kvstore</span><span class="o">.</span><span class="n">set_gradient_compression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compression_params</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="o">=</span> <span class="s1">'dist'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span><span class="p">:</span>
-                <span class="c1"># kv.pull(row_sparse_grad) is not supported for dist kvstore</span>
-                <span class="c1"># Captures condition for dist_async, dist_device_sync or based on config for</span>
-                <span class="c1"># update_on_kvstore</span>
-                <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_weight</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contains_sparse_grad</span> \
-                                    <span class="ow">or</span> <span class="s1">'device'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> <span class="ow">or</span> <span class="s1">'async'</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="o">.</span><span class="n">type</span> \
-                                    <span class="ow">or</span> <span class="n">config</span><span class="p">[</span><span class="s1">'update_on_kvstore'</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">update_on_kvstore</span><span class="p">:</span>
                 <span class="c1"># optimizer preferably needs to be set before init for multiprecision</span>
                 <span class="n">kvstore</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span> <span class="o">=</span> <span class="n">kvstore</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="o">=</span> <span class="n">update_on_kvstore</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"update_on_kvstore=False does not support "</span> \
+                                 <span class="s2">"optimizer with LRScheduler. Please "</span> \
+                                 <span class="s2">"consider setting learning rate manually."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="o">=</span> <span class="kc">None</span>
@@ -480,6 +513,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">row_sparse_pull</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">row_ids</span><span class="o">=</span><span class="n">row_id</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">idx</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_check_and_rescale_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">!=</span> <span class="n">scale</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">'Possible change in the `batch_size` from previous '</span>
+                                  <span class="s1">'`step` detected. Optimizer gradient normalizing '</span>
+                                  <span class="s1">'factor will not change w.r.t new batch_size when '</span>
+                                  <span class="s1">'update_on_kvstore=True and when distributed kvstore '</span>
+                                  <span class="s1">'is used.'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">scale</span>
+
 <div class="viewcode-block" id="Trainer.step"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Trainer.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">ignore_stale_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""Makes one step of parameter update. Should be called after</span>
 <span class="sd">        `autograd.backward()` and outside of `record()` scope.</span>
@@ -499,13 +542,7 @@
 <span class="sd">            been updated by `backward` after last step) and skip update.</span>
 <span class="sd">        """</span>
         <span class="n">rescale_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">/</span> <span class="n">batch_size</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed</span> <span class="ow">and</span> \
-           <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">!=</span> <span class="n">rescale_grad</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">'Possible change in the `batch_size` from previous `step` detected.'</span> \
-                            <span class="s1">'Optimizer gradient normalizing factor will not change w.r.t new batch_size when '</span> \
-                            <span class="s1">'update_on_kvstore=True and when distributed `kvstore` is used.'</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">rescale_grad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_and_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_kvstore</span><span class="p">()</span>
@@ -577,7 +614,7 @@
                 <span class="s1">'is not supported. Try setting `update_on_kvstore` '</span> \
                 <span class="s1">'to False when creating trainer.'</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">/</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_and_rescale_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">ignore_stale_grad</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_stale_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -612,10 +649,16 @@
 <div class="viewcode-block" id="Trainer.save_states"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Trainer.save_states">[docs]</a>    <span class="k">def</span> <span class="nf">save_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
         <span class="sd">"""Saves trainer states (e.g. optimizer, momentum) to a file.</span>
 
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fname : str</span>
 <span class="sd">            Path to output states file.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        `optimizer.param_dict`, which contains Parameter information (such as</span>
+<span class="sd">        `lr_mult` and `wd_mult`) will not be saved.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
@@ -639,6 +682,12 @@
 <span class="sd">        ----------</span>
 <span class="sd">        fname : str</span>
 <span class="sd">            Path to input states file.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        `optimizer.param_dict`, which contains Parameter information (such as</span>
+<span class="sd">        `lr_mult` and `wd_mult`) will not be loaded from the file, but rather set</span>
+<span class="sd">        based on current Trainer's parameters.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kv_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_kvstore</span><span class="p">()</span>
@@ -648,15 +697,15 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">load_optimizer_states</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">_updater</span><span class="o">.</span><span class="n">optimizer</span>
-            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">param</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">param_dict</span> <span class="o">=</span> <span class="n">param_dict</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">states</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">updater</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">:</span>
                 <span class="n">updater</span><span class="o">.</span><span class="n">set_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
                 <span class="n">updater</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">param</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">param_dict</span> <span class="o">=</span> <span class="n">param_dict</span></div></div>
 </pre></div>
 </div>
 </div>

@@ -834,17 +834,17 @@ by <a class="reference internal" href="#mxnet.optimizer.Optimizer" title="mxnet.
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em>) – Multiply the gradient with <cite>rescale_grad</cite> before updating. Often
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default 1.0</em>) – Multiply the gradient with <cite>rescale_grad</cite> before updating. Often
 choose to be <code class="docutils literal"><span class="pre">1.0/batch_size</span></code>.</li>
-<li><strong>param_idx2name</strong> (<em>dict from int to string</em><em>, </em><em>optional</em>) – A dictionary that maps int index to string name.</li>
-<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em>) – Clip the gradient by projecting onto the box <code class="docutils literal"><span class="pre">[-clip_gradient,</span> <span class="pre">clip_gradient]</span></code>.</li>
+<li><strong>param_idx2name</strong> (<em>dict from int to string</em><em>, </em><em>optional</em><em>, </em><em>default None</em>) – A dictionary that maps int index to string name.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default None</em>) – Clip the gradient by projecting onto the box <code class="docutils literal"><span class="pre">[-clip_gradient,</span> <span class="pre">clip_gradient]</span></code>.</li>
 <li><strong>learning_rate</strong> (<em>float</em>) – The initial learning rate.</li>
-<li><strong>lr_scheduler</strong> (<a class="reference internal" href="#mxnet.lr_scheduler.LRScheduler" title="mxnet.lr_scheduler.LRScheduler"><em>LRScheduler</em></a><em>, </em><em>optional</em>) – The learning rate scheduler.</li>
-<li><strong>wd</strong> (<em>float</em><em>, </em><em>optional</em>) – The weight decay (or L2 regularization) coefficient. Modifies objective
+<li><strong>lr_scheduler</strong> (<a class="reference internal" href="#mxnet.lr_scheduler.LRScheduler" title="mxnet.lr_scheduler.LRScheduler"><em>LRScheduler</em></a><em>, </em><em>optional</em><em>, </em><em>default None</em>) – The learning rate scheduler.</li>
+<li><strong>wd</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default 0.0</em>) – The weight decay (or L2 regularization) coefficient. Modifies objective
 by adding a penalty for having large weights.</li>
-<li><strong>sym</strong> (<a class="reference internal" href="../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em>, </em><em>optional</em>) – The Symbol this optimizer is applying to.</li>
-<li><strong>begin_num_update</strong> (<em>int</em><em>, </em><em>optional</em>) – The initial number of updates.</li>
-<li><strong>multi_precision</strong> (<em>bool</em><em>, </em><em>optional</em>) – <p>Flag to control the internal precision of the optimizer.:</p>
+<li><strong>sym</strong> (<a class="reference internal" href="../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em>, </em><em>optional</em><em>, </em><em>default None</em>) – The Symbol this optimizer is applying to.</li>
+<li><strong>begin_num_update</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default 0</em>) – The initial number of updates.</li>
+<li><strong>multi_precision</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default False</em>) – <p>Flag to control the internal precision of the optimizer.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kc">False</span><span class="p">:</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">using</span> <span class="n">the</span> <span class="n">same</span> <span class="n">precision</span> <span class="k">as</span> <span class="n">the</span> <span class="n">weights</span> <span class="p">(</span><span class="n">default</span><span class="p">),</span>
 <span class="kc">True</span><span class="p">:</span> <span class="n">makes</span> <span class="n">internal</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">weights</span> <span class="ow">and</span> <span class="n">applies</span> <span class="n">gradients</span>
 <span class="ow">in</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">precision</span> <span class="n">even</span> <span class="k">if</span> <span class="n">actual</span> <span class="n">weights</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">model</span> <span class="n">have</span> <span class="n">lower</span> <span class="n">precision</span><span class="o">.</span>
@@ -852,6 +852,8 @@ by adding a penalty for having large weights.</li>
 </pre></div>
 </div>
 </li>
+<li><strong>param_dict</strong> (<em>dict of int -> gluon.Parameter</em><em>, </em><em>default None</em>) – Dictionary of parameter index to gluon.Parameter, used to lookup parameter attributes
+such as lr_mult, wd_mult, etc. param_dict shall not be deep copied.</li>
 <li><strong>Properties</strong> – </li>
 <li><strong>----------</strong> – </li>
 <li><strong>learning_rate</strong> – The current learning rate of the optimizer. Given an Optimizer object

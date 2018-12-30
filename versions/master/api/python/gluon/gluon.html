@@ -1433,6 +1433,16 @@ that are not inputs.</li>
 <em class="property">class </em><code class="descclassname">mxnet.gluon.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>params</em>, <em>optimizer</em>, <em>optimizer_params=None</em>, <em>kvstore='device'</em>, <em>compression_params=None</em>, <em>update_on_kvstore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies an <cite>Optimizer</cite> on a set of Parameters. Trainer should
 be used together with <cite>autograd</cite>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For the following cases, updates will always happen on kvstore,
+i.e., you cannot set update_on_kvstore=False.</p>
+<ul class="last simple">
+<li>dist kvstore with sparse weights or sparse gradients</li>
+<li>dist async kvstore</li>
+<li><cite>optimizer.lr_scheduler</cite> is not None</li>
+</ul>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1491,6 +1501,12 @@ you may want to manually call <cite>allreduce_grads()</cite> and <cite>update()<
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>optimizer.param_dict</cite>, which contains Parameter information (such as
+<cite>lr_mult</cite> and <cite>wd_mult</cite>) will not be loaded from the file, but rather set
+based on current Trainer’s parameters.</p>
+</div>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.Trainer.save_states">
@@ -1504,6 +1520,11 @@ you may want to manually call <cite>allreduce_grads()</cite> and <cite>update()<
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>optimizer.param_dict</cite>, which contains Parameter information (such as
+<cite>lr_mult</cite> and <cite>wd_mult</cite>) will not be saved.</p>
+</div>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.gluon.Trainer.set_learning_rate">
