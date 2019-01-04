@@ -295,10 +295,10 @@
 </div>
 <p>Let’s define a method that will run one training iteration given data and label.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Use GPU if available</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">list_gpus</span><span class="p">();</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">()</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">ctx</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">list_gpus</span><span class="p">())</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+    <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
 
 <span class="c1"># Initialize the parameters with random weights</span>
 <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Xavier</span><span class="p">(),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
