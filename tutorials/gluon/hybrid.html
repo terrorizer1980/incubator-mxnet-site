@@ -226,7 +226,13 @@
 <div class="page-tracker"></div>
 <div class="section" id="hybrid-faster-training-and-easy-deployment">
 <span id="hybrid-faster-training-and-easy-deployment"></span><h1>Hybrid - Faster training and easy deployment<a class="headerlink" href="#hybrid-faster-training-and-easy-deployment" title="Permalink to this headline">¶</a></h1>
-<p><em>Note: a newer version is available <a class="reference external" href="http://gluon.mxnet.io/chapter07_distributed-learning/hybridize.html">here</a>.</em></p>
+<p><em>Related Content:</em></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://gluon.mxnet.io/chapter07_distributed-learning/hybridize.html">Fast, portable neural networks with Gluon HybridBlocks</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://en.diveintodeeplearning.org/chapter_computational-performance/hybridize.html">A Hybrid of Imperative and Symbolic Programming</a></li>
+</ul>
+</div>
 <p>Deep learning frameworks can be roughly divided into two categories: declarative
 and imperative. With declarative frameworks (including Tensorflow, Theano, etc)
 users first declare a fixed computation graph and then execute it end-to-end.
@@ -346,8 +352,186 @@ to gluon with <code class="docutils literal"><span class="pre">SymbolBlock</span
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net2</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span><span class="s1">'model-symbol.json'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'data'</span><span class="p">],</span> <span class="s1">'model-0001.params'</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="operators-that-do-not-work-with-hybridize">
+<span id="operators-that-do-not-work-with-hybridize"></span><h2>Operators that do not work with hybridize<a class="headerlink" href="#operators-that-do-not-work-with-hybridize" title="Permalink to this headline">¶</a></h2>
+<p>If you want to hybridize your model, you must use <code class="docutils literal"><span class="pre">F.some_operator</span></code> in your ‘hybrid_forward’ function.
+<code class="docutils literal"><span class="pre">F</span></code> will be <code class="docutils literal"><span class="pre">mxnet.nd</span></code> before you hybridize and <code class="docutils literal"><span class="pre">mxnet.sym</span></code> after hybridize. While most APIs are the same in NDArray and Symbol, there are some differences. Writing <code class="docutils literal"><span class="pre">F.some_operator</span></code> and call <code class="docutils literal"><span class="pre">hybridize</span></code> may not work all of the time.
+Here we list some frequently used NDArray APIs that can’t be hybridized and provide you the work arounds.</p>
+<div class="section" id="element-wise-operators">
+<span id="element-wise-operators"></span><h3>Element-wise Operators<a class="headerlink" href="#element-wise-operators" title="Permalink to this headline">¶</a></h3>
+<p>In NDArray APIs, the following arithmetic and comparison APIs are automatically broadcasted if the input NDArrays have different shapes.
+However, that’s not the case in Symbol API. It’s not automatically broadcasted, and you have to manually specify to use another set of broadcast operators for Symbols expected to have different shapes.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%"/>
+<col width="50%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">NDArray APIs</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__add__">*NDArray._*add_**</a></td>
+<td>x._<em>add_</em>(y) <=> x+y <=> mx.nd.add(x, y)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__sub__">*NDArray._*sub_**</a></td>
+<td>x._<em>sub_</em>(y) <=> x-y <=> mx.nd.subtract(x, y)</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__mul__">*NDArray._*mul_**</a></td>
+<td>x._<em>mul_</em>(y) <=> x*y <=> mx.nd.multiply(x, y)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__div__">*NDArray._*div_**</a></td>
+<td>x._<em>div_</em>(y) <=> x/y <=> mx.nd.divide(x, y)</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__mod__">*NDArray._*mod_**</a></td>
+<td>x._<em>mod_</em>(y) <=> x%y <=> mx.nd.modulo(x, y)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__lt__">*NDArray._*lt_**</a></td>
+<td>x._<em>lt_</em>(y) <=> x<y <=> x mx.nd.lesser(x, y)</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__le__">*NDArray._*le_**</a></td>
+<td>x._<em>le_</em>(y) <=> x<=y <=> mx.nd.less_equal(x, y)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__gt__">*NDArray._*gt_**</a></td>
+<td>x._<em>gt_</em>(y) <=> x>y <=> mx.nd.greater(x, y)</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__ge__">*NDArray._*ge_**</a></td>
+<td>x._<em>ge_</em>(y) <=> x>=y <=> mx.nd.greater_equal(x, y)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__eq__">*NDArray._*eq_**</a></td>
+<td>x._<em>eq_</em>(y) <=> x==y <=> mx.nd.equal(x, y)</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__ne__">*NDArray._*ne_**</a></td>
+<td>x._<em>ne_</em>(y) <=> x!=y <=> mx.nd.not_equal(x, y)</td>
+</tr>
+</tbody>
+</table>
+<p>The current workaround is to use corresponding broadcast operators for arithmetic and comparison to avoid potential hybridization failure when input shapes are different.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%"/>
+<col width="50%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol APIs</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_add">*broadcast_add*</a></td>
+<td>Returns element-wise sum of the input arrays with broadcasting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_sub">*broadcast_sub*</a></td>
+<td>Returns element-wise difference of the input arrays with broadcasting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_mul">*broadcast_mul*</a></td>
+<td>Returns element-wise product of the input arrays with broadcasting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_div">*broadcast_div*</a></td>
+<td>Returns element-wise division of the input arrays with broadcasting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_mod">*broadcast_mod*</a></td>
+<td>Returns element-wise modulo of the input arrays with broadcasting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_equal">*broadcast_equal*</a></td>
+<td>Returns the result of element-wise <em>equal to</em> (==) comparison operation with broadcasting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_not_equal">*broadcast_not_equal*</a></td>
+<td>Returns the result of element-wise <em>not equal to</em> (!=) comparison operation with broadcasting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_greater">*broadcast_greater*</a></td>
+<td>Returns the result of element-wise <em>greater than</em> (>) comparison operation with broadcasting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_greater_equal">*broadcast_greater_equal*</a></td>
+<td>Returns the result of element-wise <em>greater than or equal to</em> (>=) comparison operation with broadcasting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_lesser">*broadcast_lesser*</a></td>
+<td>::      Returns the result of element-wise <em>lesser than</em> (<) comparison operation with broadcasting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/symbol/symbol.html#mxnet.symbol.broadcast_lesser_equal">*broadcast_lesser_equal*</a></td>
+<td>Returns the result of element-wise <em>lesser than or equal to</em> (<=) comparison operation with broadcasting.</td>
+</tr>
+</tbody>
+</table>
+<p>For example, if you want to add a NDarray to your input x, use <code class="docutils literal"><span class="pre">broadcast_add</span></code> instead of <code class="docutils literal"><span class="pre">+</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="c1"># avoid writing: return x + F.ones((1, 1))</span>
+    <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>If you used <code class="docutils literal"><span class="pre">+</span></code>, it would still work before hybridization, but will throw an error of shape missmtach after hybridization.</p>
+</div>
+<div class="section" id="shape">
+<span id="shape"></span><h3>Shape<a class="headerlink" href="#shape" title="Permalink to this headline">¶</a></h3>
+<p>Gluon’s imperative interface is very flexible and allows you to print the shape of the NDArray. However, Symbol does not have shape attributes. As a result, you need to avoid printing shapes in <code class="docutils literal"><span class="pre">hybrid_forward</span></code>.
+Otherwise, you will get the following error:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>AttributeError: <span class="s1">'Symbol'</span> object has no attribute <span class="s1">'shape'</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slice">
+<span id="slice"></span><h3>Slice<a class="headerlink" href="#slice" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">[]</span></code> in NDArray is used to get a slice from the array. However, <code class="docutils literal"><span class="pre">[]</span></code> in Symbol is used to get an output from a grouped symbol.
+For example, you will get different results for the following method before and after hybridization.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The current workaround is to explicitly call <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.slice"><code class="docutils literal"><span class="pre">slice</span></code></a> or <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.slice_axis"><code class="docutils literal"><span class="pre">slice_axis</span></code></a> operators in <code class="docutils literal"><span class="pre">hybrid_forward</span></code>.</p>
+</div>
+<div class="section" id="not-implemented-operators">
+<span id="not-implemented-operators"></span><h3>Not implemented operators<a class="headerlink" href="#not-implemented-operators" title="Permalink to this headline">¶</a></h3>
+<p>Some of the often used operators in NDArray are not implemented in Symbol, and will cause hybridization failure.</p>
+<div class="section" id="ndarray-asnumpy">
+<span id="ndarray-asnumpy"></span><h4>NDArray.asnumpy<a class="headerlink" href="#ndarray-asnumpy" title="Permalink to this headline">¶</a></h4>
+<p>Symbol does not support the <code class="docutils literal"><span class="pre">asnumpy</span></code> function. You need to avoid calling <code class="docutils literal"><span class="pre">asnumpy</span></code> in <code class="docutils literal"><span class="pre">hybrid_forward</span></code>.</p>
+</div>
+<div class="section" id="array-creation-apis">
+<span id="array-creation-apis"></span><h4>Array creation APIs<a class="headerlink" href="#array-creation-apis" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">mx.nd.array()</span></code> is used a lot, but Symbol does not have the <code class="docutils literal"><span class="pre">array</span></code> API. The current workaround is to use <code class="docutils literal"><span class="pre">F.ones</span></code>, <code class="docutils literal"><span class="pre">F.zeros</span></code>, or <code class="docutils literal"><span class="pre">F.full</span></code>, which exist in both the NDArray and Symbol APIs.</p>
+</div>
+<div class="section" id="in-place-arithmetic-operators">
+<span id="in-place-arithmetic-operators"></span><h4>In-Place Arithmetic Operators<a class="headerlink" href="#in-place-arithmetic-operators" title="Permalink to this headline">¶</a></h4>
+<p>In-place arithmetic operators may be used in Gluon imperative mode, however if you expect to hybridize, you should write these operations explicitly instead.
+For example, avoid writing <code class="docutils literal"><span class="pre">x</span> <span class="pre">+=</span> <span class="pre">y</span></code> and use <code class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>, otherwise you will get <code class="docutils literal"><span class="pre">NotImplementedError</span></code>. This applies to all the following operators:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%"/>
+<col width="50%"/>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">NDArray in-place arithmetic operators</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__iadd__">*NDArray._*iadd_**</a></td>
+<td>::      x.__iadd__(y) <=> x+=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__isub__">*NDArray._*isub_**</a></td>
+<td>::      x.__isub__(y) <=> x-=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__imul__">*NDArray._*imul_**</a></td>
+<td>::      x.__imul__(y) <=> x*=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__idiv__">*NDArray._*idiv_**</a></td>
+<td>::      x.__rdiv__(y) <=> x/=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="https://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__imod__">*NDArray._*imod_**</a></td>
+<td>::      x.__rmod__(y) <=> x%=y</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="summary">
+<span id="summary"></span><h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>The recommended practice is to utilize the flexibility of imperative NDArray API during experimentation. Once you finalized your model, make necessary changes mentioned above so you can call <code class="docutils literal"><span class="pre">hybridize</span></code> function to improve performance.</p>
 <div class="btn-group" role="group">
-<div class="download-btn"><a download="hybrid.ipynb" href="hybrid.ipynb"><span class="glyphicon glyphicon-download-alt"></span> hybrid.ipynb</a></div></div></div>
+<div class="download-btn"><a download="hybrid.ipynb" href="hybrid.ipynb"><span class="glyphicon glyphicon-download-alt"></span> hybrid.ipynb</a></div><div class="download-btn"><a download="hybrid_bash.ipynb" href="hybrid_bash.ipynb"><span class="glyphicon glyphicon-download-alt"></span> hybrid_bash.ipynb</a></div></div></div>
 </div>
 </div>
 </div>
@@ -359,6 +543,19 @@ to gluon with <code class="docutils literal"><span class="pre">SymbolBlock</span
 <li><a class="reference internal" href="#hybridblock">HybridBlock</a></li>
 <li><a class="reference internal" href="#hybridize">Hybridize</a></li>
 <li><a class="reference internal" href="#serializing-trained-model-for-deployment">Serializing trained model for deployment</a></li>
+<li><a class="reference internal" href="#operators-that-do-not-work-with-hybridize">Operators that do not work with hybridize</a><ul>
+<li><a class="reference internal" href="#element-wise-operators">Element-wise Operators</a></li>
+<li><a class="reference internal" href="#shape">Shape</a></li>
+<li><a class="reference internal" href="#slice">Slice</a></li>
+<li><a class="reference internal" href="#not-implemented-operators">Not implemented operators</a><ul>
+<li><a class="reference internal" href="#ndarray-asnumpy">NDArray.asnumpy</a></li>
+<li><a class="reference internal" href="#array-creation-apis">Array creation APIs</a></li>
+<li><a class="reference internal" href="#in-place-arithmetic-operators">In-Place Arithmetic Operators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
 </ul>
 </li>
 </ul>
