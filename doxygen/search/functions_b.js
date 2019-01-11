@@ -10,6 +10,8 @@ var searchData=
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html#a482b0a676aa338cc5d38d7378ad6ff24',1,'mxnet::cpp::MSE']]],
   ['msraprelu',['MSRAPrelu',['../classmxnet_1_1cpp_1_1MSRAPrelu.html#a1285fd0ba58d5b272b2476747f5cf015',1,'mxnet::cpp::MSRAPrelu']]],
   ['mxaggregateprofilestatsprint',['MXAggregateProfileStatsPrint',['../c__api_8h.html#a8bf1ddff0b76c162f0fbdc243e83001b',1,'c_api.h']]],
+  ['mxapihandleexception',['MXAPIHandleException',['../c__api__error_8h.html#a5b63effa1a051d315c26274a81d32768',1,'c_api_error.h']]],
+  ['mxapisetlasterror',['MXAPISetLastError',['../c__api__error_8h.html#a4421f44ae0ced14e4bb0f867e2071f24',1,'c_api_error.h']]],
   ['mxautogradbackward',['MXAutogradBackward',['../c__api_8h.html#a133d10a566764530bf3172e52afbe561',1,'c_api.h']]],
   ['mxautogradbackwardex',['MXAutogradBackwardEx',['../c__api_8h.html#ad14437f7eeba78c360f9717c6b5af177',1,'c_api.h']]],
   ['mxautogradcomputegradient',['MXAutogradComputeGradient',['../c__api_8h.html#a4ea5441aa16bff2121855a5afb7be84e',1,'c_api.h']]],

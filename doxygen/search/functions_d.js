@@ -1,6 +1,8 @@
 var searchData=
 [
   ['offset',['Offset',['../classmxnet_1_1cpp_1_1NDArray.html#a4781db24d70e2151c84434791e23eeba',1,'mxnet::cpp::NDArray::Offset(size_t h=0, size_t w=0) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a1523650245063ccefc00003cfceec8c8',1,'mxnet::cpp::NDArray::Offset(size_t c, size_t h, size_t w) const ']]],
+  ['on_5fenter_5fapi',['on_enter_api',['../namespacemxnet.html#a96185db91240c6ff9409834aa2451aac',1,'mxnet']]],
+  ['on_5fexit_5fapi',['on_exit_api',['../namespacemxnet.html#a015b61168caa28b3f4effe4f106ac8f7',1,'mxnet']]],
   ['one',['One',['../classmxnet_1_1cpp_1_1One.html#a1957e5b1a3b354d59a3e15ae590b66af',1,'mxnet::cpp::One']]],
   ['op_5fmap',['op_map',['../classmxnet_1_1cpp_1_1Optimizer.html#abfc49efe03b65b06ae351f347dddc058',1,'mxnet::cpp::Optimizer']]],
   ['operator',['Operator',['../classmxnet_1_1cpp_1_1Operator.html#ae6321f03d02b6d076d4154d353b1c4a5',1,'mxnet::cpp::Operator']]],
