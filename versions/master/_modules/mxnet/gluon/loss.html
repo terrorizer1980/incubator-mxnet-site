@@ -324,11 +324,11 @@
 
 
 <div class="viewcode-block" id="L2Loss"><a class="viewcode-back" href="../../../api/python/gluon/loss.html#mxnet.gluon.loss.L2Loss">[docs]</a><span class="k">class</span> <span class="nc">L2Loss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">"""Calculates the mean squared error between `pred` and `label`.</span>
+    <span class="sa">r</span><span class="sd">"""Calculates the mean squared error between `label` and `pred`.</span>
 
-<span class="sd">    .. math:: L = \frac{1}{2} \sum_i \vert {pred}_i - {label}_i \vert^2.</span>
+<span class="sd">    .. math:: L = \frac{1}{2} \sum_i \vert {label}_i - {pred}_i \vert^2.</span>
 
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -356,17 +356,17 @@
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="L1Loss"><a class="viewcode-back" href="../../../api/python/gluon/loss.html#mxnet.gluon.loss.L1Loss">[docs]</a><span class="k">class</span> <span class="nc">L1Loss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">"""Calculates the mean absolute error between `pred` and `label`.</span>
+    <span class="sa">r</span><span class="sd">"""Calculates the mean absolute error between `label` and `pred`.</span>
 
-<span class="sd">    .. math:: L = \sum_i \vert {pred}_i - {label}_i \vert.</span>
+<span class="sd">    .. math:: L = \sum_i \vert {label}_i - {pred}_i \vert.</span>
 
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -394,7 +394,7 @@
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -420,7 +420,7 @@
 <span class="sd">            (1 - {label}_i) * \log(1 - {pred}_i)</span>
 
 
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -569,7 +569,7 @@
 <span class="sd">        L = \sum_i {label}_i * \big[\log({label}_i) - log({pred}_i)\big]</span>
 
 
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -706,13 +706,13 @@
 <span class="sd">    exceeds rho but is equal to L2 loss otherwise. Also called SmoothedL1 loss.</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        L = \sum_i \begin{cases} \frac{1}{2 {rho}} ({pred}_i - {label}_i)^2 &amp;</span>
-<span class="sd">                           \text{ if } |{pred}_i - {label}_i| < {rho} \\</span>
-<span class="sd">                           |{pred}_i - {label}_i| - \frac{{rho}}{2} &amp;</span>
+<span class="sd">        L = \sum_i \begin{cases} \frac{1}{2 {rho}} ({label}_i - {pred}_i)^2 &amp;</span>
+<span class="sd">                           \text{ if } |{label}_i - {pred}_i| < {rho} \\</span>
+<span class="sd">                           |{label}_i - {pred}_i| - \frac{{rho}}{2} &amp;</span>
 <span class="sd">                           \text{ otherwise }</span>
 <span class="sd">            \end{cases}</span>
 
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -743,7 +743,7 @@
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">loss</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">,</span> <span class="n">loss</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">,</span>
                        <span class="p">(</span><span class="mf">0.5</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
@@ -757,7 +757,7 @@
 <span class="sd">        L = \sum_i max(0, {margin} - {pred}_i \cdot {label}_i)</span>
 
 <span class="sd">    where `pred` is the classifier prediction and `label` is the target tensor</span>
-<span class="sd">    containing values -1 or 1. `pred` and `label` must have the same number of</span>
+<span class="sd">    containing values -1 or 1. `label` and `pred` must have the same number of</span>
 <span class="sd">    elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -801,7 +801,7 @@
 <span class="sd">        L = \sum_i max(0, {margin} - {pred}_i \cdot {label}_i)^2</span>
 
 <span class="sd">    where `pred` is the classifier prediction and `label` is the target tensor</span>
-<span class="sd">    containing values -1 or 1. `pred` and `label` can have arbitrary shape as</span>
+<span class="sd">    containing values -1 or 1. `label` and `pred` can have arbitrary shape as</span>
 <span class="sd">    long as they have the same number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -846,7 +846,7 @@
 
 <span class="sd">    where `pred` is the classifier prediction and `label` is the target tensor</span>
 <span class="sd">    containing values -1 or 1 (0 or 1 if `label_format` is binary).</span>
-<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same number of elements.</span>
+<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same number of elements.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -891,14 +891,14 @@
 
 <div class="viewcode-block" id="TripletLoss"><a class="viewcode-back" href="../../../api/python/gluon/loss.html#mxnet.gluon.loss.TripletLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletLoss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">"""Calculates triplet loss given three input tensors and a positive margin.</span>
-<span class="sd">    Triplet loss measures the relative similarity between prediction, a positive</span>
-<span class="sd">    example and a negative example:</span>
+<span class="sd">    Triplet loss measures the relative similarity between a positive</span>
+<span class="sd">    example, a negative example, and prediction:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        L = \sum_i \max(\Vert {pred}_i - {pos_i} \Vert_2^2 -</span>
-<span class="sd">                        \Vert {pred}_i - {neg_i} \Vert_2^2 + {margin}, 0)</span>
+<span class="sd">        L = \sum_i \max(\Vert {pos_i}_i - {pred} \Vert_2^2 -</span>
+<span class="sd">                        \Vert {neg_i}_i - {pred} \Vert_2^2 + {margin}, 0)</span>
 
-<span class="sd">    `pred`, `positive` and `negative` can have arbitrary shape as long as they</span>
+<span class="sd">    `positive`, `negative`, and 'pred' can have arbitrary shape as long as they</span>
 <span class="sd">    have the same number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -928,7 +928,7 @@
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">positive</span><span class="p">,</span> <span class="n">negative</span><span class="p">):</span>
         <span class="n">positive</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">positive</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">negative</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">negative</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">pred</span><span class="o">-</span><span class="n">positive</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">pred</span><span class="o">-</span><span class="n">negative</span><span class="p">),</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">positive</span><span class="o">-</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">negative</span><span class="o">-</span><span class="n">pred</span><span class="p">),</span>
                      <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
@@ -942,7 +942,7 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        L = \text{pred} - \text{target} * \log(\text{pred}) +\log(\text{target!})</span>
 
-<span class="sd">    `pred`, `target` can have arbitrary shape as long as they have the same number of elements.</span>
+<span class="sd">    `target`, 'pred' can have arbitrary shape as long as they have the same number of elements.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

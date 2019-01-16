@@ -274,10 +274,10 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.loss.L2Loss" title="mxnet.gluon.loss.L2Loss"><code class="xref py py-obj docutils literal"><span class="pre">L2Loss</span></code></a></td>
-<td>Calculates the mean squared error between <cite>pred</cite> and <cite>label</cite>.</td>
+<td>Calculates the mean squared error between <cite>label</cite> and <cite>pred</cite>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.loss.L1Loss" title="mxnet.gluon.loss.L1Loss"><code class="xref py py-obj docutils literal"><span class="pre">L1Loss</span></code></a></td>
-<td>Calculates the mean absolute error between <cite>pred</cite> and <cite>label</cite>.</td>
+<td>Calculates the mean absolute error between <cite>label</cite> and <cite>pred</cite>.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.loss.SigmoidBinaryCrossEntropyLoss" title="mxnet.gluon.loss.SigmoidBinaryCrossEntropyLoss"><code class="xref py py-obj docutils literal"><span class="pre">SigmoidBinaryCrossEntropyLoss</span></code></a></td>
 <td>The cross-entropy loss for binary classification.</td>
@@ -355,10 +355,10 @@
 <dl class="class">
 <dt id="mxnet.gluon.loss.L2Loss">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.loss.</code><code class="descname">L2Loss</code><span class="sig-paren">(</span><em>weight=1.0</em>, <em>batch_axis=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#L2Loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.L2Loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the mean squared error between <cite>pred</cite> and <cite>label</cite>.</p>
+<dd><p>Calculates the mean squared error between <cite>label</cite> and <cite>pred</cite>.</p>
 <div class="math">
-\[L = \frac{1}{2} \sum_i \vert {pred}_i - {label}_i \vert^2.\]</div>
-<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
+\[L = \frac{1}{2} \sum_i \vert {label}_i - {pred}_i \vert^2.\]</div>
+<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -394,10 +394,10 @@ batch_axis are averaged out.</li>
 <dl class="class">
 <dt id="mxnet.gluon.loss.L1Loss">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.loss.</code><code class="descname">L1Loss</code><span class="sig-paren">(</span><em>weight=None</em>, <em>batch_axis=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#L1Loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.L1Loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the mean absolute error between <cite>pred</cite> and <cite>label</cite>.</p>
+<dd><p>Calculates the mean absolute error between <cite>label</cite> and <cite>pred</cite>.</p>
 <div class="math">
-\[L = \sum_i \vert {pred}_i - {label}_i \vert.\]</div>
-<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
+\[L = \sum_i \vert {label}_i - {pred}_i \vert.\]</div>
+<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -443,7 +443,7 @@ is False (default), this loss computes:</p>
 <div class="math">
 \[L = - \sum_i {label}_i * \log({pred}_i) +
     (1 - {label}_i) * \log(1 - {pred}_i)\]</div>
-<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
+<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -559,7 +559,7 @@ If <cite>from_logits</cite> is True (default), loss is defined as:</p>
 <p>If <cite>from_logits</cite> is False, loss is defined as:</p>
 <div class="math">
 \[ \begin{align}\begin{aligned}\DeclareMathOperator{softmax}{softmax}\\prob = \softmax({pred})\\L = \sum_i {label}_i * \big[\log({label}_i) - log({pred}_i)\big]\end{aligned}\end{align} \]</div>
-<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
+<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -666,12 +666,12 @@ Sequence Data with Recurrent Neural Networks</a></p>
 <dd><p>Calculates smoothed L1 loss that is equal to L1 loss if absolute error
 exceeds rho but is equal to L2 loss otherwise. Also called SmoothedL1 loss.</p>
 <div class="math">
-\[\begin{split}L = \sum_i \begin{cases} \frac{1}{2 {rho}} ({pred}_i - {label}_i)^2 &amp;
-                   \text{ if } |{pred}_i - {label}_i| < {rho} \\
-                   |{pred}_i - {label}_i| - \frac{{rho}}{2} &amp;
+\[\begin{split}L = \sum_i \begin{cases} \frac{1}{2 {rho}} ({label}_i - {pred}_i)^2 &amp;
+                   \text{ if } |{label}_i - {pred}_i| < {rho} \\
+                   |{label}_i - {pred}_i| - \frac{{rho}}{2} &amp;
                    \text{ otherwise }
     \end{cases}\end{split}\]</div>
-<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
+<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -712,7 +712,7 @@ batch_axis are averaged out.</li>
 <div class="math">
 \[L = \sum_i max(0, {margin} - {pred}_i \cdot {label}_i)\]</div>
 <p>where <cite>pred</cite> is the classifier prediction and <cite>label</cite> is the target tensor
-containing values -1 or 1. <cite>pred</cite> and <cite>label</cite> must have the same number of
+containing values -1 or 1. <cite>label</cite> and <cite>pred</cite> must have the same number of
 elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -754,7 +754,7 @@ batch_axis are averaged out.</li>
 <div class="math">
 \[L = \sum_i max(0, {margin} - {pred}_i \cdot {label}_i)^2\]</div>
 <p>where <cite>pred</cite> is the classifier prediction and <cite>label</cite> is the target tensor
-containing values -1 or 1. <cite>pred</cite> and <cite>label</cite> can have arbitrary shape as
+containing values -1 or 1. <cite>label</cite> and <cite>pred</cite> can have arbitrary shape as
 long as they have the same number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -797,7 +797,7 @@ batch_axis are averaged out.</li>
 \[L = \sum_i \log(1 + \exp(- {pred}_i \cdot {label}_i))\]</div>
 <p>where <cite>pred</cite> is the classifier prediction and <cite>label</cite> is the target tensor
 containing values -1 or 1 (0 or 1 if <cite>label_format</cite> is binary).
-<cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same number of elements.</p>
+<cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -833,12 +833,12 @@ batch_axis are averaged out.</li>
 <dt id="mxnet.gluon.loss.TripletLoss">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.loss.</code><code class="descname">TripletLoss</code><span class="sig-paren">(</span><em>margin=1</em>, <em>weight=None</em>, <em>batch_axis=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#TripletLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.TripletLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates triplet loss given three input tensors and a positive margin.
-Triplet loss measures the relative similarity between prediction, a positive
-example and a negative example:</p>
+Triplet loss measures the relative similarity between a positive
+example, a negative example, and prediction:</p>
 <div class="math">
-\[L = \sum_i \max(\Vert {pred}_i - {pos_i} \Vert_2^2 -
-                \Vert {pred}_i - {neg_i} \Vert_2^2 + {margin}, 0)\]</div>
-<p><cite>pred</cite>, <cite>positive</cite> and <cite>negative</cite> can have arbitrary shape as long as they
+\[L = \sum_i \max(\Vert {pos_i}_i - {pred} \Vert_2^2 -
+                \Vert {neg_i}_i - {pred} \Vert_2^2 + {margin}, 0)\]</div>
+<p><cite>positive</cite>, <cite>negative</cite>, and ‘pred’ can have arbitrary shape as long as they
 have the same number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -878,7 +878,7 @@ Log likelihood loss.
 PoissonNLLLoss measures the loss accrued from a poisson regression prediction made by the model.</p>
 <div class="math">
 \[L = \text{pred} - \text{target} * \log(\text{pred}) +\log(\text{target!})\]</div>
-<p><cite>pred</cite>, <cite>target</cite> can have arbitrary shape as long as they have the same number of elements.</p>
+<p><cite>target</cite>, ‘pred’ can have arbitrary shape as long as they have the same number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
