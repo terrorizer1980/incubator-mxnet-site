@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['zero',['Zero',['../classmxnet_1_1cpp_1_1Zero.html',1,'mxnet::cpp']]],
-  ['zero',['Zero',['../classmxnet_1_1cpp_1_1Zero.html#a607207ff8a7b5f547909e3e6fc5c7744',1,'mxnet::cpp::Zero']]]
+  ['xavier',['Xavier',['../classmxnet_1_1cpp_1_1Xavier.html',1,'mxnet::cpp']]],
+  ['xavier',['Xavier',['../classmxnet_1_1cpp_1_1Xavier.html#a2cb09e483ea4b053702d8d9587c90766',1,'mxnet::cpp::Xavier']]]
 ];

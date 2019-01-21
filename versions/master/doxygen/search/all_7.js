@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['f16c',['F16C',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
   ['factor_5ftype',['factor_type',['../classmxnet_1_1cpp_1_1Xavier.html#aecdf5a414d18167bbbd48a84531f61c7',1,'mxnet::cpp::Xavier']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html',1,'mxnet::cpp']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html#abaabb6c44a38ac9ee5025c312eead44e',1,'mxnet::cpp::FactorScheduler']]],

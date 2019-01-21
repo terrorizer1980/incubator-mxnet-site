@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['out',['out',['../classmxnet_1_1cpp_1_1Xavier.html#a0147850e8857cdd1befe74522da54f7eaa19631c2d768e1637582ad1a9c9b0d8b',1,'mxnet::cpp::Xavier']]]
+  ['f16c',['F16C',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]]
 ];

@@ -19,6 +19,10 @@ var searchData=
   ['binarygradfunctiont1',['BinaryGradFunctionT1',['../namespacemxnet_1_1op.html#a027d1f190d964f7494816733aff6c3f2',1,'mxnet::op']]],
   ['binaryshapefunction',['BinaryShapeFunction',['../namespacemxnet_1_1op.html#a78c7bd2075894ac41351feca1b1e5c94',1,'mxnet::op']]],
   ['bind',['Bind',['../classmxnet_1_1Executor.html#a8217aa9fbdd99d107bd836872d7d9692',1,'mxnet::Executor::Bind()'],['../classmxnet_1_1cpp_1_1Symbol.html#a1b6bab44e812186f742387527a1b4a97',1,'mxnet::cpp::Symbol::Bind()']]],
+  ['blas_5fapple',['BLAS_APPLE',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a21d980a465ba2dd528b0218697d9ab28',1,'mxnet::features']]],
+  ['blas_5fatlas',['BLAS_ATLAS',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a1fcc301aeb4cf67ddb7317625d240852',1,'mxnet::features']]],
+  ['blas_5fmkl',['BLAS_MKL',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a764878c80e3a06a1858fc648d4f3fca7',1,'mxnet::features']]],
+  ['blas_5fopen',['BLAS_OPEN',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a197b57aed025da644e4de5e5ffb8e078',1,'mxnet::features']]],
   ['bulk_5fsize',['bulk_size',['../classmxnet_1_1Engine.html#a78baf44fa0dfed3285d6b9b65845825c',1,'mxnet::Engine']]],
   ['byte_5foffset',['byte_offset',['../classmxnet_1_1NDArray.html#a5dfa016a606afd37b8bc85dc2832b025',1,'mxnet::NDArray']]]
 ];

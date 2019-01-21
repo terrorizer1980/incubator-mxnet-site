@@ -65,6 +65,7 @@ var searchData=
   ['mxgetgpumemoryinformation64',['MXGetGPUMemoryInformation64',['../c__api_8h.html#a2c91608a70f2bab9b16683da49cf70e5',1,'c_api.h']]],
   ['mxgetlasterror',['MXGetLastError',['../c__api_8h.html#acab1874f3e3077710b77d1a005abf36c',1,'MXGetLastError():&#160;c_api.h'],['../c__predict__api_8h.html#acab1874f3e3077710b77d1a005abf36c',1,'MXGetLastError():&#160;c_predict_api.h']]],
   ['mxgetversion',['MXGetVersion',['../c__api_8h.html#ae33ec9d5238ae89745ca6b1456e005f1',1,'c_api.h']]],
+  ['mxhasfeature',['MXHasFeature',['../c__api_8h.html#af2b9df98e99d2705f3d4f8faf74ba1d2',1,'c_api.h']]],
   ['mximperativeinvoke',['MXImperativeInvoke',['../c__api_8h.html#a6a9a4608136959389db02ad938201a67',1,'c_api.h']]],
   ['mximperativeinvokeex',['MXImperativeInvokeEx',['../c__api_8h.html#a7501b41abb37c5ff565c14447750b787',1,'c_api.h']]],
   ['mxinitpsenv',['MXInitPSEnv',['../c__api_8h.html#a5c4a11b4fccf320d1af0f63b40fff58a',1,'c_api.h']]],

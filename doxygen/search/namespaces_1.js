@@ -5,6 +5,7 @@ var searchData=
   ['csr',['csr',['../namespacemxnet_1_1csr.html',1,'mxnet']]],
   ['cuda',['cuda',['../namespacemxnet_1_1common_1_1cuda.html',1,'mxnet::common']]],
   ['engine',['engine',['../namespacemxnet_1_1engine.html',1,'mxnet']]],
+  ['features',['features',['../namespacemxnet_1_1features.html',1,'mxnet']]],
   ['helper',['helper',['../namespacemxnet_1_1common_1_1helper.html',1,'mxnet::common']]],
   ['mxnet',['mxnet',['../namespacemxnet.html',1,'']]],
   ['op',['op',['../namespacemxnet_1_1op.html',1,'mxnet']]],

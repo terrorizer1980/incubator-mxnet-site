@@ -22,6 +22,7 @@ var searchData=
   ['install',['install',['../classmxnet_1_1cpp_1_1Monitor.html#a907b2d3d0238d6151996d1af1ef29347',1,'mxnet::cpp::Monitor']]],
   ['invoke',['Invoke',['../classmxnet_1_1Imperative.html#ae3a1279e546061bf6062817c93dce0dc',1,'mxnet::Imperative::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#abb488664e59eff22f62f28660fde54d1',1,'mxnet::cpp::Operator::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#a63438fea690f898dc1e3d058281a181a',1,'mxnet::cpp::Operator::Invoke(NDArray &amp;output)'],['../classmxnet_1_1cpp_1_1Operator.html#a85c1b1e99bb50bbbe0bd70e102b586d3',1,'mxnet::cpp::Operator::Invoke(std::vector&lt; NDArray &gt; &amp;outputs)']]],
   ['invokeop',['InvokeOp',['../classmxnet_1_1Imperative.html#adb41ed890acd4cbe672f088b0284fe84',1,'mxnet::Imperative']]],
+  ['is_5fenabled',['is_enabled',['../namespacemxnet_1_1features.html#ad9e346b63092e8dd88379eb241dfb119',1,'mxnet::features']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
   ['is_5ftraining',['is_training',['../classmxnet_1_1Imperative.html#a05de0382a6aecf2cb8ee1c0a7c021bae',1,'mxnet::Imperative']]],
