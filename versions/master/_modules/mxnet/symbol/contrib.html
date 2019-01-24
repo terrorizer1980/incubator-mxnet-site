@@ -298,17 +298,14 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    >>> true_cls = mx.nd.array([3])</span>
-<span class="sd">    >>> samples, exp_count_true, exp_count_sample = mx.nd.contrib.rand_zipfian(true_cls, 4, 5)</span>
-<span class="sd">    >>> samples</span>
-<span class="sd">    [1 3 3 3]</span>
-<span class="sd">    <NDArray 4 @cpu(0)></span>
-<span class="sd">    >>> exp_count_true</span>
-<span class="sd">    [ 0.12453879]</span>
-<span class="sd">    <NDArray 1 @cpu(0)></span>
-<span class="sd">    >>> exp_count_sample</span>
-<span class="sd">    [ 0.22629439  0.12453879  0.12453879  0.12453879]</span>
-<span class="sd">    <NDArray 4 @cpu(0)></span>
+<span class="sd">    >>> true_cls = mx.sym.Variable('true_cls')</span>
+<span class="sd">    >>> samples, exp_count_true, exp_count_sample = mx.sym.contrib.rand_zipfian(true_cls, 4, 5)</span>
+<span class="sd">    >>> samples.eval(true_cls=mx.nd.array([3]))[0].asnumpy()</span>
+<span class="sd">    array([1, 3, 3, 3])</span>
+<span class="sd">    >>> exp_count_true.eval(true_cls=mx.nd.array([3]))[0].asnumpy()</span>
+<span class="sd">    array([0.12453879])</span>
+<span class="sd">    >>> exp_count_sample.eval(true_cls=mx.nd.array([3]))[0].asnumpy()</span>
+<span class="sd">    array([0.22629439, 0.12453879, 0.12453879, 0.12453879])</span>
 <span class="sd">    """</span>
     <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">)),</span> <span class="s2">"unexpected type </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">true_classes</span><span class="p">)</span>
     <span class="n">log_range</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
