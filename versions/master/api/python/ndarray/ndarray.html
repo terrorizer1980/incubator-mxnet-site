@@ -5782,7 +5782,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, m a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L495</p>
+<p>Defined in src/operator/optimizer_op.cc:L684</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8424,7 +8424,7 @@ d_t = \frac{ 1 - \beta_1^t }{ \eta_t } (\sqrt{ \frac{ v_t }{ 1 - \beta_2^t } } +
 \sigma_t = d_t - \beta_1 d_{t-1}
 z_t = \beta_1 z_{ t-1 } + (1 - \beta_1^t) g_t - \sigma_t W_{t-1}
 W_t = - \frac{ z_t }{ d_t }\end{split}\]</div>
-<p>Defined in src/operator/optimizer_op.cc:L447</p>
+<p>Defined in src/operator/optimizer_op.cc:L636</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8478,7 +8478,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, z a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sign</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">*</span> <span class="n">lamda1</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">/</span> <span class="p">((</span><span class="n">beta</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="n">row</span><span class="p">]))</span> <span class="o">/</span> <span class="n">learning_rate</span> <span class="o">+</span> <span class="n">wd</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">></span> <span class="n">lamda1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L632</p>
+<p>Defined in src/operator/optimizer_op.cc:L821</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9682,6 +9682,156 @@ NOT in axis instead.</p>
 <li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
 <li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
 <li><strong>lazy_update</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – If true, lazy updates are applied if gradient’s stype is row_sparse.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.multi_mp_sgd_mom_update">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">multi_mp_sgd_mom_update</code><span class="sig-paren">(</span><em>*data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.multi_mp_sgd_mom_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Momentum update function for multi-precision Stochastic Gradient Descent (SGD) optimizer.</p>
+<p>Momentum update has better convergence rates on neural networks. Mathematically it looks
+like below:</p>
+<div class="math">
+\[\begin{split}v_1 = \alpha * \nabla J(W_0)\\
+v_t = \gamma v_{t-1} - \alpha * \nabla J(W_{t-1})\\
+W_t = W_{t-1} + v_t\end{split}\]</div>
+<p>It updates the weights using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">momentum</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span>
+<span class="n">weight</span> <span class="o">+=</span> <span class="n">v</span>
+</pre></div>
+</div>
+<p>Where the parameter <code class="docutils literal"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
+<p>Defined in src/operator/optimizer_op.cc:L468</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>[</em><em>]</em>) – Weights</li>
+<li><strong>lrs</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Learning rates.</li>
+<li><strong>wds</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</li>
+<li><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The decay rate of momentum estimates at each epoch.</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>num_weights</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of updated weights.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.multi_mp_sgd_update">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">multi_mp_sgd_update</code><span class="sig-paren">(</span><em>*data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.multi_mp_sgd_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update function for multi-precision Stochastic Gradient Descent (SDG) optimizer.</p>
+<p>It updates the weights using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/optimizer_op.cc:L413</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>[</em><em>]</em>) – Weights</li>
+<li><strong>lrs</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Learning rates.</li>
+<li><strong>wds</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>num_weights</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of updated weights.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.multi_sgd_mom_update">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">multi_sgd_mom_update</code><span class="sig-paren">(</span><em>*data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.multi_sgd_mom_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Momentum update function for Stochastic Gradient Descent (SGD) optimizer.</p>
+<p>Momentum update has better convergence rates on neural networks. Mathematically it looks
+like below:</p>
+<div class="math">
+\[\begin{split}v_1 = \alpha * \nabla J(W_0)\\
+v_t = \gamma v_{t-1} - \alpha * \nabla J(W_{t-1})\\
+W_t = W_{t-1} + v_t\end{split}\]</div>
+<p>It updates the weights using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">momentum</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span>
+<span class="n">weight</span> <span class="o">+=</span> <span class="n">v</span>
+</pre></div>
+</div>
+<p>Where the parameter <code class="docutils literal"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
+<p>Defined in src/operator/optimizer_op.cc:L370</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>[</em><em>]</em>) – Weights, gradients and momentum</li>
+<li><strong>lrs</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Learning rates.</li>
+<li><strong>wds</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</li>
+<li><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – The decay rate of momentum estimates at each epoch.</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>num_weights</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of updated weights.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.multi_sgd_update">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">multi_sgd_update</code><span class="sig-paren">(</span><em>*data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.multi_sgd_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update function for Stochastic Gradient Descent (SDG) optimizer.</p>
+<p>It updates the weights using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/optimizer_op.cc:L325</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>[</em><em>]</em>) – Weights</li>
+<li><strong>lrs</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Learning rates.</li>
+<li><strong>wds</strong> (<em>tuple of <float></em><em>, </em><em>required</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</li>
+<li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
+<li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
+<li><strong>num_weights</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of updated weights.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -10930,7 +11080,7 @@ gradient and <span class="math">\(E[g^2]_t\)</span> is the decaying average over
 Tieleman &amp; Hinton, 2012.</p>
 <p>Hinton suggests the momentum term <span class="math">\(\gamma\)</span> to be 0.9 and the learning rate
 <span class="math">\(\eta\)</span> to be 0.001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L553</p>
+<p>Defined in src/operator/optimizer_op.cc:L742</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -10977,7 +11127,7 @@ E[g]_t = \gamma_1 * E[g]_{t-1} + (1 - \gamma_1) * g_t\\
 <a class="reference external" href="http://arxiv.org/pdf/1308.0850v5.pdf">http://arxiv.org/pdf/1308.0850v5.pdf</a> Eq(38) - Eq(45) by Alex Graves, 2013.</p>
 <p>Graves suggests the momentum term <span class="math">\(\gamma_1\)</span> to be 0.95, <span class="math">\(\gamma_2\)</span>
 to be 0.9 and the learning rate <span class="math">\(\eta\)</span> to be 0.0001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L592</p>
+<p>Defined in src/operator/optimizer_op.cc:L781</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11555,7 +11705,7 @@ only the row slices whose indices appear in grad.indices are updated (for both w
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L372</p>
+<p>Defined in src/operator/optimizer_op.cc:L561</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11597,7 +11747,7 @@ only the row slices whose indices appear in grad.indices are updated:</p>
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L331</p>
+<p>Defined in src/operator/optimizer_op.cc:L520</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11762,7 +11912,7 @@ W_t = W_{t-1} - \eta_t \text{sign}(g_t)\end{split}\]</div>
 <li>sparse ndarray not supported for this optimizer yet.</li>
 </ul>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L57</p>
+<p>Defined in src/operator/optimizer_op.cc:L59</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11807,7 +11957,7 @@ weight = weight - learning_rate * sign(state)</dd>
 <li>sparse ndarray not supported for this optimizer yet.</li>
 </ul>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L86</p>
+<p>Defined in src/operator/optimizer_op.cc:L88</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>

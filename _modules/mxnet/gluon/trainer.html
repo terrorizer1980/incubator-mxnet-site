@@ -285,7 +285,8 @@
 <span class="sd">        See mxnet.KVStore.set_gradient_compression method for more details on gradient compression.</span>
 <span class="sd">    update_on_kvstore : bool, default None</span>
 <span class="sd">        Whether to perform parameter updates on kvstore. If None, then trainer will choose the more</span>
-<span class="sd">        suitable option depending on the type of kvstore.</span>
+<span class="sd">        suitable option depending on the type of kvstore. If the `update_on_kvstore` argument is</span>
+<span class="sd">        provided, environment variable `MXNET_UPDATE_ON_KVSTORE` will be ignored.</span>
 
 <span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
@@ -618,6 +619,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">ignore_stale_grad</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_stale_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">]</span>
+
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">grad_req</span> <span class="o">==</span> <span class="s1">'null'</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -641,10 +644,16 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_data</span><span class="p">(),</span> <span class="n">priority</span><span class="o">=-</span><span class="n">i</span><span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="k">for</span> <span class="n">upd</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">grad</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_data</span><span class="p">(),</span> <span class="n">param</span><span class="o">.</span><span class="n">list_grad</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">upd</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">grad</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">updates</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">list_data</span><span class="p">(),</span> <span class="n">param</span><span class="o">.</span><span class="n">list_grad</span><span class="p">()):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_stale_grad</span> <span class="ow">or</span> <span class="n">arr</span><span class="o">.</span><span class="n">_fresh_grad</span><span class="p">:</span>
-                    <span class="n">upd</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+                    <span class="n">upd</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">arr</span><span class="p">))</span>
                     <span class="n">arr</span><span class="o">.</span><span class="n">_fresh_grad</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kvstore</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_on_kvstore</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">updater</span><span class="p">,</span> <span class="n">upd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">upd</span><span class="p">:</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">upd</span><span class="p">)</span>
+                    <span class="n">updater</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Trainer.save_states"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Trainer.save_states">[docs]</a>    <span class="k">def</span> <span class="nf">save_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
         <span class="sd">"""Saves trainer states (e.g. optimizer, momentum) to a file.</span>

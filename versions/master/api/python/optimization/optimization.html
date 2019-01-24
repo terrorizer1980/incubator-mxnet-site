@@ -1146,6 +1146,12 @@ indices. Compared with the original update, it can provide large
 improvements in model training throughput for some applications. However, it
 provides slightly different semantics than the original update, and
 may lead to different empirical results.</p>
+<p>In the case when <code class="docutils literal"><span class="pre">update_on_kvstore</span></code> is set to False (either globally via
+MXNET_UPDATE_ON_KVSTORE=0 environment variable or as a parameter in
+<a class="reference internal" href="../gluon/gluon.html#mxnet.gluon.Trainer" title="mxnet.gluon.Trainer"><code class="xref py py-class docutils literal"><span class="pre">Trainer</span></code></a>) SGD optimizer can perform aggregated update
+of parameters, which may lead to improved performance. The aggregation size
+is controlled by MXNET_OPTIMIZER_AGGREGATION_SIZE environment variable and
+defaults to 4.</p>
 <p>Otherwise, <strong>standard updates</strong> are applied by:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rescaled_grad</span> <span class="o">=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">rescale_grad</span> <span class="o">*</span> <span class="n">clip</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="p">)</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
 <span class="n">state</span> <span class="o">=</span> <span class="n">momentum</span> <span class="o">*</span> <span class="n">state</span> <span class="o">+</span> <span class="n">rescaled_grad</span>
