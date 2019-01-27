@@ -845,8 +845,11 @@
 <span class="sd">        *In either case, value of all the arguments must be provided.*</span>
 <span class="sd">    ctx : Context</span>
 <span class="sd">        Device context.</span>
-<span class="sd">    dtype: np.float16 or np.float32 or np.float64</span>
-<span class="sd">        Datatype for mx.nd.array.</span>
+<span class="sd">    dtype: "asnumpy" or np.float16 or np.float32 or np.float64</span>
+<span class="sd">        If dtype is "asnumpy" then the mx.nd.array created will have the same</span>
+<span class="sd">        type as th numpy array from which it is copied.</span>
+<span class="sd">        Otherwise, dtype is the explicit datatype for all mx.nd.array objects</span>
+<span class="sd">        created in this function.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -868,7 +871,7 @@
 <span class="sd">    ValueError: Symbol arguments and keys of the given location do not match.</span>
 <span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="ow">or</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Symbol arguments and keys of the given location do not match."</span>
@@ -876,8 +879,8 @@
                              <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">())),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">location</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">location</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">(),</span> <span class="n">location</span><span class="p">)}</span>
-    <span class="n">location</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> \
-               <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="k">else</span> <span class="n">dtype</span><span class="p">)</span> \
+               <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">return</span> <span class="n">location</span>
 
 
@@ -902,8 +905,11 @@
 <span class="sd">        *In either case, all aux states of `sym` must be provided.*</span>
 <span class="sd">    ctx : Context</span>
 <span class="sd">        Device context.</span>
-<span class="sd">    dtype: np.float16 or np.float32 or np.float64</span>
-<span class="sd">        Datatype for mx.nd.array.</span>
+<span class="sd">    dtype: "asnumpy" or np.float16 or np.float32 or np.float64</span>
+<span class="sd">        If dtype is "asnumpy" then the mx.nd.array created will have the same</span>
+<span class="sd">        type as th numpy array from which it is copied.</span>
+<span class="sd">        Otherwise, dtype is the explicit datatype for all mx.nd.array objects</span>
+<span class="sd">        created in this function.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -927,7 +933,7 @@
 <span class="sd">    >>> _parse_aux_states(fc2, {'batchnorm0_moving_var': mean_states}, None)</span>
 <span class="sd">    ValueError: Symbol aux_states names and given aux_states do not match.</span>
 <span class="sd">    """</span>
-    <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="ow">or</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">aux_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux_states</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">aux_states</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()):</span>
@@ -938,7 +944,8 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux_states</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">aux_names</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
             <span class="n">aux_states</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">aux_names</span><span class="p">,</span> <span class="n">aux_states</span><span class="p">)}</span>
-        <span class="n">aux_states</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">aux_states</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">aux_states</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="k">else</span> <span class="n">dtype</span><span class="p">)</span> \
+                      <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">aux_states</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">return</span> <span class="n">aux_states</span>
 
 
@@ -1187,8 +1194,11 @@
 <span class="sd">            Contains the mapping between names of auxiliary states and their values.</span>
 <span class="sd">    ctx : Context, optional</span>
 <span class="sd">        running context</span>
-<span class="sd">    dtype: np.float16 or np.float32 or np.float64</span>
-<span class="sd">        Datatype for mx.nd.array.</span>
+<span class="sd">    dtype: "asnumpy" or np.float16 or np.float32 or np.float64</span>
+<span class="sd">        If dtype is "asnumpy" then the mx.nd.array created will have the same</span>
+<span class="sd">        type as th numpy array from which it is copied.</span>
+<span class="sd">        Otherwise, dtype is the explicit datatype for all mx.nd.array objects</span>
+<span class="sd">        created in this function.</span>
 
 <span class="sd">    equal_nan: Boolean</span>
 <span class="sd">        if True, `nan` is a valid value for checking equivalency (ie `nan` == `nan`)</span>
@@ -1204,7 +1214,7 @@
 <span class="sd">    >>> ret_expected = np.array([[19, 22], [43, 50]])</span>
 <span class="sd">    >>> check_symbolic_forward(sym_dot, [mat1, mat2], [ret_expected])</span>
 <span class="sd">    """</span>
-    <span class="k">assert</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="ow">or</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">default_context</span><span class="p">()</span>
 
@@ -1213,7 +1223,8 @@
                                    <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="n">expected</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sym</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">()]</span>
-    <span class="n">args_grad_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">args_grad_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"asnumpy"</span> <span class="k">else</span> <span class="n">dtype</span><span class="p">)</span> \
+                      <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">location</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="n">executor</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">args_grad</span><span class="o">=</span><span class="n">args_grad_data</span><span class="p">,</span> <span class="n">aux_states</span><span class="o">=</span><span class="n">aux_states</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">grad_arrays</span><span class="p">:</span>
