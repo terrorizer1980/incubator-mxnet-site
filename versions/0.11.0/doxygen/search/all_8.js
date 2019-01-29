@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['gamma',['gamma',['../namespacemxnet_1_1cpp.html#a0a9aa2fcd720ec0c0540a6a8ad47a8c7',1,'mxnet::cpp::gamma(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a06ca3719f4aabea2454d530af6c9bc14',1,'mxnet::cpp::gamma(Symbol data)']]],
+  ['gammaln',['gammaln',['../namespacemxnet_1_1cpp.html#a0eaf6490fbf9c17dc08c878e4f632a82',1,'mxnet::cpp::gammaln(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#ac46fe72a34cb678aed506bb9eb51d9db',1,'mxnet::cpp::gammaln(Symbol data)']]],
   ['gaussian',['gaussian',['../classmxnet_1_1cpp_1_1Xavier.html#ad9d26ff245899b6053fa417511f39207aec51f8a6742be202ebc3c509262f6bc2',1,'mxnet::cpp::Xavier']]],
   ['get',['get',['../classmxnet_1_1TBlob.html#acb2e058394548527844e219c7e3c480d',1,'mxnet::TBlob::get()'],['../classmxnet_1_1Engine.html#ae0a23da15ef63d9479c7468e1f2f825f',1,'mxnet::Engine::Get()'],['../classmxnet_1_1op_1_1SimpleOpRegistry.html#a374ec19d647f622c80a79fb3d541e7ec',1,'mxnet::op::SimpleOpRegistry::Get()'],['../classmxnet_1_1ResourceManager.html#a5712bb055045ba9fb45dd3cdb812abb8',1,'mxnet::ResourceManager::Get()'],['../classmxnet_1_1Storage.html#a96abc072908d72d3271360a7e3e4bbc2',1,'mxnet::Storage::Get()'],['../classmxnet_1_1common_1_1LazyAllocArray.html#ac4528ab581eda5b0aba35faa3687c201',1,'mxnet::common::LazyAllocArray::Get()'],['../classmxnet_1_1common_1_1ObjectPool.html#a82b4d0c3577560a4f6f62f482b125471',1,'mxnet::common::ObjectPool::Get()'],['../classmxnet_1_1cpp_1_1EvalMetric.html#aec48aecbf724835808fce89db818507c',1,'mxnet::cpp::EvalMetric::Get()']]],
   ['get_5fautograd_5fsymbol',['get_autograd_symbol',['../classmxnet_1_1NDArray.html#a5ef20369f37a4ff2ceb44adf213871dc',1,'mxnet::NDArray']]],
@@ -53,5 +55,7 @@ var searchData=
   ['grad_5farrays',['grad_arrays',['../classmxnet_1_1cpp_1_1Executor.html#a42694f583467b2b517ea8f8c0250655b',1,'mxnet::cpp::Executor']]],
   ['grad_5fdict',['grad_dict',['../classmxnet_1_1cpp_1_1Executor.html#a4ca4e8a5517ac2a35824adda6c80f872',1,'mxnet::cpp::Executor']]],
   ['gradfunctionargument',['GradFunctionArgument',['../structmxnet_1_1op_1_1GradFunctionArgument.html',1,'mxnet::op']]],
+  ['gridgenerator',['GridGenerator',['../namespacemxnet_1_1cpp.html#a6ba557fafd479004873f1c6afa6b497c',1,'mxnet::cpp::GridGenerator(const std::string &amp;symbol_name, Symbol data, GridGeneratorTransformType transform_type, Shape target_shape=Shape(0, 0))'],['../namespacemxnet_1_1cpp.html#ad6e1c5da8364f84e285d6139bbbc721f',1,'mxnet::cpp::GridGenerator(Symbol data, GridGeneratorTransformType transform_type, Shape target_shape=Shape(0, 0))']]],
+  ['gridgeneratortransformtype',['GridGeneratorTransformType',['../namespacemxnet_1_1cpp.html#a98745f0114674ef8fa60b2a35a877a2c',1,'mxnet::cpp']]],
   ['group',['Group',['../classmxnet_1_1cpp_1_1Symbol.html#afc8a595aa2b3c2c03c825f5b27061f45',1,'mxnet::cpp::Symbol']]]
 ];

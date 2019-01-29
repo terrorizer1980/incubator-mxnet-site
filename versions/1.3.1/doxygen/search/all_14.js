@@ -16,5 +16,8 @@ var searchData=
   ['updatecount_5f',['UpdateCount_',['../classmxnet_1_1cpp_1_1Optimizer.html#a299346e9e9eacaec1009f1d73a2a3fe8',1,'mxnet::cpp::Optimizer']]],
   ['updater',['Updater',['../classmxnet_1_1KVStore.html#a6e4a76bd57f185349c58a5a658c32a64',1,'mxnet::KVStore']]],
   ['updater_5f',['updater_',['../classmxnet_1_1KVStore.html#a01befb768a81a8e7a366708240ee6d06',1,'mxnet::KVStore']]],
+  ['upsampling',['UpSampling',['../namespacemxnet_1_1cpp.html#ac02c4b9e4c60499b3931d120ef51eca3',1,'mxnet::cpp::UpSampling(const std::string &amp;symbol_name, const std::vector&lt; Symbol &gt; &amp;data, uint32_t scale, UpSamplingSampleType sample_type, int num_args, uint32_t num_filter=0, UpSamplingMultiInputMode multi_input_mode=UpSamplingMultiInputMode::kConcat, uint64_t workspace=512)'],['../namespacemxnet_1_1cpp.html#a34b5385f8b52334cfedaa5a7f4ce68c9',1,'mxnet::cpp::UpSampling(const std::vector&lt; Symbol &gt; &amp;data, uint32_t scale, UpSamplingSampleType sample_type, int num_args, uint32_t num_filter=0, UpSamplingMultiInputMode multi_input_mode=UpSamplingMultiInputMode::kConcat, uint64_t workspace=512)']]],
+  ['upsamplingmultiinputmode',['UpSamplingMultiInputMode',['../namespacemxnet_1_1cpp.html#afce90445dba4ab6be903251cb0c960ef',1,'mxnet::cpp']]],
+  ['upsamplingsampletype',['UpSamplingSampleType',['../namespacemxnet_1_1cpp.html#a9c9a4644f19e7ed3c729165de2e963ab',1,'mxnet::cpp']]],
   ['utils_2eh',['utils.h',['../utils_8h.html',1,'']]]
 ];

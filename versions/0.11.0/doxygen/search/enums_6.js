@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['randtype',['RandType',['../classmxnet_1_1cpp_1_1Xavier.html#ad9d26ff245899b6053fa417511f39207',1,'mxnet::cpp::Xavier']]]
+  ['l2normalizationmode',['L2NormalizationMode',['../namespacemxnet_1_1cpp.html#a92b87bed551457a3d444a28fd3c7c84f',1,'mxnet::cpp']]],
+  ['leakyreluacttype',['LeakyReLUActType',['../namespacemxnet_1_1cpp.html#aad64d459f3652d3ec3cf37c460aa8ee0',1,'mxnet::cpp']]]
 ];

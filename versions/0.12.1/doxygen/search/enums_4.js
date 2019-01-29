@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ndarrayfunctiontypemask',['NDArrayFunctionTypeMask',['../namespacemxnet.html#a89a5f0f5cfd9e1e94604a7b42dda818a',1,'mxnet']]],
-  ['ndarraystoragetype',['NDArrayStorageType',['../namespacemxnet.html#a536b732faa980e1de446c552460ff76a',1,'mxnet']]]
+  ['factortype',['FactorType',['../classmxnet_1_1cpp_1_1Xavier.html#a0147850e8857cdd1befe74522da54f7e',1,'mxnet::cpp::Xavier']]],
+  ['fnproperty',['FnProperty',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3b',1,'mxnet']]]
 ];

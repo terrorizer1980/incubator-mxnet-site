@@ -360,7 +360,7 @@
 
 
 <div class="viewcode-block" id="Normalize"><a class="viewcode-back" href="../../../../../api/python/gluon/data.html#mxnet.gluon.data.vision.transforms.Normalize">[docs]</a><span class="k">class</span> <span class="nc">Normalize</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">"""Normalize an tensor of shape (C x H x W) with mean and</span>
+    <span class="sd">"""Normalize an tensor of shape (C x H x W) or (N x C x H x W) with mean and</span>
 <span class="sd">    standard deviation.</span>
 
 <span class="sd">    Given mean `(m1, ..., mn)` and std `(s1, ..., sn)` for `n` channels,</span>
@@ -379,12 +379,31 @@
 
 
 <span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (C x H x W) shape.</span>
+<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
 
 <span class="sd">    Outputs:</span>
 <span class="sd">        - **out**: output tensor with the shape as `data`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> transformer = transforms.Normalize(mean=(0, 1, 2), std=(3, 2, 1))</span>
+<span class="sd">    >>> image = mx.nd.random.uniform(0, 1, (3, 4, 2))</span>
+<span class="sd">    >>> transformer(image)</span>
+<span class="sd">    [[[ 0.18293785  0.19761486]</span>
+<span class="sd">      [ 0.23839645  0.28142193]</span>
+<span class="sd">      [ 0.20092112  0.28598186]</span>
+<span class="sd">      [ 0.18162774  0.28241724]]</span>
+<span class="sd">     [[-0.2881726  -0.18821815]</span>
+<span class="sd">      [-0.17705294 -0.30780914]</span>
+<span class="sd">      [-0.2812064  -0.3512327 ]</span>
+<span class="sd">      [-0.05411351 -0.4716435 ]]</span>
+<span class="sd">     [[-1.0363373  -1.7273437 ]</span>
+<span class="sd">      [-1.6165586  -1.5223348 ]</span>
+<span class="sd">      [-1.208275   -1.1878313 ]</span>
+<span class="sd">      [-1.4711051  -1.5200229 ]]]</span>
+<span class="sd">    <NDArray 3x4x2 @cpu(0)></span>
 <span class="sd">    """</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Normalize</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">mean</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_std</span> <span class="o">=</span> <span class="n">std</span>

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['customfunctioncallbacks',['CustomFunctionCallbacks',['../c__api_8h.html#a717cd8414c58e4069503725ba4dfcb33',1,'c_api.h']]],
-  ['customopcallbacks',['CustomOpCallbacks',['../c__api_8h.html#aa2395b69772d66cb5c6c4cbe47749792',1,'c_api.h']]],
-  ['customoppropcallbacks',['CustomOpPropCallbacks',['../c__api_8h.html#a62d6b72cc6b3d920797c32ea8732cbba',1,'c_api.h']]]
+  ['activationacttype',['ActivationActType',['../namespacemxnet_1_1cpp.html#a919a622dc07b83d4431e8ff775455962',1,'mxnet::cpp']]]
 ];

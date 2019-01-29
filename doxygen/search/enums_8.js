@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['simpleopinplaceoption',['SimpleOpInplaceOption',['../namespacemxnet_1_1op.html#a3c3b8c77865c7c715cfe05ee2b2fa8da',1,'mxnet::op']]],
-  ['simpleopregoption',['SimpleOpRegOption',['../namespacemxnet_1_1op.html#a01bb0bb658bedb4d58bf7d11e4b17268',1,'mxnet::op']]],
-  ['simpleopscalaroption',['SimpleOpScalarOption',['../namespacemxnet_1_1op.html#ae7310844fa858f1ec6b6428dd6977a13',1,'mxnet::op']]]
+  ['l2normalizationmode',['L2NormalizationMode',['../namespacemxnet_1_1cpp.html#a92b87bed551457a3d444a28fd3c7c84f',1,'mxnet::cpp']]],
+  ['leakyreluacttype',['LeakyReLUActType',['../namespacemxnet_1_1cpp.html#aad64d459f3652d3ec3cf37c460aa8ee0',1,'mxnet::cpp']]]
 ];

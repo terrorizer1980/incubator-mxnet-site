@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type',['Type',['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630',1,'mxnet::ResourceRequest']]]
+  ['ndarrayfunctiontypemask',['NDArrayFunctionTypeMask',['../namespacemxnet.html#a89a5f0f5cfd9e1e94604a7b42dda818a',1,'mxnet']]]
 ];

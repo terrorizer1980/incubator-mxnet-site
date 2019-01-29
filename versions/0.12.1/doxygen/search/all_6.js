@@ -1,6 +1,12 @@
 var searchData=
 [
   ['elementwisesum',['ElementwiseSum',['../namespacemxnet.html#a15dfd6f3fa03dc2cf39dbab1225e1a51',1,'mxnet']]],
+  ['elemwise_5fadd',['elemwise_add',['../namespacemxnet_1_1cpp.html#a9dc86a3606afe7cc7ed8d028f58cddc5',1,'mxnet::cpp::elemwise_add(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a11744b6b7d915633107650990dd00148',1,'mxnet::cpp::elemwise_add(Symbol lhs, Symbol rhs)']]],
+  ['elemwise_5fdiv',['elemwise_div',['../namespacemxnet_1_1cpp.html#a3a21ba4707a30004aed65f61e10feae8',1,'mxnet::cpp::elemwise_div(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a1d09f5f44e0dc4d06a98760325a7209d',1,'mxnet::cpp::elemwise_div(Symbol lhs, Symbol rhs)']]],
+  ['elemwise_5fmul',['elemwise_mul',['../namespacemxnet_1_1cpp.html#a83ef847676bdcba737c0aa0e42ec93cb',1,'mxnet::cpp::elemwise_mul(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a0076b96722559b32d5812aad03c5498a',1,'mxnet::cpp::elemwise_mul(Symbol lhs, Symbol rhs)']]],
+  ['elemwise_5fsub',['elemwise_sub',['../namespacemxnet_1_1cpp.html#a77452970fd3d028295db976f8720a553',1,'mxnet::cpp::elemwise_sub(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a348c1ba14a3a9c8adfbac8570c1c8cbf',1,'mxnet::cpp::elemwise_sub(Symbol lhs, Symbol rhs)']]],
+  ['embedding',['Embedding',['../namespacemxnet_1_1cpp.html#a0192acc18b359c612de9881860acda13',1,'mxnet::cpp::Embedding(const std::string &amp;symbol_name, Symbol data, Symbol weight, int input_dim, int output_dim, EmbeddingDtype dtype=EmbeddingDtype::kFloat32)'],['../namespacemxnet_1_1cpp.html#ae7696e1e890231c07c5fc98a1ccf6444',1,'mxnet::cpp::Embedding(Symbol data, Symbol weight, int input_dim, int output_dim, EmbeddingDtype dtype=EmbeddingDtype::kFloat32)']]],
+  ['embeddingdtype',['EmbeddingDtype',['../namespacemxnet_1_1cpp.html#a3c80705d63347982667fc541ad5bf845',1,'mxnet::cpp']]],
   ['end',['end',['../classmxnet_1_1cpp_1_1Uniform.html#aeef186638253f0fbc4e2f1a81ba7a145',1,'mxnet::cpp::Uniform']]],
   ['enforce_5fnonzero',['enforce_nonzero',['../classdmlc_1_1parameter_1_1FieldEntry_3_01mxnet_1_1TShape_01_4.html#afa1da539bf9bcb64d3b5a55aec23e8c2',1,'dmlc::parameter::FieldEntry&lt; mxnet::TShape &gt;']]],
   ['engine',['Engine',['../classmxnet_1_1Engine.html',1,'mxnet']]],
@@ -21,5 +27,8 @@ var searchData=
   ['executorhandle',['ExecutorHandle',['../c__api_8h.html#a6f224ee35892507405ced8429d874726',1,'c_api.h']]],
   ['executormonitorcallback',['ExecutorMonitorCallback',['../c__api_8h.html#a2731805437dc3d76201fc21154b1337c',1,'c_api.h']]],
   ['exes',['exes',['../classmxnet_1_1cpp_1_1Monitor.html#a036886927625e741a7360ab72a2832e1',1,'mxnet::cpp::Monitor']]],
+  ['exp',['exp',['../namespacemxnet_1_1cpp.html#af9cfdd6329c237d4b9ee144c24f51900',1,'mxnet::cpp::exp(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a7180e751ec056919b26c7235354a3452',1,'mxnet::cpp::exp(Symbol data)']]],
+  ['expand_5fdims',['expand_dims',['../namespacemxnet_1_1cpp.html#a91ad2b6dbe27c48818774c11e2b5b742',1,'mxnet::cpp::expand_dims(const std::string &amp;symbol_name, Symbol data, int axis)'],['../namespacemxnet_1_1cpp.html#ada9ddaa3e0be235d25df55558ef350c5',1,'mxnet::cpp::expand_dims(Symbol data, int axis)']]],
+  ['expm1',['expm1',['../namespacemxnet_1_1cpp.html#a6bc44d0e8ab9f520f92dac705665958b',1,'mxnet::cpp::expm1(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a4475973b83abcaef7a8147fd1d7354d9',1,'mxnet::cpp::expm1(Symbol data)']]],
   ['extra_5fdata',['extra_data',['../structmxnet_1_1DataInst.html#a311b93ed629984fdcb29cb346d3062ee',1,'mxnet::DataInst::extra_data()'],['../structmxnet_1_1DataBatch.html#a2e9faeff00dd061f04a88c3ea5758aa2',1,'mxnet::DataBatch::extra_data()']]]
 ];

@@ -13,12 +13,16 @@ var searchData=
   ['fexectype',['FExecType',['../namespacemxnet.html#a666f1055e5401ecec0278e8ba5790732',1,'mxnet']]],
   ['fieldentry',['FieldEntry',['../classdmlc_1_1parameter_1_1FieldEntry_3_01mxnet_1_1TShape_01_4.html#a0755f0abe443e4b57da234ec7b49fde0',1,'dmlc::parameter::FieldEntry&lt; mxnet::TShape &gt;']]],
   ['fieldentry_3c_20mxnet_3a_3atshape_20_3e',['FieldEntry&lt; mxnet::TShape &gt;',['../classdmlc_1_1parameter_1_1FieldEntry_3_01mxnet_1_1TShape_01_4.html',1,'dmlc::parameter']]],
+  ['fill_5felement_5f0index',['fill_element_0index',['../namespacemxnet_1_1cpp.html#af977c7bf3bb24f5ebe973dcb41680244',1,'mxnet::cpp::fill_element_0index(const std::string &amp;symbol_name, Symbol lhs, Symbol mhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a2d831f1a544ca07c5355dac626926a91',1,'mxnet::cpp::fill_element_0index(Symbol lhs, Symbol mhs, Symbol rhs)']]],
   ['find',['Find',['../classmxnet_1_1op_1_1SimpleOpRegistry.html#a8ee596c99eef39fbbfffca181bf7f26e',1,'mxnet::op::SimpleOpRegistry::Find()'],['../classmxnet_1_1cpp_1_1OptimizerRegistry.html#a2b769992ab9d22cd30dbabd5daa7e4fc',1,'mxnet::cpp::OptimizerRegistry::Find()']]],
   ['fit',['Fit',['../classmxnet_1_1cpp_1_1FeedForward.html#a0aaa2cef2f7dc3794430815c78d39563',1,'mxnet::cpp::FeedForward']]],
+  ['fix',['fix',['../namespacemxnet_1_1cpp.html#acae3f2a8b1b2882faa9fd0db7332e555',1,'mxnet::cpp::fix(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a9fdd2c357d6e02a795232469b71870a6',1,'mxnet::cpp::fix(Symbol data)']]],
+  ['flatten',['Flatten',['../namespacemxnet_1_1cpp.html#aa3470d98c61a10ac5a1c583304ca81e9',1,'mxnet::cpp::Flatten(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#ad503b97061cd6b0e2424e4f9d032e816',1,'mxnet::cpp::Flatten(Symbol data)']]],
   ['flatto1d',['FlatTo1D',['../classmxnet_1_1TBlob.html#a95bf7032c2b90627510a89ac8bb2946f',1,'mxnet::TBlob']]],
   ['flatto2d',['FlatTo2D',['../classmxnet_1_1TBlob.html#a23cc57be3b2c40a269c8c9f242fa0532',1,'mxnet::TBlob']]],
   ['flatto3d',['FlatTo3D',['../classmxnet_1_1TBlob.html#ac5cd4953869cb66ed374854a34da40f8',1,'mxnet::TBlob::FlatTo3D(int axis, mshadow::Stream&lt; Device &gt; *stream=NULL) const '],['../classmxnet_1_1TBlob.html#ada83447eb80b913592e9ac2bf8c5740f',1,'mxnet::TBlob::FlatTo3D(int axis_begin, int axis_end, mshadow::Stream&lt; Device &gt; *stream=NULL) const ']]],
   ['flattokd',['FlatToKD',['../classmxnet_1_1TBlob.html#aa2f8e15eb1fc21e159c496ec0d499b6f',1,'mxnet::TBlob']]],
+  ['floor',['floor',['../namespacemxnet_1_1cpp.html#ab4a01c682ea7f62223804ed33615048a',1,'mxnet::cpp::floor(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#ab1b48af1f465a9282bc6e0709ccef36c',1,'mxnet::cpp::floor(Symbol data)']]],
   ['fndarrayfunction',['FNDArrayFunction',['../namespacemxnet.html#a0906e49a921265634672f555451075ed',1,'mxnet']]],
   ['fnproperty',['FnProperty',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3b',1,'mxnet']]],
   ['foreach',['ForEach',['../classmxnet_1_1common_1_1LazyAllocArray.html#a43a89c8e7b4e1a09f346694073a2d998',1,'mxnet::common::LazyAllocArray']]],
@@ -31,5 +35,6 @@ var searchData=
   ['fromstring',['FromString',['../structmxnet_1_1Context.html#ac58071fc1c0647bcab7aca4a39ae6a29',1,'mxnet::Context']]],
   ['fstatefulcompute',['FStatefulCompute',['../namespacemxnet.html#a9097a269dd76d833c014149ff3eaab9b',1,'mxnet']]],
   ['fstatefulcomputeex',['FStatefulComputeEx',['../namespacemxnet.html#ab12f1853179b1456152a563edff844a9',1,'mxnet']]],
+  ['fullyconnected',['FullyConnected',['../namespacemxnet_1_1cpp.html#a94639f7aee2f232496017a7956d490e1',1,'mxnet::cpp::FullyConnected(const std::string &amp;symbol_name, Symbol data, Symbol weight, Symbol bias, int num_hidden, bool no_bias=false)'],['../namespacemxnet_1_1cpp.html#afc86f46344b1a74e703a03be1a6a7424',1,'mxnet::cpp::FullyConnected(Symbol data, Symbol weight, Symbol bias, int num_hidden, bool no_bias=false)']]],
   ['functionhandle',['FunctionHandle',['../c__api_8h.html#a197f06e1d873d34572b679532c268d35',1,'c_api.h']]]
 ];

@@ -399,7 +399,7 @@ can compose multiple transforms sequentially (taking note of which functions sho
 <td>Converts an image NDArray to a tensor NDArray.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.data.vision.transforms.Normalize" title="mxnet.gluon.data.vision.transforms.Normalize"><code class="xref py py-obj docutils literal"><span class="pre">Normalize</span></code></a></td>
-<td>Normalize an tensor of shape (C x H x W) with mean and standard deviation.</td>
+<td>Normalize an tensor of shape (C x H x W) or (N x C x H x W) with mean and standard deviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.data.vision.transforms.RandomResizedCrop" title="mxnet.gluon.data.vision.transforms.RandomResizedCrop"><code class="xref py py-obj docutils literal"><span class="pre">RandomResizedCrop</span></code></a></td>
 <td>Crop the input image with random scale and aspect ratio.</td>
@@ -937,8 +937,8 @@ the range [0, 1).</p>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.data.vision.transforms.Normalize">
-<em class="property">class </em><code class="descclassname">mxnet.gluon.data.vision.transforms.</code><code class="descname">Normalize</code><span class="sig-paren">(</span><em>mean</em>, <em>std</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/vision/transforms.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.vision.transforms.Normalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Normalize an tensor of shape (C x H x W) with mean and
+<em class="property">class </em><code class="descclassname">mxnet.gluon.data.vision.transforms.</code><code class="descname">Normalize</code><span class="sig-paren">(</span><em>mean=0.0</em>, <em>std=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/vision/transforms.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.vision.transforms.Normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize an tensor of shape (C x H x W) or (N x C x H x W) with mean and
 standard deviation.</p>
 <p>Given mean <cite>(m1, ..., mn)</cite> and std <cite>(s1, ..., sn)</cite> for <cite>n</cite> channels,
 this transform normalizes each channel of the input tensor with:</p>
@@ -961,7 +961,7 @@ this transform normalizes each channel of the input tensor with:</p>
 <dl class="docutils">
 <dt>Inputs:</dt>
 <dd><ul class="first last simple">
-<li><strong>data</strong>: input tensor with (C x H x W) shape.</li>
+<li><strong>data</strong>: input tensor with (C x H x W) or (N x C x H x W) shape.</li>
 </ul>
 </dd>
 <dt>Outputs:</dt>
@@ -970,6 +970,25 @@ this transform normalizes each channel of the input tensor with:</p>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">std</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">[[[ 0.18293785  0.19761486]</span>
+<span class="go">  [ 0.23839645  0.28142193]</span>
+<span class="go">  [ 0.20092112  0.28598186]</span>
+<span class="go">  [ 0.18162774  0.28241724]]</span>
+<span class="go"> [[-0.2881726  -0.18821815]</span>
+<span class="go">  [-0.17705294 -0.30780914]</span>
+<span class="go">  [-0.2812064  -0.3512327 ]</span>
+<span class="go">  [-0.05411351 -0.4716435 ]]</span>
+<span class="go"> [[-1.0363373  -1.7273437 ]</span>
+<span class="go">  [-1.6165586  -1.5223348 ]</span>
+<span class="go">  [-1.208275   -1.1878313 ]</span>
+<span class="go">  [-1.4711051  -1.5200229 ]]]</span>
+<span class="go"><NDArray 3x4x2 @cpu(0)></span>
+</pre></div>
+</div>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.data.vision.transforms.RandomResizedCrop">

@@ -2,6 +2,8 @@ var searchData=
 [
   ['offset',['Offset',['../classmxnet_1_1cpp_1_1NDArray.html#a4781db24d70e2151c84434791e23eeba',1,'mxnet::cpp::NDArray::Offset(size_t h=0, size_t w=0) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a1523650245063ccefc00003cfceec8c8',1,'mxnet::cpp::NDArray::Offset(size_t c, size_t h, size_t w) const ']]],
   ['one',['One',['../classmxnet_1_1cpp_1_1One.html#a1957e5b1a3b354d59a3e15ae590b66af',1,'mxnet::cpp::One']]],
+  ['one_5fhot',['one_hot',['../namespacemxnet_1_1cpp.html#a9e910ba1e5b10fdc19d0d807ef263c14',1,'mxnet::cpp::one_hot(const std::string &amp;symbol_name, Symbol indices, int depth, double on_value=1, double off_value=0, One_hotDtype dtype=One_hotDtype::kFloat32)'],['../namespacemxnet_1_1cpp.html#a35c04a9ebe97b9bf13a1f2928b464c6e',1,'mxnet::cpp::one_hot(Symbol indices, int depth, double on_value=1, double off_value=0, One_hotDtype dtype=One_hotDtype::kFloat32)']]],
+  ['ones_5flike',['ones_like',['../namespacemxnet_1_1cpp.html#a053cb533e3262bf393fd868a92e37f2f',1,'mxnet::cpp::ones_like(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a457ca5ac74ed9713761c55f9c2eace46',1,'mxnet::cpp::ones_like(Symbol data)']]],
   ['op_5fmap',['op_map',['../classmxnet_1_1cpp_1_1Optimizer.html#abfc49efe03b65b06ae351f347dddc058',1,'mxnet::cpp::Optimizer']]],
   ['operator',['Operator',['../classmxnet_1_1cpp_1_1Operator.html#ae6321f03d02b6d076d4154d353b1c4a5',1,'mxnet::cpp::Operator']]],
   ['operator_20bool',['operator bool',['../classmxnet_1_1OpStatePtr.html#a6f407d1c8d461dc474cd1c50aa53e3f8',1,'mxnet::OpStatePtr']]],

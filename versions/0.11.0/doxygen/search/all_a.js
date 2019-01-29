@@ -1,6 +1,7 @@
 var searchData=
 [
   ['id',['id',['../structmxnet_1_1Resource.html#aa1fc8578c0fa849afe7da29c1cf1308b',1,'mxnet::Resource']]],
+  ['identityattachklsparsereg',['IdentityAttachKLSparseReg',['../namespacemxnet_1_1cpp.html#a14ef7f6f4e3e5952dedfbd42b02d2831',1,'mxnet::cpp::IdentityAttachKLSparseReg(const std::string &amp;symbol_name, Symbol data, mx_float sparseness_target=0.1, mx_float penalty=0.001, mx_float momentum=0.9)'],['../namespacemxnet_1_1cpp.html#a102418bba419088e913ab8cfa6e24d69',1,'mxnet::cpp::IdentityAttachKLSparseReg(Symbol data, mx_float sparseness_target=0.1, mx_float penalty=0.001, mx_float momentum=0.9)']]],
   ['iiterator',['IIterator',['../classmxnet_1_1IIterator.html',1,'mxnet']]],
   ['in',['in',['../classmxnet_1_1cpp_1_1Xavier.html#a0147850e8857cdd1befe74522da54f7ea6f98789f7b6d06ec2bf4a1f10e5e8f54',1,'mxnet::cpp::Xavier']]],
   ['in_5farg_5fmap',['in_arg_map',['../classmxnet_1_1Executor.html#a07a3e917596ed08718ee2859283c2476',1,'mxnet::Executor']]],
@@ -26,10 +27,11 @@ var searchData=
   ['input0',['Input0',['../structmxnet_1_1op_1_1Input0.html',1,'mxnet::op']]],
   ['input1',['Input1',['../structmxnet_1_1op_1_1Input1.html',1,'mxnet::op']]],
   ['install',['install',['../classmxnet_1_1cpp_1_1Monitor.html#a907b2d3d0238d6151996d1af1ef29347',1,'mxnet::cpp::Monitor']]],
+  ['instancenorm',['InstanceNorm',['../namespacemxnet_1_1cpp.html#a5541e08fbfa3d0b49e1f3e63b36c001b',1,'mxnet::cpp::InstanceNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)'],['../namespacemxnet_1_1cpp.html#ae3362668d61945e47ee8b9f46e529ae6',1,'mxnet::cpp::InstanceNorm(Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)']]],
   ['interval',['interval',['../classmxnet_1_1cpp_1_1Monitor.html#a8b20d01b8d25a4c3693336b71e98002a',1,'mxnet::cpp::Monitor']]],
   ['invoke',['Invoke',['../classmxnet_1_1cpp_1_1Operator.html#abb488664e59eff22f62f28660fde54d1',1,'mxnet::cpp::Operator::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#a63438fea690f898dc1e3d058281a181a',1,'mxnet::cpp::Operator::Invoke(NDArray &amp;output)'],['../classmxnet_1_1cpp_1_1Operator.html#a85c1b1e99bb50bbbe0bd70e102b586d3',1,'mxnet::cpp::Operator::Invoke(std::vector&lt; NDArray &gt; &amp;outputs)']]],
-  ['io_2eh',['io.h',['../cpp-package_2include_2mxnet-cpp_2io_8h.html',1,'']]],
   ['io_2eh',['io.h',['../include_2mxnet_2io_8h.html',1,'']]],
+  ['io_2eh',['io.h',['../cpp-package_2include_2mxnet-cpp_2io_8h.html',1,'']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1autograd_1_1AGNodeEntry.html#adf925c9b87cbd5969e142123da6c7e30',1,'mxnet::autograd::AGNodeEntry::is_none()'],['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray::is_none()']]],
   ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#abd7405c065167e4e15af032b1e0a5c42',1,'mxnet::OpContext']]],
   ['isschedulernode',['IsSchedulerNode',['../classmxnet_1_1KVStore.html#a41113b9dfeab6c705ba064cc3f010fb4',1,'mxnet::KVStore']]],
