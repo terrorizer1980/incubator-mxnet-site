@@ -43,6 +43,7 @@ var searchData=
   ['invokeop',['InvokeOp',['../classmxnet_1_1Imperative.html#adb41ed890acd4cbe672f088b0284fe84',1,'mxnet::Imperative']]],
   ['io_2eh',['io.h',['../cpp-package_2include_2mxnet-cpp_2io_8h.html',1,'']]],
   ['io_2eh',['io.h',['../include_2mxnet_2io_8h.html',1,'']]],
+  ['is_5fbulk',['is_bulk',['../structmxnet_1_1RunContext.html#a6c1bcba3d060cd16330f447792956928',1,'mxnet::RunContext']]],
   ['is_5fcontainer',['is_container',['../structmxnet_1_1common_1_1is__container.html',1,'mxnet::common']]],
   ['is_5fenabled',['is_enabled',['../namespacemxnet_1_1features.html#ad9e346b63092e8dd88379eb241dfb119',1,'mxnet::features']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
