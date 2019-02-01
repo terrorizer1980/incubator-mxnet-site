@@ -408,7 +408,7 @@ can compose multiple transforms sequentially (taking note of which functions sho
 <td>Crops the image <cite>src</cite> to the given <cite>size</cite> by trimming on all four sides and preserving the center of the image.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.data.vision.transforms.Resize" title="mxnet.gluon.data.vision.transforms.Resize"><code class="xref py py-obj docutils literal"><span class="pre">Resize</span></code></a></td>
-<td>Resize an image to the given size.</td>
+<td>Resize an image or a batch of image NDArray to the given size.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.data.vision.transforms.RandomFlipLeftRight" title="mxnet.gluon.data.vision.transforms.RandomFlipLeftRight"><code class="xref py py-obj docutils literal"><span class="pre">RandomFlipLeftRight</span></code></a></td>
 <td>Randomly flip the input image left to right with a probability of 0.5.</td>
@@ -1068,7 +1068,7 @@ interpolation. See OpenCV’s resize function for available choices.</li>
 <dl class="class">
 <dt id="mxnet.gluon.data.vision.transforms.Resize">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.data.vision.transforms.</code><code class="descname">Resize</code><span class="sig-paren">(</span><em>size</em>, <em>keep_ratio=False</em>, <em>interpolation=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/vision/transforms.html#Resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.vision.transforms.Resize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resize an image to the given size.
+<dd><p>Resize an image or a batch of image NDArray to the given size.
 Should be applied before <cite>mxnet.gluon.data.vision.transforms.ToTensor</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -1079,7 +1079,11 @@ Should be applied before <cite>mxnet.gluon.data.vision.transforms.ToTensor</cite
 <li><strong>keep_ratio</strong> (<em>bool</em>) – Whether to resize the short edge or both edges to <cite>size</cite>,
 if size is give as an integer.</li>
 <li><strong>interpolation</strong> (<em>int</em>) – Interpolation method for resizing. By default uses bilinear
-interpolation. See OpenCV’s resize function for available choices.</li>
+interpolation. See OpenCV’s resize function for available choices.
+Note that the Resize on gpu use contrib.bilinearResize2D operator
+which only support bilinear interpolation(1). The result would be slightly
+different on gpu compared to cpu. OpenCV tend to align center while bilinearResize2D
+use algorithm which aligns corner.</li>
 </ul>
 </td>
 </tr>
@@ -1088,12 +1092,12 @@ interpolation. See OpenCV’s resize function for available choices.</li>
 <dl class="docutils">
 <dt>Inputs:</dt>
 <dd><ul class="first last simple">
-<li><strong>data</strong>: input tensor with (Hi x Wi x C) shape.</li>
+<li><strong>data</strong>: input tensor with (H x W x C) or (N x H x W x C) shape.</li>
 </ul>
 </dd>
 <dt>Outputs:</dt>
 <dd><ul class="first last simple">
-<li><strong>out</strong>: output tensor with (H x W x C) shape.</li>
+<li><strong>out</strong>: output tensor with (H x W x C) or (N x H x W x C) shape.</li>
 </ul>
 </dd>
 </dl>
@@ -1102,6 +1106,9 @@ interpolation. See OpenCV’s resize function for available choices.</li>
 <span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 <span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 <span class="go"><NDArray 500x1000x3 @cpu(0)></span>
+<span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go"><NDArray 3x500x1000x3 @cpu(0)></span>
 </pre></div>
 </div>
 </dd></dl>
