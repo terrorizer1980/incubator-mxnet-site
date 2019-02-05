@@ -229,7 +229,7 @@
 <div class="section" id="overview">
 <span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>MXNet Gluon API comes with a lot of great features, and it can provide you everything you need: from experimentation to deploying the model. In this tutorial, we will walk you through a common use case on how to build a model using gluon, train it on your data, and deploy it for inference.
-This tutorial covers training and inference in Python, please continue to <a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/tutorials/c++/mxnet_cpp_inference_tutorial.md">C++ inference part</a> after you finish.</p>
+This tutorial covers training and inference in Python, please continue to <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/c++/mxnet_cpp_inference_tutorial.html">C++ inference part</a> after you finish.</p>
 <p>Let’s say you need to build a service that provides flower species recognition. A common problem is that you don’t have enough data to train a good model. In such cases, a technique called Transfer Learning can be used to make a more robust model.
 In Transfer Learning we make use of a pre-trained model that solves a related task, and was trained on a very large standard dataset, such as ImageNet. ImageNet is from a different domain, but we can utilize the knowledge in this pre-trained model to perform the new task at hand.</p>
 <p>Gluon provides State of the Art models for many of the standard tasks such as Classification, Object Detection, Segmentation, etc. In this tutorial we will use the pre-trained model <a class="reference external" href="https://arxiv.org/abs/1603.05027">ResNet50 V2</a> trained on ImageNet dataset. This model achieves 77.11% top-1 accuracy on ImageNet. We seek to transfer as much knowledge as possible for our task of recognizing different species of flowers.</p>
@@ -248,7 +248,7 @@ In Transfer Learning we make use of a pre-trained model that solves a related ta
 We have prepared a utility file to help you download and organize your data into train, test, and validation sets. Run the following Python code to download and prepare the data:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
 <span class="n">data_util_file</span> <span class="o">=</span> <span class="s2">"oxford_102_flower_dataset.py"</span>
-<span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/roywei/incubator-mxnet/gluon_tutorial/docs/tutorial_utils/data/{}?raw=true"</span>
+<span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/apache/incubator-mxnet/master/docs/tutorial_utils/data/{}?raw=true"</span>
 <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">base_url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_util_file</span><span class="p">),</span> <span class="n">fname</span><span class="o">=</span><span class="n">data_util_file</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">oxford_102_flower_dataset</span>
 
@@ -257,13 +257,7 @@ We have prepared a utility file to help you download and organize your data into
 <span class="n">oxford_102_flower_dataset</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now your data will be organized into the following format, all the images belong to the same category will be put together in the following pattern:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>data
-...
-...
-...
-</pre></div>
-</div>
+<p>Now your data will be organized into train, test, and validation sets, images belong to the same class are moved to the same folder.</p>
 </div>
 <div class="section" id="training-using-gluon">
 <span id="training-using-gluon"></span><h2>Training using Gluon<a class="headerlink" href="#training-using-gluon" title="Permalink to this headline">¶</a></h2>
@@ -282,9 +276,10 @@ We have prepared a utility file to help you download and organize your data into
 <span class="kn">from</span> <span class="nn">mxnet.gluon.model_zoo.vision</span> <span class="kn">import</span> <span class="n">resnet50_v2</span>
 </pre></div>
 </div>
-<p>Next, we define the hyper-parameters that we will use for fine-tuning. We will use the <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/learning_rate_schedules.html">MXNet learning rate scheduler</a> to adjust learning rates during training.</p>
+<p>Next, we define the hyper-parameters that we will use for fine-tuning. We will use the <a class="reference external" href="https://mxnet.incubator.apache.org/tutorials/gluon/learning_rate_schedules.html">MXNet learning rate scheduler</a> to adjust learning rates during training.
+Here we set the <code class="docutils literal"><span class="pre">epochs</span></code> to 1 for quick demonstration, please change to 40 for actual training.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">classes</span> <span class="o">=</span> <span class="mi">102</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.001</span>
 <span class="n">per_device_batch_size</span> <span class="o">=</span> <span class="mi">32</span>
 <span class="n">momentum</span> <span class="o">=</span> <span class="mf">0.9</span>
@@ -308,7 +303,7 @@ We have prepared a utility file to help you download and organize your data into
 <li>Transpose the data from <code class="docutils literal"><span class="pre">[height,</span> <span class="pre">width,</span> <span class="pre">num_channels]</span></code> to <code class="docutils literal"><span class="pre">[num_channels,</span> <span class="pre">height,</span> <span class="pre">width]</span></code>, and map values from [0, 255] to [0, 1]</li>
 <li>Normalize with the mean and standard deviation from the ImageNet dataset.</li>
 </ol>
-<p>For validation and inference, we only need to apply step 1, 4, and 5. We also need to save the mean and standard deviation values for <a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/tutorials/c++/mxnet_cpp_inference_tutorial.md">inference using C++</a>.</p>
+<p>For validation and inference, we only need to apply step 1, 4, and 5. We also need to save the mean and standard deviation values for <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/c++/mxnet_cpp_inference_tutorial.html">inference using C++</a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">jitter_param</span> <span class="o">=</span> <span class="mf">0.4</span>
 <span class="n">lighting_param</span> <span class="o">=</span> <span class="mf">0.1</span>
 
@@ -433,8 +428,8 @@ We have prepared a utility file to help you download and organize your data into
 </pre></div>
 </div>
 <p>Following is the training result:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>Epoch <span class="m">40</span><span class="o">]</span> Train-acc: <span class="m">0</span>.945, loss: <span class="m">0</span>.354 <span class="p">|</span> Val-acc: <span class="m">0</span>.955 <span class="p">|</span> learning-rate: <span class="m">4</span>.219E-04 <span class="p">|</span> time: <span class="m">17</span>.8
-<span class="o">[</span>Finished<span class="o">]</span> Test-acc: <span class="m">0</span>.952
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Epoch</span> <span class="mi">40</span><span class="p">]</span> <span class="n">Train</span><span class="o">-</span><span class="n">acc</span><span class="p">:</span> <span class="mf">0.945</span><span class="p">,</span> <span class="n">loss</span><span class="p">:</span> <span class="mf">0.354</span> <span class="o">|</span> <span class="n">Val</span><span class="o">-</span><span class="n">acc</span><span class="p">:</span> <span class="mf">0.955</span> <span class="o">|</span> <span class="n">learning</span><span class="o">-</span><span class="n">rate</span><span class="p">:</span> <span class="mf">4.219E-04</span> <span class="o">|</span> <span class="n">time</span><span class="p">:</span> <span class="mf">17.8</span>
+<span class="p">[</span><span class="n">Finished</span><span class="p">]</span> <span class="n">Test</span><span class="o">-</span><span class="n">acc</span><span class="p">:</span> <span class="mf">0.952</span>
 </pre></div>
 </div>
 <p>In the previous example output, we trained the model using an <a class="reference external" href="https://aws.amazon.com/ec2/instance-types/p3/">AWS p3.8xlarge instance</a> with 4 Tesla V100 GPUs. We were able to reach a test accuracy of 95.5% with 40 epochs in around 12 minutes. This was really fast because our model was pre-trained on a much larger dataset, ImageNet, with around 1.3 million images. It worked really well to capture features on our small dataset.</p>
@@ -490,13 +485,13 @@ In general, prediction consists of the following steps:</p>
 </pre></div>
 </div>
 <p>Following is the output, you can see the image has been classified as lotus correctly.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nv">probability</span><span class="o">=</span><span class="m">9</span>.798435, <span class="nv">class</span><span class="o">=</span>lotus
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">probability</span><span class="o">=</span><span class="mf">9.798435</span><span class="p">,</span> <span class="n">class</span><span class="o">=</span><span class="n">lotus</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="what-s-next">
 <span id="what-s-next"></span><h2>What’s next<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h2>
-<p>You can continue to the <a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/tutorials/c++/mxnet_cpp_inference_tutorial.md">next tutorial</a> on how to load the model we just trained and run inference using MXNet C++ API.</p>
+<p>You can continue to the <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/c++/mxnet_cpp_inference_tutorial.html">next tutorial</a> on how to load the model we just trained and run inference using MXNet C++ API.</p>
 <p>You can also find more ways to run inference and deploy your models here:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -519,7 +514,7 @@ In general, prediction consists of the following steps:</p>
 </ul>
 </div>
 <div class="btn-group" role="group">
-<div class="download-btn"><a download="gluon_from_experiment_to_deployment.ipynb" href="gluon_from_experiment_to_deployment.ipynb"><span class="glyphicon glyphicon-download-alt"></span> gluon_from_experiment_to_deployment.ipynb</a></div><div class="download-btn"><a download="gluon_from_experiment_to_deployment_bash.ipynb" href="gluon_from_experiment_to_deployment_bash.ipynb"><span class="glyphicon glyphicon-download-alt"></span> gluon_from_experiment_to_deployment_bash.ipynb</a></div></div></div>
+<div class="download-btn"><a download="gluon_from_experiment_to_deployment.ipynb" href="gluon_from_experiment_to_deployment.ipynb"><span class="glyphicon glyphicon-download-alt"></span> gluon_from_experiment_to_deployment.ipynb</a></div></div></div>
 </div>
 </div>
 </div>
