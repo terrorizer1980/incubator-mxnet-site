@@ -64,6 +64,7 @@ var searchData=
   ['mxexecutorprint',['MXExecutorPrint',['../c__api_8h.html#ac9f776a6e7be0bacda4dcd3efa5f7dc5',1,'c_api.h']]],
   ['mxexecutorreshape',['MXExecutorReshape',['../c__api_8h.html#ada058d536ff48a8dca5bc21a81705f8c',1,'c_api.h']]],
   ['mxexecutorsetmonitorcallback',['MXExecutorSetMonitorCallback',['../c__api_8h.html#abae91a5d7847020e14395e078144489a',1,'c_api.h']]],
+  ['mxexecutorsetmonitorcallbackex',['MXExecutorSetMonitorCallbackEX',['../c__api_8h.html#a992ced6e9b9aacb58b1ce47ecd9fd28f',1,'c_api.h']]],
   ['mxexecutorsimplebind',['MXExecutorSimpleBind',['../c__api_8h.html#ae8bc5c6380c5c7aaa6c8c6b884482e29',1,'c_api.h']]],
   ['mxfreecachedop',['MXFreeCachedOp',['../c__api_8h.html#a83a34d6df4290e5efd737293cf875a9c',1,'c_api.h']]],
   ['mxfuncdescribe',['MXFuncDescribe',['../c__api_8h.html#af0a6166fe48ce0a175990914b1cb02e0',1,'c_api.h']]],

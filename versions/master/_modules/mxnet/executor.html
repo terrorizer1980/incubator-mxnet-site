@@ -459,13 +459,15 @@
             <span class="n">ndarray</span><span class="p">,</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">is_train</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="Executor.set_monitor_callback"><a class="viewcode-back" href="../../api/python/executor/executor.html#mxnet.executor.Executor.set_monitor_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_monitor_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<div class="viewcode-block" id="Executor.set_monitor_callback"><a class="viewcode-back" href="../../api/python/executor/executor.html#mxnet.executor.Executor.set_monitor_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_monitor_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""Install callback for monitor.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        callback : function</span>
 <span class="sd">            Takes a string and an NDArrayHandle.</span>
+<span class="sd">        monitor_all : bool, default False</span>
+<span class="sd">            If true, monitor both input and output, otherwise monitor output only.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -476,10 +478,11 @@
 <span class="sd">        """</span>
         <span class="n">cb_type</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CFUNCTYPE</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_callback</span> <span class="o">=</span> <span class="n">cb_type</span><span class="p">(</span><span class="n">_monitor_callback_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">))</span>
-        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXExecutorSetMonitorCallback</span><span class="p">(</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXExecutorSetMonitorCallbackEX</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_callback</span><span class="p">,</span>
-            <span class="kc">None</span><span class="p">))</span></div>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">monitor_all</span><span class="p">)))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arg_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
