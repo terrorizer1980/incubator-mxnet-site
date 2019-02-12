@@ -3,7 +3,7 @@ var searchData=
   ['l2normalization',['L2Normalization',['../namespacemxnet_1_1cpp.html#a38d13c13c0be0010e704a30430dff2b0',1,'mxnet::cpp::L2Normalization(const std::string &amp;symbol_name, Symbol data, mx_float eps=1e-10, L2NormalizationMode mode=L2NormalizationMode::kInstance)'],['../namespacemxnet_1_1cpp.html#aa4fa4bb8aef8f707869fdd41953ca2f7',1,'mxnet::cpp::L2Normalization(Symbol data, mx_float eps=1e-10, L2NormalizationMode mode=L2NormalizationMode::kInstance)']]],
   ['l2normalizationmode',['L2NormalizationMode',['../namespacemxnet_1_1cpp.html#a92b87bed551457a3d444a28fd3c7c84f',1,'mxnet::cpp']]],
   ['label',['label',['../classmxnet_1_1cpp_1_1DataBatch.html#a4053743d9b862ca70fe553872beae483',1,'mxnet::cpp::DataBatch']]],
-  ['lapack',['LAPACK',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4ace62935ed54d809f62bb28fe7c28aa8d',1,'mxnet::features']]],
+  ['lapack',['LAPACK',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41ace62935ed54d809f62bb28fe7c28aa8d',1,'mxnet::features']]],
   ['layernorm',['LayerNorm',['../namespacemxnet_1_1cpp.html#a837a8ec6d76f03fc7085b5e6588eb53c',1,'mxnet::cpp::LayerNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, int axis=-1, mx_float eps=1e-05, bool output_mean_var=false)'],['../namespacemxnet_1_1cpp.html#a093e0eb27a7bb61634444974e9400f67',1,'mxnet::cpp::LayerNorm(Symbol data, Symbol gamma, Symbol beta, int axis=-1, mx_float eps=1e-05, bool output_mean_var=false)']]],
   ['lazy_5falloc_5farray_2eh',['lazy_alloc_array.h',['../lazy__alloc__array_8h.html',1,'']]],
   ['lazyallocarray',['LazyAllocArray',['../classmxnet_1_1common_1_1LazyAllocArray.html',1,'mxnet::common']]],
@@ -11,6 +11,10 @@ var searchData=
   ['leakyrelu',['LeakyReLU',['../namespacemxnet_1_1cpp.html#afd094b64ffc4a3a77b1d2d52d86834b5',1,'mxnet::cpp::LeakyReLU(const std::string &amp;symbol_name, Symbol data, Symbol gamma, LeakyReLUActType act_type=LeakyReLUActType::kLeaky, mx_float slope=0.25, mx_float lower_bound=0.125, mx_float upper_bound=0.334)'],['../namespacemxnet_1_1cpp.html#acbf6201925b98b3b055eac9fa6cdc0c6',1,'mxnet::cpp::LeakyReLU(Symbol data, Symbol gamma, LeakyReLUActType act_type=LeakyReLUActType::kLeaky, mx_float slope=0.25, mx_float lower_bound=0.125, mx_float upper_bound=0.334)']]],
   ['leakyreluacttype',['LeakyReLUActType',['../namespacemxnet_1_1cpp.html#aad64d459f3652d3ec3cf37c460aa8ee0',1,'mxnet::cpp']]],
   ['legacyload',['LegacyLoad',['../classmxnet_1_1NDArray.html#a0b212c0a0c4c83c64a6bf6d0c430602b',1,'mxnet::NDArray']]],
+  ['libfeature',['LibFeature',['../structLibFeature.html',1,'']]],
+  ['libinfo',['LibInfo',['../structmxnet_1_1features_1_1LibInfo.html#ae9f0cc75baeb5a37ed1c83b7d7706d61',1,'mxnet::features::LibInfo']]],
+  ['libinfo',['LibInfo',['../structmxnet_1_1features_1_1LibInfo.html',1,'mxnet::features']]],
+  ['libinfo_2eh',['libinfo.h',['../libinfo_8h.html',1,'']]],
   ['linearregressionoutput',['LinearRegressionOutput',['../namespacemxnet_1_1cpp.html#a9cde2fb30690b60d2659a4e4e56ab910',1,'mxnet::cpp::LinearRegressionOutput(const std::string &amp;symbol_name, Symbol data, Symbol label, mx_float grad_scale=1)'],['../namespacemxnet_1_1cpp.html#afcbbe84c18e89e4c03a994f2438ea821',1,'mxnet::cpp::LinearRegressionOutput(Symbol data, Symbol label, mx_float grad_scale=1)']]],
   ['list_5farguments',['list_arguments',['../structNativeOpInfo.html#af25c58d65a2350cab76403f1ce21922e',1,'NativeOpInfo::list_arguments()'],['../structNDArrayOpInfo.html#abc701d8c032a1c5b9358de8ab060d9c2',1,'NDArrayOpInfo::list_arguments()']]],
   ['list_5foutputs',['list_outputs',['../structNativeOpInfo.html#a6a324c4b74a64b295c404ff235fac1e1',1,'NativeOpInfo::list_outputs()'],['../structNDArrayOpInfo.html#ab99abece52b77824dde5df98837f4f7b',1,'NDArrayOpInfo::list_outputs()']]],
@@ -39,7 +43,7 @@ var searchData=
   ['logstoragefallback',['LogStorageFallback',['../namespacemxnet_1_1common.html#aad719abf411ea1ed9185c3849203820f',1,'mxnet::common']]],
   ['lr_5fscheduler_2eh',['lr_scheduler.h',['../lr__scheduler_8h.html',1,'']]],
   ['lrn',['LRN',['../namespacemxnet_1_1cpp.html#a1110128eb77f14f6cf35f002b5b0c288',1,'mxnet::cpp::LRN(const std::string &amp;symbol_name, Symbol data, uint32_t nsize, mx_float alpha=0.0001, mx_float beta=0.75, mx_float knorm=2)'],['../namespacemxnet_1_1cpp.html#afa46e4eb9198e8a5d2ffdffa10d77f3d',1,'mxnet::cpp::LRN(Symbol data, uint32_t nsize, mx_float alpha=0.0001, mx_float beta=0.75, mx_float knorm=2)']]],
-  ['lrscheduler',['LRScheduler',['../classmxnet_1_1cpp_1_1LRScheduler.html',1,'mxnet::cpp']]],
   ['lrscheduler',['LRScheduler',['../classmxnet_1_1cpp_1_1LRScheduler.html#a18c635d1650fbeb99d85bc271b71e5a7',1,'mxnet::cpp::LRScheduler']]],
+  ['lrscheduler',['LRScheduler',['../classmxnet_1_1cpp_1_1LRScheduler.html',1,'mxnet::cpp']]],
   ['lrscheduler_5f',['lrScheduler_',['../classmxnet_1_1cpp_1_1Optimizer.html#ad03f167498541f5bbbbffcdecb875445',1,'mxnet::cpp::Optimizer']]]
 ];

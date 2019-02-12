@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['backward',['backward',['../structNativeOpInfo.html#a2faec6cfc4510b455de950a4b104ea9f',1,'NativeOpInfo::backward()'],['../structNDArrayOpInfo.html#ac8a4bb0b4a71f372e5abb8ded36dd61c',1,'NDArrayOpInfo::backward()'],['../classmxnet_1_1Executor.html#aa2fd32510a718aff38323e63be0d65e3',1,'mxnet::Executor::Backward()'],['../classmxnet_1_1Imperative.html#afa4950a3cf57431f1d0d639c3f7afa7d',1,'mxnet::Imperative::Backward()'],['../classmxnet_1_1Operator.html#ad32d74b9bf56caf920b5e6379d2bb259',1,'mxnet::Operator::Backward()'],['../classmxnet_1_1cpp_1_1Executor.html#abd98fc4f87cd8adea049a31a840898e4',1,'mxnet::cpp::Executor::Backward()']]],
+  ['backward',['Backward',['../classmxnet_1_1Executor.html#aa2fd32510a718aff38323e63be0d65e3',1,'mxnet::Executor::Backward()'],['../classmxnet_1_1Imperative.html#afa4950a3cf57431f1d0d639c3f7afa7d',1,'mxnet::Imperative::Backward()'],['../classmxnet_1_1Operator.html#ad32d74b9bf56caf920b5e6379d2bb259',1,'mxnet::Operator::Backward()'],['../classmxnet_1_1cpp_1_1Executor.html#abd98fc4f87cd8adea049a31a840898e4',1,'mxnet::cpp::Executor::Backward()'],['../structNativeOpInfo.html#a2faec6cfc4510b455de950a4b104ea9f',1,'NativeOpInfo::backward()'],['../structNDArrayOpInfo.html#ac8a4bb0b4a71f372e5abb8ded36dd61c',1,'NDArrayOpInfo::backward()']]],
   ['backwardinplaceoption',['BackwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#a67231a5a1525ec7480de98a79dce0194',1,'mxnet::OperatorProperty']]],
   ['backwardinputs',['BackwardInputs',['../classmxnet_1_1OperatorProperty.html#a9f488509e132094ce7e79125ce853042',1,'mxnet::OperatorProperty']]],
   ['backwardresource',['BackwardResource',['../classmxnet_1_1OperatorProperty.html#ade7720a3e0ebba67d89978925a77609b',1,'mxnet::OperatorProperty']]],
@@ -25,10 +25,10 @@ var searchData=
   ['binarygradfunctiont1',['BinaryGradFunctionT1',['../namespacemxnet_1_1op.html#a027d1f190d964f7494816733aff6c3f2',1,'mxnet::op']]],
   ['binaryshapefunction',['BinaryShapeFunction',['../namespacemxnet_1_1op.html#a78c7bd2075894ac41351feca1b1e5c94',1,'mxnet::op']]],
   ['bind',['Bind',['../classmxnet_1_1Executor.html#a8217aa9fbdd99d107bd836872d7d9692',1,'mxnet::Executor::Bind()'],['../classmxnet_1_1cpp_1_1Symbol.html#a1b6bab44e812186f742387527a1b4a97',1,'mxnet::cpp::Symbol::Bind()']]],
-  ['blas_5fapple',['BLAS_APPLE',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a21d980a465ba2dd528b0218697d9ab28',1,'mxnet::features']]],
-  ['blas_5fatlas',['BLAS_ATLAS',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a1fcc301aeb4cf67ddb7317625d240852',1,'mxnet::features']]],
-  ['blas_5fmkl',['BLAS_MKL',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a764878c80e3a06a1858fc648d4f3fca7',1,'mxnet::features']]],
-  ['blas_5fopen',['BLAS_OPEN',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a197b57aed025da644e4de5e5ffb8e078',1,'mxnet::features']]],
+  ['blas_5fapple',['BLAS_APPLE',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a21d980a465ba2dd528b0218697d9ab28',1,'mxnet::features']]],
+  ['blas_5fatlas',['BLAS_ATLAS',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a1fcc301aeb4cf67ddb7317625d240852',1,'mxnet::features']]],
+  ['blas_5fmkl',['BLAS_MKL',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a764878c80e3a06a1858fc648d4f3fca7',1,'mxnet::features']]],
+  ['blas_5fopen',['BLAS_OPEN',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a197b57aed025da644e4de5e5ffb8e078',1,'mxnet::features']]],
   ['blockgrad',['BlockGrad',['../namespacemxnet_1_1cpp.html#adad94b7c3a0a17f4b9c01073cc162d0e',1,'mxnet::cpp::BlockGrad(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a906c010c5b4b27cb35fac092e8752cb8',1,'mxnet::cpp::BlockGrad(Symbol data)']]],
   ['broadcast_5fadd',['broadcast_add',['../namespacemxnet_1_1cpp.html#a857af56895efd5feaa3276b6903f8cfa',1,'mxnet::cpp::broadcast_add(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#ac5d476176e65f464bdbd82263305bd9d',1,'mxnet::cpp::broadcast_add(Symbol lhs, Symbol rhs)']]],
   ['broadcast_5faxis',['broadcast_axis',['../namespacemxnet_1_1cpp.html#a85cc565eca8e7b366cb7875afe6e9456',1,'mxnet::cpp::broadcast_axis(const std::string &amp;symbol_name, Symbol data, Shape axis=Shape(), Shape size=Shape())'],['../namespacemxnet_1_1cpp.html#a8077f0726ac5436b8abcb8621cc7171c',1,'mxnet::cpp::broadcast_axis(Symbol data, Shape axis=Shape(), Shape size=Shape())']]],

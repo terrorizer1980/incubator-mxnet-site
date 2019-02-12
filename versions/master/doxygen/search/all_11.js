@@ -30,7 +30,7 @@ var searchData=
   ['print',['Print',['../classmxnet_1_1Executor.html#a3803afcb87e4c69940c8d3d88a03e6ee',1,'mxnet::Executor']]],
   ['prod',['prod',['../namespacemxnet_1_1cpp.html#af84dd35dd17a1675a342c52708da9902',1,'mxnet::cpp::prod(const std::string &amp;symbol_name, Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)'],['../namespacemxnet_1_1cpp.html#a561746f1a9bf11e5e3c488248cd73973',1,'mxnet::cpp::prod(Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)']]],
   ['profilehandle',['ProfileHandle',['../c__api_8h.html#a2f6ad8b0cc1e894f64b5ecad2ceb1aa7',1,'c_api.h']]],
-  ['profiler',['PROFILER',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4af655c75ca4b00702eef0ae2233dd706b',1,'mxnet::features']]],
+  ['profiler',['PROFILER',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41af655c75ca4b00702eef0ae2233dd706b',1,'mxnet::features']]],
   ['profiler_5fmessage_5ffuncname',['PROFILER_MESSAGE_FUNCNAME',['../include_2mxnet_2base_8h.html#ae34be2bf889657a1452b87fd36f034c3',1,'base.h']]],
   ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html#a0ee929dcfa7b8e4baa59d85b7071d22b',1,'mxnet::cpp::PSNR']]],
   ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]],

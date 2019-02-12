@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['f16c',['F16C',['../namespacemxnet_1_1features.html#af3123d902e4be808da18241729023de4a1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
+  ['f16c',['F16C',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
   ['factor_5ftype',['factor_type',['../classmxnet_1_1cpp_1_1Xavier.html#aecdf5a414d18167bbbd48a84531f61c7',1,'mxnet::cpp::Xavier']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html',1,'mxnet::cpp']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html#abaabb6c44a38ac9ee5025c312eead44e',1,'mxnet::cpp::FactorScheduler']]],
@@ -31,7 +31,7 @@ var searchData=
   ['fneedrequantize',['FNeedRequantize',['../namespacemxnet.html#a7f7c271f6d03ee358eb9e66486e41045',1,'mxnet']]],
   ['fnproperty',['FnProperty',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3b',1,'mxnet']]],
   ['foreach',['ForEach',['../classmxnet_1_1common_1_1LazyAllocArray.html#a43a89c8e7b4e1a09f346694073a2d998',1,'mxnet::common::LazyAllocArray']]],
-  ['forward',['Forward',['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()'],['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()']]],
+  ['forward',['forward',['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()'],['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()']]],
   ['forwardinplaceoption',['ForwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#aad7a3e87866515a2b7100e849a2fe966',1,'mxnet::OperatorProperty']]],
   ['forwardresource',['ForwardResource',['../classmxnet_1_1OperatorProperty.html#a623210dd1b9495ca73f223e0b06f998c',1,'mxnet::OperatorProperty']]],
   ['fquantizedop',['FQuantizedOp',['../namespacemxnet.html#ac4a55ce92442f122a1a0e6ae8d134f10',1,'mxnet']]],

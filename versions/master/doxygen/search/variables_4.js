@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['enabled',['enabled',['../structLibFeature.html#a9918c579588ba4d31818212618d2d33d',1,'LibFeature']]],
   ['end',['end',['../classmxnet_1_1cpp_1_1Uniform.html#aeef186638253f0fbc4e2f1a81ba7a145',1,'mxnet::cpp::Uniform']]],
   ['epoch_5fsize',['epoch_size',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a1e955308739787e7dbd9c9026d18a3ce',1,'mxnet::cpp::FeedForwardConfig']]],
   ['exes',['exes',['../classmxnet_1_1cpp_1_1Monitor.html#a036886927625e741a7360ab72a2832e1',1,'mxnet::cpp::Monitor']]],
