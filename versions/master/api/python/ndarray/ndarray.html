@@ -5427,21 +5427,97 @@ Also <cite>squeeze_axis</cite> can be set to true only if <code class="docutils 
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.Softmax">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">Softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>grad_scale=_Null</em>, <em>ignore_label=_Null</em>, <em>multi_output=_Null</em>, <em>use_ignore=_Null</em>, <em>preserve_shape=_Null</em>, <em>normalization=_Null</em>, <em>out_grad=_Null</em>, <em>smooth_alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.Softmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Please use <cite>SoftmaxOutput</cite>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This operator has been renamed to <cite>SoftmaxOutput</cite>, which
-computes the gradient of cross-entropy loss w.r.t softmax output.
-To just compute softmax output, use the <cite>softmax</cite> operator.</p>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">Softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>label=None</em>, <em>grad_scale=_Null</em>, <em>ignore_label=_Null</em>, <em>multi_output=_Null</em>, <em>use_ignore=_Null</em>, <em>preserve_shape=_Null</em>, <em>normalization=_Null</em>, <em>out_grad=_Null</em>, <em>smooth_alpha=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.Softmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the gradient of cross entropy loss with respect to softmax output.</p>
+<ul>
+<li><p class="first">This operator computes the gradient in two steps.
+The cross entropy loss does not actually need to be computed.</p>
+<ul class="simple">
+<li>Applies softmax function on the input array.</li>
+<li>Computes and returns the gradient of cross entropy loss w.r.t. the softmax output.</li>
+</ul>
+</li>
+<li><p class="first">The softmax function, cross entropy loss and gradient is given by:</p>
+<ul>
+<li><p class="first">Softmax Function:</p>
+<div class="math">
+\[\text{softmax}(x)_i = \frac{exp(x_i)}{\sum_j exp(x_j)}\]</div>
+</li>
+<li><p class="first">Cross Entropy Function:</p>
+<div class="math">
+\[\text{CE(label, output)} = - \sum_i \text{label}_i \log(\text{output}_i)\]</div>
+</li>
+<li><p class="first">The gradient of cross entropy loss w.r.t softmax output:</p>
+<div class="math">
+\[\text{gradient} = \text{output} - \text{label}\]</div>
+</li>
+</ul>
+</li>
+<li><p class="first">During forward propagation, the softmax function is computed for each instance in the input array.</p>
+<p>For general <em>N</em>-D input arrays with shape <span class="math">\((d_1, d_2, ..., d_n)\)</span>. The size is
+<span class="math">\(s=d_1 \cdot d_2 \cdot \cdot \cdot d_n\)</span>. We can use the parameters <cite>preserve_shape</cite>
+and <cite>multi_output</cite> to specify the way to compute softmax:</p>
+<ul class="simple">
+<li>By default, <cite>preserve_shape</cite> is <code class="docutils literal"><span class="pre">false</span></code>. This operator will reshape the input array
+into a 2-D array with shape <span class="math">\((d_1, \frac{s}{d_1})\)</span> and then compute the softmax function for
+each row in the reshaped array, and afterwards reshape it back to the original shape
+<span class="math">\((d_1, d_2, ..., d_n)\)</span>.</li>
+<li>If <cite>preserve_shape</cite> is <code class="docutils literal"><span class="pre">true</span></code>, the softmax function will be computed along
+the last axis (<cite>axis</cite> = <code class="docutils literal"><span class="pre">-1</span></code>).</li>
+<li>If <cite>multi_output</cite> is <code class="docutils literal"><span class="pre">true</span></code>, the softmax function will be computed along
+the second axis (<cite>axis</cite> = <code class="docutils literal"><span class="pre">1</span></code>).</li>
+</ul>
+</li>
+<li><p class="first">During backward propagation, the gradient of cross-entropy loss w.r.t softmax output array is computed.
+The provided label can be a one-hot label array or a probability label array.</p>
+<ul>
+<li><p class="first">If the parameter <cite>use_ignore</cite> is <code class="docutils literal"><span class="pre">true</span></code>, <cite>ignore_label</cite> can specify input instances
+with a particular label to be ignored during backward propagation. <strong>This has no effect when
+softmax `output` has same shape as `label`</strong>.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
+<span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">ignore_label</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">SoftmaxOutput</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="p">,</span>\
+              <span class="n">multi_output</span><span class="o">=</span><span class="n">true</span><span class="p">,</span> <span class="n">use_ignore</span><span class="o">=</span><span class="n">true</span><span class="p">,</span>\
+              <span class="n">ignore_label</span><span class="o">=</span><span class="n">ignore_label</span><span class="p">)</span>
+<span class="c1">## forward softmax output</span>
+<span class="p">[[</span> <span class="mf">0.0320586</span>   <span class="mf">0.08714432</span>  <span class="mf">0.23688284</span>  <span class="mf">0.64391428</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>      <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>      <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>        <span class="mf">0.25</span>      <span class="p">]]</span>
+<span class="c1">## backward gradient output</span>
+<span class="p">[[</span> <span class="mf">0.</span>    <span class="mf">0.</span>    <span class="mf">0.</span>    <span class="mf">0.</span>  <span class="p">]</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">0.75</span>  <span class="mf">0.25</span>  <span class="mf">0.25</span>  <span class="mf">0.25</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.25</span>  <span class="mf">0.25</span> <span class="o">-</span><span class="mf">0.75</span>  <span class="mf">0.25</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.25</span>  <span class="mf">0.25</span>  <span class="mf">0.25</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">]]</span>
+<span class="c1">## notice that the first row is all 0 because label[0] is 1, which is equal to ignore_label.</span>
+</pre></div>
 </div>
-<p>Defined in src/operator/softmax_output.cc:L138</p>
+</li>
+<li><p class="first">The parameter <cite>grad_scale</cite> can be used to rescale the gradient, which is often used to
+give each loss function different weights.</p>
+</li>
+<li><p class="first">This operator also supports various ways to normalize the gradient by <cite>normalization</cite>,
+The <cite>normalization</cite> is applied if softmax output has different shape than the labels.
+The <cite>normalization</cite> mode can be set to the followings:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">'null'</span></code>: do nothing.</li>
+<li><code class="docutils literal"><span class="pre">'batch'</span></code>: divide the gradient by the batch size.</li>
+<li><code class="docutils literal"><span class="pre">'valid'</span></code>: divide the gradient by the number of instances which are not ignored.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Defined in src/operator/softmax_output.cc:L230</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input array.</li>
+<li><strong>label</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Ground truth label.</li>
 <li><strong>grad_scale</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scales the gradient by a float factor.</li>
 <li><strong>ignore_label</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – The instances whose <cite>labels</cite> == <cite>ignore_label</cite> will be ignored during backward, if <cite>use_ignore</cite> is set to <code class="docutils literal"><span class="pre">true</span></code>).</li>
 <li><strong>multi_output</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set to <code class="docutils literal"><span class="pre">true</span></code>, the softmax function will be computed along axis <code class="docutils literal"><span class="pre">1</span></code>. This is applied when the shape of input array differs from the shape of label array.</li>
@@ -5592,7 +5668,7 @@ The <cite>normalization</cite> mode can be set to the followings:</p>
 </ul>
 </li>
 </ul>
-<p>Defined in src/operator/softmax_output.cc:L123</p>
+<p>Defined in src/operator/softmax_output.cc:L230</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
