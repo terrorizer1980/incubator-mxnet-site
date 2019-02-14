@@ -224,7 +224,18 @@
 </div>
 <div class="content">
 <div class="page-tracker"></div>
-<div class="section" id="gluon-from-experiment-to-deployment-an-end-to-end-tutorial">
+<!--- Licensed to the Apache Software Foundation (ASF) under one -->
+<!--- or more contributor license agreements.  See the NOTICE file -->
+<!--- distributed with this work for additional information -->
+<!--- regarding copyright ownership.  The ASF licenses this file -->
+<!--- to you under the Apache License, Version 2.0 (the -->
+<!--- "License"); you may not use this file except in compliance -->
+<!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, -->
+<!--- software distributed under the License is distributed on an -->
+<!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
+<!--- KIND, either express or implied.  See the License for the -->
+<!--- specific language governing permissions and limitations -->
+<!--- under the License. --><div class="section" id="gluon-from-experiment-to-deployment-an-end-to-end-tutorial">
 <span id="gluon-from-experiment-to-deployment-an-end-to-end-tutorial"></span><h1>Gluon: from experiment to deployment, an end to end tutorial<a class="headerlink" href="#gluon-from-experiment-to-deployment-an-end-to-end-tutorial" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -267,7 +278,6 @@ We have prepared a utility file to help you download and organize your data into
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span>
 
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">init</span>
@@ -290,7 +300,8 @@ Here we set the <code class="docutils literal"><span class="pre">epochs</span></
 <span class="n">lr_epochs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
 
 <span class="n">num_gpus</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">()</span>
-<span class="n">num_workers</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+<span class="c1"># you can replace num_workers with the number of cores on you device</span>
+<span class="n">num_workers</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">ctx</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_gpus</span><span class="p">)]</span> <span class="k">if</span> <span class="n">num_gpus</span> <span class="o">></span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()]</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="n">per_device_batch_size</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">num_gpus</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
