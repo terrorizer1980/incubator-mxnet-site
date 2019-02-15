@@ -243,8 +243,10 @@
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable= arguments-differ</span>
 <span class="sd">"""Custom neural network layers in model_zoo."""</span>
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Concurrent'</span><span class="p">,</span> <span class="s1">'HybridConcurrent'</span><span class="p">,</span> <span class="s1">'Identity'</span><span class="p">,</span> <span class="s1">'SparseEmbedding'</span><span class="p">,</span>
-           <span class="s1">'SyncBatchNorm'</span><span class="p">]</span>
+           <span class="s1">'SyncBatchNorm'</span><span class="p">,</span> <span class="s1">'PixelShuffle1D'</span><span class="p">,</span> <span class="s1">'PixelShuffle2D'</span><span class="p">,</span>
+           <span class="s1">'PixelShuffle3D'</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="k">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">test_utils</span>
@@ -463,6 +465,183 @@
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">running_mean</span><span class="p">,</span> <span class="n">running_var</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">SyncBatchNorm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">running_mean</span><span class="p">,</span> <span class="n">running_var</span><span class="p">,</span>
                                        <span class="n">name</span><span class="o">=</span><span class="s1">'fwd'</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PixelShuffle1D"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle1D">[docs]</a><span class="k">class</span> <span class="nc">PixelShuffle1D</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">"""Pixel-shuffle layer for upsampling in 1 dimension.</span>
+
+<span class="sd">    Pixel-shuffling is the operation of taking groups of values along</span>
+<span class="sd">    the *channel* dimension and regrouping them into blocks of pixels</span>
+<span class="sd">    along the ``W`` dimension, thereby effectively multiplying that dimension</span>
+<span class="sd">    by a constant factor in size.</span>
+
+<span class="sd">    For example, a feature map of shape :math:`(fC, W)` is reshaped</span>
+<span class="sd">    into :math:`(C, fW)` by forming little value groups of size :math:`f`</span>
+<span class="sd">    and arranging them in a grid of size :math:`W`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    factor : int or 1-tuple of int</span>
+<span class="sd">        Upsampling factor, applied to the ``W`` dimension.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: Tensor of shape ``(N, f*C, W)``.</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: Tensor of shape ``(N, C, W*f)``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> pxshuf = PixelShuffle1D(2)</span>
+<span class="sd">    >>> x = mx.nd.zeros((1, 8, 3))</span>
+<span class="sd">    >>> pxshuf(x).shape</span>
+<span class="sd">    (1, 4, 6)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PixelShuffle1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PixelShuffle1D.hybrid_forward"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle1D.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">"""Perform pixel-shuffling on the input."""</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span>
+                                             <span class="c1"># (N, C*f, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (N, C, f, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>     <span class="c1"># (N, C, W, f)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">))</span>         <span class="c1"># (N, C, W*f)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PixelShuffle2D"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle2D">[docs]</a><span class="k">class</span> <span class="nc">PixelShuffle2D</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">"""Pixel-shuffle layer for upsampling in 2 dimensions.</span>
+
+<span class="sd">    Pixel-shuffling is the operation of taking groups of values along</span>
+<span class="sd">    the *channel* dimension and regrouping them into blocks of pixels</span>
+<span class="sd">    along the ``H`` and ``W`` dimensions, thereby effectively multiplying</span>
+<span class="sd">    those dimensions by a constant factor in size.</span>
+
+<span class="sd">    For example, a feature map of shape :math:`(f^2 C, H, W)` is reshaped</span>
+<span class="sd">    into :math:`(C, fH, fW)` by forming little :math:`f \times f` blocks</span>
+<span class="sd">    of pixels and arranging them in an :math:`H \times W` grid.</span>
+
+<span class="sd">    Pixel-shuffling together with regular convolution is an alternative,</span>
+<span class="sd">    learnable way of upsampling an image by arbitrary factors. It is reported</span>
+<span class="sd">    to help overcome checkerboard artifacts that are common in upsampling with</span>
+<span class="sd">    transposed convolutions (also called deconvolutions). See the paper</span>
+<span class="sd">    `Real-Time Single Image and Video Super-Resolution Using an Efficient</span>
+<span class="sd">    Sub-Pixel Convolutional Neural Network <https://arxiv.org/abs/1609.05158>`_</span>
+<span class="sd">    for further details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    factor : int or 2-tuple of int</span>
+<span class="sd">        Upsampling factors, applied to the ``H`` and ``W`` dimensions,</span>
+<span class="sd">        in that order.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: Tensor of shape ``(N, f1*f2*C, H, W)``.</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: Tensor of shape ``(N, C, H*f1, W*f2)``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> pxshuf = PixelShuffle2D((2, 3))</span>
+<span class="sd">    >>> x = mx.nd.zeros((1, 12, 3, 5))</span>
+<span class="sd">    >>> pxshuf(x).shape</span>
+<span class="sd">    (1, 2, 6, 15)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PixelShuffle2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">factor</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fac</span><span class="p">)</span> <span class="k">for</span> <span class="n">fac</span> <span class="ow">in</span> <span class="n">factor</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"wrong length </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PixelShuffle2D.hybrid_forward"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle2D.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">"""Perform pixel-shuffling on the input."""</span>
+        <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span>
+                                                      <span class="c1"># (N, f1*f2*C, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">f1</span> <span class="o">*</span> <span class="n">f2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (N, C, f1*f2, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>    <span class="c1"># (N, C, f1, f2, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>        <span class="c1"># (N, C, H, f1, W, f2)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">))</span>              <span class="c1"># (N, C, H*f1, W*f2)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PixelShuffle3D"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle3D">[docs]</a><span class="k">class</span> <span class="nc">PixelShuffle3D</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">"""Pixel-shuffle layer for upsampling in 3 dimensions.</span>
+
+<span class="sd">    Pixel-shuffling (or voxel-shuffling in 3D) is the operation of taking</span>
+<span class="sd">    groups of values along the *channel* dimension and regrouping them into</span>
+<span class="sd">    blocks of voxels along the ``D``, ``H`` and ``W`` dimensions, thereby</span>
+<span class="sd">    effectively multiplying those dimensions by a constant factor in size.</span>
+
+<span class="sd">    For example, a feature map of shape :math:`(f^3 C, D, H, W)` is reshaped</span>
+<span class="sd">    into :math:`(C, fD, fH, fW)` by forming little :math:`f \times f \times f`</span>
+<span class="sd">    blocks of voxels and arranging them in a :math:`D \times H \times W` grid.</span>
+
+<span class="sd">    Pixel-shuffling together with regular convolution is an alternative,</span>
+<span class="sd">    learnable way of upsampling an image by arbitrary factors. It is reported</span>
+<span class="sd">    to help overcome checkerboard artifacts that are common in upsampling with</span>
+<span class="sd">    transposed convolutions (also called deconvolutions). See the paper</span>
+<span class="sd">    `Real-Time Single Image and Video Super-Resolution Using an Efficient</span>
+<span class="sd">    Sub-Pixel Convolutional Neural Network <https://arxiv.org/abs/1609.05158>`_</span>
+<span class="sd">    for further details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    factor : int or 3-tuple of int</span>
+<span class="sd">        Upsampling factors, applied to the ``D``, ``H`` and ``W``</span>
+<span class="sd">        dimensions, in that order.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: Tensor of shape ``(N, f1*f2*f3*C, D, H, W)``.</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: Tensor of shape ``(N, C, D*f1, H*f2, W*f3)``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> pxshuf = PixelShuffle3D((2, 3, 4))</span>
+<span class="sd">    >>> x = mx.nd.zeros((1, 48, 3, 5, 7))</span>
+<span class="sd">    >>> pxshuf(x).shape</span>
+<span class="sd">    (1, 2, 6, 15, 28)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PixelShuffle3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">factor</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fac</span><span class="p">)</span> <span class="k">for</span> <span class="n">fac</span> <span class="ow">in</span> <span class="n">factor</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"wrong length </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PixelShuffle3D.hybrid_forward"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.nn.PixelShuffle3D.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">"""Perform pixel-shuffling on the input."""</span>
+        <span class="c1"># `transpose` doesn't support 8D, need other implementation</span>
+        <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span>
+                                                              <span class="c1"># (N, C*f1*f2*f3, D, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">f1</span> <span class="o">*</span> <span class="n">f2</span> <span class="o">*</span> <span class="n">f3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (N, C, f1*f2*f3, D, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>                               <span class="c1"># (N, C, D, f1*f2*f3, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="o">*</span><span class="n">f3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>      <span class="c1"># (N, C, D, f1, f2*f3, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>                 <span class="c1"># (N, C, D*f1, f2*f3, H, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>                               <span class="c1"># (N, C, D*f1, H, f2*f3, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>         <span class="c1"># (N, C, D*f1, H, f2, f3, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>                 <span class="c1"># (N, C, D*f1, H*f2, f3, W)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>                               <span class="c1"># (N, C, D*f1, H*f2, W, f3)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">))</span>                    <span class="c1"># (N, C, D*f1, H*f2, W*f3)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">)</span></div>
 </pre></div>
 </div>
 </div>

@@ -323,6 +323,15 @@ so that feature contributors can receive feedback.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.nn.SyncBatchNorm" title="mxnet.gluon.contrib.nn.SyncBatchNorm"><code class="xref py py-obj docutils literal"><span class="pre">SyncBatchNorm</span></code></a></td>
 <td>Cross-GPU Synchronized Batch normalization (SyncBN)</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.contrib.nn.PixelShuffle1D" title="mxnet.gluon.contrib.nn.PixelShuffle1D"><code class="xref py py-obj docutils literal"><span class="pre">PixelShuffle1D</span></code></a></td>
+<td>Pixel-shuffle layer for upsampling in 1 dimension.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.nn.PixelShuffle2D" title="mxnet.gluon.contrib.nn.PixelShuffle2D"><code class="xref py py-obj docutils literal"><span class="pre">PixelShuffle2D</span></code></a></td>
+<td>Pixel-shuffle layer for upsampling in 2 dimensions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.contrib.nn.PixelShuffle3D" title="mxnet.gluon.contrib.nn.PixelShuffle3D"><code class="xref py py-obj docutils literal"><span class="pre">PixelShuffle3D</span></code></a></td>
+<td>Pixel-shuffle layer for upsampling in 3 dimensions.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -405,7 +414,7 @@ so that feature contributors can receive feedback.</p>
 <div class="section" id="api-reference">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 <script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script><span class="target" id="module-mxnet.gluon.contrib"></span><p>Contrib neural network module.</p>
-<span class="target" id="module-mxnet.gluon.contrib.nn"></span><p>Contrib recurrent neural network module.</p>
+<span class="target" id="module-mxnet.gluon.contrib.nn"></span><p>Contributed neural network modules.</p>
 <dl class="class">
 <dt id="mxnet.gluon.contrib.nn.Concurrent">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.nn.</code><code class="descname">Concurrent</code><span class="sig-paren">(</span><em>axis=-1</em>, <em>prefix=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#Concurrent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.Concurrent" title="Permalink to this definition">¶</a></dt>
@@ -571,6 +580,151 @@ If False, use local batch-norm.</li>
 </table>
 </dd>
 </dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle1D">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.nn.</code><code class="descname">PixelShuffle1D</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pixel-shuffle layer for upsampling in 1 dimension.</p>
+<p>Pixel-shuffling is the operation of taking groups of values along
+the <em>channel</em> dimension and regrouping them into blocks of pixels
+along the <code class="docutils literal"><span class="pre">W</span></code> dimension, thereby effectively multiplying that dimension
+by a constant factor in size.</p>
+<p>For example, a feature map of shape <span class="math">\((fC, W)\)</span> is reshaped
+into <span class="math">\((C, fW)\)</span> by forming little value groups of size <span class="math">\(f\)</span>
+and arranging them in a grid of size <span class="math">\(W\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>factor</strong> (<em>int</em><em> or </em><em>1-tuple of int</em>) – Upsampling factor, applied to the <code class="docutils literal"><span class="pre">W</span></code> dimension.</li>
+<li><strong>Inputs</strong> – <ul>
+<li><strong>data</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">f*C,</span> <span class="pre">W)</span></code>.</li>
+</ul>
+</li>
+<li><strong>Outputs</strong> – <ul>
+<li><strong>out</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">W*f)</span></code>.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">pxshuf</span> <span class="o">=</span> <span class="n">PixelShuffle1D</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">pxshuf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 4, 6)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle1D.hybrid_forward">
+<code class="descname">hybrid_forward</code><span class="sig-paren">(</span><em>F</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle1D.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle1D.hybrid_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform pixel-shuffling on the input.</p>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle2D">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.nn.</code><code class="descname">PixelShuffle2D</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pixel-shuffle layer for upsampling in 2 dimensions.</p>
+<p>Pixel-shuffling is the operation of taking groups of values along
+the <em>channel</em> dimension and regrouping them into blocks of pixels
+along the <code class="docutils literal"><span class="pre">H</span></code> and <code class="docutils literal"><span class="pre">W</span></code> dimensions, thereby effectively multiplying
+those dimensions by a constant factor in size.</p>
+<p>For example, a feature map of shape <span class="math">\((f^2 C, H, W)\)</span> is reshaped
+into <span class="math">\((C, fH, fW)\)</span> by forming little <span class="math">\(f \times f\)</span> blocks
+of pixels and arranging them in an <span class="math">\(H \times W\)</span> grid.</p>
+<p>Pixel-shuffling together with regular convolution is an alternative,
+learnable way of upsampling an image by arbitrary factors. It is reported
+to help overcome checkerboard artifacts that are common in upsampling with
+transposed convolutions (also called deconvolutions). See the paper
+<a class="reference external" href="https://arxiv.org/abs/1609.05158">Real-Time Single Image and Video Super-Resolution Using an Efficient
+Sub-Pixel Convolutional Neural Network</a>
+for further details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>factor</strong> (<em>int</em><em> or </em><em>2-tuple of int</em>) – Upsampling factors, applied to the <code class="docutils literal"><span class="pre">H</span></code> and <code class="docutils literal"><span class="pre">W</span></code> dimensions,
+in that order.</li>
+<li><strong>Inputs</strong> – <ul>
+<li><strong>data</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">f1*f2*C,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>.</li>
+</ul>
+</li>
+<li><strong>Outputs</strong> – <ul>
+<li><strong>out</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">H*f1,</span> <span class="pre">W*f2)</span></code>.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">pxshuf</span> <span class="o">=</span> <span class="n">PixelShuffle2D</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">pxshuf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 2, 6, 15)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle2D.hybrid_forward">
+<code class="descname">hybrid_forward</code><span class="sig-paren">(</span><em>F</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle2D.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle2D.hybrid_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform pixel-shuffling on the input.</p>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle3D">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.nn.</code><code class="descname">PixelShuffle3D</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pixel-shuffle layer for upsampling in 3 dimensions.</p>
+<p>Pixel-shuffling (or voxel-shuffling in 3D) is the operation of taking
+groups of values along the <em>channel</em> dimension and regrouping them into
+blocks of voxels along the <code class="docutils literal"><span class="pre">D</span></code>, <code class="docutils literal"><span class="pre">H</span></code> and <code class="docutils literal"><span class="pre">W</span></code> dimensions, thereby
+effectively multiplying those dimensions by a constant factor in size.</p>
+<p>For example, a feature map of shape <span class="math">\((f^3 C, D, H, W)\)</span> is reshaped
+into <span class="math">\((C, fD, fH, fW)\)</span> by forming little <span class="math">\(f \times f \times f\)</span>
+blocks of voxels and arranging them in a <span class="math">\(D \times H \times W\)</span> grid.</p>
+<p>Pixel-shuffling together with regular convolution is an alternative,
+learnable way of upsampling an image by arbitrary factors. It is reported
+to help overcome checkerboard artifacts that are common in upsampling with
+transposed convolutions (also called deconvolutions). See the paper
+<a class="reference external" href="https://arxiv.org/abs/1609.05158">Real-Time Single Image and Video Super-Resolution Using an Efficient
+Sub-Pixel Convolutional Neural Network</a>
+for further details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>factor</strong> (<em>int</em><em> or </em><em>3-tuple of int</em>) – Upsampling factors, applied to the <code class="docutils literal"><span class="pre">D</span></code>, <code class="docutils literal"><span class="pre">H</span></code> and <code class="docutils literal"><span class="pre">W</span></code>
+dimensions, in that order.</li>
+<li><strong>Inputs</strong> – <ul>
+<li><strong>data</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">f1*f2*f3*C,</span> <span class="pre">D,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>.</li>
+</ul>
+</li>
+<li><strong>Outputs</strong> – <ul>
+<li><strong>out</strong>: Tensor of shape <code class="docutils literal"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">D*f1,</span> <span class="pre">H*f2,</span> <span class="pre">W*f3)</span></code>.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">pxshuf</span> <span class="o">=</span> <span class="n">PixelShuffle3D</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">pxshuf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 2, 6, 15, 28)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.nn.PixelShuffle3D.hybrid_forward">
+<code class="descname">hybrid_forward</code><span class="sig-paren">(</span><em>F</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle3D.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle3D.hybrid_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform pixel-shuffling on the input.</p>
+</dd></dl>
 </dd></dl>
 <span class="target" id="module-mxnet.gluon.contrib.rnn"></span><p>Contrib recurrent neural network module.</p>
 <dl class="class">
