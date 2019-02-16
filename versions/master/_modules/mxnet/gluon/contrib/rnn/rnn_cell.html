@@ -247,6 +247,7 @@
 <span class="kn">from</span> <span class="nn">...rnn</span> <span class="k">import</span> <span class="n">BidirectionalCell</span><span class="p">,</span> <span class="n">SequentialRNNCell</span><span class="p">,</span> <span class="n">ModifierCell</span><span class="p">,</span> <span class="n">HybridRecurrentCell</span>
 <span class="kn">from</span> <span class="nn">...rnn.rnn_cell</span> <span class="k">import</span> <span class="n">_format_sequence</span><span class="p">,</span> <span class="n">_get_begin_state</span><span class="p">,</span> <span class="n">_mask_sequence_variable_length</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">tensor_types</span>
+<span class="kn">from</span> <span class="nn">....base</span> <span class="k">import</span> <span class="n">_as_list</span>
 
 <div class="viewcode-block" id="VariationalDropoutCell"><a class="viewcode-back" href="../../../../../api/python/gluon/contrib.html#mxnet.gluon.contrib.rnn.VariationalDropoutCell">[docs]</a><span class="k">class</span> <span class="nc">VariationalDropoutCell</span><span class="p">(</span><span class="n">ModifierCell</span><span class="p">):</span>
     <span class="sd">"""</span>
@@ -545,6 +546,120 @@
 
         <span class="k">return</span> <span class="n">next_r</span><span class="p">,</span> <span class="p">[</span><span class="n">next_r</span><span class="p">,</span> <span class="n">next_c</span><span class="p">]</span></div>
     <span class="c1"># pylint: enable= arguments-differ</span>
+
+
+<span class="k">def</span> <span class="nf">dynamic_unroll</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">begin_state</span><span class="p">,</span> <span class="n">drop_inputs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop_outputs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                   <span class="n">layout</span><span class="o">=</span><span class="s1">'TNC'</span><span class="p">,</span> <span class="n">valid_length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Unrolls an RNN cell across time steps.</span>
+
+<span class="sd">    Currently, 'TNC' is a preferred layout. unroll on the input of this layout</span>
+<span class="sd">    runs much faster.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cell : an object whose base class is RNNCell.</span>
+<span class="sd">        The RNN cell to run on the input sequence.</span>
+<span class="sd">    inputs : Symbol</span>
+<span class="sd">        It should have shape (batch_size, length, ...) if `layout` is 'NTC',</span>
+<span class="sd">        or (length, batch_size, ...) if `layout` is 'TNC'.</span>
+<span class="sd">    begin_state : nested list of Symbol</span>
+<span class="sd">        The initial states of the RNN sequence.</span>
+<span class="sd">    drop_inputs : float, default 0.</span>
+<span class="sd">        The dropout rate for inputs. Won't apply dropout if it equals 0.</span>
+<span class="sd">    drop_outputs : float, default 0.</span>
+<span class="sd">        The dropout rate for outputs. Won't apply dropout if it equals 0.</span>
+<span class="sd">    layout : str, optional</span>
+<span class="sd">        `layout` of input symbol. Only used if inputs</span>
+<span class="sd">        is a single Symbol.</span>
+<span class="sd">    valid_length : Symbol, NDArray or None</span>
+<span class="sd">        `valid_length` specifies the length of the sequences in the batch without padding.</span>
+<span class="sd">        This option is especially useful for building sequence-to-sequence models where</span>
+<span class="sd">        the input and output sequences would potentially be padded.</span>
+<span class="sd">        If `valid_length` is None, all sequences are assumed to have the same length.</span>
+<span class="sd">        If `valid_length` is a Symbol or NDArray, it should have shape (batch_size,).</span>
+<span class="sd">        The ith element will be the length of the ith sequence in the batch.</span>
+<span class="sd">        The last valid state will be return and the padded outputs will be masked with 0.</span>
+<span class="sd">        Note that `valid_length` must be smaller or equal to `length`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs : Symbol</span>
+<span class="sd">        the output of the RNN from this unrolling.</span>
+
+<span class="sd">    states : list of Symbol</span>
+<span class="sd">        The new state of this RNN after this unrolling.</span>
+<span class="sd">        The type of this symbol is same as the output of `begin_state`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> seq_len = 3</span>
+<span class="sd">    >>> batch_size = 2</span>
+<span class="sd">    >>> input_size = 5</span>
+<span class="sd">    >>> cell = mx.gluon.rnn.LSTMCell(input_size, prefix='rnn_')</span>
+<span class="sd">    >>> cell.initialize(ctx=mx.cpu())</span>
+<span class="sd">    >>> rnn_data = mx.nd.normal(loc=0, scale=1, shape=(seq_len, batch_size, input_size))</span>
+<span class="sd">    >>> state_shape = (batch_size, input_size)</span>
+<span class="sd">    >>> states = [mx.nd.normal(loc=0, scale=1, shape=state_shape) for i in range(2)]</span>
+<span class="sd">    >>> valid_length = mx.nd.array([2, 3])</span>
+<span class="sd">    >>> output, states = mx.gluon.contrib.rnn.rnn_cell.dynamic_unroll(cell, rnn_data, states,</span>
+<span class="sd">                                                                      valid_length=valid_length,</span>
+<span class="sd">                                                                      layout='TNC')</span>
+<span class="sd">    >>> print(output)</span>
+<span class="sd">    [[[ 0.00767238  0.00023103  0.03973929 -0.00925503 -0.05660512]</span>
+<span class="sd">      [ 0.00881535  0.05428379 -0.02493718 -0.01834097  0.02189514]]</span>
+<span class="sd">     [[-0.00676967  0.01447039  0.01287002 -0.00574152 -0.05734247]</span>
+<span class="sd">      [ 0.01568508  0.02650866 -0.04270559 -0.04328435  0.00904011]]</span>
+<span class="sd">     [[ 0.          0.          0.          0.          0.        ]</span>
+<span class="sd">      [ 0.01055336  0.02734251 -0.03153727 -0.03742751 -0.01378113]]]</span>
+<span class="sd">     <NDArray 3x2x5 @cpu(0)></span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Merge is always True, so we don't need length.</span>
+    <span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_format_sequence</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layout</span><span class="p">)))</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+        <span class="n">axes</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">begin_state</span>
+
+    <span class="k">if</span> <span class="n">drop_inputs</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">drop_inputs</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="n">axis</span><span class="p">,))</span>
+
+    <span class="k">if</span> <span class="n">valid_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">loop_body</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">cell</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zeros</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">zeros</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_as_list</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">def</span> <span class="nf">loop_body</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+            <span class="n">cell_states</span> <span class="o">=</span> <span class="n">states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">iter_no</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">new_states</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">cell_states</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cell_states</span><span class="p">):</span>
+                <span class="n">new_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">broadcast_greater</span><span class="p">(</span><span class="n">valid_length</span><span class="p">,</span> <span class="n">iter_no</span><span class="p">),</span>
+                                        <span class="n">new_states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">new_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iter_no</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">new_states</span>
+
+    <span class="n">outputs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">loop_body</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">drop_outputs</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">drop_outputs</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="n">axis</span><span class="p">,))</span>
+    <span class="k">if</span> <span class="n">valid_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">SequenceMask</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">sequence_length</span><span class="o">=</span><span class="n">valid_length</span><span class="p">,</span>
+                                 <span class="n">use_sequence_length</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="c1"># the last state is the iteration number. We don't need it.</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">states</span>
 </pre></div>
 </div>
 </div>
