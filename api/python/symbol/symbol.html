@@ -5025,22 +5025,21 @@ The widths of the higher two dimensions <code class="docutils literal"><span cla
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.symbol.Pooling">
-<code class="descclassname">mxnet.symbol.</code><code class="descname">Pooling</code><span class="sig-paren">(</span><em>data=None</em>, <em>kernel=_Null</em>, <em>pool_type=_Null</em>, <em>global_pool=_Null</em>, <em>cudnn_off=_Null</em>, <em>pooling_convention=_Null</em>, <em>stride=_Null</em>, <em>pad=_Null</em>, <em>p_value=_Null</em>, <em>count_include_pad=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.Pooling" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.symbol.</code><code class="descname">Pooling</code><span class="sig-paren">(</span><em>data=None</em>, <em>kernel=_Null</em>, <em>pool_type=_Null</em>, <em>global_pool=_Null</em>, <em>cudnn_off=_Null</em>, <em>pooling_convention=_Null</em>, <em>stride=_Null</em>, <em>pad=_Null</em>, <em>p_value=_Null</em>, <em>count_include_pad=_Null</em>, <em>layout=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.Pooling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs pooling on the input.</p>
 <p>The shapes for 1-D pooling are</p>
 <ul class="simple">
-<li><strong>data</strong>: <em>(batch_size, channel, width)</em>,</li>
-<li><strong>out</strong>: <em>(batch_size, num_filter, out_width)</em>.</li>
+<li><strong>data</strong> and <strong>out</strong>: <em>(batch_size, channel, width)</em> (NCW layout) or
+<em>(batch_size, width, channel)</em> (NWC layout),</li>
 </ul>
 <p>The shapes for 2-D pooling are</p>
 <ul>
-<li><p class="first"><strong>data</strong>: <em>(batch_size, channel, height, width)</em></p>
-</li>
-<li><p class="first"><strong>out</strong>: <em>(batch_size, num_filter, out_height, out_width)</em>, with:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">out_height</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">out_width</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
+<li><p class="first"><strong>data</strong> and <strong>out</strong>: <em>(batch_size, channel, height, width)</em> (NCHW layout) or
+<em>(batch_size, height, width, channel)</em> (NHWC layout),</p>
+<blockquote>
+<div><p>out_height = f(height, kernel[0], pad[0], stride[0])
+out_width = f(width, kernel[1], pad[1], stride[1])</p>
+</div></blockquote>
 </li>
 </ul>
 <p>The definition of <em>f</em> depends on <code class="docutils literal"><span class="pre">pooling_convention</span></code>, which has two options:</p>
@@ -5066,15 +5065,15 @@ The widths of the higher two dimensions <code class="docutils literal"><span cla
 <li><strong>lp</strong>: Lp pooling</li>
 </ul>
 <p>For 3-D pooling, an additional <em>depth</em> dimension is added before
-<em>height</em>. Namely the input data will have shape <em>(batch_size, channel, depth,
-height, width)</em>.</p>
+<em>height</em>. Namely the input data and output will have shape <em>(batch_size, channel, depth,
+height, width)</em> (NCDHW layout) or <em>(batch_size, depth, height, width, channel)</em> (NDHWC layout).</p>
 <p>Notes on Lp pooling:</p>
 <p>Lp pooling was first introduced by this paper: <a class="reference external" href="https://arxiv.org/pdf/1204.3968.pdf">https://arxiv.org/pdf/1204.3968.pdf</a>.
 L-1 pooling is simply sum pooling, while L-inf pooling is simply max pooling.
 We can see that Lp pooling stands between those two, in practice the most common value for p is 2.</p>
 <p>For each window <code class="docutils literal"><span class="pre">X</span></code>, the mathematical expression for Lp pooling is:</p>
 <p><span class="math">\(f(X) = \sqrt[p]{\sum_{x}^{X} x^p}\)</span></p>
-<p>Defined in src/operator/nn/pooling.cc:L379</p>
+<p>Defined in src/operator/nn/pooling.cc:L416</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -5090,6 +5089,8 @@ We can see that Lp pooling stands between those two, in practice the most common
 <li><strong>pad</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Pad for pooling: (y, x) or (d, y, x). Defaults to no padding.</li>
 <li><strong>p_value</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Value of p for Lp pooling, can be 1 or 2, required for Lp Pooling.</li>
 <li><strong>count_include_pad</strong> (<em>boolean</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Only used for AvgPool, specify whether to count padding elements for averagecalculation. For example, with a 5*5 kernel on a 3*3 corner of a image,the sum of the 9 valid elements will be divided by 25 if this is set to true,or it will be divided by 9 if this is set to false. Defaults to true.</li>
+<li><strong>layout</strong> (<em>{None</em><em>, </em><em>'NCDHW'</em><em>, </em><em>'NCHW'</em><em>, </em><em>'NCW'</em><em>, </em><em>'NDHWC'</em><em>, </em><em>'NHWC'</em><em>, </em><em>'NWC'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Set layout for input and output. Empty for
+default layout: NCW for 1d, NCHW for 2d and NCDHW for 3d.</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>
