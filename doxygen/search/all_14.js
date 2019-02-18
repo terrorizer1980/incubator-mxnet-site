@@ -21,7 +21,7 @@ var searchData=
   ['trunc',['trunc',['../namespacemxnet_1_1cpp.html#a308aaabadc48791c4924c8a71cba8ca4',1,'mxnet::cpp::trunc(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a757f20c97f47b0f6f720df6686d97cf9',1,'mxnet::cpp::trunc(Symbol data)']]],
   ['tself',['TSelf',['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#ac2fd6ca9171b44a1ab131430cc5866a3',1,'mxnet::op::SimpleOpRegEntry']]],
   ['tshape',['TShape',['../namespacemxnet.html#a6e14bb5f6ffc81892feca8d1da658687',1,'mxnet']]],
-  ['type',['Type',['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630',1,'mxnet::ResourceRequest::Type()'],['../structmxnet_1_1ResourceRequest.html#ad67cb809ea1e0db24629ffbd3db00a63',1,'mxnet::ResourceRequest::type()'],['../classmxnet_1_1KVStore.html#a722b2150dbf50d528fce62307809f949',1,'mxnet::KVStore::type()']]],
+  ['type',['type',['../structmxnet_1_1ResourceRequest.html#ad67cb809ea1e0db24629ffbd3db00a63',1,'mxnet::ResourceRequest::type()'],['../classmxnet_1_1KVStore.html#a722b2150dbf50d528fce62307809f949',1,'mxnet::KVStore::type()'],['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630',1,'mxnet::ResourceRequest::Type()']]],
   ['type_5f',['type_',['../classmxnet_1_1KVStore.html#ad1023ca677c6e87ccc7d92c4df48bd40',1,'mxnet::KVStore']]],
   ['type_5fflag_5f',['type_flag_',['../classmxnet_1_1TBlob.html#a4649b740b80a6045754cb2389cfcca61',1,'mxnet::TBlob']]],
   ['type_5fmask',['type_mask',['../structmxnet_1_1NDArrayFunctionReg.html#a0b24615f30e4fbe69ee75c7b319735bf',1,'mxnet::NDArrayFunctionReg']]],
