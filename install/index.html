@@ -247,6 +247,7 @@
 <li class="toctree-l2"><a class="reference external" href="https://console.cloud.google.com/marketplace/details/nvidia-ngc-public/nvidia_gpu_cloud_image">NVIDIA VM</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://azuremarketplace.microsoft.com/en-us/marketplace/apps/nvidia.ngc_azure_17_11?tab=Overview">NVIDIA VM</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://docs.cloud.oracle.com/iaas/Content/Compute/References/ngcimage.htm">NVIDIA VM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docker-installation">Docker installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build">Build</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
@@ -939,11 +940,15 @@ MXNet should work on any cloud provider's CPU-only instances. Follow the Python 
 </div> <!-- end cpu -->
 </div> <!-- END - Cloud Python Installation Instructions --><!-- DEVICES -->
 <div class="devices">
-  <div class="raspberry-pi"><p>MXNet supports the Debian based Raspbian ARM based operating system so you can run MXNet on Raspberry Pi Devices.</p>
+  <div class="raspberry-pi"><p>MXNet supports the Debian based Raspbian ARM based operating system so you can run MXNet on Raspberry Pi 3B devices.</p>
 <p>These instructions will walk through how to build MXNet for the Raspberry Pi and install the Python bindings for the library.</p>
 <p>You can do a dockerized cross compilation build on your local machine or a native build on-device.</p>
 <p>The complete MXNet library and its requirements can take almost 200MB of RAM, and loading large models with the library can take over 1GB of RAM. Because of this, we recommend running MXNet on the Raspberry Pi 3 or an equivalent device that has more than 1 GB of RAM and a Secure Digital (SD) card that has at least 4 GB of free memory.</p>
+<div class="section" id="quick-installation">
+<span id="quick-installation"></span><h2>Quick installation<a class="headerlink" href="#quick-installation" title="Permalink to this headline">¶</a></h2>
+<p>You can use this [pre-built Python wheel](wget https://mxnet-public.s3.amazonaws.com/install/raspbian/mxnet-1.5.0-py2.py3-none-any.whl) on a Raspberry Pi 3B with Stretch. You will likely need to install several dependencies to get MXNet to work. Refer to the following <strong>Build</strong> section for details.</p>
 <p><strong>Cross compilation build (Experimental)</strong></p>
+</div>
 <div class="section" id="docker-installation">
 <span id="docker-installation"></span><h2>Docker installation<a class="headerlink" href="#docker-installation" title="Permalink to this headline">¶</a></h2>
 <p><strong>Step 1</strong>  Install Docker on your machine by following the <a class="reference external" href="https://docs.docker.com/engine/installation/linux/ubuntu/#install-using-the-repository">docker installation instructions</a>.</p>
@@ -964,9 +969,44 @@ file to your Raspberry Pi.</p>
 </div>
 <div class="section" id="install">
 <span id="install"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
-<p>Create a virtualenv and install the package we created previously.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>virtualenv -p `which python3` mxnet_py3
-source mxnet_py3/bin/activate
+<p>Your Pi will need several dependencies.</p>
+<p>Install MXNet dependencies with the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> \
+    <span class="n">apt</span><span class="o">-</span><span class="n">transport</span><span class="o">-</span><span class="n">https</span> \
+    <span class="n">build</span><span class="o">-</span><span class="n">essential</span> \
+    <span class="n">ca</span><span class="o">-</span><span class="n">certificates</span> \
+    <span class="n">cmake</span> \
+    <span class="n">curl</span> \
+    <span class="n">git</span> \
+    <span class="n">libatlas</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libcurl4</span><span class="o">-</span><span class="n">openssl</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libjemalloc</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">liblapack</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libopenblas</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libopencv</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">libzmq3</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">ninja</span><span class="o">-</span><span class="n">build</span> \
+    <span class="n">python</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">software</span><span class="o">-</span><span class="n">properties</span><span class="o">-</span><span class="n">common</span> \
+    <span class="n">sudo</span> \
+    <span class="n">unzip</span> \
+    <span class="n">virtualenv</span> \
+    <span class="n">wget</span>
+</pre></div>
+</div>
+<p>Install virtualenv with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenv</span>
+</pre></div>
+</div>
+<p>Create a Python 2.7 environment for MXNet with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>virtualenv -p `which python` mxnet_py27
+</pre></div>
+</div>
+<p>You may use Python 3, however the <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/embedded/wine_detector.html">wine bottle detection example</a> for the Pi with camera requires Python 2.7.</p>
+<p>Create a virtualenv and install the wheel we created previously, or the wheel that you downloaded.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>virtualenv -p `which python3` mxnet_py27
+source mxnet_py27/bin/activate
 pip install mxnet-x.x.x-py2.py3-none-any.whl
 </pre></div>
 </div>
@@ -990,7 +1030,7 @@ pip install mxnet-x.x.x-py2.py3-none-any.whl
 </ul>
 <p>Install these dependencies using the following commands in any directory:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">git</span> <span class="n">cmake</span> <span class="n">ninja</span><span class="o">-</span><span class="n">build</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">g</span><span class="o">++-</span><span class="mf">4.9</span> <span class="n">c</span><span class="o">++-</span><span class="mf">4.9</span> <span class="n">liblapack</span><span class="o">*</span> <span class="n">libblas</span><span class="o">*</span> <span class="n">libopencv</span><span class="o">*</span> <span class="n">libopenblas</span><span class="o">*</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span> <span class="n">virtualenv</span>
+    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">git</span> <span class="n">cmake</span> <span class="n">ninja</span><span class="o">-</span><span class="n">build</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">g</span><span class="o">++-</span><span class="mf">4.9</span> <span class="n">c</span><span class="o">++-</span><span class="mf">4.9</span> <span class="n">liblapack</span><span class="o">*</span> <span class="n">libblas</span><span class="o">*</span> <span class="n">libopencv</span><span class="o">*</span> <span class="n">libopenblas</span><span class="o">*</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span> <span class="n">python</span><span class="o">-</span><span class="n">dev</span> <span class="n">virtualenv</span>
 </pre></div>
 </div>
 <p>Clone the MXNet source code repository using the following <code class="docutils literal"><span class="pre">git</span></code> command in your home directory:</p>
@@ -1120,6 +1160,7 @@ then running:</p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installing MXNet</a><ul>
+<li><a class="reference internal" href="#quick-installation">Quick installation</a></li>
 <li><a class="reference internal" href="#docker-installation">Docker installation</a></li>
 <li><a class="reference internal" href="#build">Build</a></li>
 <li><a class="reference internal" href="#install">Install</a></li>
