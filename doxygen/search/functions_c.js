@@ -229,6 +229,7 @@ var searchData=
   ['mxsymbolinfershape',['MXSymbolInferShape',['../c__api_8h.html#afaf03324563098f1ac4c23ecfc88b784',1,'c_api.h']]],
   ['mxsymbolinfershapepartial',['MXSymbolInferShapePartial',['../c__api_8h.html#a664c85b47c69b81be3b9ea1dfcb72a94',1,'c_api.h']]],
   ['mxsymbolinfertype',['MXSymbolInferType',['../c__api_8h.html#a1eff7ea3fd2fe56509c75f5a610890e6',1,'c_api.h']]],
+  ['mxsymbolinfertypepartial',['MXSymbolInferTypePartial',['../c__api_8h.html#aef2aa2ec49929b49aa9193b516310fe5',1,'c_api.h']]],
   ['mxsymbollistarguments',['MXSymbolListArguments',['../c__api_8h.html#ade7acc2c570cc5b6eea2f1f2efc67a74',1,'c_api.h']]],
   ['mxsymbollistatomicsymbolcreators',['MXSymbolListAtomicSymbolCreators',['../c__api_8h.html#a6eb35d17154ef093856e60e416d354cc',1,'c_api.h']]],
   ['mxsymbollistattr',['MXSymbolListAttr',['../c__api_8h.html#a9e4dc341e666c772e1b530920ba4a0e9',1,'c_api.h']]],
