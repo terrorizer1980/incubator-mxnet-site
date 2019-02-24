@@ -12,5 +12,6 @@ var searchData=
   ['staticarray',['StaticArray',['../structmxnet_1_1common_1_1StaticArray.html',1,'mxnet::common']]],
   ['storage',['Storage',['../classmxnet_1_1Storage.html',1,'mxnet']]],
   ['symblob',['SymBlob',['../structmxnet_1_1cpp_1_1SymBlob.html',1,'mxnet::cpp']]],
-  ['symbol',['Symbol',['../classmxnet_1_1cpp_1_1Symbol.html',1,'mxnet::cpp']]]
+  ['symbol',['Symbol',['../classmxnet_1_1cpp_1_1Symbol.html',1,'mxnet::cpp']]],
+  ['syncedgpuauxstream',['SyncedGPUAuxStream',['../classmxnet_1_1SyncedGPUAuxStream.html',1,'mxnet']]]
 ];

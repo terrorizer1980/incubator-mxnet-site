@@ -51,6 +51,7 @@ var searchData=
   ['aux_5fshape',['aux_shape',['../classmxnet_1_1NDArray.html#a5ebf1ac5452188d02bc7d784cb35fca9',1,'mxnet::NDArray']]],
   ['aux_5fshapes',['aux_shapes',['../classmxnet_1_1NDArray.html#a2b728b509871ba0f1b8c946099ebad8d',1,'mxnet::NDArray']]],
   ['aux_5fstate_5fmap',['aux_state_map',['../classmxnet_1_1Executor.html#a0a38a98fc4dcddc4205b5980ee7bdc4b',1,'mxnet::Executor']]],
+  ['aux_5fstream',['aux_stream',['../structmxnet_1_1RunContext.html#aefb2816ee8261ff91c733073da897611',1,'mxnet::RunContext']]],
   ['aux_5ftype',['aux_type',['../classmxnet_1_1NDArray.html#a02fe304d3498632571fea1a7c1fd91d6',1,'mxnet::NDArray']]],
   ['aux_5ftypes',['aux_types',['../classmxnet_1_1NDArray.html#a8970b39ecb7947218981f607d9b6dce8',1,'mxnet::NDArray']]],
   ['avg',['avg',['../classmxnet_1_1cpp_1_1Xavier.html#a0147850e8857cdd1befe74522da54f7eae05ed98f784456106dd4ee81e2189395',1,'mxnet::cpp::Xavier']]]
