@@ -762,9 +762,9 @@ The <code class="docutils literal"><span class="pre">OperatorProperty</span></co
 <ul class="simple">
 <li><strong>InferShape:</strong></li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span></span>           <span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">InferShape</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">TShape</span><span class="o">></span> <span class="o">*</span><span class="n">in_shape</span><span class="p">,</span>
-                                   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">TShape</span><span class="o">></span> <span class="o">*</span><span class="n">out_shape</span><span class="p">,</span>
-                                   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">TShape</span><span class="o">></span> <span class="o">*</span><span class="n">aux_shape</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span>           <span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">InferShape</span><span class="p">(</span><span class="n">mxnet</span><span class="o">::</span><span class="n">ShapeVector</span> <span class="o">*</span><span class="n">in_shape</span><span class="p">,</span>
+                                   <span class="n">mxnet</span><span class="o">::</span><span class="n">ShapeVector</span> <span class="o">*</span><span class="n">out_shape</span><span class="p">,</span>
+                                   <span class="n">mxnet</span><span class="o">::</span><span class="n">ShapeVector</span> <span class="o">*</span><span class="n">aux_shape</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>This interface has two purposes:</p>
@@ -782,9 +782,9 @@ like reuse the space, and so on.
 MXNet defines two interfaces to achieve this:</li>
 </ul>
 <div class="highlight-c++"><div class="highlight"><pre><span></span>           <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">ResourceRequest</span><span class="o">></span> <span class="n">ForwardResource</span><span class="p">(</span>
-               <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">TShape</span><span class="o">></span> <span class="o">&amp;</span><span class="n">in_shape</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+               <span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">ShapeVector</span> <span class="o">&amp;</span><span class="n">in_shape</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
            <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">ResourceRequest</span><span class="o">></span> <span class="n">BackwardResource</span><span class="p">(</span>
-               <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o"><</span><span class="n">TShape</span><span class="o">></span> <span class="o">&amp;</span><span class="n">in_shape</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+               <span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">ShapeVector</span> <span class="o">&amp;</span><span class="n">in_shape</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">ResourceRequest</span></code> structure (in <code class="docutils literal"><span class="pre">resource.h</span></code>) currently contains only a type flag:</p>
@@ -927,7 +927,7 @@ before any <code class="docutils literal"><span class="pre">Forward</span></code
 To do so, you could define a <code class="docutils literal"><span class="pre">ConvolutionParam</span></code> structure, as follows:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span></span>    <span class="cp">#include</span> <span class="cpf"><dmlc/parameter.h></span><span class="cp"></span>
     <span class="k">struct</span> <span class="nl">ConvolutionParam</span> <span class="p">:</span> <span class="k">public</span> <span class="n">dmlc</span><span class="o">::</span><span class="n">Parameter</span><span class="o"><</span><span class="n">ConvolutionParam</span><span class="o">></span> <span class="p">{</span>
-      <span class="n">TShape</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">pad</span><span class="p">;</span>
+      <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">pad</span><span class="p">;</span>
       <span class="kt">uint32_t</span> <span class="n">num_filter</span><span class="p">,</span> <span class="n">num_group</span><span class="p">,</span> <span class="n">workspace</span><span class="p">;</span>
       <span class="kt">bool</span> <span class="n">no_bias</span><span class="p">;</span>
     <span class="p">};</span>
@@ -1038,10 +1038,10 @@ As a consequence, all data shapes
 must be provided before any calculation occurs.
 Before we proceed with defining functions and gradient,
 let’s check input data shape consistency and provide output shape.</p>
-<div class="highlight-cpp"><div class="highlight"><pre><span></span>    <span class="k">typedef</span> <span class="nf">TShape</span> <span class="p">(</span><span class="o">*</span><span class="n">UnaryShapeFunction</span><span class="p">)(</span><span class="k">const</span> <span class="n">TShape</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+<div class="highlight-cpp"><div class="highlight"><pre><span></span>    <span class="k">typedef</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span> <span class="p">(</span><span class="o">*</span><span class="n">UnaryShapeFunction</span><span class="p">)(</span><span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
                                          <span class="k">const</span> <span class="n">EnvArguments</span><span class="o">&amp;</span> <span class="n">env</span><span class="p">);</span>
-    <span class="k">typedef</span> <span class="nf">TShape</span> <span class="p">(</span><span class="o">*</span><span class="n">BinaryShapeFunction</span><span class="p">)(</span><span class="k">const</span> <span class="n">TShape</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span>
-                                          <span class="k">const</span> <span class="n">TShape</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">,</span>
+    <span class="k">typedef</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span> <span class="p">(</span><span class="o">*</span><span class="n">BinaryShapeFunction</span><span class="p">)(</span><span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span>
+                                          <span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">,</span>
                                           <span class="k">const</span> <span class="n">EnvArguments</span><span class="o">&amp;</span> <span class="n">env</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1063,9 +1063,9 @@ Refer to the additional usages of <code class="docutils literal"><span class="pr
 </div>
 <p>In our smooth l1 loss example, it’s okay to use the default behavior whereby the output has the same shape as the source.
 Written explicitly, it is:</p>
-<div class="highlight-cpp"><div class="highlight"><pre><span></span>    <span class="kr">inline</span> <span class="n">TShape</span> <span class="nf">SmoothL1Shape_</span><span class="p">(</span><span class="k">const</span> <span class="n">TShape</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+<div class="highlight-cpp"><div class="highlight"><pre><span></span>    <span class="kr">inline</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span> <span class="n">SmoothL1Shape_</span><span class="p">(</span><span class="k">const</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
                                  <span class="k">const</span> <span class="n">EnvArguments</span><span class="o">&amp;</span> <span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="n">TShape</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">mxnet</span><span class="o">::</span><span class="n">TShape</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
     <span class="p">}</span>
 </pre></div>
 </div>

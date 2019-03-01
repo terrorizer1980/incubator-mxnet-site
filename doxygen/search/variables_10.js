@@ -1,7 +1,7 @@
 var searchData=
 [
   ['scalar',['scalar',['../structmxnet_1_1op_1_1EnvArguments.html#a74dfe03602a990b6552c8f7a01b2ecb5',1,'mxnet::op::EnvArguments']]],
-  ['shape_5f',['shape_',['../classmxnet_1_1TBlob.html#a6cc7a57d9c33fefc08630e81951a004f',1,'mxnet::TBlob']]],
+  ['shape_5f',['shape_',['../classmxnet_1_1TBlob.html#af0e813ff066c775051d1f1f78a4a2029',1,'mxnet::TBlob']]],
   ['shared_5fid',['shared_id',['../structmxnet_1_1Storage_1_1Handle.html#ad938f8d0ddba567350ee7b3aae14b4c1',1,'mxnet::Storage::Handle']]],
   ['shared_5fpid',['shared_pid',['../structmxnet_1_1Storage_1_1Handle.html#ac92111bc6d73d7402331615506684b74',1,'mxnet::Storage::Handle']]],
   ['sigma',['sigma',['../classmxnet_1_1cpp_1_1Normal.html#ada8a6b37d8422f72d104e979299ebc7f',1,'mxnet::cpp::Normal']]],

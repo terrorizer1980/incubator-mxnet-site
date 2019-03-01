@@ -17,7 +17,7 @@ var searchData=
   ['foreach',['ForEach',['../classmxnet_1_1common_1_1LazyAllocArray.html#a43a89c8e7b4e1a09f346694073a2d998',1,'mxnet::common::LazyAllocArray']]],
   ['forward',['Forward',['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()']]],
   ['forwardinplaceoption',['ForwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#aad7a3e87866515a2b7100e849a2fe966',1,'mxnet::OperatorProperty']]],
-  ['forwardresource',['ForwardResource',['../classmxnet_1_1OperatorProperty.html#a623210dd1b9495ca73f223e0b06f998c',1,'mxnet::OperatorProperty']]],
+  ['forwardresource',['ForwardResource',['../classmxnet_1_1OperatorProperty.html#a4623326f2919d6ae87a6d783bb9751c7',1,'mxnet::OperatorProperty']]],
   ['free',['Free',['../classmxnet_1_1Storage.html#a5bdbd7b3ab712cd9e087ab007bdc64dd',1,'mxnet::Storage']]],
   ['freestate',['FreeState',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4.html#aaa64545e32685e361acac218ef764d76',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::FreeState()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4.html#a4d8f90c3bc95bf05a57d175afcd2700e',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::FreeState()']]],
   ['fresh_5fout_5fgrad',['fresh_out_grad',['../classmxnet_1_1NDArray.html#aee74980eb87bf7c482d15458f5194cbe',1,'mxnet::NDArray']]],

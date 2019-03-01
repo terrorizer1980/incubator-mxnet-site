@@ -20,5 +20,6 @@ var searchData=
   ['_7estorage',['~Storage',['../classmxnet_1_1Storage.html#af1e1bfea9236ccfba64344226416b04a',1,'mxnet::Storage']]],
   ['_7esymblob',['~SymBlob',['../structmxnet_1_1cpp_1_1SymBlob.html#a470cf7d61b5178f1535e92622bef00d5',1,'mxnet::cpp::SymBlob']]],
   ['_7esyncedgpuauxstream',['~SyncedGPUAuxStream',['../classmxnet_1_1SyncedGPUAuxStream.html#a5cb6f54e19a02b05d94daf4454a4d032',1,'mxnet::SyncedGPUAuxStream']]],
+  ['_7etuple',['~Tuple',['../classmxnet_1_1Tuple.html#a361c7b85d10b37eeb25de15379081d17',1,'mxnet::Tuple']]],
   ['_7evar',['~Var',['../structmxnet_1_1engine_1_1Var.html#af9884f59707511d65ecdb04a6dab0423',1,'mxnet::engine::Var']]]
 ];
