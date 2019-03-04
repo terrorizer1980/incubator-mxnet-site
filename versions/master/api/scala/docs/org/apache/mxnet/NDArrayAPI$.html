@@ -4253,22 +4253,65 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L754</pre></div><dl cl
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.NDArrayAPIBase#choose_element_0index" visbl="pub">
-<a id="choose_element_0index(lhs:org.apache.mxnet.NDArray,rhs:org.apache.mxnet.NDArray,out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn"></a>
-<a id="choose_element_0index(NDArray,NDArray,Option[NDArray]):NDArrayFuncReturn"></a>
+<a id="choose_element_0index(data:org.apache.mxnet.NDArray,index:org.apache.mxnet.NDArray,axis:Option[Int],keepdims:Option[Boolean],mode:Option[String],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn"></a>
+<a id="choose_element_0index(NDArray,NDArray,Option[Int],Option[Boolean],Option[String],Option[NDArray]):NDArrayFuncReturn"></a>
 <h4 class="signature">
 <span class="modifier_kind">
 <span class="modifier">abstract </span>
 <span class="kind">def</span>
 </span>
 <span class="symbol">
-<span class="name">choose_element_0index</span><span class="params">(<span name="lhs">lhs: <a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="rhs">rhs: <a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="out">out: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+<span class="name">choose_element_0index</span><span class="params">(<span name="data">data: <a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="index">index: <a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="axis">axis: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="keepdims">keepdims: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="mode">mode: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="out">out: <span class="extype" name="scala.Option">Option</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.NDArray">NDArray</a>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
 </span>
 </h4><span class="permalink">
-<a href="../../../index.html#org.apache.mxnet.NDArrayAPI$@choose_element_0index(lhs:org.apache.mxnet.NDArray,rhs:org.apache.mxnet.NDArray,out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
+<a href="../../../index.html#org.apache.mxnet.NDArrayAPI$@choose_element_0index(data:org.apache.mxnet.NDArray,index:org.apache.mxnet.NDArray,axis:Option[Int],keepdims:Option[Boolean],mode:Option[String],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn" target="_top" title="Permalink">
 <img src="../../../lib/permalink.png"/>
 </a>
 </span>
-<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Choose one element from each line(row <span class="kw">for</span> python, column <span class="kw">for</span> R/Julia) in lhs according to index indicated by rhs. This function assume rhs uses <span class="num">0</span>-based index.</pre></div><dl class="paramcmts block"><dt class="param">lhs</dt><dd class="cmt"><p>Left operand to the function.</p></dd><dt class="param">rhs</dt><dd class="cmt"><p>Right operand to the function.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Picks elements from an input array according to the input indices along the given axis.
+
+Given an input array of shape ``(d0, d1)`` and indices of shape ``(i0,)``, the result will be
+an output array of shape ``(i0,)`` <span class="kw">with</span>::
+
+  output[i] = input[i, indices[i] ]
+
+By default, <span class="kw">if</span> any index mentioned is too large, it is replaced by the index that addresses
+the last element along an axis (the `clip` mode).
+
+This function supports n-dimensional input and (n-<span class="num">1</span>)-dimensional indices arrays.
+
+Examples::
+
+  x = `[ [ <span class="num">1.</span>,  <span class="num">2.</span>],
+       [ <span class="num">3.</span>,  <span class="num">4.</span>],
+       [ <span class="num">5.</span>,  <span class="num">6.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 0</span>
+  pick(x, y=[<span class="num">0</span>,<span class="num">1</span>], <span class="num">0</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>]
+
+  <span class="cmt">// picks elements with specified indices along axis 1</span>
+  pick(x, y=[<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>], <span class="num">1</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>,  <span class="num">5.</span>]
+
+  y = `[ [ <span class="num">1.</span>],
+       [ <span class="num">0.</span>],
+       [ <span class="num">2.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 1 using 'wrap' mode</span>
+  <span class="cmt">// to place indicies that would normally be out of bounds</span>
+  pick(x, y=[<span class="num">2</span>,-<span class="num">1</span>,-<span class="num">2</span>], <span class="num">1</span>, mode=<span class="lit">'wrap'</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>,  <span class="num">5.</span>]
+
+  y = `[ [ <span class="num">1.</span>],
+       [ <span class="num">0.</span>],
+       [ <span class="num">2.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 1 and dims are maintained</span>
+  pick(x,y, <span class="num">1</span>, keepdims=True) = `[ [ <span class="num">2.</span>],
+                                 [ <span class="num">3.</span>],
+                                 [ <span class="num">6.</span>] ]
+
+
+
+Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L154</pre></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The input array</p></dd><dt class="param">index</dt><dd class="cmt"><p>The index array</p></dd><dt class="param">axis</dt><dd class="cmt"><p>int or None. The axis to picking the elements. Negative values means indexing from right to left. If is <code>None</code>, the elements in the index w.r.t the flattened input will be picked.</p></dd><dt class="param">keepdims</dt><dd class="cmt"><p>If true, the axis where we pick the elements is left in the result as dimension with size one.</p></dd><dt class="param">mode</dt><dd class="cmt"><p>Specify how out-of-bound indices behave. Default is "clip". "clip" means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  "wrap" means to wrap around.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>
@@ -6938,7 +6981,7 @@ Examples::
 
 
 
-Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L153</pre></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The input array</p></dd><dt class="param">index</dt><dd class="cmt"><p>The index array</p></dd><dt class="param">axis</dt><dd class="cmt"><p>int or None. The axis to picking the elements. Negative values means indexing from right to left. If is <code>None</code>, the elements in the index w.r.t the flattened input will be picked.</p></dd><dt class="param">keepdims</dt><dd class="cmt"><p>If true, the axis where we pick the elements is left in the result as dimension with size one.</p></dd><dt class="param">mode</dt><dd class="cmt"><p>Specify how out-of-bound indices behave. Default is "clip". "clip" means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  "wrap" means to wrap around.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
+Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L154</pre></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The input array</p></dd><dt class="param">index</dt><dd class="cmt"><p>The index array</p></dd><dt class="param">axis</dt><dd class="cmt"><p>int or None. The axis to picking the elements. Negative values means indexing from right to left. If is <code>None</code>, the elements in the index w.r.t the flattened input will be picked.</p></dd><dt class="param">keepdims</dt><dd class="cmt"><p>If true, the axis where we pick the elements is left in the result as dimension with size one.</p></dd><dt class="param">mode</dt><dd class="cmt"><p>Specify how out-of-bound indices behave. Default is "clip". "clip" means clip to the range. So, if all indices mentioned are too large, they are replaced by the index that addresses the last element along an axis.  "wrap" means to wrap around.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a class="extype" href="NDArrayAPIBase.html" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
 <span class="name">@<a class="extype" href="annotation/Experimental.html" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
 </dd></dl></div>

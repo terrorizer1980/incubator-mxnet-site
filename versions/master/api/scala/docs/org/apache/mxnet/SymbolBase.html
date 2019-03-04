@@ -4122,7 +4122,50 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L754</pre></div><dl cl
 <img src="../../../lib/permalink.png"/>
 </a>
 </span>
-<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Choose one element from each line(row <span class="kw">for</span> python, column <span class="kw">for</span> R/Julia) in lhs according to index indicated by rhs. This function assume rhs uses <span class="num">0</span>-based index.</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Picks elements from an input array according to the input indices along the given axis.
+
+Given an input array of shape ``(d0, d1)`` and indices of shape ``(i0,)``, the result will be
+an output array of shape ``(i0,)`` <span class="kw">with</span>::
+
+  output[i] = input[i, indices[i] ]
+
+By default, <span class="kw">if</span> any index mentioned is too large, it is replaced by the index that addresses
+the last element along an axis (the `clip` mode).
+
+This function supports n-dimensional input and (n-<span class="num">1</span>)-dimensional indices arrays.
+
+Examples::
+
+  x = `[ [ <span class="num">1.</span>,  <span class="num">2.</span>],
+       [ <span class="num">3.</span>,  <span class="num">4.</span>],
+       [ <span class="num">5.</span>,  <span class="num">6.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 0</span>
+  pick(x, y=[<span class="num">0</span>,<span class="num">1</span>], <span class="num">0</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>]
+
+  <span class="cmt">// picks elements with specified indices along axis 1</span>
+  pick(x, y=[<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>], <span class="num">1</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>,  <span class="num">5.</span>]
+
+  y = `[ [ <span class="num">1.</span>],
+       [ <span class="num">0.</span>],
+       [ <span class="num">2.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 1 using 'wrap' mode</span>
+  <span class="cmt">// to place indicies that would normally be out of bounds</span>
+  pick(x, y=[<span class="num">2</span>,-<span class="num">1</span>,-<span class="num">2</span>], <span class="num">1</span>, mode=<span class="lit">'wrap'</span>) = [ <span class="num">1.</span>,  <span class="num">4.</span>,  <span class="num">5.</span>]
+
+  y = `[ [ <span class="num">1.</span>],
+       [ <span class="num">0.</span>],
+       [ <span class="num">2.</span>] ]
+
+  <span class="cmt">// picks elements with specified indices along axis 1 and dims are maintained</span>
+  pick(x,y, <span class="num">1</span>, keepdims=True) = `[ [ <span class="num">2.</span>],
+                                 [ <span class="num">3.</span>],
+                                 [ <span class="num">6.</span>] ]
+
+
+
+Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L154</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#clip" visbl="pub">
 <a id="clip(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
@@ -6630,7 +6673,7 @@ Examples::
 
 
 
-Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L153</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+Defined in src/operator/tensor/broadcast_reduce_op_index.cc:L154</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.SymbolBase#prod" visbl="pub">
 <a id="prod(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>

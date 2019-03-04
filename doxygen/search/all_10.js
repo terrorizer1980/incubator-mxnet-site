@@ -56,7 +56,7 @@ var searchData=
   ['opreqtype',['OpReqType',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398',1,'mxnet::OpReqType()'],['../namespacemxnet_1_1cpp.html#ae1e49a337d45c7071defefda2ec91845',1,'mxnet::cpp::OpReqType()']]],
   ['oprhandle',['OprHandle',['../classmxnet_1_1Engine.html#a832436e413a075291aa1a631942c3f01',1,'mxnet::Engine::OprHandle()'],['../namespacemxnet_1_1engine.html#a2d9b14b658e3f3c4e03ca49cd38ace94',1,'mxnet::engine::OprHandle()']]],
   ['opstateptr',['OpStatePtr',['../classmxnet_1_1OpStatePtr.html',1,'mxnet']]],
-  ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html#a0f9555beda838a27b235ab5a3e4c13c4',1,'mxnet::cpp::Optimizer::Optimizer()'],['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a12146c3d98b52e4d89bc4ed683ee7e74',1,'mxnet::cpp::FeedForwardConfig::optimizer()']]],
+  ['optimizer',['optimizer',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a12146c3d98b52e4d89bc4ed683ee7e74',1,'mxnet::cpp::FeedForwardConfig::optimizer()'],['../classmxnet_1_1cpp_1_1Optimizer.html#a0f9555beda838a27b235ab5a3e4c13c4',1,'mxnet::cpp::Optimizer::Optimizer()']]],
   ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html',1,'mxnet::cpp']]],
   ['optimizer_2eh',['optimizer.h',['../optimizer_8h.html',1,'']]],
   ['optimizercreator',['OptimizerCreator',['../namespacemxnet_1_1cpp.html#a16a22578671e5ebcf8addb2275c317bc',1,'mxnet::cpp']]],
