@@ -252,16 +252,26 @@
 
 <div class="viewcode-block" id="Feature"><a class="viewcode-back" href="../../api/python/libinfo/libinfo.html#mxnet.runtime.Feature">[docs]</a><span class="k">class</span> <span class="nc">Feature</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    Compile time feature description</span>
+<span class="sd">    Compile time feature description, member fields: `name` and `enabled`.</span>
 <span class="sd">    """</span>
     <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s2">"_name"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">"enabled"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">)</span>
+        <span class="p">(</span><span class="s2">"_enabled"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">)</span>
     <span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Feature name.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        True if MXNet was compiled with the given compile-time feature.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
@@ -275,7 +285,8 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    :return: list of class LibFeature indicating which features are available and enabled</span>
+<span class="sd">    list</span>
+<span class="sd">        List of :class:`.Feature` objects</span>
 <span class="sd">    """</span>
     <span class="n">lib_features_c_array</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">Feature</span><span class="p">)()</span>
     <span class="n">lib_features_size</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_size_t</span><span class="p">()</span>
@@ -299,11 +310,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        :param x: str The name of a valid feature as string for example 'CUDA'</span>
+<span class="sd">        feature_name: str</span>
+<span class="sd">            The name of a valid feature as string for example 'CUDA'</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        :return: bool True if it's enabled, False if it's disabled, RuntimeError if the feature is not known</span>
+<span class="sd">        Boolean</span>
+<span class="sd">            True if it's enabled, False if it's disabled, RuntimeError if the feature is not known</span>
 <span class="sd">        """</span>
         <span class="n">feature_name</span> <span class="o">=</span> <span class="n">feature_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">feature_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>

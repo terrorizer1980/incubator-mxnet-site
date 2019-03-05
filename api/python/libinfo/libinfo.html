@@ -274,23 +274,68 @@
 <p>The libinfo functionality allows to check for compile-time features supported by the library.</p>
 <div class="section" id="example-usage">
 <span id="example-usage"></span><h3>Example usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span>In [1]: import mxnet as mx
+<div class="highlight-default"><div class="highlight"><pre><span></span>In []: import mxnet as mx
    ...: import mxnet.runtime
    ...: fs = mx.runtime.Features()
 
-In [2]: fs
-Out[2]: [✖ CUDA, ✖ CUDNN, ✖ NCCL, ✖ CUDA_RTC, ✖ TENSORRT, ✔ CPU_SSE, ✔ CPU_SSE2, ✔ CPU_SSE3, ✔ CPU_SSE4_1, ✔ CPU_SSE4_2, ✖ CPU_SSE4A, ✔ CPU_AVX, ✖ CPU_AVX2, ✖ OPENMP, ✖ SSE, ✔ F16C, ✖ JEMALLOC, ✔ BLAS_OPEN, ✖ BLAS_ATLAS, ✖ BLAS_MKL, ✖ BLAS_APPLE, ✔ LAPACK, ✖ MKLDNN, ✔ OPENCV, ✖ CAFFE, ✖ PROFILER, ✖ DIST_KVSTORE, ✖ CXX14, ✔ SIGNAL_HANDLER, ✔ DEBUG]
+In []: fs
+Out[]: [✖ CUDA, ✖ CUDNN, ✖ NCCL, ✖ CUDA_RTC, ✖ TENSORRT, ✔ CPU_SSE, ✔ CPU_SSE2, ✔ CPU_SSE3, ✔ CPU_SSE4_1, ✔ CPU_SSE4_2, ✖ CPU_SSE4A, ✔ CPU_AVX, ✖ CPU_AVX2, ✖ OPENMP, ✖ SSE, ✔ F16C, ✖ JEMALLOC, ✔ BLAS_OPEN, ✖ BLAS_ATLAS, ✖ BLAS_MKL, ✖ BLAS_APPLE, ✔ LAPACK, ✖ MKLDNN, ✔ OPENCV, ✖ CAFFE, ✖ PROFILER, ✖ DIST_KVSTORE, ✖ CXX14, ✔ SIGNAL_HANDLER, ✔ DEBUG]
 
-In [3]: fs['CUDA'].enabled
-Out[3]: False
+In []: fs.keys()
+Out[]: odict_keys(['CUDA', 'CUDNN', 'NCCL', 'CUDA_RTC', 'TENSORRT', 'CPU_SSE', 'CPU_SSE2', 'CPU_SSE3', 'CPU_SSE4_1', 'CPU_SSE4_2', 'CPU_SSE4A', 'CPU_AVX', 'CPU_AVX2', 'OPENMP', 'SSE', 'F16C', 'JEMALLOC', 'BLAS_OPEN', 'BLAS_ATLAS', 'BLAS_MKL', 'BLAS_APPLE', 'LAPACK', 'MKLDNN', 'OPENCV', 'CAFFE', 'PROFILER', 'DIST_KVSTORE', 'CXX14', 'SIGNAL_HANDLER', 'DEBUG'])
 
-In [4]: fs.is_enabled('CPU_SSE')
-Out[4]: True
+In []: type(fs['CUDA'])
+Out[]: mxnet.runtime.Feature
 
-In [5]: fs.is_enabled('CUDA')
-Out[5]: False
+In []: fs['CUDA'].enabled
+Out[]: False
 
-In [6]:
+In []: fs.is_enabled('CPU_SSE')
+Out[]: True
+
+In []: fs.is_enabled('CUDA')
+Out[]: False
+
+In []: features = mx.runtime.feature_list()
+
+In []: features
+Out[]:
+[✖ CUDA,
+ ✖ CUDNN,
+ ✖ NCCL,
+ ✖ CUDA_RTC,
+ ✖ TENSORRT,
+ ✔ CPU_SSE,
+ ✔ CPU_SSE2,
+ ✔ CPU_SSE3,
+ ✔ CPU_SSE4_1,
+ ✔ CPU_SSE4_2,
+ ✖ CPU_SSE4A,
+ ✔ CPU_AVX,
+ ✖ CPU_AVX2,
+ ✖ OPENMP,
+ ✖ SSE,
+ ✔ F16C,
+ ✖ JEMALLOC,
+ ✔ BLAS_OPEN,
+ ✖ BLAS_ATLAS,
+ ✖ BLAS_MKL,
+ ✖ BLAS_APPLE,
+ ✔ LAPACK,
+ ✖ MKLDNN,
+ ✔ OPENCV,
+ ✖ CAFFE,
+ ✖ PROFILER,
+ ✖ DIST_KVSTORE,
+ ✖ CXX14,
+ ✔ SIGNAL_HANDLER,
+ ✔ DEBUG]
+
+In []: type(features)
+Out[]: list
+
+In []: type(features[0])
+Out[]: mxnet.runtime.Feature
 </pre></div>
 </div>
 <table border="1" class="longtable docutils">
@@ -299,15 +344,6 @@ In [6]:
 <col width="90%"/>
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#mxnet.runtime.Features" title="mxnet.runtime.Features"><code class="xref py py-obj docutils literal"><span class="pre">Features</span></code></a></td>
-<td>OrderedDict of name to Feature</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#mxnet.runtime.Feature" title="mxnet.runtime.Feature"><code class="xref py py-obj docutils literal"><span class="pre">Feature</span></code></a></td>
-<td>Compile time feature description</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#mxnet.runtime.feature_list" title="mxnet.runtime.feature_list"><code class="xref py py-obj docutils literal"><span class="pre">feature_list</span></code></a></td>
-<td>Check the library for compile-time features.</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -318,7 +354,17 @@ In [6]:
 <dl class="class">
 <dt id="mxnet.runtime.Feature">
 <em class="property">class </em><code class="descclassname">mxnet.runtime.</code><code class="descname">Feature</code><a class="reference internal" href="../../../_modules/mxnet/runtime.html#Feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compile time feature description</p>
+<dd><p>Compile time feature description, member fields: <cite>name</cite> and <cite>enabled</cite>.</p>
+<dl class="attribute">
+<dt id="mxnet.runtime.Feature.name">
+<code class="descname">name</code><a class="headerlink" href="#mxnet.runtime.Feature.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature name.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="mxnet.runtime.Feature.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#mxnet.runtime.Feature.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if MXNet was compiled with the given compile-time feature.</p>
+</dd></dl>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.runtime.feature_list">
@@ -328,9 +374,9 @@ In [6]:
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="#mxnet.runtime.Feature" title="mxnet.runtime.Feature"><code class="xref py py-class docutils literal"><span class="pre">Feature</span></code></a> objects</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">return: list of class LibFeature indicating which features are available and enabled</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -343,15 +389,15 @@ In [6]:
 <dt id="mxnet.runtime.Features.is_enabled">
 <code class="descname">is_enabled</code><span class="sig-paren">(</span><em>feature_name</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/runtime.html#Features.is_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.Features.is_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check for a particular feature by name</p>
-<p>:param :
-:type : param x: str The name of a valid feature as string for example ‘CUDA’</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>feature_name</strong> (<em>str</em>) – The name of a valid feature as string for example ‘CUDA’</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">return: bool True if it’s enabled, False if it’s disabled, RuntimeError if the feature is not known</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if it’s enabled, False if it’s disabled, RuntimeError if the feature is not known</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Boolean</td>
 </tr>
 </tbody>
 </table>
