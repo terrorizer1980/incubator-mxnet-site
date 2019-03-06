@@ -8877,7 +8877,7 @@ inputs (batch mode).</p>
       <span class="p">[</span><span class="o">-</span><span class="mf">19.09768702</span><span class="p">,</span> <span class="mf">0.52758934</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L569</p>
+<p>Defined in src/operator/tensor/la_op.cc:L567</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8912,14 +8912,15 @@ matrix transposition (depending on <em>transpose_a</em>, <em>transpose_b</em>).<
 are given by the last dimensions of the tensors, the row indices by the axis specified with the <em>axis</em>
 parameter. By default, the trailing two dimensions will be used for matrix encoding.</p>
 <p>For a non-default axis parameter, the operation performed is equivalent to a series of swapaxes/gemm/swapaxes
-calls. For example let <em>A</em>, <em>B</em>, <em>C</em> be 5 dimensional tensors. Then gemm(<em>A</em>, <em>B</em>, <em>C</em>, axis=1) is equivalent to</p>
-<blockquote>
-<div>A1 = swapaxes(A, dim1=1, dim2=3)
-B1 = swapaxes(B, dim1=1, dim2=3)
-C = swapaxes(C, dim1=1, dim2=3)
-C = gemm(A1, B1, C)
-C = swapaxis(C, dim1=1, dim2=3)</div></blockquote>
-<p>without the overhead of the additional swapaxis operations.</p>
+calls. For example let <em>A</em>, <em>B</em>, <em>C</em> be 5 dimensional tensors. Then gemm(<em>A</em>, <em>B</em>, <em>C</em>, axis=1) is equivalent
+to the following without the overhead of the additional swapaxis operations:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">swapaxes</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">B1</span> <span class="o">=</span> <span class="n">swapaxes</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">swapaxes</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">gemm</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">swapaxis</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>When the input data is of type float32 and the environment variables MXNET_CUDA_ALLOW_TENSOR_CORE
 and MXNET_CUDA_TENSOR_OP_MATH_ALLOW_CONVERSION are set to 1, this operator will try to use
 pseudo-float16 precision (float32 math with float16 I/O) precision in order to use
@@ -8986,13 +8987,14 @@ transposition (depending on <em>transpose_a</em>, <em>transpose_b</em>).</p>
 are given by the last dimensions of the tensors, the row indices by the axis specified with the <em>axis</em>
 parameter. By default, the trailing two dimensions will be used for matrix encoding.</p>
 <p>For a non-default axis parameter, the operation performed is equivalent to a series of swapaxes/gemm/swapaxes
-calls. For example let <em>A</em>, <em>B</em> be 5 dimensional tensors. Then gemm(<em>A</em>, <em>B</em>, axis=1) is equivalent to</p>
-<blockquote>
-<div>A1 = swapaxes(A, dim1=1, dim2=3)
-B1 = swapaxes(B, dim1=1, dim2=3)
-C = gemm2(A1, B1)
-C = swapaxis(C, dim1=1, dim2=3)</div></blockquote>
-<p>without the overhead of the additional swapaxis operations.</p>
+calls. For example let <em>A</em>, <em>B</em> be 5 dimensional tensors. Then gemm(<em>A</em>, <em>B</em>, axis=1) is equivalent to
+the following without the overhead of the additional swapaxis operations:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">swapaxes</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">B1</span> <span class="o">=</span> <span class="n">swapaxes</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">gemm2</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">B1</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">swapaxis</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>When the input data is of type float32 and the environment variables MXNET_CUDA_ALLOW_TENSOR_CORE
 and MXNET_CUDA_TENSOR_OP_MATH_ALLOW_CONVERSION are set to 1, this operator will try to use
 pseudo-float16 precision (float32 math with float16 I/O) precision in order to use
@@ -9015,7 +9017,7 @@ Tensor Cores on suitable NVIDIA GPUs. This can sometimes give significant speedu
         <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.04</span> <span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L162</p>
+<p>Defined in src/operator/tensor/la_op.cc:L161</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9067,7 +9069,7 @@ positive diagonal entries, and:</p>
 <span class="n">potrf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L213</p>
+<p>Defined in src/operator/tensor/la_op.cc:L212</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9124,7 +9126,7 @@ cannot use the Cholesky factor <em>A</em> (<em>potrf</em>), together with backsu
             <span class="p">[[</span><span class="mf">0.06641</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01562</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01562</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0625</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L274</p>
+<p>Defined in src/operator/tensor/la_op.cc:L273</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9167,7 +9169,7 @@ inputs (batch mode).</p>
 <span class="n">sumlogdiag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.9459</span><span class="p">,</span> <span class="mf">3.9318</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L445</p>
+<p>Defined in src/operator/tensor/la_op.cc:L443</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9221,7 +9223,7 @@ inputs (batch mode).</p>
 <span class="n">syrk</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.04</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L501</p>
+<p>Defined in src/operator/tensor/la_op.cc:L499</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9277,7 +9279,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
                          <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L333</p>
+<p>Defined in src/operator/tensor/la_op.cc:L331</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -9337,7 +9339,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
                          <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/la_op.cc:L396</p>
+<p>Defined in src/operator/tensor/la_op.cc:L394</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
