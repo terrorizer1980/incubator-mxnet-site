@@ -37,5 +37,7 @@ var searchData=
   ['broadcast_5fsub',['broadcast_sub',['../namespacemxnet_1_1cpp.html#aa329d1598ba167a8cf14b76341cda2c2',1,'mxnet::cpp::broadcast_sub(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#ac17077658ee116a287bc8668b92ca0f0',1,'mxnet::cpp::broadcast_sub(Symbol lhs, Symbol rhs)']]],
   ['broadcast_5fto',['broadcast_to',['../namespacemxnet_1_1cpp.html#a1ec5a8cf851e1b5ab222d7901fcede7c',1,'mxnet::cpp::broadcast_to(const std::string &amp;symbol_name, Symbol data, Shape shape=Shape())'],['../namespacemxnet_1_1cpp.html#a7443d6c979ea61d91b01d2e41d555151',1,'mxnet::cpp::broadcast_to(Symbol data, Shape shape=Shape())']]],
   ['bulk_5fsize',['bulk_size',['../classmxnet_1_1Engine.html#a78baf44fa0dfed3285d6b9b65845825c',1,'mxnet::Engine']]],
+  ['bulkexecmaxnodetrainbwd',['BulkExecMaxNodeTrainBwd',['../classmxnet_1_1Imperative.html#a482d9ab2ab7d969c55f7c13797a662a0',1,'mxnet::Imperative']]],
+  ['bulkexecmaxnodetrainfwd',['BulkExecMaxNodeTrainFwd',['../classmxnet_1_1Imperative.html#af19dbcd37d7adf9d205b9c2efdb84b6b',1,'mxnet::Imperative']]],
   ['byte_5foffset',['byte_offset',['../classmxnet_1_1NDArray.html#a5dfa016a606afd37b8bc85dc2832b025',1,'mxnet::NDArray']]]
 ];

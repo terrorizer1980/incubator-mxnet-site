@@ -248,7 +248,6 @@
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">errno</span>
@@ -437,6 +436,7 @@
                          <span class="s2">" for this shape (</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">output_arr</span><span class="p">)</span><span class="o">.</span><span class="n">tostype</span><span class="p">(</span><span class="s2">"csr"</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="assign_each"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.assign_each">[docs]</a><span class="k">def</span> <span class="nf">assign_each</span><span class="p">(</span><span class="n">the_input</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
     <span class="sd">"""Return ndarray composed of passing each array value through some function"""</span>
@@ -1616,14 +1616,7 @@
 <span class="sd">        If there are n GPUs, then return a list [0,1,...,n-1]. Otherwise returns</span>
 <span class="sd">        [].</span>
 <span class="sd">    """</span>
-    <span class="n">re</span> <span class="o">=</span> <span class="s1">''</span>
-    <span class="n">nvidia_smi</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'nvidia-smi'</span><span class="p">,</span> <span class="s1">'/usr/bin/nvidia-smi'</span><span class="p">,</span> <span class="s1">'/usr/local/nvidia/bin/nvidia-smi'</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">nvidia_smi</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">re</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="n">cmd</span><span class="p">,</span> <span class="s2">"-L"</span><span class="p">],</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
-            <span class="k">pass</span>
-    <span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span> <span class="k">if</span> <span class="s1">'GPU'</span> <span class="ow">in</span> <span class="n">i</span><span class="p">]))</span></div>
+    <span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">get_gpu_count</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="download"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.download">[docs]</a><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">"""Download an given URL</span>

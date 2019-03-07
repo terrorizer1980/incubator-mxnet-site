@@ -12,6 +12,8 @@ var searchData=
   ['postauxstreamusesync',['PostAuxStreamUseSync',['../classmxnet_1_1GPUAuxStream.html#a3f103abfadfb2f6d637430b2d92cce7b',1,'mxnet::GPUAuxStream']]],
   ['preauxstreamusesync',['PreAuxStreamUseSync',['../classmxnet_1_1GPUAuxStream.html#a2add80e8e23386df1646434630f405f4',1,'mxnet::GPUAuxStream']]],
   ['predict',['Predict',['../classmxnet_1_1cpp_1_1FeedForward.html#a597daed3105b8583640cf7d941314838',1,'mxnet::cpp::FeedForward']]],
+  ['preferbulkexecinference',['PreferBulkExecInference',['../classmxnet_1_1Imperative.html#a0b5c5c6c9e7288156a7c633cb5433900',1,'mxnet::Imperative']]],
+  ['preferbulkexectrain',['PreferBulkExecTrain',['../classmxnet_1_1Imperative.html#a99b8ef35060523298e8e7e969d829920',1,'mxnet::Imperative']]],
   ['print',['Print',['../classmxnet_1_1Executor.html#a3803afcb87e4c69940c8d3d88a03e6ee',1,'mxnet::Executor']]],
   ['prod',['prod',['../namespacemxnet_1_1cpp.html#af84dd35dd17a1675a342c52708da9902',1,'mxnet::cpp::prod(const std::string &amp;symbol_name, Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)'],['../namespacemxnet_1_1cpp.html#a561746f1a9bf11e5e3c488248cd73973',1,'mxnet::cpp::prod(Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)']]],
   ['prodshape',['ProdShape',['../classmxnet_1_1TShape.html#aa72c62b4d22066e55b77d0296a3dedf5',1,'mxnet::TShape']]],
