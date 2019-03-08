@@ -255,6 +255,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">numeric_types</span>
 <span class="kn">from</span> <span class="nn">.block</span> <span class="k">import</span> <span class="n">HybridBlock</span>
 
+
 <span class="k">def</span> <span class="nf">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""Apply weighting to loss.</span>
 
@@ -285,9 +286,11 @@
 
     <span class="k">return</span> <span class="n">loss</span>
 
+
 <span class="k">def</span> <span class="nf">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="sd">"""Reshapes x to the same shape as y."""</span>
     <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">if</span> <span class="n">F</span> <span class="ow">is</span> <span class="n">ndarray</span> <span class="k">else</span> <span class="n">F</span><span class="o">.</span><span class="n">reshape_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="Loss"><a class="viewcode-back" href="../../../api/python/gluon/loss.html#mxnet.gluon.loss.Loss">[docs]</a><span class="k">class</span> <span class="nc">Loss</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sd">"""Base class for loss.</span>
@@ -299,6 +302,7 @@
 <span class="sd">    batch_axis : int, default 0</span>
 <span class="sd">        The axis that represents mini-batch.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">=</span> <span class="n">weight</span>
@@ -351,13 +355,14 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">L2Loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
@@ -389,6 +394,7 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">L1Loss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -409,18 +415,22 @@
 
 <span class="sd">        prob = \frac{1}{1 + \exp(-{pred})}</span>
 
-<span class="sd">        L = - \sum_i {label}_i * \log({prob}_i) +</span>
+<span class="sd">        L = - \sum_i {label}_i * \log({prob}_i) * pos\_weight +</span>
 <span class="sd">            (1 - {label}_i) * \log(1 - {prob}_i)</span>
 
 <span class="sd">    If `from_sigmoid` is True, this loss computes:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        L = - \sum_i {label}_i * \log({pred}_i) +</span>
+<span class="sd">        L = - \sum_i {label}_i * \log({pred}_i) * pos\_weight +</span>
 <span class="sd">            (1 - {label}_i) * \log(1 - {pred}_i)</span>
 
+<span class="sd">    A tensor `pos_weight > 1` decreases the false negative count, hence increasing</span>
+<span class="sd">    the recall.</span>
+<span class="sd">    Conversely setting `pos_weight < 1` decreases the false positive count and</span>
+<span class="sd">    increases the precision.</span>
 
-<span class="sd">    `label` and `pred` can have arbitrary shape as long as they have the same</span>
+<span class="sd">    `pred` and `label` can have arbitrary shape as long as they have the same</span>
 <span class="sd">    number of elements.</span>
 
 <span class="sd">    Parameters</span>
@@ -443,24 +453,44 @@
 <span class="sd">          to the same shape as pred. For example, if pred has shape (64, 10)</span>
 <span class="sd">          and you want to weigh each sample in the batch separately,</span>
 <span class="sd">          sample_weight should have shape (64, 1).</span>
+<span class="sd">        - **pos_weight**: a weighting tensor of positive examples. Must be a vector with length</span>
+<span class="sd">          equal to the number of classes.For example, if pred has shape (64, 10),</span>
+<span class="sd">          pos_weight should have shape (1, 10).</span>
 
 <span class="sd">    Outputs:</span>
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_sigmoid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SigmoidBinaryCrossEntropyLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SigmoidBinaryCrossEntropyLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_sigmoid</span> <span class="o">=</span> <span class="n">from_sigmoid</span>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_sigmoid</span><span class="p">:</span>
-            <span class="c1"># We use the stable formula: max(x, 0) - x * z + log(1 + exp(-abs(x)))</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">*</span> <span class="n">label</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'softrelu'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pos_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># We use the stable formula: max(x, 0) - x * z + log(1 + exp(-abs(x)))</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">*</span> <span class="n">label</span> <span class="o">+</span> \
+                    <span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'softrelu'</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># We use the stable formula: x - x * z + (1 + z * pos_weight - z) * \</span>
+                <span class="c1">#    (log(1 + exp(-abs(x))) + max(-x, 0))</span>
+                <span class="n">log_weight</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_mul</span><span class="p">(</span><span class="n">pos_weight</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">pred</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">*</span> <span class="n">label</span> <span class="o">+</span> <span class="n">log_weight</span> <span class="o">*</span> \
+                       <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'softrelu'</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="o">-</span><span class="n">pred</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pred</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span><span class="o">*</span><span class="n">label</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">pred</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">label</span><span class="p">))</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-12</span>
+            <span class="k">if</span> <span class="n">pos_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pred</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">label</span>
+                         <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">label</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">broadcast_mul</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pred</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">label</span><span class="p">,</span> <span class="n">pos_weight</span><span class="p">)</span>
+                         <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">label</span><span class="p">))</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
 
 <span class="n">SigmoidBCELoss</span> <span class="o">=</span> <span class="n">SigmoidBinaryCrossEntropyLoss</span>
 
@@ -526,9 +556,11 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">sparse_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SoftmaxCrossEntropyLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SoftmaxCrossEntropyLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_axis</span> <span class="o">=</span> <span class="n">axis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sparse_label</span> <span class="o">=</span> <span class="n">sparse_label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_logits</span> <span class="o">=</span> <span class="n">from_logits</span>
@@ -540,9 +572,10 @@
             <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">pick</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred</span><span class="o">*</span><span class="n">label</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred</span> <span class="o">*</span> <span class="n">label</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
 
 <span class="n">SoftmaxCELoss</span> <span class="o">=</span> <span class="n">SoftmaxCrossEntropyLoss</span>
 
@@ -607,6 +640,7 @@
 <span class="sd">        `Kullback-Leibler divergence</span>
 <span class="sd">        <https://en.wikipedia.org/wiki/Kullback-Leibler_divergence>`_</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">KLDivLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -616,7 +650,7 @@
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_logits</span><span class="p">:</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">label</span> <span class="o">*</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">label</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">label</span> <span class="o">*</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">label</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -678,11 +712,12 @@
 <span class="sd">        Sequence Data with Recurrent Neural Networks</span>
 <span class="sd">        <http://www.cs.toronto.edu/~graves/icml_2006.pdf>`_</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'NTC'</span><span class="p">,</span> <span class="n">label_layout</span><span class="o">=</span><span class="s1">'NT'</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">layout</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'NTC'</span><span class="p">,</span> <span class="s1">'TNC'</span><span class="p">],</span>\
-               <span class="s2">"Only 'NTC' and 'TNC' layouts for pred are supported. Got: </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="n">layout</span>
+            <span class="s2">"Only 'NTC' and 'TNC' layouts for pred are supported. Got: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">layout</span>
         <span class="k">assert</span> <span class="n">label_layout</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'NT'</span><span class="p">,</span> <span class="s1">'TN'</span><span class="p">],</span>\
-               <span class="s2">"Only 'NT' and 'TN' layouts for label are supported. Got: </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="n">label_layout</span>
+            <span class="s2">"Only 'NT' and 'TN' layouts for label are supported. Got: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">label_layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_layout</span> <span class="o">=</span> <span class="n">label_layout</span>
         <span class="n">batch_axis</span> <span class="o">=</span> <span class="n">label_layout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'N'</span><span class="p">)</span>
@@ -737,6 +772,7 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HuberLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
@@ -745,7 +781,7 @@
         <span class="n">label</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">loss</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">,</span> <span class="n">loss</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">,</span>
-                       <span class="p">(</span><span class="mf">0.5</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
+                       <span class="p">(</span><span class="mf">0.5</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -783,6 +819,7 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HingeLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span> <span class="o">=</span> <span class="n">margin</span>
@@ -827,6 +864,7 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SquaredHingeLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span> <span class="o">=</span> <span class="n">margin</span>
@@ -872,6 +910,7 @@
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,). Dimenions other than</span>
 <span class="sd">          batch_axis are averaged out.</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label_format</span><span class="o">=</span><span class="s1">'signed'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LogisticLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_format</span> <span class="o">=</span> <span class="n">label_format</span>
@@ -884,7 +923,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_format</span> <span class="o">==</span> <span class="s1">'signed'</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># Transform label to be either 0 or 1</span>
         <span class="c1"># Use a stable formula in computation</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">*</span> <span class="n">label</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'softrelu'</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">pred</span> <span class="o">*</span> <span class="n">label</span> <span class="o">+</span> \
+            <span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'softrelu'</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -921,6 +961,7 @@
 <span class="sd">    Outputs:</span>
 <span class="sd">        - **loss**: loss tensor with shape (batch_size,).</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TripletLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span> <span class="o">=</span> <span class="n">margin</span>
@@ -928,7 +969,7 @@
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">positive</span><span class="p">,</span> <span class="n">negative</span><span class="p">):</span>
         <span class="n">positive</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">positive</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
         <span class="n">negative</span> <span class="o">=</span> <span class="n">_reshape_like</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">negative</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">positive</span><span class="o">-</span><span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">negative</span><span class="o">-</span><span class="n">pred</span><span class="p">),</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">positive</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">negative</span> <span class="o">-</span> <span class="n">pred</span><span class="p">),</span>
                      <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_axis</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
@@ -973,6 +1014,7 @@
 <span class="sd">    Outputs:</span>
 <span class="sd">        - **loss**: Average loss (shape=(1,1)) of the loss tensor with shape (batch_size,).</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">compute_full</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PoissonNLLLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_logits</span> <span class="o">=</span> <span class="n">from_logits</span>
@@ -986,7 +1028,8 @@
             <span class="n">loss</span> <span class="o">=</span> <span class="n">pred</span> <span class="o">-</span> <span class="n">target</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pred</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_full</span><span class="p">:</span>
             <span class="c1"># Using numpy's pi value</span>
-            <span class="n">stirling_factor</span> <span class="o">=</span> <span class="n">target</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">-</span> <span class="n">target</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">target</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+            <span class="n">stirling_factor</span> <span class="o">=</span> <span class="n">target</span> <span class="o">*</span> \
+                <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">-</span> <span class="n">target</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">target</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
             <span class="n">target_gt_1</span> <span class="o">=</span> <span class="n">target</span> <span class="o">></span> <span class="mi">1</span>
             <span class="n">stirling_factor</span> <span class="o">*=</span> <span class="n">target_gt_1</span>
             <span class="n">loss</span> <span class="o">+=</span> <span class="n">stirling_factor</span>
@@ -1029,6 +1072,7 @@
 <span class="sd">    Outputs:</span>
 <span class="sd">        - **loss**: The loss tensor with shape (batch_size,).</span>
 <span class="sd">    """</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CosineEmbeddingLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span> <span class="o">=</span> <span class="n">margin</span>
@@ -1045,7 +1089,8 @@
             <span class="n">z_array</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">z_array</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">cos_sim_b</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_maximum</span><span class="p">(</span><span class="n">z_array</span><span class="p">,</span> <span class="n">y_minus_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">cos_sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cos_sim_b</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">broadcast_maximum</span><span class="p">(</span>
+            <span class="n">z_array</span><span class="p">,</span> <span class="n">y_minus_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">cos_sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_margin</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">cos_sim_a</span> <span class="o">+</span> <span class="n">cos_sim_b</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_apply_weighting</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span>
@@ -1054,7 +1099,7 @@
         <span class="c1"># Calculates the cosine similarity between 2 vectors</span>
         <span class="n">x_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">y_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x_dot_y</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x_dot_y</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">F</span> <span class="ow">is</span> <span class="n">ndarray</span><span class="p">:</span>
             <span class="n">eps_arr</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e-12</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>

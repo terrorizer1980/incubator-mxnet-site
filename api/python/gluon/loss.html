@@ -449,13 +449,17 @@ batch_axis are averaged out.</li>
 <p>BCE loss is useful when training logistic regression. If <cite>from_sigmoid</cite>
 is False (default), this loss computes:</p>
 <div class="math">
-\[ \begin{align}\begin{aligned}prob = \frac{1}{1 + \exp(-{pred})}\\L = - \sum_i {label}_i * \log({prob}_i) +
+\[ \begin{align}\begin{aligned}prob = \frac{1}{1 + \exp(-{pred})}\\L = - \sum_i {label}_i * \log({prob}_i) * pos\_weight +
     (1 - {label}_i) * \log(1 - {prob}_i)\end{aligned}\end{align} \]</div>
 <p>If <cite>from_sigmoid</cite> is True, this loss computes:</p>
 <div class="math">
-\[L = - \sum_i {label}_i * \log({pred}_i) +
+\[L = - \sum_i {label}_i * \log({pred}_i) * pos\_weight +
     (1 - {label}_i) * \log(1 - {pred}_i)\]</div>
-<p><cite>label</cite> and <cite>pred</cite> can have arbitrary shape as long as they have the same
+<p>A tensor <cite>pos_weight > 1</cite> decreases the false negative count, hence increasing
+the recall.
+Conversely setting <cite>pos_weight < 1</cite> decreases the false positive count and
+increases the precision.</p>
+<p><cite>pred</cite> and <cite>label</cite> can have arbitrary shape as long as they have the same
 number of elements.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -482,6 +486,9 @@ same size as <cite>pred</cite>.</li>
 to the same shape as pred. For example, if pred has shape (64, 10)
 and you want to weigh each sample in the batch separately,
 sample_weight should have shape (64, 1).</li>
+<li><strong>pos_weight</strong>: a weighting tensor of positive examples. Must be a vector with length
+equal to the number of classes.For example, if pred has shape (64, 10),
+pos_weight should have shape (1, 10).</li>
 </ul>
 </dd>
 <dt>Outputs:</dt>
