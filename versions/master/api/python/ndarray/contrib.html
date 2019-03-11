@@ -1429,7 +1429,7 @@ y : matched row indices.</p>
 </div>
 </dd>
 </dl>
-<p>Defined in src/operator/contrib/bounding_box.cc:L176</p>
+<p>Defined in src/operator/contrib/bounding_box.cc:L180</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1509,7 +1509,7 @@ which stands for the rows in x where the corresonding element in index is non-ze
 </div>
 </dd>
 </dl>
-<p>Defined in src/operator/contrib/bounding_box.cc:L130</p>
+<p>Defined in src/operator/contrib/bounding_box.cc:L134</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1534,11 +1534,12 @@ which stands for the rows in x where the corresonding element in index is non-ze
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.contrib.box_nms">
-<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">box_nms</code><span class="sig-paren">(</span><em>data=None</em>, <em>overlap_thresh=_Null</em>, <em>valid_thresh=_Null</em>, <em>topk=_Null</em>, <em>coord_start=_Null</em>, <em>score_index=_Null</em>, <em>id_index=_Null</em>, <em>force_suppress=_Null</em>, <em>in_format=_Null</em>, <em>out_format=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.box_nms" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">box_nms</code><span class="sig-paren">(</span><em>data=None</em>, <em>overlap_thresh=_Null</em>, <em>valid_thresh=_Null</em>, <em>topk=_Null</em>, <em>coord_start=_Null</em>, <em>score_index=_Null</em>, <em>id_index=_Null</em>, <em>background_id=_Null</em>, <em>force_suppress=_Null</em>, <em>in_format=_Null</em>, <em>out_format=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.box_nms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply non-maximum suppression to input.</p>
 <p>The output will be sorted in descending order according to <cite>score</cite>. Boxes with
-overlaps larger than <cite>overlap_thresh</cite> and smaller scores will be removed and
-filled with -1, the corresponding position will be recorded for backward propogation.</p>
+overlaps larger than <cite>overlap_thresh</cite>, smaller scores and background boxes
+will be removed and filled with -1, the corresponding position will be recorded
+for backward propogation.</p>
 <p>During back-propagation, the gradient will be copied to the original
 position according to the input index. For positions that have been suppressed,
 the in_grad will be assigned 0.
@@ -1556,6 +1557,9 @@ additional elements are allowed.</p>
 <ul>
 <li><p class="first"><cite>id_index</cite>: optional, use -1 to ignore, useful if <cite>force_suppress=False</cite>, which means
 we will skip highly overlapped boxes if one is <cite>apple</cite> while the other is <cite>car</cite>.</p>
+</li>
+<li><p class="first"><cite>background_id</cite>: optional, default=-1, class id for background boxes, useful
+when <cite>id_index >= 0</cite> which means boxes with background id will be filtered before nms.</p>
 </li>
 <li><p class="first"><cite>coord_start</cite>: required, default=2, the starting index of the 4 coordinates.
 Two formats are supported:</p>
@@ -1586,7 +1590,7 @@ When two boxes overlap IOU > <cite>overlap_thresh</cite>, the one with smaller s
            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/contrib/bounding_box.cc:L89</p>
+<p>Defined in src/operator/contrib/bounding_box.cc:L93</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1599,6 +1603,7 @@ When two boxes overlap IOU > <cite>overlap_thresh</cite>, the one with smaller s
 <li><strong>coord_start</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='2'</em>) – Start index of the consecutive 4 coordinates.</li>
 <li><strong>score_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Index of the scores/confidence of boxes.</li>
 <li><strong>id_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Optional, index of the class categories, -1 to disable.</li>
+<li><strong>background_id</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Optional, id of the background class which will be ignored in nms.</li>
 <li><strong>force_suppress</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Optional, if set false and id_index is provided, nms will only apply to boxes belongs to the same category</li>
 <li><strong>in_format</strong> (<em>{'center'</em><em>, </em><em>'corner'}</em><em>,</em><em>optional</em><em>, </em><em>default='corner'</em>) – The input box encoding type.
 “corner” means boxes are encoded as [xmin, ymin, xmax, ymax], “center” means boxes are encodes as [x, y, width, height].</li>
@@ -1619,11 +1624,12 @@ When two boxes overlap IOU > <cite>overlap_thresh</cite>, the one with smaller s
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.contrib.box_non_maximum_suppression">
-<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">box_non_maximum_suppression</code><span class="sig-paren">(</span><em>data=None</em>, <em>overlap_thresh=_Null</em>, <em>valid_thresh=_Null</em>, <em>topk=_Null</em>, <em>coord_start=_Null</em>, <em>score_index=_Null</em>, <em>id_index=_Null</em>, <em>force_suppress=_Null</em>, <em>in_format=_Null</em>, <em>out_format=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.box_non_maximum_suppression" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">box_non_maximum_suppression</code><span class="sig-paren">(</span><em>data=None</em>, <em>overlap_thresh=_Null</em>, <em>valid_thresh=_Null</em>, <em>topk=_Null</em>, <em>coord_start=_Null</em>, <em>score_index=_Null</em>, <em>id_index=_Null</em>, <em>background_id=_Null</em>, <em>force_suppress=_Null</em>, <em>in_format=_Null</em>, <em>out_format=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.box_non_maximum_suppression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply non-maximum suppression to input.</p>
 <p>The output will be sorted in descending order according to <cite>score</cite>. Boxes with
-overlaps larger than <cite>overlap_thresh</cite> and smaller scores will be removed and
-filled with -1, the corresponding position will be recorded for backward propogation.</p>
+overlaps larger than <cite>overlap_thresh</cite>, smaller scores and background boxes
+will be removed and filled with -1, the corresponding position will be recorded
+for backward propogation.</p>
 <p>During back-propagation, the gradient will be copied to the original
 position according to the input index. For positions that have been suppressed,
 the in_grad will be assigned 0.
@@ -1641,6 +1647,9 @@ additional elements are allowed.</p>
 <ul>
 <li><p class="first"><cite>id_index</cite>: optional, use -1 to ignore, useful if <cite>force_suppress=False</cite>, which means
 we will skip highly overlapped boxes if one is <cite>apple</cite> while the other is <cite>car</cite>.</p>
+</li>
+<li><p class="first"><cite>background_id</cite>: optional, default=-1, class id for background boxes, useful
+when <cite>id_index >= 0</cite> which means boxes with background id will be filtered before nms.</p>
 </li>
 <li><p class="first"><cite>coord_start</cite>: required, default=2, the starting index of the 4 coordinates.
 Two formats are supported:</p>
@@ -1671,7 +1680,7 @@ When two boxes overlap IOU > <cite>overlap_thresh</cite>, the one with smaller s
            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/contrib/bounding_box.cc:L89</p>
+<p>Defined in src/operator/contrib/bounding_box.cc:L93</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -1684,6 +1693,7 @@ When two boxes overlap IOU > <cite>overlap_thresh</cite>, the one with smaller s
 <li><strong>coord_start</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='2'</em>) – Start index of the consecutive 4 coordinates.</li>
 <li><strong>score_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Index of the scores/confidence of boxes.</li>
 <li><strong>id_index</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Optional, index of the class categories, -1 to disable.</li>
+<li><strong>background_id</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – Optional, id of the background class which will be ignored in nms.</li>
 <li><strong>force_suppress</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Optional, if set false and id_index is provided, nms will only apply to boxes belongs to the same category</li>
 <li><strong>in_format</strong> (<em>{'center'</em><em>, </em><em>'corner'}</em><em>,</em><em>optional</em><em>, </em><em>default='corner'</em>) – The input box encoding type.
 “corner” means boxes are encoded as [xmin, ymin, xmax, ymax], “center” means boxes are encodes as [x, y, width, height].</li>
