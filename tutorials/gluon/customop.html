@@ -246,6 +246,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">autograd</span>
+<span class="kn">import</span> <span class="nn">os</span>
 </pre></div>
 </div>
 <div class="section" id="parameter-less-operators">
@@ -415,9 +416,27 @@
 <span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="using-custom-operators-with-fork">
+<span id="using-custom-operators-with-fork"></span><h2>Using custom operators with fork<a class="headerlink" href="#using-custom-operators-with-fork" title="Permalink to this headline">¶</a></h2>
+<p>In Linux systems, the default method in multiprocessing to create process is by using fork. If there are unfinished async custom operations when forking, the program will be blocked because of python GIL. Always use sync calls like <code class="docutils literal"><span class="pre">wait_to_read</span></code> or <code class="docutils literal"><span class="pre">waitall</span></code> before calling fork.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">Custom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)</span>
+<span class="c1"># unfinished async sigmoid operation will cause blocking</span>
+<span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Correctly handling this will make mxnet depend upon libpython, so the workaround now is to ensure that all custom operations are executed before forking process.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">Custom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)</span>
+<span class="c1"># force execution by reading y</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
+<span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+</pre></div>
+</div>
 <div class="btn-group" role="group">
 <div class="download-btn"><a download="customop.ipynb" href="customop.ipynb"><span class="glyphicon glyphicon-download-alt"></span> customop.ipynb</a></div></div></div>
-</div>
 </div>
 </div>
 </div>
@@ -439,6 +458,7 @@
 <li><a class="reference internal" href="#example-usage">Example usage</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#using-custom-operators-with-fork">Using custom operators with fork</a></li>
 </ul>
 </li>
 </ul>
