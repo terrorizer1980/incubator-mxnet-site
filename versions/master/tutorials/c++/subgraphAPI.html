@@ -308,24 +308,50 @@
     <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="n">SubgraphSelectorPtr</span> <span class="n">CreateSubgraphSelector</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o"><</span><span class="n">SgSelector</span><span class="o">></span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">property</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o"><</span><span class="n">CreateSubgraphSelector</span><span class="o">></span><span class="p">();</span>
+    <span class="n">property</span><span class="o">-></span><span class="n">SetAttr</span><span class="o"><</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">></span><span class="p">(</span><span class="s">"property_name"</span><span class="p">,</span> <span class="s">"subgraph example pass"</span><span class="p">);</span> <span class="c1">// Optional, better to have it.</span>
+    <span class="n">property</span><span class="o">-></span><span class="n">SetAttr</span><span class="o"><</span><span class="kt">bool</span><span class="o">></span><span class="p">(</span><span class="s">"inference_only"</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span> <span class="c1">// Optional, only for inference_only pass.</span>
+    <span class="k">return</span> <span class="n">property</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>After defining the subgraph property, we need to register it.</p>
+<p><code class="docutils literal"><span class="pre">SetAttr</span></code> is optional and developer can define their own attributes to control property behavior.
+There’re 2 built-in attributes that used by MXNet executor.</p>
+<p><code class="docutils literal"><span class="pre">property_name</span></code>  : std::string, name of this property.</p>
+<p><code class="docutils literal"><span class="pre">inference_only</span></code> : bool, apply this property only for inference. Property will be skiped when need_grad=True. Default <code class="docutils literal"><span class="pre">false</span></code> if this attribute isn’t defined.</p>
+<p>After defining the subgraph property, we need to register it in .cc file.</p>
 <div class="highlight-C++"><div class="highlight"><pre><span></span><span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>After compiling this subgraph mechanism into MXNet, we can use the environment variable <code class="docutils literal"><span class="pre">MXNET_SUBGRAPH_BACKEND</span></code> to activate it.</p>
+<p>It’s possible to register multiple properties for same backend. In practice, we recommend to put each property definition into .h file, and register backend in single .cc file. Property will be executed according to the register order.</p>
+<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">"SgProperty.h" // Define SgProperty class</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">"SgProperty2.h" // Define SgProperty2 class</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">"SgProperty3.h" // Define SgProperty3 class</span><span class="cp"></span>
+
+<span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>  <span class="c1">// Execution order 1.</span>
+<span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty2</span><span class="p">);</span> <span class="c1">// Execution order 2.</span>
+<span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty3</span><span class="p">);</span> <span class="c1">// Execution order 3.</span>
+</pre></div>
+</div>
+<p>After compiling this subgraph mechanism into MXNet, we can use the environment variable <code class="docutils literal"><span class="pre">MXNET_SUBGRAPH_BACKEND</span></code> to activate it during symbol bind.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MXNET_SUBGRAPH_BACKEND</span><span class="o">=</span>SgTest
+</pre></div>
+</div>
+<p>Or you can use python symbol API <code class="docutils literal"><span class="pre">get_backend_symbol</span></code> to run all properties registered for this backend and get returned symbol.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+<span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_backend_symbol</span><span class="p">(</span><span class="s1">'SgTest'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal"><span class="pre">SgProperty</span></code> is activated, a message will be shown in terminal as</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>start to execute subgraph example pass.
 </pre></div>
 </div>
 <p>This tutorial shows a simple example of how to use the subgraph API to search for patterns in an NNVM graph.
 Intested users can try different pattern matching rules (i.e., define their own <code class="docutils literal"><span class="pre">SubgraphSelector</span></code>) and
 attach different operators to execute the subgraphs.</p>
 <div class="btn-group" role="group">
-<div class="download-btn"><a download="subgraphAPI_bash.ipynb" href="subgraphAPI_bash.ipynb"><span class="glyphicon glyphicon-download-alt"></span> subgraphAPI_bash.ipynb</a></div></div></div>
+<div class="download-btn"><a download="subgraphAPI.ipynb" href="subgraphAPI.ipynb"><span class="glyphicon glyphicon-download-alt"></span> subgraphAPI.ipynb</a></div><div class="download-btn"><a download="subgraphAPI_bash.ipynb" href="subgraphAPI_bash.ipynb"><span class="glyphicon glyphicon-download-alt"></span> subgraphAPI_bash.ipynb</a></div></div></div>
 </div>
 </div>
 <div aria-label="main navigation" class="sphinxsidebar rightsidebar" role="navigation">
