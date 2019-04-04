@@ -453,6 +453,67 @@
         <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">random_size_crop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="CropResize"><a class="viewcode-back" href="../../../../../api/python/gluon/data.html#mxnet.gluon.data.vision.transforms.CropResize">[docs]</a><span class="k">class</span> <span class="nc">CropResize</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">"""Crop the input image with and optionally resize it.</span>
+
+<span class="sd">    Makes a crop of the original image then optionally resize it to the specified size.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : int</span>
+<span class="sd">        Left boundary of the cropping area</span>
+<span class="sd">    y : int</span>
+<span class="sd">        Top boundary of the cropping area</span>
+<span class="sd">    w : int</span>
+<span class="sd">        Width of the cropping area</span>
+<span class="sd">    h : int</span>
+<span class="sd">        Height of the cropping area</span>
+<span class="sd">    size : int or tuple of (w, h)</span>
+<span class="sd">        Optional, resize to new size after cropping</span>
+<span class="sd">    interpolation : int, optional</span>
+<span class="sd">        Interpolation method for resizing. By default uses bilinear</span>
+<span class="sd">        interpolation. See OpenCV's resize function for available choices.</span>
+<span class="sd">        https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html?highlight=resize#resize</span>
+<span class="sd">        Note that the Resize on gpu use contrib.bilinearResize2D operator</span>
+<span class="sd">        which only support bilinear interpolation(1). The result would be slightly</span>
+<span class="sd">        different on gpu compared to cpu. OpenCV tend to align center while bilinearResize2D</span>
+<span class="sd">        use algorithm which aligns corner.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor with (H x W x C) or (N x H x W x C) shape.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: input tensor with (H x W x C) or (N x H x W x C) shape.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> transformer = vision.transforms.CropResize(x=0, y=0, width=100, height=100)</span>
+<span class="sd">    >>> image = mx.nd.random.uniform(0, 255, (224, 224, 3)).astype(dtype=np.uint8)</span>
+<span class="sd">    >>> transformer(image)</span>
+<span class="sd">    <NDArray 100x100x3 @cpu(0)></span>
+<span class="sd">    >>> image = mx.nd.random.uniform(0, 255, (3, 224, 224, 3)).astype(dtype=np.uint8)</span>
+<span class="sd">    >>> transformer(image)</span>
+<span class="sd">    <NDArray 3x100x100x3 @cpu(0)></span>
+<span class="sd">    >>> transformer = vision.transforms.CropResize(x=0, y=0, width=100, height=100, size=(50, 50), interpolation=1)</span>
+<span class="sd">    >>> transformer(image)</span>
+<span class="sd">    <NDArray 3x50x50 @cpu(0)></span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CropResize</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
+
+    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
 <div class="viewcode-block" id="CenterCrop"><a class="viewcode-back" href="../../../../../api/python/gluon/data.html#mxnet.gluon.data.vision.transforms.CenterCrop">[docs]</a><span class="k">class</span> <span class="nc">CenterCrop</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
     <span class="sd">"""Crops the image `src` to the given `size` by trimming on all four</span>
 <span class="sd">    sides and preserving the center of the image. Upsamples if `src` is</span>

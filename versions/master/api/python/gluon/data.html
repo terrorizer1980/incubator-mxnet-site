@@ -1042,6 +1042,59 @@ interpolation. See OpenCV’s resize function for available choices.</li>
 </dl>
 </dd></dl>
 <dl class="class">
+<dt id="mxnet.gluon.data.vision.transforms.CropResize">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.data.vision.transforms.</code><code class="descname">CropResize</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>width</em>, <em>height</em>, <em>size=None</em>, <em>interpolation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/vision/transforms.html#CropResize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.vision.transforms.CropResize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop the input image with and optionally resize it.</p>
+<p>Makes a crop of the original image then optionally resize it to the specified size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>int</em>) – Left boundary of the cropping area</li>
+<li><strong>y</strong> (<em>int</em>) – Top boundary of the cropping area</li>
+<li><strong>w</strong> (<em>int</em>) – Width of the cropping area</li>
+<li><strong>h</strong> (<em>int</em>) – Height of the cropping area</li>
+<li><strong>size</strong> (<em>int</em><em> or </em><em>tuple of</em><em> (</em><em>w</em><em>, </em><em>h</em><em>)</em>) – Optional, resize to new size after cropping</li>
+<li><strong>interpolation</strong> (<em>int</em><em>, </em><em>optional</em>) – Interpolation method for resizing. By default uses bilinear
+interpolation. See OpenCV’s resize function for available choices.
+<a class="reference external" href="https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html?highlight=resize#resize">https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html?highlight=resize#resize</a>
+Note that the Resize on gpu use contrib.bilinearResize2D operator
+which only support bilinear interpolation(1). The result would be slightly
+different on gpu compared to cpu. OpenCV tend to align center while bilinearResize2D
+use algorithm which aligns corner.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: input tensor with (H x W x C) or (N x H x W x C) shape.</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: input tensor with (H x W x C) or (N x H x W x C) shape.</li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">CropResize</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go"><NDArray 100x100x3 @cpu(0)></span>
+<span class="gp">>>> </span><span class="n">image</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go"><NDArray 3x100x100x3 @cpu(0)></span>
+<span class="gp">>>> </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">CropResize</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">transformer</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go"><NDArray 3x50x50 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="class">
 <dt id="mxnet.gluon.data.vision.transforms.CenterCrop">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.data.vision.transforms.</code><code class="descname">CenterCrop</code><span class="sig-paren">(</span><em>size</em>, <em>interpolation=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/vision/transforms.html#CenterCrop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.vision.transforms.CenterCrop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crops the image <cite>src</cite> to the given <cite>size</cite> by trimming on all four
