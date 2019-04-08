@@ -288,10 +288,6 @@
 <span class="sd">        Return value is a list even if `num_slice` is 1.</span>
 <span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">batch_axis</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">size</span> <span class="o"><</span> <span class="n">num_slice</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">"Too many slices for data with shape </span><span class="si">%s</span><span class="s2">. Arguments are "</span> \
-            <span class="s2">"num_slice=</span><span class="si">%d</span><span class="s2"> and batch_axis=</span><span class="si">%d</span><span class="s2">."</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">num_slice</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">even_split</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">%</span> <span class="n">num_slice</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">"data with shape </span><span class="si">%s</span><span class="s2"> cannot be evenly split into </span><span class="si">%d</span><span class="s2"> slices along axis </span><span class="si">%d</span><span class="s2">. "</span> \
@@ -300,6 +296,12 @@
                 <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">num_slice</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">,</span> <span class="n">num_slice</span><span class="p">))</span>
 
     <span class="n">step</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="n">num_slice</span>
+
+    <span class="c1"># If size < num_slice, make fewer slices</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">even_split</span> <span class="ow">and</span> <span class="n">size</span> <span class="o"><</span> <span class="n">num_slice</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">num_slice</span> <span class="o">=</span> <span class="n">size</span>
+
     <span class="k">if</span> <span class="n">batch_axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">step</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o"><</span> <span class="n">num_slice</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">:</span><span class="n">size</span><span class="p">]</span>
                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_slice</span><span class="p">)]</span>
