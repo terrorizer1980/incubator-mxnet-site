@@ -807,7 +807,7 @@ MCC of 0 is uncorrelated, 1 is completely correlated, and -1 is negatively corre
 <p>where 0 terms in the denominator are replaced by 1.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This version of MCC only supports binary classification.</p>
+<p class="last">This version of MCC only supports binary classification.  See PCC.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
@@ -1284,6 +1284,89 @@ By default include all labels.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.metric.PCC">
+<em class="property">class </em><code class="descclassname">mxnet.metric.</code><code class="descname">PCC</code><span class="sig-paren">(</span><em>name='pcc'</em>, <em>output_names=None</em>, <em>label_names=None</em>, <em>has_global_stats=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/metric.html#PCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.PCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>PCC is a multiclass equivalent for the Matthews correlation coefficient derived
+from a discrete solution to the Pearson correlation coefficient.</p>
+<div class="math">
+\[\text{PCC} = \frac {\sum _{k}\sum _{l}\sum _{m}C_{kk}C_{lm}-C_{kl}C_{mk}}
+{{\sqrt {\sum _{k}(\sum _{l}C_{kl})(\sum _{k'|k'\neq k}\sum _{l'}C_{k'l'})}}
+ {\sqrt {\sum _{k}(\sum _{l}C_{lk})(\sum _{k'|k'\neq k}\sum _{l'}C_{l'k'})}}}\]</div>
+<p>defined in terms of a K x K confusion matrix C.</p>
+<p>When there are more than two labels the PCC will no longer range between -1 and +1.
+Instead the minimum value will be between -1 and 0 depending on the true distribution.
+The maximum value is always +1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – Name of this metric instance for display.</li>
+<li><strong>output_names</strong> (<em>list of str</em><em>, or </em><em>None</em>) – Name of predictions that should be used when updating with update_dict.
+By default include all predictions.</li>
+<li><strong>label_names</strong> (<em>list of str</em><em>, or </em><em>None</em>) – Name of labels that should be used when updating with update_dict.
+By default include all labels.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># In this example the network almost always predicts positive</span>
+<span class="gp">>>> </span><span class="n">false_positives</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">>>> </span><span class="n">false_negatives</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">>>> </span><span class="n">true_positives</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">>>> </span><span class="n">true_negatives</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">>>> </span><span class="n">predicts</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<span class="go">    [[.3, .7]]*false_positives +</span>
+<span class="go">    [[.7, .3]]*true_negatives +</span>
+<span class="go">    [[.7, .3]]*false_negatives +</span>
+<span class="go">    [[.3, .7]]*true_positives</span>
+<span class="go">)]</span>
+<span class="gp">>>> </span><span class="n">labels</span>  <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<span class="go">    [0]*(false_positives + true_negatives) +</span>
+<span class="go">    [1]*(false_negatives + true_positives)</span>
+<span class="go">)]</span>
+<span class="gp">>>> </span><span class="n">f1</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">F1</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">f1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">preds</span> <span class="o">=</span> <span class="n">predicts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">pcc</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">PCC</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">pcc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">preds</span> <span class="o">=</span> <span class="n">predicts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">f1</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">('f1', 0.95233560306652054)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">pcc</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">('pcc', 0.01917751877733392)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="mxnet.metric.PCC.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>labels</em>, <em>preds</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/metric.html#PCC.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.PCC.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the internal evaluation result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>labels</strong> (list of <cite>NDArray</cite>) – The labels of the data.</li>
+<li><strong>preds</strong> (list of <cite>NDArray</cite>) – Predicted values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.metric.PCC.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/metric.html#PCC.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.PCC.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the internal evaluation result to initial state.</p>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.metric.PCC.reset_local">
+<code class="descname">reset_local</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/metric.html#PCC.reset_local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.metric.PCC.reset_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the local portion of the internal evaluation results
+to initial state.</p>
 </dd></dl>
 </dd></dl>
 <dl class="class">

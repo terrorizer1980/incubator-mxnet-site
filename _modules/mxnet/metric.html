@@ -1085,7 +1085,7 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        This version of MCC only supports binary classification.</span>
+<span class="sd">        This version of MCC only supports binary classification.  See PCC.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1699,6 +1699,136 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+
+
+<span class="nd">@register</span>
+<div class="viewcode-block" id="PCC"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.PCC">[docs]</a><span class="k">class</span> <span class="nc">PCC</span><span class="p">(</span><span class="n">EvalMetric</span><span class="p">):</span>
+    <span class="sd">"""PCC is a multiclass equivalent for the Matthews correlation coefficient derived</span>
+<span class="sd">    from a discrete solution to the Pearson correlation coefficient.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\text{PCC} = \\frac {\\sum _{k}\\sum _{l}\\sum _{m}C_{kk}C_{lm}-C_{kl}C_{mk}}</span>
+<span class="sd">        {{\\sqrt {\\sum _{k}(\\sum _{l}C_{kl})(\\sum _{k'|k'\\neq k}\\sum _{l'}C_{k'l'})}}</span>
+<span class="sd">         {\\sqrt {\\sum _{k}(\\sum _{l}C_{lk})(\\sum _{k'|k'\\neq k}\\sum _{l'}C_{l'k'})}}}</span>
+
+<span class="sd">    defined in terms of a K x K confusion matrix C.</span>
+
+<span class="sd">    When there are more than two labels the PCC will no longer range between -1 and +1.</span>
+<span class="sd">    Instead the minimum value will be between -1 and 0 depending on the true distribution.</span>
+<span class="sd">    The maximum value is always +1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of this metric instance for display.</span>
+<span class="sd">    output_names : list of str, or None</span>
+<span class="sd">        Name of predictions that should be used when updating with update_dict.</span>
+<span class="sd">        By default include all predictions.</span>
+<span class="sd">    label_names : list of str, or None</span>
+<span class="sd">        Name of labels that should be used when updating with update_dict.</span>
+<span class="sd">        By default include all labels.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> # In this example the network almost always predicts positive</span>
+<span class="sd">    >>> false_positives = 1000</span>
+<span class="sd">    >>> false_negatives = 1</span>
+<span class="sd">    >>> true_positives = 10000</span>
+<span class="sd">    >>> true_negatives = 1</span>
+<span class="sd">    >>> predicts = [mx.nd.array(</span>
+<span class="sd">        [[.3, .7]]*false_positives +</span>
+<span class="sd">        [[.7, .3]]*true_negatives +</span>
+<span class="sd">        [[.7, .3]]*false_negatives +</span>
+<span class="sd">        [[.3, .7]]*true_positives</span>
+<span class="sd">    )]</span>
+<span class="sd">    >>> labels  = [mx.nd.array(</span>
+<span class="sd">        [0]*(false_positives + true_negatives) +</span>
+<span class="sd">        [1]*(false_negatives + true_positives)</span>
+<span class="sd">    )]</span>
+<span class="sd">    >>> f1 = mx.metric.F1()</span>
+<span class="sd">    >>> f1.update(preds = predicts, labels = labels)</span>
+<span class="sd">    >>> pcc = mx.metric.PCC()</span>
+<span class="sd">    >>> pcc.update(preds = predicts, labels = labels)</span>
+<span class="sd">    >>> print f1.get()</span>
+<span class="sd">    ('f1', 0.95233560306652054)</span>
+<span class="sd">    >>> print pcc.get()</span>
+<span class="sd">    ('pcc', 0.01917751877733392)</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'pcc'</span><span class="p">,</span>
+                 <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PCC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+            <span class="n">has_global_stats</span><span class="o">=</span><span class="n">has_global_stats</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_grow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lcm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lcm</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">inc</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inc</span><span class="p">)),</span> <span class="s1">'constant'</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gcm</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">inc</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inc</span><span class="p">)),</span> <span class="s1">'constant'</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">+=</span> <span class="n">inc</span>
+
+    <span class="k">def</span> <span class="nf">_calc_mcc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmat</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cov_xx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
+        <span class="n">cov_yy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cov_xx</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">cov_yy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'nan'</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">cmat</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span>
+        <span class="n">cov_xy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">n</span> <span class="o">-</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cov_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">cov_xx</span> <span class="o">*</span> <span class="n">cov_yy</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<div class="viewcode-block" id="PCC.update"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.PCC.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
+        <span class="sd">"""Updates the internal evaluation result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        labels : list of `NDArray`</span>
+<span class="sd">            The labels of the data.</span>
+
+<span class="sd">        preds : list of `NDArray`</span>
+<span class="sd">            Predicted values.</span>
+<span class="sd">        """</span>
+        <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># update the confusion matrix</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int32'</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">label</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">>=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_grow</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">bcm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+                <span class="n">bcm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lcm</span> <span class="o">+=</span> <span class="n">bcm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gcm</span> <span class="o">+=</span> <span class="n">bcm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sum_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_mcc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lcm</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_sum_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_mcc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcm</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span>
+
+<div class="viewcode-block" id="PCC.reset"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.PCC.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the internal evaluation result to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_local</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PCC.reset_local"><a class="viewcode-back" href="../../api/python/metric/metric.html#mxnet.metric.PCC.reset_local">[docs]</a>    <span class="k">def</span> <span class="nf">reset_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Resets the local portion of the internal evaluation results</span>
+<span class="sd">        to initial state."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lcm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span></div></div>
 
 
 <span class="nd">@register</span>
