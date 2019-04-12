@@ -52,6 +52,8 @@ var searchData=
   ['mxdataiternext',['MXDataIterNext',['../c__api_8h.html#a8be0adeef4b87243a5eda12f17e64e67',1,'c_api.h']]],
   ['mxdumpprocessprofile',['MXDumpProcessProfile',['../c__api_8h.html#a9cac2d6bf87964adc923ccfc2b723ee4',1,'c_api.h']]],
   ['mxdumpprofile',['MXDumpProfile',['../c__api_8h.html#a2a9788db511ad2ec5057e8eecc3f6703',1,'c_api.h']]],
+  ['mxenginepushasync',['MXEnginePushAsync',['../c__api_8h.html#a2db04c3d242e1a3574d434267f2c01b8',1,'c_api.h']]],
+  ['mxenginepushsync',['MXEnginePushSync',['../c__api_8h.html#a0d70c27c34bf5babcb1c9d19646be685',1,'c_api.h']]],
   ['mxenginesetbulksize',['MXEngineSetBulkSize',['../c__api_8h.html#a4917b11499d6ef916ab7f78274c8cf0b',1,'c_api.h']]],
   ['mxexecutorbackward',['MXExecutorBackward',['../c__api_8h.html#ad8f92bb15e11058abe12959cfc4dcbb3',1,'c_api.h']]],
   ['mxexecutorbackwardex',['MXExecutorBackwardEx',['../c__api_8h.html#a3a211f3e0c6270271ce4fe79228dd0c2',1,'c_api.h']]],
