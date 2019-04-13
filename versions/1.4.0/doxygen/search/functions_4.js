@@ -19,7 +19,7 @@ var searchData=
   ['dev_5fid',['dev_id',['../classmxnet_1_1TBlob.html#a5dc3a399b0119175643da0d35fde7edd',1,'mxnet::TBlob']]],
   ['dev_5fmask',['dev_mask',['../structmxnet_1_1Context.html#a07c6092f42393d543460f766a7a3b6df',1,'mxnet::Context::dev_mask()'],['../classmxnet_1_1TBlob.html#a613ad1f5ba31efcbecbd041e23cc61b2',1,'mxnet::TBlob::dev_mask()']]],
   ['dev_5ftype_5fstring',['dev_type_string',['../namespacemxnet_1_1common.html#a733ce35d109323dbf4ef1f4bc3094870',1,'mxnet::common']]],
-  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#adfa0dbabaa1adcb77a5d2beda2a7fb59',1,'mxnet::common::cuda::DeviceStore']]],
+  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#ad9878a09a93d4fcaf9d0639b3613d9f7',1,'mxnet::common::cuda::DeviceStore']]],
   ['diag',['diag',['../namespacemxnet_1_1cpp.html#a9d7452da1d5fa7996df1b339fa6fc976',1,'mxnet::cpp::diag(const std::string &amp;symbol_name, Symbol data, int k=0, int axis1=0, int axis2=1)'],['../namespacemxnet_1_1cpp.html#a5a6b3ea298ef40587dc2c6986edbc624',1,'mxnet::cpp::diag(Symbol data, int k=0, int axis1=0, int axis2=1)']]],
   ['directfree',['DirectFree',['../classmxnet_1_1Storage.html#a098f8ebacd25f5203b2dc4c1796aec64',1,'mxnet::Storage']]],
   ['dispatch_5fmode_5fstring',['dispatch_mode_string',['../namespacemxnet_1_1common.html#a4716f6044f678090af8ae7ef3ace3a31',1,'mxnet::common']]],

@@ -36,7 +36,7 @@ var searchData=
   ['dev_5ftype',['dev_type',['../structmxnet_1_1Context.html#a66040df23c2a5663f29bc50aa0bbace3',1,'mxnet::Context']]],
   ['dev_5ftype_5fstring',['dev_type_string',['../namespacemxnet_1_1common.html#a733ce35d109323dbf4ef1f4bc3094870',1,'mxnet::common']]],
   ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html',1,'mxnet::common::cuda']]],
-  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#adfa0dbabaa1adcb77a5d2beda2a7fb59',1,'mxnet::common::cuda::DeviceStore']]],
+  ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#ad9878a09a93d4fcaf9d0639b3613d9f7',1,'mxnet::common::cuda::DeviceStore']]],
   ['devicetype',['DeviceType',['../structmxnet_1_1Context.html#a611c227b5e04a2777c3e4507bb76f60e',1,'mxnet::Context::DeviceType()'],['../namespacemxnet_1_1cpp.html#a65c3def958cbb9d09c7f56082a5257d6',1,'mxnet::cpp::DeviceType()']]],
   ['diag',['diag',['../namespacemxnet_1_1cpp.html#a9d7452da1d5fa7996df1b339fa6fc976',1,'mxnet::cpp::diag(const std::string &amp;symbol_name, Symbol data, int k=0, int axis1=0, int axis2=1)'],['../namespacemxnet_1_1cpp.html#a5a6b3ea298ef40587dc2c6986edbc624',1,'mxnet::cpp::diag(Symbol data, int k=0, int axis1=0, int axis2=1)']]],
   ['dim_5ft',['dim_t',['../c__api_8h.html#ab15fcfeedbe50ea6db54a98b582d7eaf',1,'c_api.h']]],
