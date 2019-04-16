@@ -260,7 +260,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">,</span> <span class="n">integer_types</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">mx_real_t</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">DLPackHandle</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">DLPackHandle</span><span class="p">,</span> <span class="n">mx_int</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">ctypes2buffer</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">current_context</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_internal</span>
@@ -368,11 +368,11 @@
 
 <span class="k">def</span> <span class="nf">_new_from_shared_mem</span><span class="p">(</span><span class="n">shared_pid</span><span class="p">,</span> <span class="n">shared_id</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
     <span class="n">hdl</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayCreateFromSharedMem</span><span class="p">(</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayCreateFromSharedMemEx</span><span class="p">(</span>
         <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">shared_pid</span><span class="p">),</span>
         <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">shared_id</span><span class="p">),</span>
-        <span class="n">c_array</span><span class="p">(</span><span class="n">mx_uint</span><span class="p">,</span> <span class="n">shape</span><span class="p">),</span>
-        <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)),</span>
+        <span class="n">c_array</span><span class="p">(</span><span class="n">mx_int</span><span class="p">,</span> <span class="n">shape</span><span class="p">),</span>
+        <span class="n">mx_int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)),</span>
         <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_DTYPE_NP_TO_MX</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">])),</span>
         <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">hdl</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">hdl</span>
@@ -2070,11 +2070,14 @@
 <span class="sd">        >>> y.shape</span>
 <span class="sd">        (2L, 3L, 4L)</span>
 <span class="sd">        """</span>
-        <span class="n">ndim</span> <span class="o">=</span> <span class="n">mx_uint</span><span class="p">()</span>
-        <span class="n">pdata</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">mx_uint</span><span class="p">)()</span>
-        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayGetShape</span><span class="p">(</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="n">mx_int</span><span class="p">()</span>
+        <span class="n">pdata</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">mx_int</span><span class="p">)()</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayGetShapeEx</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">ndim</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">pdata</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">pdata</span><span class="p">[:</span><span class="n">ndim</span><span class="o">.</span><span class="n">value</span><span class="p">])</span> <span class="c1"># pylint: disable=invalid-slice-index</span>
+        <span class="k">if</span> <span class="n">ndim</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">pdata</span><span class="p">[:</span><span class="n">ndim</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>  <span class="c1"># pylint: disable=invalid-slice-index</span>
 
 
     <span class="nd">@property</span>

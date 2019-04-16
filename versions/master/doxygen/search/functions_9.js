@@ -26,6 +26,7 @@ var searchData=
   ['invokeop',['InvokeOp',['../classmxnet_1_1Imperative.html#adb41ed890acd4cbe672f088b0284fe84',1,'mxnet::Imperative']]],
   ['is_5fenabled',['is_enabled',['../namespacemxnet_1_1features.html#ae9494f297c1db19a517795f88d890db6',1,'mxnet::features']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
+  ['is_5fnp_5fcomp',['is_np_comp',['../classmxnet_1_1Imperative.html#aafd49a76f33148a9b64a02153c9c6f06',1,'mxnet::Imperative']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
   ['is_5ftraining',['is_training',['../classmxnet_1_1Imperative.html#a05de0382a6aecf2cb8ee1c0a7c021bae',1,'mxnet::Imperative']]],
   ['isnone',['IsNone',['../classmxnet_1_1Imperative_1_1AGInfo.html#afca370cc8b3e93f950d04df6e29f1fdc',1,'mxnet::Imperative::AGInfo']]],

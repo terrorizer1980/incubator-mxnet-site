@@ -47,6 +47,7 @@ var searchData=
   ['is_5fcontainer',['is_container',['../structmxnet_1_1common_1_1is__container.html',1,'mxnet::common']]],
   ['is_5fenabled',['is_enabled',['../namespacemxnet_1_1features.html#ae9494f297c1db19a517795f88d890db6',1,'mxnet::features']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
+  ['is_5fnp_5fcomp',['is_np_comp',['../classmxnet_1_1Imperative.html#aafd49a76f33148a9b64a02153c9c6f06',1,'mxnet::Imperative']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
   ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#a2d550bd138ed08333bebed8dd876644f',1,'mxnet::OpContext']]],
   ['is_5ftraining',['is_training',['../classmxnet_1_1Imperative.html#a05de0382a6aecf2cb8ee1c0a7c021bae',1,'mxnet::Imperative']]],

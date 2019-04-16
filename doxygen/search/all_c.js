@@ -127,7 +127,7 @@ var searchData=
   ['ksoftrelu',['kSoftrelu',['../namespacemxnet_1_1cpp.html#a919a622dc07b83d4431e8ff775455962a16649b2702b00ce7861366cbe7079e0f',1,'mxnet::cpp']]],
   ['ksoftsign',['kSoftsign',['../namespacemxnet_1_1cpp.html#a919a622dc07b83d4431e8ff775455962a12e90c7bc792e5b90d39318907669e63',1,'mxnet::cpp']]],
   ['kspatial',['kSpatial',['../namespacemxnet_1_1cpp.html#a92b87bed551457a3d444a28fd3c7c84fa83fe4465949392cd595c66cd0992bf4f',1,'mxnet::cpp']]],
-  ['kstackcache',['kStackCache',['../classmxnet_1_1Tuple.html#ad50103d2a4eb236e78ea4d0cdfba8e7b',1,'mxnet::Tuple']]],
+  ['kstackcache',['kStackCache',['../classmxnet_1_1Tuple.html#a69b5d9b088d983ebc6f975708568d1ae',1,'mxnet::Tuple']]],
   ['kstate',['kState',['../namespacemxnet.html#a691b662ef3ae22904fc7d7d63db4c14eaafd8bac1c90d2b1e9ad1ea7d74c46618',1,'mxnet']]],
   ['ksubgraphexec',['kSubgraphExec',['../namespacemxnet.html#ad7801fb2dd68294d4c7a9e289bc071adabfccd41d634d8095c956c29c9ee35257',1,'mxnet']]],
   ['ksum',['kSum',['../namespacemxnet_1_1cpp.html#a44ef744b314acdba218a7405f56e00beaa1dc5fbfa16754d1e628d66381725617',1,'mxnet::cpp::kSum()'],['../namespacemxnet_1_1cpp.html#afce90445dba4ab6be903251cb0c960efaa1dc5fbfa16754d1e628d66381725617',1,'mxnet::cpp::kSum()'],['../namespacemxnet_1_1cpp.html#a7dc4e3b741dfffc9295e1f8fbcb51c2eaa1dc5fbfa16754d1e628d66381725617',1,'mxnet::cpp::kSum()']]],
