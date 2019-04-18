@@ -5793,11 +5793,11 @@ The storage type of ``trunc`` output depends upon the input storage type:
 Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L802
 
 `data`: The input array.
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-up-sampling"><h3>up-sampling</h3><div class="usage"><code>(up-sampling data scale sample-type num-args)</code><code>(up-sampling {:keys [data scale num-filter sample-type multi-input-mode num-args workspace out], :or {num-filter nil, multi-input-mode nil, workspace nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Performs nearest neighbor/bilinear up sampling to inputs.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-up-sampling"><h3>up-sampling</h3><div class="usage"><code>(up-sampling data scale sample-type num-args)</code><code>(up-sampling {:keys [data scale num-filter sample-type multi-input-mode num-args workspace out], :or {num-filter nil, multi-input-mode nil, workspace nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Performs nearest neighbor/bilinear up sampling to inputs. Bilinear upsampling makes use of deconvolution. Therefore, provide 2 inputs - data and weight. 
 
-`data`: Array of tensors to upsample
+`data`: Array of tensors to upsample. For bilinear upsampling, there should be 2 inputs - 1 data and 1 weight.
 `scale`: Up sampling scale
-`num-filter`: Input filter. Only used by bilinear sample_type. (optional)
+`num-filter`: Input filter. Only used by bilinear sample_type.Since bilinear upsampling uses deconvolution, num_filters is set to the number of channels. (optional)
 `sample-type`: upsampling method
 `multi-input-mode`: How to handle multiple input. concat means concatenate upsampled images along the channel dimension. sum means add all images together, only available for nearest neighbor upsampling. (optional)
 `num-args`: Number of inputs to be upsampled. For nearest neighbor upsampling, this can be 1-N; the size of output will be(scale*h_0,scale*w_0) and all other inputs will be upsampled to thesame size. For bilinear upsampling this must be 2; 1 input and 1 weight.
