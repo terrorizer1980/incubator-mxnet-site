@@ -250,7 +250,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docker-installation">Docker installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build">Build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-using-a-pip-wheel">Install using a pip wheel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#native-build">Native Build</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#nvidia-jetson-tx-family">Nvidia Jetson TX family</a></li>
@@ -968,8 +969,7 @@ MXNet should work on any cloud provider's CPU-only instances. Follow the Python 
 <p>The complete MXNet library and its requirements can take almost 200MB of RAM, and loading large models with the library can take over 1GB of RAM. Because of this, we recommend running MXNet on the Raspberry Pi 3 or an equivalent device that has more than 1 GB of RAM and a Secure Digital (SD) card that has at least 4 GB of free memory.</p>
 <div class="section" id="quick-installation">
 <span id="quick-installation"></span><h2>Quick installation<a class="headerlink" href="#quick-installation" title="Permalink to this headline">¶</a></h2>
-<p>You can use this [pre-built Python wheel](wget https://mxnet-public.s3.amazonaws.com/install/raspbian/mxnet-1.5.0-py2.py3-none-any.whl) on a Raspberry Pi 3B with Stretch. You will likely need to install several dependencies to get MXNet to work. Refer to the following <strong>Build</strong> section for details.</p>
-<p><strong>Cross compilation build (Experimental)</strong></p>
+<p>You can use this <a class="reference external" href="https://mxnet-public.s3.amazonaws.com/install/raspbian/mxnet-1.5.0-py2.py3-none-any.whl">pre-built Python wheel</a> on a Raspberry Pi 3B with Stretch. You will likely need to install several dependencies to get MXNet to work. Refer to the following <strong>Build</strong> section for details.</p>
 </div>
 <div class="section" id="docker-installation">
 <span id="docker-installation"></span><h2>Docker installation<a class="headerlink" href="#docker-installation" title="Permalink to this headline">¶</a></h2>
@@ -980,17 +980,20 @@ MXNet should work on any cloud provider's CPU-only instances. Follow the Python 
 </div>
 <div class="section" id="build">
 <span id="build"></span><h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
-<p><strong>Please use a Native build with gcc 4 as explained below, higher compiler versions currently cause test
-failures on ARM</strong></p>
-<p>The following command will build a container with dependencies and tools and then compile MXNet for
-ARMv7. The resulting artifact will be located in <code class="docutils literal"><span class="pre">build/mxnet-x.x.x-py2.py3-none-any.whl</span></code>, copy this
-file to your Raspberry Pi.</p>
+<p><strong>This cross compilation build is experimental.</strong></p>
+<p><strong>Please use a Native build with gcc 4 as explained below, higher compiler versions currently cause test failures on ARM.</strong></p>
+<p>The following command will build a container with dependencies and tools,
+and then compile MXNet for ARMv7.
+You will want to run this on a fast cloud instance or locally on a fast PC to save time.
+The resulting artifact will be located in <code class="docutils literal"><span class="pre">build/mxnet-x.x.x-py2.py3-none-any.whl</span></code>.
+Copy this file to your Raspberry Pi.
+The previously mentioned pre-built wheel was created using this method.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="o">/</span><span class="n">build</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">p</span> <span class="n">armv7</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="install">
-<span id="install"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-using-a-pip-wheel">
+<span id="install-using-a-pip-wheel"></span><h2>Install using a pip wheel<a class="headerlink" href="#install-using-a-pip-wheel" title="Permalink to this headline">¶</a></h2>
 <p>Your Pi will need several dependencies.</p>
 <p>Install MXNet dependencies with the following:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
@@ -1010,6 +1013,7 @@ file to your Raspberry Pi.</p>
     <span class="n">libzmq3</span><span class="o">-</span><span class="n">dev</span> \
     <span class="n">ninja</span><span class="o">-</span><span class="n">build</span> \
     <span class="n">python</span><span class="o">-</span><span class="n">dev</span> \
+    <span class="n">python</span><span class="o">-</span><span class="n">pip</span> \
     <span class="n">software</span><span class="o">-</span><span class="n">properties</span><span class="o">-</span><span class="n">common</span> \
     <span class="n">sudo</span> \
     <span class="n">unzip</span> \
@@ -1026,14 +1030,22 @@ file to your Raspberry Pi.</p>
 </pre></div>
 </div>
 <p>You may use Python 3, however the <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/embedded/wine_detector.html">wine bottle detection example</a> for the Pi with camera requires Python 2.7.</p>
-<p>Create a virtualenv and install the wheel we created previously, or the wheel that you downloaded.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>virtualenv -p `which python3` mxnet_py27
-source mxnet_py27/bin/activate
-pip install mxnet-x.x.x-py2.py3-none-any.whl
+<p>Activate the environment, then install the wheel we created previously, or install this <a class="reference external" href="https://mxnet-public.s3.amazonaws.com/install/raspbian/mxnet-1.5.0-py2.py3-none-any.whl">prebuilt wheel</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">mxnet_py27</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
 </pre></div>
 </div>
-<p><strong>Native Build</strong></p>
-<p>Installing MXNet is a two-step process:</p>
+<p>Test MXNet with the Python interpreter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python
+
+&gt;&gt;&gt; import mxnet
+</pre></div>
+</div>
+<p>If there are no errors then you&#8217;re ready to start using MXNet on your Pi!</p>
+</div>
+<div class="section" id="native-build">
+<span id="native-build"></span><h2>Native Build<a class="headerlink" href="#native-build" title="Permalink to this headline">¶</a></h2>
+<p>Installing MXNet from source is a two-step process:</p>
 <ol class="simple">
 <li>Build the shared library from the MXNet C++ source code.</li>
 <li>Install the supported language-specific packages for MXNet.</li>
@@ -1185,7 +1197,8 @@ then running:</p>
 <li><a class="reference internal" href="#quick-installation">Quick installation</a></li>
 <li><a class="reference internal" href="#docker-installation">Docker installation</a></li>
 <li><a class="reference internal" href="#build">Build</a></li>
-<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#install-using-a-pip-wheel">Install using a pip wheel</a></li>
+<li><a class="reference internal" href="#native-build">Native Build</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#nvidia-jetson-tx-family">Nvidia Jetson TX family</a></li>
