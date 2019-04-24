@@ -28,6 +28,7 @@ var searchData=
   ['mxnet_5fuse_5fcusolver',['MXNET_USE_CUSOLVER',['../libinfo_8h.html#a207b3ff436236ca2f20429254283f1e9',1,'libinfo.h']]],
   ['mxnet_5fuse_5fdist_5fkvstore',['MXNET_USE_DIST_KVSTORE',['../libinfo_8h.html#a4a7918ab40197ed4f7a8b1299eb4de30',1,'libinfo.h']]],
   ['mxnet_5fuse_5ff16c',['MXNET_USE_F16C',['../libinfo_8h.html#a71e24f68549b990dbf1f626fa93a1573',1,'libinfo.h']]],
+  ['mxnet_5fuse_5fint64_5ftensor_5fsize',['MXNET_USE_INT64_TENSOR_SIZE',['../libinfo_8h.html#af7c2b7296d65f3ba8249724b230187b3',1,'libinfo.h']]],
   ['mxnet_5fuse_5flapack',['MXNET_USE_LAPACK',['../libinfo_8h.html#a29f26ebd5389951c14094fa6e5743813',1,'libinfo.h']]],
   ['mxnet_5fuse_5fmkldnn',['MXNET_USE_MKLDNN',['../libinfo_8h.html#a303d365c51075f296d940f28c5983211',1,'libinfo.h']]],
   ['mxnet_5fuse_5fnccl',['MXNET_USE_NCCL',['../libinfo_8h.html#a85d246074f9f0d953e1ced84a166826d',1,'libinfo.h']]],

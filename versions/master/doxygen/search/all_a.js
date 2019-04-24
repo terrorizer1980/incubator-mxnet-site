@@ -38,6 +38,7 @@ var searchData=
   ['input1',['Input1',['../structmxnet_1_1op_1_1Input1.html',1,'mxnet::op']]],
   ['install',['install',['../classmxnet_1_1cpp_1_1Monitor.html#a6a949f12e07542d7204f766518b3ba3c',1,'mxnet::cpp::Monitor']]],
   ['instancenorm',['InstanceNorm',['../namespacemxnet_1_1cpp.html#a5541e08fbfa3d0b49e1f3e63b36c001b',1,'mxnet::cpp::InstanceNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)'],['../namespacemxnet_1_1cpp.html#ae3362668d61945e47ee8b9f46e529ae6',1,'mxnet::cpp::InstanceNorm(Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)']]],
+  ['int64_5ftensor_5fsize',['INT64_TENSOR_SIZE',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a947661a849962fc901a7fd72f2a8bda5',1,'mxnet::features']]],
   ['interval',['interval',['../classmxnet_1_1cpp_1_1Monitor.html#a8b20d01b8d25a4c3693336b71e98002a',1,'mxnet::cpp::Monitor']]],
   ['invoke',['Invoke',['../classmxnet_1_1Imperative.html#ae3a1279e546061bf6062817c93dce0dc',1,'mxnet::Imperative::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#abb488664e59eff22f62f28660fde54d1',1,'mxnet::cpp::Operator::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#a63438fea690f898dc1e3d058281a181a',1,'mxnet::cpp::Operator::Invoke(NDArray &amp;output)'],['../classmxnet_1_1cpp_1_1Operator.html#a85c1b1e99bb50bbbe0bd70e102b586d3',1,'mxnet::cpp::Operator::Invoke(std::vector&lt; NDArray &gt; &amp;outputs)']]],
   ['invokeop',['InvokeOp',['../classmxnet_1_1Imperative.html#adb41ed890acd4cbe672f088b0284fe84',1,'mxnet::Imperative']]],
