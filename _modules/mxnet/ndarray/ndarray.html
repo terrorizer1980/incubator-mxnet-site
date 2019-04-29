@@ -272,7 +272,7 @@
            <span class="s2">"imdecode"</span><span class="p">,</span> <span class="s2">"lesser"</span><span class="p">,</span> <span class="s2">"lesser_equal"</span><span class="p">,</span> <span class="s2">"logical_and"</span><span class="p">,</span> <span class="s2">"logical_or"</span><span class="p">,</span> <span class="s2">"logical_xor"</span><span class="p">,</span>
            <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"moveaxis"</span><span class="p">,</span> <span class="s2">"modulo"</span><span class="p">,</span> <span class="s2">"multiply"</span><span class="p">,</span> <span class="s2">"not_equal"</span><span class="p">,</span> <span class="s2">"onehot_encode"</span><span class="p">,</span>
            <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"subtract"</span><span class="p">,</span> <span class="s2">"true_divide"</span><span class="p">,</span> <span class="s2">"waitall"</span><span class="p">,</span> <span class="s2">"_new_empty_handle"</span><span class="p">,</span> <span class="s2">"histogram"</span><span class="p">,</span>
-           <span class="s2">"split_v2"</span><span class="p">,</span> <span class="s2">"to_dlpack_for_read"</span><span class="p">,</span> <span class="s2">"to_dlpack_for_write"</span><span class="p">,</span> <span class="s2">"from_dlpack"</span><span class="p">]</span>
+           <span class="s2">"split_v2"</span><span class="p">,</span> <span class="s2">"to_dlpack_for_read"</span><span class="p">,</span> <span class="s2">"to_dlpack_for_write"</span><span class="p">,</span> <span class="s2">"from_dlpack"</span><span class="p">,</span> <span class="s2">"from_numpy"</span><span class="p">]</span>
 
 <span class="n">_STORAGE_TYPE_UNDEFINED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">_STORAGE_TYPE_DEFAULT</span> <span class="o">=</span> <span class="mi">0</span>
@@ -4339,6 +4339,111 @@
     <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_SetName</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="n">_c_str_used_dltensor</span><span class="p">)</span>
     <span class="c1"># delete the deleter of the old dlpack</span>
     <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyCapsule_SetDestructor</span><span class="p">(</span><span class="n">dlpack</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
+
+<span class="k">class</span> <span class="nc">DLContext</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"device_type"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"device_id"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">DLDataType</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"type_code"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint8</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"bits"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint8</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"lanes"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint16</span><span class="p">)]</span>
+    <span class="n">TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"int32"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"int64"</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"bool"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"uint32"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"uint64"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"float32"</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"float64"</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">DLTensor</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"ctx"</span><span class="p">,</span> <span class="n">DLContext</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"ndim"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"dtype"</span><span class="p">,</span> <span class="n">DLDataType</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"shape"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"strides"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"byte_offset"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint64</span><span class="p">)]</span>
+
+<span class="k">class</span> <span class="nc">DLManagedTensor</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">DeleterFunc</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CFUNCTYPE</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">DLManagedTensor</span><span class="p">))</span>
+
+
+<span class="n">DLManagedTensor</span><span class="o">.</span><span class="n">_fields_</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"dl_tensor"</span><span class="p">,</span> <span class="n">DLTensor</span><span class="p">),</span>           <span class="c1"># pylint: disable=protected-access</span>
+                            <span class="p">(</span><span class="s2">"manager_ctx"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">"deleter"</span><span class="p">,</span> <span class="n">DeleterFunc</span><span class="p">)]</span>
+
+
+<span class="nd">@DeleterFunc</span>
+<span class="k">def</span> <span class="nf">dl_managed_tensor_deleter</span><span class="p">(</span><span class="n">dl_managed_tensor_handle</span><span class="p">):</span>
+    <span class="n">void_p</span> <span class="o">=</span> <span class="n">dl_managed_tensor_handle</span><span class="o">.</span><span class="n">contents</span><span class="o">.</span><span class="n">manager_ctx</span>
+    <span class="n">pyobj</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">void_p</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">)</span>
+    <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">Py_DecRef</span><span class="p">(</span><span class="n">pyobj</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="from_numpy"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.from_numpy">[docs]</a><span class="k">def</span> <span class="nf">from_numpy</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">zero_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">"""Returns an MXNet's NDArray backed by Numpy's ndarray.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ndarray: numpy.ndarray</span>
+<span class="sd">        input data</span>
+
+<span class="sd">    zero_copy: bool</span>
+<span class="sd">        Whether we use DLPack's zero-copy conversion to convert to MXNet's NDArray.</span>
+<span class="sd">        This is only available for c-contiguous arrays, i.e. array.flags[C_CONTIGUOUS] == True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NDArray</span>
+<span class="sd">        a NDArray backed by a dlpack tensor</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="nf">_make_manager_ctx</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">pyobj</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">void_p</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">pyobj</span><span class="p">)</span>
+        <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">Py_IncRef</span><span class="p">(</span><span class="n">pyobj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">void_p</span>
+
+    <span class="k">def</span> <span class="nf">_make_dl_tensor</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DLDataType</span><span class="o">.</span><span class="n">TYPE_MAP</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" is not supported."</span><span class="p">)</span>
+        <span class="n">dl_tensor</span> <span class="o">=</span> <span class="n">DLTensor</span><span class="p">()</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">DLContext</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">DLDataType</span><span class="o">.</span><span class="n">TYPE_MAP</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="p">)]</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">shape_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">)</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">strides</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">dl_tensor</span><span class="o">.</span><span class="n">byte_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">dl_tensor</span>
+
+    <span class="k">def</span> <span class="nf">_make_dl_managed_tensor</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+        <span class="n">c_obj</span> <span class="o">=</span> <span class="n">DLManagedTensor</span><span class="p">()</span>
+        <span class="n">c_obj</span><span class="o">.</span><span class="n">dl_tensor</span> <span class="o">=</span> <span class="n">_make_dl_tensor</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">c_obj</span><span class="o">.</span><span class="n">manager_ctx</span> <span class="o">=</span> <span class="n">_make_manager_ctx</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">c_obj</span><span class="o">.</span><span class="n">deleter</span> <span class="o">=</span> <span class="n">dl_managed_tensor_deleter</span>
+        <span class="k">return</span> <span class="n">c_obj</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">zero_copy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ndarray</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">'C_CONTIGUOUS'</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only c-contiguous arrays are supported for zero-copy"</span><span class="p">)</span>
+    <span class="n">c_obj</span> <span class="o">=</span> <span class="n">_make_dl_managed_tensor</span><span class="p">(</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">addressof</span><span class="p">(</span><span class="n">c_obj</span><span class="p">)</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayFromDLPack</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
 </pre></div>
 </div>
