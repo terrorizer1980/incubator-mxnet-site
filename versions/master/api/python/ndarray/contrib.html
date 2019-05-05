@@ -764,7 +764,7 @@ The pooling kernel and stride sizes are automatically chosen for desired output 
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.contrib.BilinearResize2D">
-<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">BilinearResize2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>height=_Null</em>, <em>width=_Null</em>, <em>scale_height=_Null</em>, <em>scale_width=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.BilinearResize2D" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.contrib.</code><code class="descname">BilinearResize2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>like=None</em>, <em>height=_Null</em>, <em>width=_Null</em>, <em>scale_height=_Null</em>, <em>scale_width=_Null</em>, <em>mode=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.BilinearResize2D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform 2D resizing (upsampling or downsampling) for 4D input using bilinear interpolation.</p>
 <p>Expected input is a 4 dimensional NDArray (NCHW) and the output
 with the shape of (N x C x height x width).
@@ -772,17 +772,19 @@ The key idea of bilinear interpolation is to perform linear interpolation
 first in one direction, and then again in the other direction. See the wikipedia of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Bilinear_interpolation">Bilinear interpolation</a>
 for more details.</p>
-<p>Defined in src/operator/contrib/bilinear_resize.cc:L175</p>
+<p>Defined in src/operator/contrib/bilinear_resize.cc:L193</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input data</li>
-<li><strong>height</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – output height (required, but ignored if scale_height is defined)</li>
-<li><strong>width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – output width (required, but ignored if scale_width is defined)</li>
-<li><strong>scale_height</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the height (optional, ignores height if defined)</li>
-<li><strong>scale_width</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the scale_width (optional, ignores width if defined)</li>
+<li><strong>like</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Resize data to it’s shape</li>
+<li><strong>height</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – output height (required, but ignored if scale_height is defined or mode is not “size”)</li>
+<li><strong>width</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – output width (required, but ignored if scale_width is defined or mode is not “size”)</li>
+<li><strong>scale_height</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the height (optional, used in modes “scale” and “odd_scale”)</li>
+<li><strong>scale_width</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the width (optional, used in modes “scale” and “odd_scale”)</li>
+<li><strong>mode</strong> (<em>{'like'</em><em>, </em><em>'odd_scale'</em><em>, </em><em>'size'</em><em>, </em><em>'to_even_down'</em><em>, </em><em>'to_even_up'</em><em>, </em><em>'to_odd_down'</em><em>, </em><em>'to_odd_up'}</em><em>,</em><em>optional</em><em>, </em><em>default='size'</em>) – resizing mode. “simple” - output height equals parameter “height” if “scale_height” parameter is not defined or input height multiplied by “scale_height” otherwise. Same for width;”odd_scale” - if original height or width is odd, then result height is calculated like result_h = (original_h - 1) * scale + 1; for scale > 1 the result shape would be like if we did deconvolution with kernel = (1, 1) and stride = (height_scale, width_scale); and for scale < 1 shape would be like we did convolution with kernel = (1, 1) and stride = (int(1 / height_scale), int( 1/ width_scale);”like” - resize first input to the height and width of second input; “to_even_down” - resize input to nearest lower even height and width (if original height is odd then result height = original height - 1);”to_even_up” - resize input to nearest bigger even height and width (if original height is odd then result height = original height + 1);”to_odd_down” - resize input to nearest odd height and width (if original height is odd then result height = original height - 1);”to_odd_up” - resize input to nearest odd height and width (if original height is odd then result height = original height + 1);</li>
 <li><strong>out</strong> (<a class="reference internal" href="ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
