@@ -336,6 +336,20 @@ so that feature contributors can receive feedback.</p>
 </tbody>
 </table>
 </div>
+<div class="section" id="convolutional-neural-network">
+<span id="convolutional-neural-network"></span><h3>Convolutional neural network<a class="headerlink" href="#convolutional-neural-network" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"/>
+<col width="90%"/>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.cnn.DeformableConvolution" title="mxnet.gluon.contrib.cnn.DeformableConvolution"><code class="xref py py-obj docutils literal"><span class="pre">DeformableConvolution</span></code></a></td>
+<td>2-D Deformable Convolution v_1 (Dai, 2017).</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="recurrent-neural-network">
 <span id="recurrent-neural-network"></span><h3>Recurrent neural network<a class="headerlink" href="#recurrent-neural-network" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
@@ -726,6 +740,75 @@ dimensions, in that order.</li>
 <code class="descname">hybrid_forward</code><span class="sig-paren">(</span><em>F</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/nn/basic_layers.html#PixelShuffle3D.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.nn.PixelShuffle3D.hybrid_forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform pixel-shuffling on the input.</p>
 </dd></dl>
+</dd></dl>
+<span class="target" id="module-mxnet.gluon.contrib.cnn"></span><p>Contrib convolutional neural network module.</p>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.cnn.DeformableConvolution">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.cnn.</code><code class="descname">DeformableConvolution</code><span class="sig-paren">(</span><em>channels</em>, <em>kernel_size=(1</em>, <em>1)</em>, <em>strides=(1</em>, <em>1)</em>, <em>padding=(0</em>, <em>0)</em>, <em>dilation=(1</em>, <em>1)</em>, <em>groups=1</em>, <em>num_deformable_group=1</em>, <em>layout='NCHW'</em>, <em>use_bias=True</em>, <em>in_channels=0</em>, <em>activation=None</em>, <em>weight_initializer=None</em>, <em>bias_initializer='zeros'</em>, <em>offset_weight_initializer='zeros'</em>, <em>offset_bias_initializer='zeros'</em>, <em>offset_use_bias=True</em>, <em>op_name='DeformableConvolution'</em>, <em>adj=None</em>, <em>prefix=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/cnn/conv_layers.html#DeformableConvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.cnn.DeformableConvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>2-D Deformable Convolution v_1 (Dai, 2017).
+Normal Convolution uses sampling points in a regular grid, while the sampling
+points of Deformablem Convolution can be offset. The offset is learned with a
+separate convolution layer during the training. Both the convolution layer for
+generating the output features and the offsets are included in this gluon layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channels</strong> (<em>int</em><em>,</em>) – The dimensionality of the output space
+i.e. the number of output channels in the convolution.</li>
+<li><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple/list of 2 ints</em><em>, </em><em>(</em><em>Default value =</em><em> (</em><em>1</em><em>,</em><em>1</em><em>)</em><em>)</em>) – Specifies the dimensions of the convolution window.</li>
+<li><strong>strides</strong> (<em>int</em><em> or </em><em>tuple/list of 2 ints</em><em>, </em><em>(</em><em>Default value =</em><em> (</em><em>1</em><em>,</em><em>1</em><em>)</em><em>)</em>) – Specifies the strides of the convolution.</li>
+<li><strong>padding</strong> (<em>int</em><em> or </em><em>tuple/list of 2 ints</em><em>, </em><em>(</em><em>Default value =</em><em> (</em><em>0</em><em>,</em><em>0</em><em>)</em><em>)</em>) – If padding is non-zero, then the input is implicitly zero-padded
+on both sides for padding number of points.</li>
+<li><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple/list of 2 ints</em><em>, </em><em>(</em><em>Default value =</em><em> (</em><em>1</em><em>,</em><em>1</em><em>)</em><em>)</em>) – Specifies the dilation rate to use for dilated convolution.</li>
+<li><strong>groups</strong> (<em>int</em><em>, </em><em>(</em><em>Default value = 1</em><em>)</em>) – Controls the connections between inputs and outputs.
+At groups=1, all inputs are convolved to all outputs.
+At groups=2, the operation becomes equivalent to having two convolution
+layers side by side, each seeing half the input channels, and producing
+half the output channels, and both subsequently concatenated.</li>
+<li><strong>num_deformable_group</strong> (<em>int</em><em>, </em><em>(</em><em>Default value = 1</em><em>)</em>) – Number of deformable group partitions.</li>
+<li><strong>layout</strong> (<em>str</em><em>, </em><em>(</em><em>Default value = NCHW</em><em>)</em>) – Dimension ordering of data and weight. Can be ‘NCW’, ‘NWC’, ‘NCHW’,
+‘NHWC’, ‘NCDHW’, ‘NDHWC’, etc. ‘N’, ‘C’, ‘H’, ‘W’, ‘D’ stands for
+batch, channel, height, width and depth dimensions respectively.
+Convolution is performed over ‘D’, ‘H’, and ‘W’ dimensions.</li>
+<li><strong>use_bias</strong> (<em>bool</em><em>, </em><em>(</em><em>Default value = True</em><em>)</em>) – Whether the layer for generating the output features uses a bias vector.</li>
+<li><strong>in_channels</strong> (<em>int</em><em>, </em><em>(</em><em>Default value = 0</em><em>)</em>) – The number of input channels to this layer. If not specified,
+initialization will be deferred to the first time <cite>forward</cite> is called
+and input channels will be inferred from the shape of input data.</li>
+<li><strong>activation</strong> (<em>str</em><em>, </em><em>(</em><em>Default value = None</em><em>)</em>) – Activation function to use. See <a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.Activation" title="mxnet.ndarray.Activation"><code class="xref py py-func docutils literal"><span class="pre">Activation()</span></code></a>.
+If you don’t specify anything, no activation is applied
+(ie. “linear” activation: <cite>a(x) = x</cite>).</li>
+<li><strong>weight_initializer</strong> (str or <cite>Initializer</cite>, (Default value = None)) – Initializer for the <cite>weight</cite> weights matrix for the convolution layer
+for generating the output features.</li>
+<li><strong>bias_initializer</strong> (str or <cite>Initializer</cite>, (Default value = zeros)) – Initializer for the bias vector for the convolution layer
+for generating the output features.</li>
+<li><strong>offset_weight_initializer</strong> (str or <cite>Initializer</cite>, (Default value = zeros)) – Initializer for the <cite>weight</cite> weights matrix for the convolution layer
+for generating the offset.</li>
+<li><strong>offset_bias_initializer</strong> (str or <cite>Initializer</cite>, (Default value = zeros),) – Initializer for the bias vector for the convolution layer
+for generating the offset.</li>
+<li><strong>offset_use_bias</strong> (<em>bool</em><em>, </em><em>(</em><em>Default value = True</em><em>)</em>) – Whether the layer for generating the offset uses a bias vector.</li>
+<li><strong>Inputs</strong> – <ul>
+<li><strong>data</strong>: 4D input tensor with shape
+<cite>(batch_size, in_channels, height, width)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.
+For other layouts shape is permuted accordingly.</li>
+</ul>
+</li>
+<li><strong>Outputs</strong> – <ul>
+<li><strong>out</strong>: 4D output tensor with shape
+<cite>(batch_size, channels, out_height, out_width)</cite> when <cite>layout</cite> is <cite>NCHW</cite>.
+out_height and out_width are calculated as:<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">out_height</span> <span class="o">=</span> <span class="n">floor</span><span class="p">((</span><span class="n">height</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">dilation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">stride</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">out_width</span> <span class="o">=</span> <span class="n">floor</span><span class="p">((</span><span class="n">width</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">padding</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">dilation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">stride</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <span class="target" id="module-mxnet.gluon.contrib.rnn"></span><p>Contrib recurrent neural network module.</p>
 <dl class="class">
@@ -1333,6 +1416,7 @@ If None, a default vocabulary is created.</li>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#contrib">Contrib</a><ul>
 <li><a class="reference internal" href="#neural-network">Neural network</a></li>
+<li><a class="reference internal" href="#convolutional-neural-network">Convolutional neural network</a></li>
 <li><a class="reference internal" href="#recurrent-neural-network">Recurrent neural network</a></li>
 <li><a class="reference internal" href="#data">Data</a><ul>
 <li><a class="reference internal" href="#text-dataset">Text dataset</a></li>
