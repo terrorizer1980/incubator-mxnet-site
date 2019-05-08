@@ -5227,7 +5227,7 @@ height, width)</em>.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.symbol.RNN">
-<code class="descclassname">mxnet.symbol.</code><code class="descname">RNN</code><span class="sig-paren">(</span><em>data=None</em>, <em>parameters=None</em>, <em>state=None</em>, <em>state_cell=None</em>, <em>state_size=_Null</em>, <em>num_layers=_Null</em>, <em>bidirectional=_Null</em>, <em>mode=_Null</em>, <em>p=_Null</em>, <em>state_outputs=_Null</em>, <em>projection_size=_Null</em>, <em>lstm_state_clip_min=_Null</em>, <em>lstm_state_clip_max=_Null</em>, <em>lstm_state_clip_nan=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.RNN" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.symbol.</code><code class="descname">RNN</code><span class="sig-paren">(</span><em>data=None</em>, <em>parameters=None</em>, <em>state=None</em>, <em>state_cell=None</em>, <em>sequence_length=None</em>, <em>state_size=_Null</em>, <em>num_layers=_Null</em>, <em>bidirectional=_Null</em>, <em>mode=_Null</em>, <em>p=_Null</em>, <em>state_outputs=_Null</em>, <em>projection_size=_Null</em>, <em>lstm_state_clip_min=_Null</em>, <em>lstm_state_clip_max=_Null</em>, <em>lstm_state_clip_nan=_Null</em>, <em>use_sequence_length=_Null</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.RNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies recurrent layers to input data. Currently, vanilla RNN, LSTM and GRU are
 implemented, with both multi-layer and bidirectional support.</p>
 <p>When the input data is of type float32 and the environment variables MXNET_CUDA_ALLOW_TENSOR_CORE
@@ -5266,7 +5266,7 @@ ReLU and Tanh.</p>
           n_t = \tanh(W_{in} x_t + b_{in} + r_t * (W_{hn} h_{(t-1)}+ b_{hn})) \\
           h_t = (1 - z_t) * n_t + z_t * h_{(t-1)} \\
           \end{array}\end{split}\]</div>
-<p>Defined in src/operator/rnn.cc:L219</p>
+<p>Defined in src/operator/rnn.cc:L248</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -5276,6 +5276,7 @@ ReLU and Tanh.</p>
 <li><strong>parameters</strong> (<a class="reference internal" href="#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Vector of all RNN trainable parameters concatenated</li>
 <li><strong>state</strong> (<a class="reference internal" href="#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – initial hidden state of the RNN</li>
 <li><strong>state_cell</strong> (<a class="reference internal" href="#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – initial cell state for LSTM networks (only for LSTM)</li>
+<li><strong>sequence_length</strong> (<a class="reference internal" href="#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Vector of valid sequence lengths for each element in batch. (Only used if use_sequence_length kwarg is True)</li>
 <li><strong>state_size</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – size of the state for each layer</li>
 <li><strong>num_layers</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – number of stacked layers</li>
 <li><strong>bidirectional</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – whether to use bidirectional recurrent layers</li>
@@ -5286,6 +5287,7 @@ ReLU and Tanh.</p>
 <li><strong>lstm_state_clip_min</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Minimum clip value of LSTM states. This option must be used together with lstm_state_clip_max.</li>
 <li><strong>lstm_state_clip_max</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Maximum clip value of LSTM states. This option must be used together with lstm_state_clip_min.</li>
 <li><strong>lstm_state_clip_nan</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to stop NaN from propagating in state by clipping it to min/max. If clipping range is not specified, this option is ignored.</li>
+<li><strong>use_sequence_length</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set to true, this layer takes in an extra input parameter <cite>sequence_length</cite> to specify variable length sequence</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>

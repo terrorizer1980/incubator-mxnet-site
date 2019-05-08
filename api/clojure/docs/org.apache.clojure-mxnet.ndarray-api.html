@@ -4008,7 +4008,7 @@ Defined in src/operator/optimizer_op.cc:L781
 `rescale-grad`: Rescale gradient to grad = rescale_grad*grad. (optional)
 `clip-gradient`: Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient &lt;= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient). (optional)
 `clip-weights`: Clip weights to the range of [-clip_weights, clip_weights] If clip_weights &lt;= 0, weight clipping is turned off. weights = max(min(weights, clip_weights), -clip_weights). (optional)
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rnn"><h3>rnn</h3><div class="usage"><code>(rnn data parameters state state-cell state-size num-layers mode)</code><code>(rnn {:keys [data parameters state state-cell state-size num-layers bidirectional mode p state-outputs projection-size lstm-state-clip-min lstm-state-clip-max lstm-state-clip-nan out], :or {bidirectional nil, p nil, state-outputs nil, projection-size nil, lstm-state-clip-min nil, lstm-state-clip-max nil, lstm-state-clip-nan nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Applies recurrent layers to input data. Currently, vanilla RNN, LSTM and GRU are
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rnn"><h3>rnn</h3><div class="usage"><code>(rnn data parameters state state-cell sequence-length state-size num-layers mode)</code><code>(rnn {:keys [data parameters state state-cell sequence-length state-size num-layers bidirectional mode p state-outputs projection-size lstm-state-clip-min lstm-state-clip-max lstm-state-clip-nan use-sequence-length out], :or {projection-size nil, p nil, lstm-state-clip-min nil, state-outputs nil, lstm-state-clip-max nil, use-sequence-length nil, lstm-state-clip-nan nil, out nil, bidirectional nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Applies recurrent layers to input data. Currently, vanilla RNN, LSTM and GRU are
 implemented, with both multi-layer and bidirectional support.
 
 When the input data is of type float32 and the environment variables MXNET_CUDA_ALLOW_TENSOR_CORE
@@ -4063,12 +4063,13 @@ The definition of GRU here is slightly different from paper but compatible with 
             \end{array}
 
 
-Defined in src/operator/rnn.cc:L219
+Defined in src/operator/rnn.cc:L248
 
 `data`: Input data to RNN
 `parameters`: Vector of all RNN trainable parameters concatenated
 `state`: initial hidden state of the RNN
 `state-cell`: initial cell state for LSTM networks (only for LSTM)
+`sequence-length`: Vector of valid sequence lengths for each element in batch. (Only used if use_sequence_length kwarg is True)
 `state-size`: size of the state for each layer
 `num-layers`: number of stacked layers
 `bidirectional`: whether to use bidirectional recurrent layers (optional)
@@ -4079,6 +4080,7 @@ Defined in src/operator/rnn.cc:L219
 `lstm-state-clip-min`: Minimum clip value of LSTM states. This option must be used together with lstm_state_clip_max. (optional)
 `lstm-state-clip-max`: Maximum clip value of LSTM states. This option must be used together with lstm_state_clip_min. (optional)
 `lstm-state-clip-nan`: Whether to stop NaN from propagating in state by clipping it to min/max. If clipping range is not specified, this option is ignored. (optional)
+`use-sequence-length`: If set to true, this layer takes in an extra input parameter `sequence_length` to specify variable length sequence (optional)
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-roi-pooling"><h3>roi-pooling</h3><div class="usage"><code>(roi-pooling data rois pooled-size spatial-scale)</code><code>(roi-pooling {:keys [data rois pooled-size spatial-scale out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Performs region of interest(ROI) pooling on the input array.
 
 ROI pooling is a variant of a max pooling layer, in which the output size is fixed and
