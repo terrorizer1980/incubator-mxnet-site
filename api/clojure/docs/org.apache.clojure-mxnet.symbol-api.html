@@ -5731,7 +5731,58 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L802
 
 `data`: The input array. (optional)
 `name`: Name of the symbol (optional)
-`attr`: Attributes of the symbol (optional)</pre></div></div><div class="public anchor" id="var-up-sampling"><h3>up-sampling</h3><div class="usage"><code>(up-sampling {:keys [data scale num-filter sample-type multi-input-mode num-args workspace name attr], :or {num-filter nil, multi-input-mode nil, workspace nil, name nil, attr nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Performs nearest neighbor/bilinear up sampling to inputs. Bilinear upsampling makes use of deconvolution. Therefore, provide 2 inputs - data and weight. 
+`attr`: Attributes of the symbol (optional)</pre></div></div><div class="public anchor" id="var-up-sampling"><h3>up-sampling</h3><div class="usage"><code>(up-sampling {:keys [data scale num-filter sample-type multi-input-mode num-args workspace name attr], :or {num-filter nil, multi-input-mode nil, workspace nil, name nil, attr nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Upsamples the given input data.
+
+Two algorithms (``sample_type``) are available for upsampling:
+
+- Nearest Neighbor
+- Bilinear
+
+**Nearest Neighbor Upsampling**
+
+Input data is expected to be NCHW.
+
+Example::
+
+  x = [[[[1. 1. 1.]
+         [1. 1. 1.]
+         [1. 1. 1.]]]]
+
+  UpSampling(x, scale=2, sample_type='nearest') = [[[[1. 1. 1. 1. 1. 1.]
+                                                     [1. 1. 1. 1. 1. 1.]
+                                                     [1. 1. 1. 1. 1. 1.]
+                                                     [1. 1. 1. 1. 1. 1.]
+                                                     [1. 1. 1. 1. 1. 1.]
+                                                     [1. 1. 1. 1. 1. 1.]]]]
+
+**Bilinear Upsampling**
+
+Uses `deconvolution` algorithm under the hood. You need provide both input data and the kernel.
+
+Input data is expected to be NCHW.
+
+`num_filter` is expected to be same as the number of channels.
+
+Example::
+
+  x = [[[[1. 1. 1.]
+         [1. 1. 1.]
+         [1. 1. 1.]]]]
+
+  w = [[[[1. 1. 1. 1.]
+         [1. 1. 1. 1.]
+         [1. 1. 1. 1.]
+         [1. 1. 1. 1.]]]]
+  
+  UpSampling(x, w, scale=2, sample_type='bilinear', num_filter=1) = [[[[1. 2. 2. 2. 2. 1.]
+                                                                       [2. 4. 4. 4. 4. 2.]
+                                                                       [2. 4. 4. 4. 4. 2.]
+                                                                       [2. 4. 4. 4. 4. 2.]
+                                                                       [2. 4. 4. 4. 4. 2.]
+                                                                       [1. 2. 2. 2. 2. 1.]]]]
+
+
+Defined in src/operator/nn/upsampling.cc:L173
 
 `data`: Array of tensors to upsample. For bilinear upsampling, there should be 2 inputs - 1 data and 1 weight.
 `scale`: Up sampling scale

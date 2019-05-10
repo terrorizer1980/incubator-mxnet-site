@@ -2180,7 +2180,58 @@ Defined in src/operator/swapaxis.cc:L70</pre></div><dl class="paramcmts block"><
 <img src="../../../../lib/permalink.png"/>
 </a>
 </span>
-<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Performs nearest neighbor/bilinear up sampling to inputs. Bilinear upsampling makes use of deconvolution. Therefore, provide <span class="num">2</span> inputs - data and weight.</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Upsamples the given input data.
+
+Two algorithms (``sample_type``) are available <span class="kw">for</span> upsampling:
+
+- Nearest Neighbor
+- Bilinear
+
+**Nearest Neighbor Upsampling**
+
+Input data is expected to be NCHW.
+
+Example::
+
+  x = `[ [`[ [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>] ] ] ]
+
+  UpSampling(x, scale=<span class="num">2</span>, sample_type='nearest') = `[ [`[ [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+                                                     [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+                                                     [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+                                                     [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+                                                     [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+                                                     [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>] ] ] ]
+
+**Bilinear Upsampling**
+
+Uses `deconvolution` algorithm under the hood. You need provide both input data and the kernel.
+
+Input data is expected to be NCHW.
+
+`num_filter` is expected to be same as the number of channels.
+
+Example::
+
+  x = `[ [`[ [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>] ] ] ]
+
+  w = `[ [`[ [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>]
+         [<span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span> <span class="num">1.</span>] ] ] ]
+
+  UpSampling(x, w, scale=<span class="num">2</span>, sample_type='bilinear', num_filter=<span class="num">1</span>) = `[ [`[ [<span class="num">1.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">1.</span>]
+                                                                       [<span class="num">2.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">2.</span>]
+                                                                       [<span class="num">2.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">2.</span>]
+                                                                       [<span class="num">2.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">2.</span>]
+                                                                       [<span class="num">2.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">4.</span> <span class="num">2.</span>]
+                                                                       [<span class="num">1.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">2.</span> <span class="num">1.</span>] ] ] ]
+
+
+Defined in src/operator/nn/upsampling.cc:L173</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@Experimental</span><span class="args">()</span>
 </dd></dl></div>
