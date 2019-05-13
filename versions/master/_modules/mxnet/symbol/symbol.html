@@ -272,8 +272,8 @@
 <span class="kn">from</span> <span class="nn">._internal</span> <span class="k">import</span> <span class="n">SymbolBase</span><span class="p">,</span> <span class="n">_set_symbol_class</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Symbol"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">,</span> <span class="s2">"Variable"</span><span class="p">,</span> <span class="s2">"Group"</span><span class="p">,</span> <span class="s2">"load"</span><span class="p">,</span> <span class="s2">"load_json"</span><span class="p">,</span>
-           <span class="s2">"pow"</span><span class="p">,</span> <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"hypot"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"zeros"</span><span class="p">,</span> <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">,</span>
-           <span class="s2">"histogram"</span><span class="p">,</span> <span class="s2">"split_v2"</span><span class="p">]</span>
+           <span class="s2">"pow"</span><span class="p">,</span> <span class="s2">"power"</span><span class="p">,</span> <span class="s2">"maximum"</span><span class="p">,</span> <span class="s2">"minimum"</span><span class="p">,</span> <span class="s2">"hypot"</span><span class="p">,</span> <span class="s2">"eye"</span><span class="p">,</span> <span class="s2">"zeros"</span><span class="p">,</span>
+           <span class="s2">"ones"</span><span class="p">,</span> <span class="s2">"full"</span><span class="p">,</span> <span class="s2">"arange"</span><span class="p">,</span> <span class="s2">"linspace"</span><span class="p">,</span> <span class="s2">"histogram"</span><span class="p">,</span> <span class="s2">"split_v2"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="Symbol"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol">[docs]</a><span class="k">class</span> <span class="nc">Symbol</span><span class="p">(</span><span class="n">SymbolBase</span><span class="p">):</span>
@@ -3305,6 +3305,42 @@
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">_numpy</span><span class="o">.</span><span class="n">float32</span>
     <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">repeat</span><span class="p">,</span>
                              <span class="n">infer_range</span><span class="o">=</span><span class="n">infer_range</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="linspace"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.linspace">[docs]</a><span class="k">def</span> <span class="nf">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Return evenly spaced numbers within a specified interval.</span>
+
+<span class="sd">    Values are generated within the half-open interval [`start`, `stop`) or</span>
+<span class="sd">    closed interval [start, stop] depending on whether `endpoint` is True or</span>
+<span class="sd">    False. The function is similar to `numpy.linspace`, but returns a `Symbol`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    start : number</span>
+<span class="sd">        Start of interval.</span>
+<span class="sd">    stop : number</span>
+<span class="sd">        End of interval, unless endpoint is set to False.  In that case,</span>
+<span class="sd">        the sequence consists of all but the last of `num + 1` evenly spaced</span>
+<span class="sd">        samples, so that stop is excluded. Note that the step size changes</span>
+<span class="sd">        when endpoint is False.</span>
+<span class="sd">    num : number</span>
+<span class="sd">        Number of samples to generate. Must be non-negative.</span>
+<span class="sd">    endpoint : bool</span>
+<span class="sd">        If True, stop is the last sample. Otherwise, it is not included.</span>
+<span class="sd">        The default is True.</span>
+<span class="sd">    ctx : Context, optional</span>
+<span class="sd">        Device context. Default context is the current default context.</span>
+<span class="sd">    dtype : str or numpy.dtype, optional</span>
+<span class="sd">        The data type of the `NDArray`. The default datatype is `np.float32`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : Symbol</span>
+<span class="sd">        The created Symbol</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_numpy</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span>
+                               <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="histogram"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.histogram">[docs]</a><span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">"""Compute the histogram of the input data.</span>
