@@ -305,6 +305,11 @@
     <span class="c1"># be needed for different device and dtype</span>
     <span class="k">return</span> <span class="mf">1e-5</span> <span class="k">if</span> <span class="n">rtol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rtol</span></div>
 
+<div class="viewcode-block" id="get_etol"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.get_etol">[docs]</a><span class="k">def</span> <span class="nf">get_etol</span><span class="p">(</span><span class="n">etol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Get default numerical threshold for regression test."""</span>
+    <span class="c1"># _TODO: get from env variable, different threshold might</span>
+    <span class="c1"># be needed for different device and dtype</span>
+    <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">etol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">etol</span></div>
 
 <div class="viewcode-block" id="random_arrays"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.random_arrays">[docs]</a><span class="k">def</span> <span class="nf">random_arrays</span><span class="p">(</span><span class="o">*</span><span class="n">shapes</span><span class="p">):</span>
     <span class="sd">"""Generate some random numpy arrays."""</span>
@@ -718,6 +723,50 @@
                             <span class="o">%</span> <span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">a</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
                             <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
     <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="assert_almost_equal_with_err"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.assert_almost_equal_with_err">[docs]</a><span class="k">def</span> <span class="nf">assert_almost_equal_with_err</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">etol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">),</span> <span class="n">equal_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">"""Test that two numpy arrays are almost equal within given error rate. Raise exception message if not.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : np.ndarray</span>
+<span class="sd">    b : np.ndarray</span>
+<span class="sd">    threshold : None or float</span>
+<span class="sd">        The checking threshold. Default threshold will be used if set to ``None``.</span>
+<span class="sd">    etol : None or float</span>
+<span class="sd">        The error rate threshold. If etol is float, return true if error_rate < etol even if</span>
+<span class="sd">        any error is found.</span>
+<span class="sd">    """</span>
+    <span class="n">rtol</span> <span class="o">=</span> <span class="n">get_rtol</span><span class="p">(</span><span class="n">rtol</span><span class="p">)</span>
+    <span class="n">atol</span> <span class="o">=</span> <span class="n">get_atol</span><span class="p">(</span><span class="n">atol</span><span class="p">)</span>
+    <span class="n">etol</span> <span class="o">=</span> <span class="n">get_etol</span><span class="p">(</span><span class="n">etol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">etol</span><span class="p">:</span>
+        <span class="n">equals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">equals</span><span class="p">)</span> <span class="o">/</span> <span class="n">equals</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">></span> <span class="n">etol</span><span class="p">:</span>
+            <span class="c1">#if True:</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">rel</span> <span class="o">=</span> <span class="n">find_max_violation</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">npt</span><span class="o">.</span><span class="n">build_err_msg</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span>
+                                    <span class="n">err_msg</span><span class="o">=</span><span class="s2">"Error </span><span class="si">%f</span><span class="s2"> exceeds tolerance rtol=</span><span class="si">%f</span><span class="s2">, atol=</span><span class="si">%f</span><span class="s2">, etol=</span><span class="si">%f</span><span class="s2">."</span>
+                                            <span class="s2">" Error_rate=</span><span class="si">%f</span><span class="s2">. Location of maximum error:</span><span class="si">%s</span><span class="s2">, a=</span><span class="si">%f</span><span class="s2">, b=</span><span class="si">%f</span><span class="s2">"</span>
+                                    <span class="o">%</span> <span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">,</span> <span class="n">etol</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">a</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                                    <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">almost_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">,</span> <span class="n">equal_nan</span><span class="o">=</span><span class="n">equal_nan</span><span class="p">):</span>
+            <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">almost_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">,</span> <span class="n">equal_nan</span><span class="o">=</span><span class="n">equal_nan</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">rel</span> <span class="o">=</span> <span class="n">find_max_violation</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">npt</span><span class="o">.</span><span class="n">build_err_msg</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s2">"Error </span><span class="si">%f</span><span class="s2"> exceeds tolerance rtol=</span><span class="si">%f</span><span class="s2">, atol=</span><span class="si">%f</span><span class="s2">. "</span>
+                                        <span class="s2">" Location of maximum error:</span><span class="si">%s</span><span class="s2">, a=</span><span class="si">%f</span><span class="s2">, b=</span><span class="si">%f</span><span class="s2">"</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">a</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                                <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="almost_equal_ignore_nan"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.almost_equal_ignore_nan">[docs]</a><span class="k">def</span> <span class="nf">almost_equal_ignore_nan</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
