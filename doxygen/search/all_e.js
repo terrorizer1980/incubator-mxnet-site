@@ -26,6 +26,7 @@ var searchData=
   ['min',['min',['../namespacemxnet_1_1cpp.html#aa42fcdd6b63c85b812018cbadb4ac521',1,'mxnet::cpp::min(const std::string &amp;symbol_name, Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)'],['../namespacemxnet_1_1cpp.html#a92583837ea8e7e5d54564655703d48a4',1,'mxnet::cpp::min(Symbol data, dmlc::optional&lt; Shape &gt; axis=dmlc::optional&lt; Shape &gt;(), bool keepdims=false, bool exclude=false)']]],
   ['mkldnn',['MKLDNN',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41ae86d8c90b5bf35807da227052d68856d',1,'mxnet::features']]],
   ['model_2eh',['model.h',['../model_8h.html',1,'']]],
+  ['moments',['moments',['../namespacemxnet_1_1cpp.html#a48e10fbe3cf0c189e639be1e4981639f',1,'mxnet::cpp::moments(const std::string &amp;symbol_name, Symbol data, dmlc::optional&lt; Shape &gt; axes=dmlc::optional&lt; Shape &gt;(), bool keepdims=false)'],['../namespacemxnet_1_1cpp.html#ae144165cb2b946544d28e0b6d16d20b0',1,'mxnet::cpp::moments(Symbol data, dmlc::optional&lt; Shape &gt; axes=dmlc::optional&lt; Shape &gt;(), bool keepdims=false)']]],
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html',1,'mxnet::cpp']]],
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Executor.html#a1aceee49824f6ba6ea0d4b26a8ebe1d4',1,'mxnet::cpp::Executor::Monitor()'],['../classmxnet_1_1cpp_1_1Monitor.html#a1e08421a5f777de6005ff5f2876a49a0',1,'mxnet::cpp::Monitor::Monitor()']]],
   ['monitor_2eh',['monitor.h',['../monitor_8h.html',1,'']]],
