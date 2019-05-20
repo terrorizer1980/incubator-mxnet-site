@@ -342,6 +342,9 @@ symbolic expressions for linear algebra routines.</p>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.symbol.linalg.maketrian" title="mxnet.symbol.linalg.maketrian"><code class="xref py py-obj docutils literal"><span class="pre">maketrian</span></code></a></td>
 <td>Constructs a square matrix with the input representing a specific triangular sub-matrix.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.symbol.linalg.inverse" title="mxnet.symbol.linalg.inverse"><code class="xref py py-obj docutils literal"><span class="pre">inverse</span></code></a></td>
+<td>Compute the inverse of a matrix.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -655,6 +658,52 @@ Tensor Cores on suitable NVIDIA GPUs. This can sometimes give significant speedu
 <li><strong>transpose_b</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Multiply with transposed of second input (B).</li>
 <li><strong>alpha</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar factor multiplied with A*B.</li>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-2'</em>) – Axis corresponding to the matrix row indices.</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.linalg.inverse">
+<code class="descclassname">mxnet.symbol.linalg.</code><code class="descname">inverse</code><span class="sig-paren">(</span><em>A=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.linalg.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the inverse of a matrix.
+Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
+<p>If <em>n=2</em>, <em>A</em> is a square matrix. We compute:</p>
+<blockquote>
+<div><em>out</em> = <em>A</em><sup>-1</sup></div></blockquote>
+<p>If <em>n>2</em>, <em>inverse</em> is performed separately on the trailing two dimensions
+for all inputs (batch mode).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The operator supports float32 and float64 data types only.</p>
+</div>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">inversion</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]]</span>
+<span class="n">inverse</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]]</span>
+
+<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">inversion</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]]]</span>
+<span class="n">inverse</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]],</span>
+              <span class="p">[[</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/tensor/la_op.cc:L917</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Tensor of square matrix</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>
