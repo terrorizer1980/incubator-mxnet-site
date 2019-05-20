@@ -4437,7 +4437,12 @@
 
 
 <div class="viewcode-block" id="from_numpy"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.from_numpy">[docs]</a><span class="k">def</span> <span class="nf">from_numpy</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">zero_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">"""Returns an MXNet's NDArray backed by Numpy's ndarray.</span>
+    <span class="sd">"""Returns an MXNet's ndarray backed by numpy's ndarray.</span>
+<span class="sd">    When `zero_copy` is set to be true,</span>
+<span class="sd">    this API consumes numpy's ndarray and produces MXNet's ndarray</span>
+<span class="sd">    without having to copy the content. In this case, we disallow</span>
+<span class="sd">    users to modify the given numpy ndarray, and it is suggested</span>
+<span class="sd">    not to read the numpy ndarray as well for internal correctness.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -4486,6 +4491,7 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">'C_CONTIGUOUS'</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only c-contiguous arrays are supported for zero-copy"</span><span class="p">)</span>
+    <span class="n">ndarray</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">'WRITEABLE'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">c_obj</span> <span class="o">=</span> <span class="n">_make_dl_managed_tensor</span><span class="p">(</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="n">address</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">addressof</span><span class="p">(</span><span class="n">c_obj</span><span class="p">)</span>
     <span class="n">address</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>

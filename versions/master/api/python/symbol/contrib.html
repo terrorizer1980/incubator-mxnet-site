@@ -1262,6 +1262,22 @@ then set <code class="docutils literal"><span class="pre">gamma</span></code> to
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.symbol.contrib.backward_hawkesll">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">backward_hawkesll</code><span class="sig-paren">(</span><em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.backward_hawkesll" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result symbol.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.symbol.contrib.backward_index_copy">
 <code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">backward_index_copy</code><span class="sig-paren">(</span><em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.backward_index_copy" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -2215,6 +2231,77 @@ uses only a single learning rate for every row of the parameter array.</p>
 <li><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</li>
 <li><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient <= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</li>
 <li><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1e-05</em>) – Epsilon for numerical stability</li>
+<li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result symbol.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.symbol.contrib.hawkesll">
+<code class="descclassname">mxnet.symbol.contrib.</code><code class="descname">hawkesll</code><span class="sig-paren">(</span><em>lda=None</em>, <em>alpha=None</em>, <em>beta=None</em>, <em>state=None</em>, <em>lags=None</em>, <em>marks=None</em>, <em>valid_length=None</em>, <em>max_time=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.contrib.hawkesll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log likelihood of a univariate Hawkes process.</p>
+<p>The log likelihood is calculated on point process observations represented
+as <em>ragged</em> matrices for <em>lags</em> (interarrival times w.r.t. the previous point),
+and <em>marks</em> (identifiers for the process ID). Note that each mark is considered independent,
+i.e., computes the joint likelihood of a set of Hawkes processes determined by the conditional intensity:</p>
+<div class="math">
+\[\lambda_k^*(t) = \lambda_k + \alpha_k \sum_{\{t_i < t, y_i = k\}} \beta_k \exp(-\beta_k (t - t_i))\]</div>
+<p>where <span class="math">\(\lambda_k\)</span> specifies the background intensity <code class="docutils literal"><span class="pre">lda</span></code>, <span class="math">\(\alpha_k\)</span> specifies the <em>branching ratio</em> or <code class="docutils literal"><span class="pre">alpha</span></code>, and <span class="math">\(\beta_k\)</span> the delay density parameter <code class="docutils literal"><span class="pre">beta</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">lags</span></code> and <code class="docutils literal"><span class="pre">marks</span></code> are two NDArrays of shape (N, T) and correspond to the representation of the point process observation, the first dimension corresponds to the batch index, and the second to the sequence. These are “left-aligned” <em>ragged</em> matrices (the first index of the second dimension is the beginning of every sequence. The length of each sequence is given by <code class="docutils literal"><span class="pre">valid_length</span></code>, of shape (N,) where <code class="docutils literal"><span class="pre">valid_length[i]</span></code> corresponds to the number of valid points in <code class="docutils literal"><span class="pre">lags[i,</span> <span class="pre">:]</span></code> and <code class="docutils literal"><span class="pre">marks[i,</span> <span class="pre">:]</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">max_time</span></code> is the length of the observation period of the point process. That is, specifying <code class="docutils literal"><span class="pre">max_time[i]</span> <span class="pre">=</span> <span class="pre">5</span></code> computes the likelihood of the i-th sample as observed on the time interval <span class="math">\((0, 5]\)</span>. Naturally, the sum of all valid <code class="docutils literal"><span class="pre">lags[i,</span> <span class="pre">:valid_length[i]]</span></code> must be less than or equal to 5.</p>
+<p>The input <code class="docutils literal"><span class="pre">state</span></code> specifies the <em>memory</em> of the Hawkes process. Invoking the memoryless property of exponential decays, we compute the <em>memory</em> as</p>
+<div class="math">
+\[s_k(t) = \sum_{t_i < t} \exp(-\beta_k (t - t_i)).\]</div>
+<p>The <code class="docutils literal"><span class="pre">state</span></code> to be provided is <span class="math">\(s_k(0)\)</span> and carries the added intensity due to past events before the current batch. <span class="math">\(s_k(T)\)</span> is returned from the function where <span class="math">\(T\)</span> is <code class="docutils literal"><span class="pre">max_time[T]</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># define the Hawkes process parameters</span>
+<span class="n">lda</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span><span class="o">.</span><span class="n">tile</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>  <span class="c1"># branching ratios should be < 1</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+
+<span class="c1"># the "data", or observations</span>
+<span class="n">ia_times</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]])</span>
+<span class="n">marks</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+<span class="c1"># starting "state" of the process</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">))</span>
+
+<span class="n">valid_length</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>  <span class="c1"># number of valid points in each sequence</span>
+<span class="n">max_time</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,))</span> <span class="o">*</span> <span class="mf">100.0</span>  <span class="c1"># length of the observation period</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">hawkesll</span><span class="p">(</span>
+    <span class="n">lda</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">ia_times</span><span class="p">,</span> <span class="n">marks</span><span class="p">,</span> <span class="n">valid_length</span><span class="p">,</span> <span class="n">max_time</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>References:</p>
+<ul class="simple">
+<li>Bacry, E., Mastromatteo, I., &amp; Muzy, J. F. (2015).
+Hawkes processes in finance. Market Microstructure and Liquidity
+, 1(01), 1550005.</li>
+</ul>
+<p>Defined in src/operator/contrib/hawkes_ll.cc:L84</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lda</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (N, K) The intensity for each of the K processes, for each sample</li>
+<li><strong>alpha</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (K,) The infectivity factor (branching ratio) for each process</li>
+<li><strong>beta</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (K,) The decay parameter for each process</li>
+<li><strong>state</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (N, K) the Hawkes state for each process</li>
+<li><strong>lags</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (N, T) the interarrival times</li>
+<li><strong>marks</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Shape (N, T) the marks (process ids)</li>
+<li><strong>valid_length</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – The number of valid points in the process</li>
+<li><strong>max_time</strong> (<a class="reference internal" href="symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – the length of the interval where the processes were sampled</li>
 <li><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</li>
 </ul>
 </td>
