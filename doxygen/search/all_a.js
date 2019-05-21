@@ -1,7 +1,7 @@
 var searchData=
 [
   ['id',['id',['../structmxnet_1_1Resource.html#aa1fc8578c0fa849afe7da29c1cf1308b',1,'mxnet::Resource']]],
-  ['identityattachklsparsereg',['IdentityAttachKLSparseReg',['../namespacemxnet_1_1cpp.html#a14ef7f6f4e3e5952dedfbd42b02d2831',1,'mxnet::cpp::IdentityAttachKLSparseReg(const std::string &amp;symbol_name, Symbol data, mx_float sparseness_target=0.1, mx_float penalty=0.001, mx_float momentum=0.9)'],['../namespacemxnet_1_1cpp.html#a102418bba419088e913ab8cfa6e24d69',1,'mxnet::cpp::IdentityAttachKLSparseReg(Symbol data, mx_float sparseness_target=0.1, mx_float penalty=0.001, mx_float momentum=0.9)']]],
+  ['identityattachklsparsereg',['IdentityAttachKLSparseReg',['../namespacemxnet_1_1cpp.html#a290a3d5bc0f7796b33f4d97dd4619c74',1,'mxnet::cpp::IdentityAttachKLSparseReg(const std::string &amp;symbol_name, Symbol data, mx_float sparseness_target=0.100000001, mx_float penalty=0.00100000005, mx_float momentum=0.899999976)'],['../namespacemxnet_1_1cpp.html#af292c750b45406c0a63f868bc9d52f9e',1,'mxnet::cpp::IdentityAttachKLSparseReg(Symbol data, mx_float sparseness_target=0.100000001, mx_float penalty=0.00100000005, mx_float momentum=0.899999976)']]],
   ['iiterator',['IIterator',['../classmxnet_1_1IIterator.html',1,'mxnet']]],
   ['ilog2ui',['ilog2ui',['../namespacemxnet_1_1common.html#a44c77619725d8bc68a085bdbcaa5416b',1,'mxnet::common']]],
   ['ilog2ul',['ilog2ul',['../namespacemxnet_1_1common.html#ad45245532df14e35b887c2ec91939d8d',1,'mxnet::common']]],
@@ -37,7 +37,7 @@ var searchData=
   ['input0',['Input0',['../structmxnet_1_1op_1_1Input0.html',1,'mxnet::op']]],
   ['input1',['Input1',['../structmxnet_1_1op_1_1Input1.html',1,'mxnet::op']]],
   ['install',['install',['../classmxnet_1_1cpp_1_1Monitor.html#a6a949f12e07542d7204f766518b3ba3c',1,'mxnet::cpp::Monitor']]],
-  ['instancenorm',['InstanceNorm',['../namespacemxnet_1_1cpp.html#a5541e08fbfa3d0b49e1f3e63b36c001b',1,'mxnet::cpp::InstanceNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)'],['../namespacemxnet_1_1cpp.html#ae3362668d61945e47ee8b9f46e529ae6',1,'mxnet::cpp::InstanceNorm(Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.001)']]],
+  ['instancenorm',['InstanceNorm',['../namespacemxnet_1_1cpp.html#a70334886f074143fd207de9000ed355f',1,'mxnet::cpp::InstanceNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.00100000005)'],['../namespacemxnet_1_1cpp.html#a3e3fcdab6ef8516b9a477215171b05d3',1,'mxnet::cpp::InstanceNorm(Symbol data, Symbol gamma, Symbol beta, mx_float eps=0.00100000005)']]],
   ['int64_5ftensor_5fsize',['INT64_TENSOR_SIZE',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a947661a849962fc901a7fd72f2a8bda5',1,'mxnet::features']]],
   ['interval',['interval',['../classmxnet_1_1cpp_1_1Monitor.html#a8b20d01b8d25a4c3693336b71e98002a',1,'mxnet::cpp::Monitor']]],
   ['invoke',['Invoke',['../classmxnet_1_1Imperative.html#ae3a1279e546061bf6062817c93dce0dc',1,'mxnet::Imperative::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#abb488664e59eff22f62f28660fde54d1',1,'mxnet::cpp::Operator::Invoke()'],['../classmxnet_1_1cpp_1_1Operator.html#a63438fea690f898dc1e3d058281a181a',1,'mxnet::cpp::Operator::Invoke(NDArray &amp;output)'],['../classmxnet_1_1cpp_1_1Operator.html#a85c1b1e99bb50bbbe0bd70e102b586d3',1,'mxnet::cpp::Operator::Invoke(std::vector&lt; NDArray &gt; &amp;outputs)']]],

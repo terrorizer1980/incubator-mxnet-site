@@ -1500,7 +1500,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">debug_str</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">py_str</span><span class="p">(</span><span class="n">debug_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Symbol.save"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<div class="viewcode-block" id="Symbol.save"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">"""Saves symbol to a file.</span>
 
 <span class="sd">        You can also use pickle to do the job if you only work on python.</span>
@@ -1517,6 +1517,8 @@
 <span class="sd">            - "s3://my-bucket/path/my-s3-symbol"</span>
 <span class="sd">            - "hdfs://my-bucket/path/my-hdfs-symbol"</span>
 <span class="sd">            - "/path-to/my-local-symbol"</span>
+<span class="sd">        remove_amp_cast : bool, optional</span>
+<span class="sd">            Whether to remove the amp_cast and amp_multicast operators, before saving the model.</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -1524,7 +1526,12 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'fname need to be string'</span><span class="p">)</span>
-        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">c_str</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span></div>
+        <span class="k">if</span> <span class="n">remove_amp_cast</span><span class="p">:</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolRemoveAmpCast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">c_str</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">c_str</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="Symbol.tojson"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.tojson">[docs]</a>    <span class="k">def</span> <span class="nf">tojson</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Saves symbol to a JSON string.</span>
@@ -1595,6 +1602,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Only accept list of NDArrays or dict of str to NDArray'</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">c_array</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">arg_handles</span><span class="p">),</span> <span class="n">arg_arrays</span>
+
+    <span class="k">def</span> <span class="nf">_gen_atomic_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXGenAtomicSymbolFromSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
 
     <span class="c1"># pylint: disable=too-many-locals</span>
 <div class="viewcode-block" id="Symbol.simple_bind"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.simple_bind">[docs]</a>    <span class="k">def</span> <span class="nf">simple_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">'write'</span><span class="p">,</span> <span class="n">type_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stype_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
