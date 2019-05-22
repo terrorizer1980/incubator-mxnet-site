@@ -165,7 +165,7 @@ var searchData=
   ['mxndarraycreatesparseex',['MXNDArrayCreateSparseEx',['../c__api_8h.html#a7cf5a1795602f1dd8b5cadbe1c0e28b4',1,'c_api.h']]],
   ['mxndarraydetach',['MXNDArrayDetach',['../c__api_8h.html#a8e2c90cfa6c52a012fd3f23ffd8541f2',1,'c_api.h']]],
   ['mxndarrayfree',['MXNDArrayFree',['../c__api_8h.html#a857e66f665360d5fab3ad52528df38dd',1,'c_api.h']]],
-  ['mxndarrayfromdlpack',['MXNDArrayFromDLPack',['../c__api_8h.html#aec85a2a2bd001ec478204b9a275f7ee7',1,'c_api.h']]],
+  ['mxndarrayfromdlpack',['MXNDArrayFromDLPack',['../c__api_8h.html#a9033963e1b250911c19b67370d297de4',1,'c_api.h']]],
   ['mxndarraygetauxndarray',['MXNDArrayGetAuxNDArray',['../c__api_8h.html#a9eae2530c7c4aae1c5451a8966a3bf15',1,'c_api.h']]],
   ['mxndarraygetauxtype',['MXNDArrayGetAuxType',['../c__api_8h.html#a5f8937c0b27a527c8b62adb7a4704d83',1,'c_api.h']]],
   ['mxndarraygetcontext',['MXNDArrayGetContext',['../c__api_8h.html#a3ae6292f1e640d54c92a8cc56f513b76',1,'c_api.h']]],
