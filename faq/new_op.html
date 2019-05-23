@@ -471,6 +471,23 @@ that the i-th input can share memory with the j-th output.</p>
 output or nothing to calculating gradient.</p>
 <p>For more complicated patterns, use <code class="docutils literal"><span class="pre">MakeGradNode(op_name,</span> <span class="pre">n,</span> <span class="pre">heads,</span> <span class="pre">dict)</span></code> to create gradient entries,
 where heads are input entries to the backward op, composed from ograds and n->inputs.</p>
+<p>When assembling a return vector of <code class="docutils literal"><span class="pre">std::vector<nnvm::NodeEntry></span> <span class="pre">ret;</span></code> a common pattern would be to
+either create nodes in place as in:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ret</span><span class="o">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">MakeNode</span><span class="p">(</span><span class="s2">"zeros_like"</span><span class="p">,</span> <span class="n">n</span><span class="o">-></span><span class="n">attrs</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_xyz_backward"</span><span class="p">,</span>
+    <span class="p">{</span><span class="n">n</span><span class="o">-></span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]},</span> <span class="n">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">n</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Or create the node, modify and then move into NodeEntry’s constructor if this node is not to be used
+again. This avoids uneccessary copies of the shared_ptr.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o"><</span> <span class="n">n</span><span class="o">-></span><span class="n">inputs</span><span class="o">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">nnvm</span><span class="p">::</span><span class="n">NodePtr</span> <span class="n">node</span> <span class="o">=</span> <span class="n">nnvm</span><span class="p">::</span><span class="n">Node</span><span class="p">::</span><span class="n">Create</span><span class="p">();</span>
+  <span class="n">node</span><span class="o">-></span><span class="n">attrs</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">copy_op</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-></span><span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">ograds</span><span class="p">[</span><span class="mi">0</span><span class="p">]};</span>
+  <span class="n">ret</span><span class="o">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">move</span><span class="p">(</span><span class="n">node</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The first case uses RVO and the second in place construction.</p>
 </div>
 <div class="section" id="fcompute-xpu">
 <span id="fcompute-xpu"></span><h4>FCompute<xpu><a class="headerlink" href="#fcompute-xpu" title="Permalink to this headline">¶</a></h4>
