@@ -876,7 +876,7 @@ information on the definition and the algorithm.</p>
 <p>For 2-D deformable convolution, the shapes are</p>
 <ul class="simple">
 <li><strong>data</strong>: <em>(batch_size, channel, height, width)</em></li>
-<li><strong>offset</strong>: <em>(batch_size, num_deformable_group * kernel[0] * kernel[1], height, width)</em></li>
+<li><strong>offset</strong>: <em>(batch_size, num_deformable_group * kernel[0] * kernel[1] * 2, height, width)</em></li>
 <li><strong>weight</strong>: <em>(num_filter, channel, kernel[0], kernel[1])</em></li>
 <li><strong>bias</strong>: <em>(num_filter,)</em></li>
 <li><strong>out</strong>: <em>(batch_size, num_filter, out_height, out_width)</em>.</li>
@@ -900,9 +900,9 @@ the data with the <em>i</em>-th weight part. The output is obtained by concating
 the <em>g</em> results.</p>
 <p>If <code class="docutils literal"><span class="pre">num_deformable_group</span></code> is larger than 1, denoted by <em>dg</em>, then split the
 input <code class="docutils literal"><span class="pre">offset</span></code> evenly into <em>dg</em> parts along the channel axis, and also evenly
-split <code class="docutils literal"><span class="pre">out</span></code> evenly into <em>dg</em> parts along the channel axis. Next compute the
-deformable convolution, apply the <em>i</em>-th part of the offset part on the <em>i</em>-th
-out.</p>
+split <code class="docutils literal"><span class="pre">data</span></code> into <em>dg</em> parts along the channel axis. Next compute the
+deformable convolution, apply the <em>i</em>-th part of the offset on the <em>i</em>-th part
+of the data.</p>
 <p>Both <code class="docutils literal"><span class="pre">weight</span></code> and <code class="docutils literal"><span class="pre">bias</span></code> are learnable parameters.</p>
 <p>Defined in src/operator/contrib/deformable_convolution.cc:L100</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -918,9 +918,9 @@ out.</p>
 <li><strong>stride</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution stride: (h, w) or (d, h, w). Defaults to 1 for each dimension.</li>
 <li><strong>dilate</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution dilate: (h, w) or (d, h, w). Defaults to 1 for each dimension.</li>
 <li><strong>pad</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Zero pad for convolution: (h, w) or (d, h, w). Defaults to no padding.</li>
-<li><strong>num_filter</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Convolution filter(channel) number</li>
-<li><strong>num_group</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Number of group partitions.</li>
-<li><strong>num_deformable_group</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Number of deformable group partitions.</li>
+<li><strong>num_filter</strong> (<em>int</em><em>, </em><em>required</em>) – Convolution filter(channel) number</li>
+<li><strong>num_group</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of group partitions.</li>
+<li><strong>num_deformable_group</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of deformable group partitions.</li>
 <li><strong>workspace</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1024</em>) – Maximum temperal workspace allowed for convolution (MB).</li>
 <li><strong>no_bias</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to disable bias parameter.</li>
 <li><strong>layout</strong> (<em>{None</em><em>, </em><em>'NCDHW'</em><em>, </em><em>'NCHW'</em><em>, </em><em>'NCW'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Set layout for input, output and weight. Empty for
