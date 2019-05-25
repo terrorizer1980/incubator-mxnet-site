@@ -218,6 +218,7 @@ var searchData=
   ['mxsetprofilerconfig',['MXSetProfilerConfig',['../c__api_8h.html#a47521044e7ddd44500ed478f45705564',1,'c_api.h']]],
   ['mxsetprofilerstate',['MXSetProfilerState',['../c__api_8h.html#ac373802e0d3a38f297345f87d307a798',1,'c_api.h']]],
   ['mxsetsubgraphpropertyopnames',['MXSetSubgraphPropertyOpNames',['../c__api__test_8h.html#abd1c8c72b4ff85820e8671aa49868b73',1,'c_api_test.h']]],
+  ['mxstorageemptycache',['MXStorageEmptyCache',['../c__api_8h.html#a9fc1010dc2f1adb36569be3142e2995a',1,'c_api.h']]],
   ['mxsymbolcompose',['MXSymbolCompose',['../c__api_8h.html#a879a5ee991393d364b787e948b4c9961',1,'c_api.h']]],
   ['mxsymbolcopy',['MXSymbolCopy',['../c__api_8h.html#a6f8fc1fb5c90c92498241b75f74cea86',1,'c_api.h']]],
   ['mxsymbolcreateatomicsymbol',['MXSymbolCreateAtomicSymbol',['../c__api_8h.html#a9cd6ad8c274665172513707dd73262ce',1,'c_api.h']]],
