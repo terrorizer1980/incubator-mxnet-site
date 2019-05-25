@@ -491,6 +491,26 @@ when kvstore’s type is <code class="docutils literal"><span class="pre">device
 </li>
 </ul>
 </div>
+<div class="section" id="interface-between-python-and-the-c-api">
+<span id="interface-between-python-and-the-c-api"></span><h2>Interface between Python and the C API<a class="headerlink" href="#interface-between-python-and-the-c-api" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>MXNET_ENABLE_CYTHON<ul>
+<li>Values: 0(false), 1(true) <code class="docutils literal"><span class="pre">(default=1)</span></code></li>
+<li>If set to 0, MXNet uses the ctypes to interface with the C API.</li>
+<li>If set to 1, MXNet tries to use the cython modules for the ndarray and symbol. If it fails, the ctypes is used or an error occurs depending on MXNET_ENFORCE_CYTHON.</li>
+</ul>
+</li>
+<li>MXNET_ENFORCE_CYTHON<ul>
+<li>Values: 0(false) or 1(true) <code class="docutils literal"><span class="pre">(default=0)</span></code></li>
+<li>This has an effect only if MXNET_ENABLE_CYTHON is 1.</li>
+<li>If set to 0, MXNet fallbacks to the ctypes if importing the cython modules fails.</li>
+<li>If set to 1, MXNet raises an error if importing the cython modules fails.</li>
+</ul>
+</li>
+</ul>
+<p>If cython modules are used, <code class="docutils literal"><span class="pre">mx.nd._internal.NDArrayBase</span></code> must be <code class="docutils literal"><span class="pre">mxnet._cy3.ndarray.NDArrayBase</span></code> for python 3 or <code class="docutils literal"><span class="pre">mxnet._cy2.ndarray.NDArrayBase</span></code> for python 2.
+If ctypes is used, it must be <code class="docutils literal"><span class="pre">mxnet._ctypes.ndarray.NDArrayBase</span></code>.</p>
+</div>
 <div class="section" id="other-environment-variables">
 <span id="other-environment-variables"></span><h2>Other Environment Variables<a class="headerlink" href="#other-environment-variables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -677,6 +697,7 @@ each mxnet will take only partial num_cores available with system.</li>
 <li><a class="reference internal" href="#control-the-data-communication">Control the Data Communication</a></li>
 <li><a class="reference internal" href="#memonger">Memonger</a></li>
 <li><a class="reference internal" href="#control-the-profiler">Control the profiler</a></li>
+<li><a class="reference internal" href="#interface-between-python-and-the-c-api">Interface between Python and the C API</a></li>
 <li><a class="reference internal" href="#other-environment-variables">Other Environment Variables</a></li>
 <li><a class="reference internal" href="#settings-for-minimum-memory-usage">Settings for Minimum Memory Usage</a></li>
 <li><a class="reference internal" href="#settings-for-more-gpu-parallelism">Settings for More GPU Parallelism</a></li>
