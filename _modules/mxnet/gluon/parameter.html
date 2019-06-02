@@ -255,7 +255,8 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">context</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">cpu</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">autograd</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">,</span> <span class="n">shape_is_known</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">is_np_shape</span>
 
 <span class="c1"># pylint: disable= invalid-name</span>
 <span class="n">tensor_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
@@ -381,7 +382,20 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
+        <span class="sd">"""The shape of the parameter.</span>
+
+<span class="sd">        By default, an unknown dimension size is 0. However, when the NumPy semantic</span>
+<span class="sd">        is turned on, unknown dimension size is -1.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">is_np_shape</span><span class="p">():</span>
+            <span class="c1"># Parameters shouldn't be zero-size. If one of its dimension is 0,</span>
+            <span class="c1"># it means the parameter isn't initialized. In the NumPy semantics,</span>
+            <span class="c1"># the unknown dimension should be marked with -1.</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
 
     <span class="nd">@shape</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_shape</span><span class="p">):</span>
@@ -494,7 +508,7 @@
             <span class="k">return</span>
         <span class="n">init</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">default_init</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deferred_init</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_deferred_init</span> <span class="o">=</span> <span class="p">()</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">></span> <span class="mi">0</span><span class="p">,</span> \
+        <span class="k">assert</span> <span class="n">shape_is_known</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> \
             <span class="s2">"Cannot initialize Parameter '</span><span class="si">%s</span><span class="s2">' because it has "</span> \
             <span class="s2">"invalid shape: </span><span class="si">%s</span><span class="s2">. Please specify in_units, "</span> \
             <span class="s2">"in_channels, etc for `Block`s."</span><span class="o">%</span><span class="p">(</span>
@@ -605,7 +619,7 @@
             <span class="n">ctx</span> <span class="o">=</span> <span class="p">[</span><span class="n">ctx</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">init</span> <span class="o">=</span> <span class="n">default_init</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o"><=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">shape_is_known</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_deferred_init</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_deferred_init</span> <span class="o">=</span> <span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">default_init</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">return</span>

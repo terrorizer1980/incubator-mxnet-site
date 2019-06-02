@@ -263,6 +263,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span> <span class="nn">..util</span> <span class="k">import</span> <span class="n">is_np_shape</span>
 
 <div class="viewcode-block" id="split_data"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.utils.split_data">[docs]</a><span class="k">def</span> <span class="nf">split_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num_slice</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">even_split</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">"""Splits an NDArray into `num_slice` slices along `batch_axis`.</span>
@@ -637,6 +638,23 @@
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">shape_is_known</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+    <span class="sd">"""Check whether a shape is completely known with or without np semantics.</span>
+
+<span class="sd">    Please see the doc of is_np_shape for more details.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">unknown_dim_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">is_np_shape</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">unknown_dim_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">dim_size</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim_size</span> <span class="o">==</span> <span class="n">unknown_dim_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">dim_size</span> <span class="o">></span> <span class="n">unknown_dim_size</span><span class="p">,</span> <span class="s2">"shape dimension size cannot be less than </span><span class="si">{}</span><span class="s2">, while "</span> \
+                                            <span class="s2">"received </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unknown_dim_size</span><span class="p">,</span> <span class="n">dim_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
 </div>
