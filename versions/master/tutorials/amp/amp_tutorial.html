@@ -300,10 +300,9 @@
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_network</span><span class="p">():</span>
     <span class="c1"># SSD with RN50 backbone</span>
     <span class="n">net_name</span> <span class="o">=</span> <span class="s1">'ssd_512_resnet50_v1_coco'</span>
-    <span class="n">net</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">net_name</span><span class="p">,</span> <span class="n">pretrained_base</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">norm_layer</span><span class="o">=</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm</span><span class="p">)</span>
-    <span class="n">async_net</span> <span class="o">=</span> <span class="n">net</span>
     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"always"</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+        <span class="n">net</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">net_name</span><span class="p">,</span> <span class="n">pretrained_base</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">norm_layer</span><span class="o">=</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm</span><span class="p">)</span>
         <span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
         <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">reset_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 
@@ -317,11 +316,6 @@
 <p>First, let us create the network.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">get_network</span><span class="p">()</span>
 <span class="n">net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">static_alloc</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">static_shape</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">mxnet</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">mxnet</span><span class="o">/</span><span class="n">gluon</span><span class="o">/</span><span class="n">block</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1138</span><span class="p">:</span> <span class="ne">UserWarning</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">decide</span> <span class="nb">type</span> <span class="k">for</span> <span class="n">the</span> <span class="n">following</span> <span class="n">arguments</span><span class="o">.</span> <span class="n">Consider</span> <span class="n">providing</span> <span class="n">them</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
-    <span class="n">data</span><span class="p">:</span> <span class="kc">None</span>
-  <span class="n">input_sym_arg_type</span> <span class="o">=</span> <span class="n">in_param</span><span class="o">.</span><span class="n">infer_type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Next, we need to create a Gluon Trainer.</p>
@@ -386,11 +380,6 @@
 <p>After that, we can create the network exactly the same way we did in FP32 training.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">get_network</span><span class="p">()</span>
 <span class="n">net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">static_alloc</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">static_shape</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">mxnet</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">mxnet</span><span class="o">/</span><span class="n">gluon</span><span class="o">/</span><span class="n">block</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1138</span><span class="p">:</span> <span class="ne">UserWarning</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">decide</span> <span class="nb">type</span> <span class="k">for</span> <span class="n">the</span> <span class="n">following</span> <span class="n">arguments</span><span class="o">.</span> <span class="n">Consider</span> <span class="n">providing</span> <span class="n">them</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
-    <span class="n">data</span><span class="p">:</span> <span class="kc">None</span>
-  <span class="n">input_sym_arg_type</span> <span class="o">=</span> <span class="n">in_param</span><span class="o">.</span><span class="n">infer_type</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>For some models that may be enough to start training in mixed precision, but the full FP16 recipe recommends using dynamic loss scaling to guard against over- and underflows of FP16 values. Therefore, as a next step, we create a trainer and initialize it with support for AMP’s dynamic loss scaling. Currently, support for dynamic loss scaling is limited to trainers created with <code class="docutils literal"><span class="pre">update_on_kvstore=False</span></code> option, and so we add it to our trainer initialization.</p>
