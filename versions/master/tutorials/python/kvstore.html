@@ -267,13 +267,9 @@ a (<code class="docutils literal"><span class="pre">int</span></code>, <code cla
 <p><code class="docutils literal"><span class="pre">[[</span> <span class="pre">8.</span> <span class="pre">8.</span> <span class="pre">8.],[</span> <span class="pre">8.</span> <span class="pre">8.</span> <span class="pre">8.]]</span></code><!--notebook-skip-line--></p>
 <p>The data for pushing can be stored on any device. Furthermore, you can push multiple
 values into the same key, where KVStore will first sum all of these
-values and then push the aggregated value:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># The numbers used below assume 4 GPUs</span>
-<span class="n">gpus</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">()</span>
-<span class="k">if</span> <span class="n">gpus</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gpus</span><span class="p">)]</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+values and then push the aggregated value. Here we will just demonstrate pushing a list of values on CPU.
+Please note summation only happens if the value list is longer than one</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
 <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">ctx</span> <span class="ow">in</span> <span class="n">contexts</span><span class="p">]</span>
 <span class="n">kv</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="n">kv</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">a</span><span class="p">)</span>
@@ -294,7 +290,6 @@ control how data is merged:</p>
 </div>
 <p><code class="docutils literal"><span class="pre">[[</span> <span class="pre">4.</span> <span class="pre">4.</span> <span class="pre">4.],[</span> <span class="pre">4.</span> <span class="pre">4.</span> <span class="pre">4.]]</span></code><!--notebook-skip-line--></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">kv</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
-<span class="c1">#</span>
 <span class="n">kv</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
 </pre></div>
