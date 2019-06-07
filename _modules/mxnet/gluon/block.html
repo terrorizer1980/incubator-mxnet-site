@@ -579,7 +579,7 @@
                               <span class="s1">'save_parameters may resolve this error.'</span><span class="o">%</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.load_parameters"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                        <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""Load parameters from file previously saved by `save_parameters`.</span>
 
 <span class="sd">        Parameters</span>
@@ -593,6 +593,9 @@
 <span class="sd">        ignore_extra : bool, default False</span>
 <span class="sd">            Whether to silently ignore parameters from the file that are not</span>
 <span class="sd">            present in this Block.</span>
+<span class="sd">        cast_dtype : bool, default False</span>
+<span class="sd">            Cast the data type of the NDArray loaded from the checkpoint to the dtype</span>
+<span class="sd">            provided by the Parameter if any.</span>
 
 <span class="sd">        References</span>
 <span class="sd">        ----------</span>
@@ -608,7 +611,7 @@
             <span class="c1"># legacy loading</span>
             <span class="k">del</span> <span class="n">loaded</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_missing</span><span class="p">:</span>
@@ -624,7 +627,7 @@
                     <span class="s2">"which contains parameters </span><span class="si">%s</span><span class="s2">. Set ignore_extra=True to ignore. "</span><span class="o">%</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">)</span></div>
+                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.load_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_params">[docs]</a>    <span class="k">def</span> <span class="nf">load_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
