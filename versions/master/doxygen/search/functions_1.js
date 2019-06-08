@@ -31,7 +31,7 @@ var searchData=
   ['asarray',['AsArray',['../classmxnet_1_1NDArray.html#a46ccc06ccb40071d0d275d4c649f3d07',1,'mxnet::NDArray']]],
   ['assign',['assign',['../classmxnet_1_1Tuple.html#a2fa519288bdce42447674e78fa4c6fda',1,'mxnet::Tuple']]],
   ['assigncontext',['AssignContext',['../namespacemxnet_1_1common.html#a19bebfe40260d14068675b893f6b1a6b',1,'mxnet::common']]],
-  ['at',['At',['../classmxnet_1_1NDArray.html#a3b615512a8fb89b9edc99b35064ead95',1,'mxnet::NDArray::At()'],['../classmxnet_1_1cpp_1_1NDArray.html#a7a9d09c88b1761e541409c02da474912',1,'mxnet::cpp::NDArray::At(size_t h, size_t w) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a052ac29f6d12a696a5f8eedb76a2c7a8',1,'mxnet::cpp::NDArray::At(size_t c, size_t h, size_t w) const ']]],
+  ['at',['At',['../classmxnet_1_1NDArray.html#a3b615512a8fb89b9edc99b35064ead95',1,'mxnet::NDArray::At()'],['../classmxnet_1_1cpp_1_1NDArray.html#a9eaa1d87dc1714e895db8f5697e01f39',1,'mxnet::cpp::NDArray::At(size_t index) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a7a9d09c88b1761e541409c02da474912',1,'mxnet::cpp::NDArray::At(size_t h, size_t w) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a052ac29f6d12a696a5f8eedb76a2c7a8',1,'mxnet::cpp::NDArray::At(size_t c, size_t h, size_t w) const ']]],
   ['atwithrecord',['AtWithRecord',['../classmxnet_1_1NDArray.html#aa2a801dd5c47b5bdd01a385d2c4327b8',1,'mxnet::NDArray']]],
   ['aux_5fdata',['aux_data',['../classmxnet_1_1NDArray.html#ad8194805eabb65d8a9d33fda840b66a9',1,'mxnet::NDArray']]],
   ['aux_5fdict',['aux_dict',['../classmxnet_1_1cpp_1_1Executor.html#a6c6ef2d2f79c26fd0bad949243f7a37a',1,'mxnet::cpp::Executor']]],
