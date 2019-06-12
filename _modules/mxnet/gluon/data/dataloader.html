@@ -634,7 +634,7 @@
 <span class="k">class</span> <span class="nc">_MultiWorkerIter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">"""Internal multi-worker iterator for DataLoader."""</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker_pool</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">worker_pool</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
@@ -646,6 +646,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span> <span class="o">=</span> <span class="n">pin_device_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_loader</span> <span class="o">=</span> <span class="n">data_loader</span>
         <span class="c1"># pre-fetch</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">prefetch</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_push_next</span><span class="p">()</span>
@@ -807,7 +808,8 @@
                                 <span class="n">pin_memory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">,</span> <span class="n">pin_device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span><span class="p">,</span>
                                 <span class="n">worker_fn</span><span class="o">=</span><span class="n">_thread_worker_fn</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="k">else</span> <span class="n">_worker_fn</span><span class="p">,</span>
                                 <span class="n">prefetch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span><span class="p">,</span>
-                                <span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+                                <span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">data_loader</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span>
