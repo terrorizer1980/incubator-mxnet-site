@@ -4,6 +4,5 @@ var searchData=
   ['arg_5farrays',['arg_arrays',['../classmxnet_1_1cpp_1_1Executor.html#a13d04b04cfafce126946be071549ace9',1,'mxnet::cpp::Executor']]],
   ['array_5f',['array_',['../structmxnet_1_1common_1_1StaticArray.html#a2b48c2aff03cc1c29306defddbca3649',1,'mxnet::common::StaticArray']]],
   ['async_5fon_5fcomplete',['async_on_complete',['../structmxnet_1_1OpContext.html#a40ce0e3d4ac21412cfafafc5b1fd32ef',1,'mxnet::OpContext']]],
-  ['aux_5farrays',['aux_arrays',['../classmxnet_1_1cpp_1_1Executor.html#a11cc4c29bb7d5f859e9bbb4bc0df51ab',1,'mxnet::cpp::Executor']]],
-  ['aux_5fstream',['aux_stream',['../structmxnet_1_1RunContext.html#aefb2816ee8261ff91c733073da897611',1,'mxnet::RunContext']]]
+  ['aux_5farrays',['aux_arrays',['../classmxnet_1_1cpp_1_1Executor.html#a11cc4c29bb7d5f859e9bbb4bc0df51ab',1,'mxnet::cpp::Executor']]]
 ];

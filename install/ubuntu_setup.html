@@ -70,9 +70,9 @@
     <!-- -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="up" title="Build MXNet from Source" href="build_from_source.html" />
-    <link rel="next" title="Installing MXNet on Windows" href="windows_setup.html" />
-    <link rel="prev" title="Using AMP (Automatic Mixed Precision) in MXNet" href="../tutorials/amp/amp_tutorial.html" /> 
+    <link rel="up" title="Installing MXNet" href="index.html" />
+    <link rel="next" title="Validate Your MXNet Installation" href="validate_mxnet.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="tx2_setup.html" /> 
 
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png">
   </head>
@@ -332,7 +332,8 @@ sudo ./ubuntu_python.sh
 <div class="section" id="pip-package-availability">
 <span id="pip-package-availability"></span><h4>pip Package Availability<a class="headerlink" href="#pip-package-availability" title="Permalink to this headline">¶</a></h4>
 <p>The following table presents the pip packages that are recommended for each version of MXNet.</p>
-<p><img alt="pip package table" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/install/pip-packages-1.4.0.png" /></p>
+<!-- Table does not render - using a picture alternative
+--><p><img alt="pip package table" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/install/pip-packages.png" /></p>
 <p>To install an older version of MXNet with one of the packages in the previous table add <code class="docutils literal"><span class="pre">==</span></code> with the version you require. For example for version 1.1.0 of MXNet with CUDA 8, you would use <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mxnet-cu80==1.1.0</span></code>.</p>
 <hr></div>
 </div>
@@ -365,38 +366,20 @@ sudo ./ubuntu_python.sh
 </div>
 <div class="section" id="manual-mxnet-installation">
 <span id="manual-mxnet-installation"></span><h4>Manual MXNet Installation<a class="headerlink" href="#manual-mxnet-installation" title="Permalink to this headline">¶</a></h4>
-<p>It is recommended that you review the general <a class="reference internal" href="build_from_source.html"><span class="doc">build from source</span></a> instructions before continuing.</p>
+<p>It is recommended that you review the general <a class="reference external" href="http://mxnet.io/install/build_from_source.html">build from source</a> instructions before continuing.</p>
 <p>On Ubuntu versions 16.04 or later, you need the following dependencies:</p>
-<p><strong>Step 1:</strong> Install prerequisite packages.</p>
+<p><strong>Step 1:</strong> Install build tools and git.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    sudo apt-get update
-    sudo apt-get install -y build-essential git ninja-build ccache
-</pre></div>
-</div>
-<p><strong>For Ubuntu 18.04 and CUDA builds you need to update CMake</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
-<span class="nb">set</span> -exuo pipefail
-sudo apt remove --purge --auto-remove cmake
-
-<span class="c1"># Update CMAKE for correct cuda autotedetection: https://github.com/clab/dynet/issues/1457</span>
-<span class="nv">version</span><span class="o">=</span><span class="m">3</span>.14
-<span class="nv">build</span><span class="o">=</span><span class="m">0</span>
-mkdir -p ~/tmp
-<span class="nb">cd</span> ~/tmp
-wget https://cmake.org/files/v<span class="nv">$version</span>/cmake-<span class="nv">$version</span>.<span class="nv">$build</span>.tar.gz
-tar -xzvf cmake-<span class="nv">$version</span>.<span class="nv">$build</span>.tar.gz
-<span class="nb">cd</span> cmake-<span class="nv">$version</span>.<span class="nv">$build</span>/
-./bootstrap
-make -j<span class="k">$(</span>nproc<span class="k">)</span>
-sudo make install
+    sudo apt-get install -y build-essential git
 </pre></div>
 </div>
 <p><strong>Step 2:</strong> Install a Math Library.</p>
-<p>Details on the different math libraries are found in the build from source guide&#8217;s <a class="reference external" href="/install/build_from_source.html#math-library-selection">Math Library Selection</a> section.</p>
+<p>Details on the different math libraries are found in the build from source guide&#8217;s <a class="reference external" href="http://mxnet.io/install/build_from_source.html#math-library-selection">Math Library Selection</a> section.</p>
 <p>For OpenBLAS use:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    sudo apt-get install -y libopenblas-dev
 </pre></div>
 </div>
-<p>For other libraries, visit the <a class="reference external" href="/install/build_from_source.html#math-library-selection">Math Library Selection</a> section.</p>
+<p>For other libraries, visit the <a class="reference external" href="http://mxnet.io/install/build_from_source.html#math-library-selection">Math Library Selection</a> section.</p>
 <p><strong>Step 3:</strong> Install OpenCV.</p>
 <p><em>MXNet</em> uses <a class="reference external" href="http://opencv.org/">OpenCV</a> for efficient image loading and augmentation operations.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    sudo apt-get install -y libopencv-dev
@@ -404,62 +387,29 @@ sudo make install
 </div>
 <p><strong>Step 4:</strong> Download MXNet sources and build MXNet core shared library.</p>
 <p>If building on CPU and using OpenBLAS:</p>
-<p>Clone the repository:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
     <span class="nb">cd</span> incubator-mxnet
+    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas
 </pre></div>
 </div>
-<p>Build with CMake and ninja, without GPU and without MKL.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>    rm -rf build
-    mkdir -p build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
-    cmake -GNinja <span class="se">\</span>
-        -DUSE_CUDA<span class="o">=</span>OFF <span class="se">\</span>
-        -DUSE_MKL_IF_AVAILABLE<span class="o">=</span>OFF <span class="se">\</span>
-        -DCMAKE_CUDA_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_C_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_CXX_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-    ..
-    ninja
+<p>If building on CPU and using MKL and MKL-DNN (make sure MKL is installed according to <a class="reference external" href="http://mxnet.io/install/build_from_source.html#math-library-selection">Math Library Selection</a> and <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/MKLDNN_README.md">MKL-DNN README</a>):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
+    <span class="nb">cd</span> incubator-mxnet
+    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>mkl <span class="nv">USE_MKLDNN</span><span class="o">=</span><span class="m">1</span>
 </pre></div>
 </div>
-<p>If building on CPU and using MKL and MKL-DNN (make sure MKL is installed according to <a class="reference external" href="/install/build_from_source.html#math-library-selection">Math Library Selection</a> and <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/docs/tutorials/mkldnn/MKLDNN_README.md">MKL-DNN README</a>):</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>    rm -rf build
-    mkdir -p build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
-    cmake -GNinja <span class="se">\</span>
-        -DUSE_CUDA<span class="o">=</span>OFF <span class="se">\</span>
-        -DUSE_MKL_IF_AVAILABLE<span class="o">=</span>ON <span class="se">\</span>
-        -DCMAKE_CUDA_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_C_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_CXX_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-    ..
-    ninja
+<p>If building on GPU and you want OpenCV and OpenBLAS (make sure you have installed the <a class="reference external" href="#cuda-dependencies">CUDA dependencies first</a>):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>    git clone --recursive https://github.com/apache/incubator-mxnet.git
+    <span class="nb">cd</span> incubator-mxnet
+    make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas <span class="nv">USE_CUDA</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_CUDA_PATH</span><span class="o">=</span>/usr/local/cuda <span class="nv">USE_CUDNN</span><span class="o">=</span><span class="m">1</span>
 </pre></div>
 </div>
-<p>If building on GPU (make sure you have installed the <a class="reference external" href="#cuda-dependencies">CUDA dependencies first</a>):
-Cuda 10.1 in Ubuntu 18.04 builds fine but is not currently tested in CI.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>    rm -rf build
-    mkdir -p build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
-    cmake -GNinja <span class="se">\</span>
-        -DUSE_CUDA<span class="o">=</span>ON <span class="se">\</span>
-        -DUSE_MKL_IF_AVAILABLE<span class="o">=</span>OFF <span class="se">\</span>
-        -DCMAKE_CUDA_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_C_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-        -DCMAKE_CXX_COMPILER_LAUNCHER<span class="o">=</span>ccache <span class="se">\</span>
-    ..
-    ninja
+<p><em>Note</em> - USE_OPENCV and USE_BLAS are make file flags to set compilation options to use OpenCV and BLAS library. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code> and also review common <a class="reference external" href="http://mxnet.io/install/build_from_source.html#usage-examples">usage examples</a>.</p>
+<p>Building from source creates a library called <code class="docutils literal"><span class="pre">libmxnet.so</span></code> in the <code class="docutils literal"><span class="pre">lib</span></code> folder in your MXNet project root.</p>
+<p>You may also want to add the MXNet shared library to your <code class="docutils literal"><span class="pre">LD_LIBRARY_PATH</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$PWD</span>/lib
 </pre></div>
 </div>
-<p><em>Note</em> - You can explore and use more compilation options as they are delcared in the top of <code class="docutils literal"><span class="pre">CMakeLists.txt</span></code> and also review common <a class="reference external" href="/install/build_from_source.html#usage-examples">usage examples</a>.
-Optionally, you can also use a higher level, scripted version of the above with an editable CMake options file by doing the
-following:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>cp cmake/cmake_options.yml .
-<span class="c1"># Edit cmake_options.yml in the MXNet root to your taste</span>
-<span class="nv">$EDITOR</span> cmake_options.yml
-<span class="c1"># Launch a local CMake build</span>
-./dev_menu.py build
-</pre></div>
-</div>
-<p>Building from source creates a library called <code class="docutils literal"><span class="pre">libmxnet.so</span></code> in the <code class="docutils literal"><span class="pre">build</span></code> folder in your MXNet project root.</p>
 <p>After building the MXNet library, you may install language bindings.</p>
 <hr></div>
 </div>
@@ -488,15 +438,15 @@ $ pip install -e .
 <div class="section" id="optional-python-packages">
 <span id="optional-python-packages"></span><h4>Optional Python Packages<a class="headerlink" href="#optional-python-packages" title="Permalink to this headline">¶</a></h4>
 <p>You may optionally install <code class="docutils literal"><span class="pre">graphviz</span></code> library that is used for visualizing network graphs you build on MXNet. You may also install <a class="reference external" href="http://jupyter.readthedocs.io/">Jupyter Notebook</a> which is used for running MXNet tutorials and examples.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo pip install <span class="nv">graphviz</span><span class="o">==</span><span class="m">0</span>.8.4 <span class="se">\</span>
-                 jupyter
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo pip install graphviz
+sudo pip install jupyter
 </pre></div>
 </div>
 <hr></div>
 </div>
 <div class="section" id="install-the-mxnet-package-for-c">
 <span id="install-the-mxnet-package-for-c"></span><h3>Install the MXNet Package for C++<a class="headerlink" href="#install-the-mxnet-package-for-c" title="Permalink to this headline">¶</a></h3>
-<p>Refer to the <a class="reference internal" href="c_plus_plus.html"><span class="doc">C++ Package setup guide</span></a>.</p>
+<p>Refer to the <a class="reference external" href="http://mxnet.io/install/c_plus_plus.html">C++ Package setup guide</a>.</p>
 <hr></div>
 <div class="section" id="install-the-mxnet-package-for-clojure">
 <span id="install-the-mxnet-package-for-clojure"></span><h3>Install the MXNet Package for Clojure<a class="headerlink" href="#install-the-mxnet-package-for-clojure" title="Permalink to this headline">¶</a></h3>
@@ -584,12 +534,10 @@ $ sudo apt-get install -y build-essential git
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install -y libopencv-dev
 </pre></div>
 </div>
-<p><strong>Step 4</strong> Download MXNet sources and build MXNet core shared library. You can clone the repository as described in the following code block, or you may try the <a class="reference internal" href="download.html"><span class="doc">download links</span></a> for your desired MXNet version.</p>
+<p><strong>Step 4</strong> Download MXNet sources and build MXNet core shared library. You can clone the repository as described in the following code block, or you may try the <a href="download.html">download links</a> for your desired MXNet version.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone --recursive https://github.com/apache/incubator-mxnet
 $ <span class="nb">cd</span> incubator-mxnet
-$ <span class="nb">echo</span> <span class="s2">&quot;USE_OPENCV = 1&quot;</span> &gt;&gt; ./config.mk
-$ <span class="nb">echo</span> <span class="s2">&quot;USE_BLAS = openblas&quot;</span> &gt;&gt; ./config.mk
-$ make -j <span class="k">$(</span>nproc<span class="k">)</span>
+$ make -j <span class="k">$(</span>nproc<span class="k">)</span> <span class="nv">USE_OPENCV</span><span class="o">=</span><span class="m">1</span> <span class="nv">USE_BLAS</span><span class="o">=</span>openblas
 </pre></div>
 </div>
 <p><em>Note</em> - USE_OPENCV and USE_BLAS are make file flags to set compilation options to use OpenCV and BLAS library. You can explore and use more compilation options in <code class="docutils literal"><span class="pre">make/config.mk</span></code>.</p>
@@ -624,27 +572,27 @@ $ make -j <span class="k">$(</span>nproc<span class="k">)</span>
 <div class="section" id="install-the-mxnet-package-for-scala">
 <span id="install-the-mxnet-package-for-scala"></span><h3>Install the MXNet Package for Scala<a class="headerlink" href="#install-the-mxnet-package-for-scala" title="Permalink to this headline">¶</a></h3>
 <p>To use the MXNet-Scala package, you can acquire the Maven package as a dependency.</p>
-<p>Further information is in the <a class="reference internal" href="scala_setup.html"><span class="doc">MXNet-Scala Setup Instructions</span></a>.</p>
-<p>If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference internal" href="../tutorials/scala/mxnet_scala_on_intellij.html"><span class="doc">MXNet-Scala on IntelliJ tutorial</span></a> instead.</p>
+<p>Further information is in the <a class="reference external" href="http://mxnet.io/install/scala_setup.html">MXNet-Scala Setup Instructions</a>.</p>
+<p>If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference external" href="http://mxnet.io/tutorials/scala/mxnet_scala_on_intellij.html">MXNet-Scala on IntelliJ tutorial</a> instead.</p>
 <hr></div>
 <div class="section" id="install-the-mxnet-package-for-java">
 <span id="install-the-mxnet-package-for-java"></span><h3>Install the MXNet Package for Java<a class="headerlink" href="#install-the-mxnet-package-for-java" title="Permalink to this headline">¶</a></h3>
 <p>To use the MXNet-Java package, you can acquire the Maven package as a dependency.</p>
-<p>Further information is in the <a class="reference internal" href="java_setup.html"><span class="doc">MXNet-Java Setup Instructions</span></a>.</p>
-<p>If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference internal" href="../tutorials/java/mxnet_java_on_intellij.html"><span class="doc">MXNet-Java on IntelliJ tutorial</span></a> instead.</p>
+<p>Further information is in the <a class="reference external" href="http://mxnet.io/install/java.html">MXNet-Java Setup Instructions</a>.</p>
+<p>If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference external" href="http://mxnet.io/tutorials/java/mxnet_java_on_intellij.html">MXNet-Java on IntelliJ tutorial</a> instead.</p>
 <hr></div>
 </div>
 <div class="section" id="contributions">
 <span id="contributions"></span><h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
-<p>You are more than welcome to contribute easy installation scripts for other operating systems and programming languages. See the <a class="reference internal" href="../community/contribute.html"><span class="doc">community contributions page</span></a> for further information.</p>
+<p>You are more than welcome to contribute easy installation scripts for other operating systems and programming languages. See the <a class="reference external" href="http://mxnet.io/community/contribute.html">community contributions page</a> for further information.</p>
 </div>
 <div class="section" id="next-steps">
 <span id="next-steps"></span><h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">How To</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../architecture/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/faq/index.html">How To</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/architecture/index.html">Architecture</a></li>
 </ul>
 </div>
 <p><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous"></p>

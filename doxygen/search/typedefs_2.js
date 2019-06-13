@@ -14,7 +14,7 @@ var searchData=
   ['customopcreatefunc',['CustomOpCreateFunc',['../c__api_8h.html#a6c79906616c8c56a409a97c4111a6b88',1,'c_api.h']]],
   ['customopdelfunc',['CustomOpDelFunc',['../c__api_8h.html#a0056a2f79906cce0f8aa78966c2d4a6c',1,'c_api.h']]],
   ['customopfbfunc',['CustomOpFBFunc',['../c__api_8h.html#a260ea269f1da99011750fc3e18661f06',1,'c_api.h']]],
-  ['customopinfershapefunc',['CustomOpInferShapeFunc',['../c__api_8h.html#a323ab55cb6f9bc761b7960f4acb1fc48',1,'c_api.h']]],
+  ['customopinfershapefunc',['CustomOpInferShapeFunc',['../c__api_8h.html#a004103d4a52000a4cdb377c577aa7a4d',1,'c_api.h']]],
   ['customopinferstoragetypefunc',['CustomOpInferStorageTypeFunc',['../c__api_8h.html#a7756a9e273e3e9b408a23081415719dc',1,'c_api.h']]],
   ['customopinfertypefunc',['CustomOpInferTypeFunc',['../c__api_8h.html#a59855e0408519e73b05419cd0d9d976e',1,'c_api.h']]],
   ['customoplistfunc',['CustomOpListFunc',['../c__api_8h.html#a5bcf4b1e26b22c9363a016bd9d27085c',1,'c_api.h']]],

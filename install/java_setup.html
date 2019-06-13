@@ -70,9 +70,9 @@
     <!-- -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="up" title="MXNet - Java Inference API" href="../api/java/index.html" />
-    <link rel="next" title="MXNet - Julia API" href="../api/julia/index.html" />
-    <link rel="prev" title="MXNet - Java Inference API" href="../api/java/index.html" /> 
+    <link rel="up" title="Installing MXNet" href="index.html" />
+    <link rel="next" title="Installing MXNet from source on OS X (Mac)" href="osx_setup.html" />
+    <link rel="prev" title="Source Download" href="download.html" /> 
 
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png">
   </head>
@@ -269,7 +269,7 @@
 <!--- under the License. --><div class="section" id="setup-the-mxnet-package-for-java">
 <span id="setup-the-mxnet-package-for-java"></span><h1>Setup the MXNet Package for Java<a class="headerlink" href="#setup-the-mxnet-package-for-java" title="Permalink to this headline">¶</a></h1>
 <p>The following instructions are provided for macOS and Ubuntu. Windows is not yet available.</p>
-<p><strong>Note:</strong> If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference internal" href="../tutorials/java/mxnet_java_on_intellij.html"><span class="doc">MXNet-Java on IntelliJ tutorial</span></a> instead of these instructions.</p>
+<p><strong>Note:</strong> If you use IntelliJ or a similar IDE, you may want to follow the <a class="reference external" href="http://mxnet.io/tutorials/java/mxnet_java_on_intellij.html">MXNet-Java on IntelliJ tutorial</a> instead of these instructions.</p>
 <hr><div class="section" id="maven">
 <span id="maven"></span><h2>Maven<a class="headerlink" href="#maven" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="setup-instructions">
@@ -279,24 +279,39 @@
 <div class="highlight-bash"><div class="highlight"><pre><span></span>brew update
 brew tap caskroom/versions
 brew cask install java8
+brew install opencv
 brew install maven
 </pre></div>
 </div>
 <p><strong>Ubuntu Steps</strong></p>
-<p>Please run the following lines:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt-get install openjdk-8-java maven
+<p>These scripts will install Maven and its dependencies. You will be running the Scala scripts because the MXNet-Java project has a dependency on the MXNet-Scala project.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget https://raw.githubusercontent.com/apache/incubator-mxnet/master/ci/docker/install/ubuntu_core.sh
+wget https://raw.githubusercontent.com/apache/incubator-mxnet/master/ci/docker/install/ubuntu_scala.sh
+chmod +x ubuntu_core.sh
+chmod +x ubuntu_scala.sh
+sudo ./ubuntu_core.sh
+sudo ./ubuntu_scala.sh
 </pre></div>
 </div>
 <p><strong>Step 2.</strong> Run the demo MXNet-Java project.</p>
 <p>Go to the <a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/scala-package/mxnet-demo/java-demo">MXNet-Java demo project&#8217;s README</a> and follow the directions to test the MXNet-Java package installation.</p>
 <div class="section" id="maven-repository">
 <span id="maven-repository"></span><h4>Maven Repository<a class="headerlink" href="#maven-repository" title="Permalink to this headline">¶</a></h4>
-<p>MXNet-Java can be easily included in your Maven managed project. The Java packages are currently available on Maven. Add the dependency which corresponds to your platform to the <code class="docutils literal"><span class="pre">dependencies</span></code> tag :</p>
+<p>MXNet-Java can be easily included in your Maven managed project. The Java packages are currently available as nightly builds on Maven. Add the following Maven repository to your <code class="docutils literal"><span class="pre">pom.xml</span></code> to fetch the Java packages :</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">repositories</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">repository</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">id</span><span class="p">&gt;</span>Apache Snapshot<span class="p">&lt;/</span><span class="nt">id</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">url</span><span class="p">&gt;</span>https://repository.apache.org/content/groups/snapshots<span class="p">&lt;/</span><span class="nt">url</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">repository</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">repositories</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>Also, add the dependency which corresponds to your platform to the <code class="docutils literal"><span class="pre">dependencies</span></code> tag :</p>
 <p><strong>Linux CPU</strong></p>
 <div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-linux-x86_64-cpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.4.0<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.3.1-SNAPSHOT<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
 </pre></div>
 </div>
@@ -304,7 +319,7 @@ brew install maven
 <div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-linux-x86_64-gpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.4.0<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.3.1-SNAPSHOT<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
 </pre></div>
 </div>
@@ -312,26 +327,17 @@ brew install maven
 <div class="highlight-html"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">dependency</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">groupId</span><span class="p">&gt;</span>org.apache.mxnet<span class="p">&lt;/</span><span class="nt">groupId</span><span class="p">&gt;</span>
   <span class="p">&lt;</span><span class="nt">artifactId</span><span class="p">&gt;</span>mxnet-full_2.11-osx-x86_64-cpu<span class="p">&lt;/</span><span class="nt">artifactId</span><span class="p">&gt;</span>
-  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.4.0<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">version</span><span class="p">&gt;</span>1.3.1-SNAPSHOT<span class="p">&lt;/</span><span class="nt">version</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">dependency</span><span class="p">&gt;</span>
 </pre></div>
 </div>
-<p>The official Java Packages have been released as part of MXNet 1.4 and are available on the <a class="reference external" href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.mxnet%22">MXNet Maven package repository</a>.</p>
+<p>The official Java Packages will be released with the release of MXNet 1.4 and will be available on  <a class="reference external" href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.mxnet%22">MXNet Maven package repository</a>.</p>
 <hr></div>
-</div>
-<div class="section" id="eclipse-ide-support">
-<span id="eclipse-ide-support"></span><h3>Eclipse IDE Support<a class="headerlink" href="#eclipse-ide-support" title="Permalink to this headline">¶</a></h3>
-<p>You can convert your existing Maven project to a project that can run in Eclipse by:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mvn</span> <span class="n">eclipse</span><span class="p">:</span><span class="n">eclipse</span>
-</pre></div>
-</div>
-<p>This can be done once you have your maven project properly configured.</p>
 </div>
 </div>
 <div class="section" id="source">
 <span id="source"></span><h2>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <p>The previously mentioned setup with Maven is recommended. Otherwise, the following instructions for macOS and Ubuntu are provided for reference only:</p>
-<p><strong>If you have already built mxnet from source using <code class="docutils literal"><span class="pre">cmake</span></code>, run <code class="docutils literal"><span class="pre">make</span> <span class="pre">clean</span></code> and then follow the appropriate guide below</strong>*</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="33%" />
@@ -346,23 +352,24 @@ brew install maven
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>macOS</td>
-<td><a class="reference external" href="osx_setup.html#build-the-shared-library">Shared Library for macOS</a></td>
-<td><a class="reference external" href="osx_setup.html#install-the-mxnet-package-for-scala">Scala Package for macOS</a></td>
+<td><a class="reference external" href="../install/osx_setup.html#build-the-shared-library">Shared Library for macOS</a></td>
+<td><a class="reference external" href="http://mxnet.incubator.apache.org/install/osx_setup.html#install-the-mxnet-package-for-scala">Scala Package for macOS</a></td>
 </tr>
 <tr class="row-odd"><td>Ubuntu</td>
-<td><a class="reference external" href="ubuntu_setup.html#installing-mxnet-on-ubuntu">Shared Library for Ubuntu</a></td>
-<td><a class="reference external" href="ubuntu_setup.html#install-the-mxnet-package-for-scala">Scala Package for Ubuntu</a></td>
+<td><a class="reference external" href="../install/ubuntu_setup.html#installing-mxnet-on-ubuntu">Shared Library for Ubuntu</a></td>
+<td><a class="reference external" href="http://mxnet.incubator.apache.org/install/ubuntu_setup.html#install-the-mxnet-package-for-scala">Scala Package for Ubuntu</a></td>
 </tr>
 <tr class="row-even"><td>Windows</td>
-<td>&#160;</td>
+<td><a class="reference external" href="../install/windows_setup.html#build-the-shared-library">Shared Library for Windows</a></td>
 <td>Call for Contribution</td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="build-java-from-an-existing-mxnet-installation">
 <span id="build-java-from-an-existing-mxnet-installation"></span><h3>Build Java from an Existing MXNet Installation<a class="headerlink" href="#build-java-from-an-existing-mxnet-installation" title="Permalink to this headline">¶</a></h3>
-<p>If you have already built MXNet <strong>from source</strong> and are looking to setup Java from that point, you may simply run the following from the MXNet <code class="docutils literal"><span class="pre">scala-package</span></code> folder:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mvn</span> <span class="n">install</span>
+<p>If you have already built MXNet <strong>from source</strong> and are looking to setup Java from that point, you may simply run the following from the MXNet source root:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">scalapkg</span>
+<span class="n">make</span> <span class="n">scalainstall</span>
 </pre></div>
 </div>
 <p>This will install both the Java Inference API and the required MXNet-Scala package.</p>
@@ -370,16 +377,16 @@ brew install maven
 </div>
 <div class="section" id="documentation">
 <span id="documentation"></span><h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>Javadocs are generated as part of the docs build pipeline. You can find them published in the <a class="reference internal" href="../api/java/index.html"><span class="doc">Java API</span></a> section of the website or by going to the <a class="reference external" href="https://mxnet.incubator.apache.org/api/scala/docs/index.html#org.apache.mxnet.package">scaladocs output</a> directly.</p>
+<p>Javadocs are generated as part of the docs build pipeline. You can find them published in the <a class="reference external" href="http://mxnet.io/api/java/index.html">Java API</a> section of the website or by going to the <a class="reference external" href="https://mxnet.incubator.apache.org/api/scala/docs/index.html#org.apache.mxnet.package">scaladocs output</a> directly.</p>
 <p>To build the docs yourself, follow the <a class="reference external" href="https://github.com/apache/incubator-mxnet/tree/master/docs/build_version_doc#developer-instructions">developer build docs instructions</a>.</p>
 <hr></div>
 <div class="section" id="resources">
 <span id="resources"></span><h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/api/java">Java API</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mxnet.incubator.apache.org/api/scala/docs/index.html#org.apache.mxnet.package">javadocs</a></li>
-<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/tutorials/java">MXNet-Java Tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/api/java/index.html">Java API</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/api/java/docs/index.html#org.apache.mxnet.package">javadocs</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://mxnet.io/../tutorials/index.html#java-tutorials">MXNet-Java Tutorials</a></li>
 </ul>
 </div>
 </div>
@@ -399,7 +406,6 @@ brew install maven
 <li><a class="reference internal" href="#maven-repository">Maven Repository</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#eclipse-ide-support">Eclipse IDE Support</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#source">Source</a><ul>
