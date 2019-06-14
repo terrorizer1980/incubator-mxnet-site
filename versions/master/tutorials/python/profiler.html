@@ -237,10 +237,10 @@
 <!--- specific language governing permissions and limitations -->
 <!--- under the License. --><div class="section" id="profiling-mxnet-models">
 <span id="profiling-mxnet-models"></span><h1>Profiling MXNet Models<a class="headerlink" href="#profiling-mxnet-models" title="Permalink to this headline">¶</a></h1>
-<p>It is often helpful to understand what operations take how much time while running a model. This helps optimize the model to run faster. In this tutorial, we will learn how to profile MXNet models to measure their running time and memory consumption using the MXNet profiler.</p>
+<p>It is often helpful to check the execution time of each operation in a neural network. You can then determine where to focus your effort to speed up model training or inference. In this tutorial, we will learn how to profile MXNet models to measure their running time and memory consumption using the MXNet profiler.</p>
 <div class="section" id="the-incorrect-way-to-profile">
 <span id="the-incorrect-way-to-profile"></span><h2>The incorrect way to profile<a class="headerlink" href="#the-incorrect-way-to-profile" title="Permalink to this headline">¶</a></h2>
-<p>If you have just begun using MXNet, you might be tempted to measure the execution time of your model using Python’s <code class="docutils literal"><span class="pre">time</span></code> module like shown below:</p>
+<p>If you have just started to use MXNet, you might be tempted to measure the execution time of your model using Python’s <code class="docutils literal"><span class="pre">time</span></code> module like shown below:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">nd</span>
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
@@ -251,28 +251,24 @@
 <span class="k">print</span><span class="p">(</span><span class="s1">'Time for matrix multiplication: </span><span class="si">%f</span><span class="s1"> sec</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>                                
-<span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>                                
-<span class="k">print</span><span class="p">(</span><span class="s1">'Time for printing the output: </span><span class="si">%f</span><span class="s1"> sec'</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+<span class="n">y_np</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>                             
+<span class="k">print</span><span class="p">(</span><span class="s1">'Time for converting to numpy: </span><span class="si">%f</span><span class="s1"> sec'</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Time for matrix multiplication: 0.005051 sec</strong><!--notebook-skip-line--></p>
-<p>[[501.1584  508.29724 495.65237 ... 492.84705 492.69092 490.0481 ]<!--notebook-skip-line--></p>
-<p>[508.81058 507.1822  495.1743  ... 503.10526 497.29315 493.67917]<!--notebook-skip-line--></p>
-<p>[489.56598 499.47015 490.17722 ... 490.99945 488.05008 483.28836]<!--notebook-skip-line--></p>
-<p>...<!--notebook-skip-line--></p>
-<p>[484.0019  495.7179  479.92142 ... 493.69952 478.89194 487.2074 ]<!--notebook-skip-line--></p>
-<p>[499.64932 507.65094 497.5938  ... 493.0474  500.74512 495.82712]<!--notebook-skip-line--></p>
-<p>[516.0143  519.1715  506.354   ... 510.08878 496.35608 495.42523]]<!--notebook-skip-line--></p>
-<p><strong>Time for printing the output: 0.167693 sec</strong><!--notebook-skip-line--></p>
-<p>From the output above, it seems as if printing the output takes lot more time that multiplying two large matrices. That doesn’t feel right.</p>
-<p>This is because, in MXNet, all operations are executed asynchronously. So, when <code class="docutils literal"><span class="pre">nd.dot(x,</span> <span class="pre">x)</span></code> returns, the matrix multiplication is not complete, it has only been queued for execution. <code class="docutils literal"><span class="pre">asnumpy</span></code> in <code class="docutils literal"><span class="pre">print(y.asnumpy())</span></code> however, waits for the result to be computed and hence takes longer time.</p>
-<p>While it is possible to use <code class="docutils literal"><span class="pre">NDArray.waitall()</span></code> before and after operations to get running time of operations, it is not a scalable method to measure running time of multiple sets of operations, especially in a Sequential or Hybrid network.</p>
+<p><strong>Time for converting to numpy: 0.167693 sec</strong><!--notebook-skip-line--></p>
+<p>From the timings above, it seems as if converting to numpy takes lot more time than multiplying two large matrices. That doesn’t seem right.</p>
+<p>This is because, in MXNet, all operations are executed asynchronously. So, when <code class="docutils literal"><span class="pre">nd.dot(x,</span> <span class="pre">x)</span></code> returns, the matrix multiplication is not complete, it has only been queued for execution. However, <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html?highlight=asnumpy#mxnet.ndarray.NDArray.asnumpy"><code class="docutils literal"><span class="pre">asnumpy</span></code></a> has to wait for the result to be calculated in order to convert it to numpy array on CPU, hence taking a longer time. Other examples of ‘blocking’ operations include <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html?highlight=asscalar#mxnet.ndarray.NDArray.asscalar"><code class="docutils literal"><span class="pre">asscalar</span></code></a> and <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html?highlight=wait_to_read#mxnet.ndarray.NDArray.wait_to_read"><code class="docutils literal"><span class="pre">wait_to_read</span></code></a>.</p>
+<p>While it is possible to use <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/ndarray/ndarray.html?highlight=waitall#mxnet.ndarray.waitall"><code class="docutils literal"><span class="pre">NDArray.waitall()</span></code></a> before and after operations to get running time of operations, it is not a scalable method to measure running time of multiple sets of operations, especially in a <a class="reference external" href="http://mxnet.incubator.apache.org/api/python/gluon/gluon.html?highlight=sequential#mxnet.gluon.nn.Sequential"><code class="docutils literal"><span class="pre">Sequential</span></code></a> or hybridized network.</p>
 </div>
 <div class="section" id="the-correct-way-to-profile">
 <span id="the-correct-way-to-profile"></span><h2>The correct way to profile<a class="headerlink" href="#the-correct-way-to-profile" title="Permalink to this headline">¶</a></h2>
 <p>The correct way to measure running time of MXNet models is to use MXNet profiler. In the rest of this tutorial, we will learn how to use the MXNet profiler to measure the running time and memory consumption of MXNet models. You can import the profiler and configure it from Python code.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">profiler</span>
-<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'profile_output.json'</span><span class="p">)</span>
+
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">filename</span><span class="o">=</span><span class="s1">'profile_output.json'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">profile_all</span></code> enables all types of profiling. You can also individually enable the following types of profiling:</p>
@@ -285,8 +281,9 @@
 <p><code class="docutils literal"><span class="pre">aggregate_stats</span></code> aggregates statistics in memory which can then be printed to console by calling <code class="docutils literal"><span class="pre">profiler.dumps()</span></code>.</p>
 <div class="section" id="setup-build-a-model">
 <span id="setup-build-a-model"></span><h3>Setup: Build a model<a class="headerlink" href="#setup-build-a-model" title="Permalink to this headline">¶</a></h3>
-<p>Let’s build a small convolutional neural network that we can use for profiling.</p>
+<p>Let’s build a small convolutional neural network that we can use to demonstrate profiling.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span>
+
 <span class="n">net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">HybridSequential</span><span class="p">()</span>
 <span class="k">with</span> <span class="n">net</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
     <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
@@ -300,11 +297,13 @@
 </div>
 <p>We need data that we can run through the network for profiling. We’ll use the MNIST dataset.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet.gluon.data.vision</span> <span class="kn">import</span> <span class="n">transforms</span>
-<span class="n">train_data</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">transform_first</span><span class="p">(</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()),</span>
-                                   <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform_first</span><span class="p">(</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">())</span>
+<span class="n">dataloader</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Let’s define a method that will run one training iteration given data and label.</p>
+<p>Let’s define a function that will run a single training iteration given <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">label</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Use GPU if available</span>
 <span class="k">if</span> <span class="n">mx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">():</span>
     <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">()</span>
@@ -315,26 +314,22 @@
 <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Xavier</span><span class="p">(),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
 <span class="c1"># Use SGD optimizer</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">'sgd'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'learning_rate'</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">})</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">'sgd'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'learning_rate'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">})</span>
 
-<span class="c1"># Softmax Cross Entropy is a frequently used loss function for multi-classs classification</span>
+<span class="c1"># Softmax Cross Entropy is a frequently used loss function for multi-class classification</span>
 <span class="n">softmax_cross_entropy</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">SoftmaxCrossEntropyLoss</span><span class="p">()</span>
 
 <span class="c1"># A helper function to run one training iteration</span>
 <span class="k">def</span> <span class="nf">run_training_iteration</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
-    
     <span class="c1"># Load data and label is the right context</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-    
     <span class="c1"># Run the forward pass</span>
     <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">softmax_cross_entropy</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
-    
     <span class="c1"># Run the backward pass</span>
     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    
     <span class="c1"># Apply changes to parameters</span>
     <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
@@ -342,9 +337,9 @@
 </div>
 <div class="section" id="starting-and-stopping-the-profiler-from-python">
 <span id="starting-and-stopping-the-profiler-from-python"></span><h3>Starting and stopping the profiler from Python<a class="headerlink" href="#starting-and-stopping-the-profiler-from-python" title="Permalink to this headline">¶</a></h3>
-<p>When the first forward pass is run on a network, MXNet does a number of housekeeping tasks including inferring the shapes of various parameters, allocating memory for intermediate and final outputs, etc. For these reasons, profiling the first iteration doesn’t provide accurate results. We will, therefore skip the first iteration.</p>
+<p>When the first forward pass is run on a network, MXNet does a number of housekeeping tasks including inferring the shapes of various parameters, allocating memory for intermediate and final outputs, etc. For these reasons, profiling the first iteration doesn’t provide representative results for the rest of training. We will, therefore, skip the first iteration.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Run the first iteration without profiling</span>
-<span class="n">itr</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+<span class="n">itr</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span>
 <span class="n">run_training_iteration</span><span class="p">(</span><span class="o">*</span><span class="nb">next</span><span class="p">(</span><span class="n">itr</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -356,26 +351,29 @@
 
 <span class="n">run_training_iteration</span><span class="p">(</span><span class="o">*</span><span class="nb">next</span><span class="p">(</span><span class="n">itr</span><span class="p">))</span>
 
-<span class="c1"># Ask the profiler to stop recording after operations have completed</span>
+<span class="c1"># Make sure all operations have completed</span>
 <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span>
+<span class="c1"># Ask the profiler to stop recording</span>
 <span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'stop'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Between running and stopping the profiler, you can also pause and resume the profiler using <code class="docutils literal"><span class="pre">profiler.pause()</span></code> and <code class="docutils literal"><span class="pre">profiler.resume()</span></code> respectively to profile only parts of the code you want to profile.</p>
 </div>
-<div class="section" id="starting-profiler-automatically-using-environment-variable">
-<span id="starting-profiler-automatically-using-environment-variable"></span><h3>Starting profiler automatically using environment variable<a class="headerlink" href="#starting-profiler-automatically-using-environment-variable" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="starting-the-profiler-automatically-using-an-environment-variable">
+<span id="starting-the-profiler-automatically-using-an-environment-variable"></span><h3>Starting the profiler automatically using an environment variable<a class="headerlink" href="#starting-the-profiler-automatically-using-an-environment-variable" title="Permalink to this headline">¶</a></h3>
 <p>The method described above requires code changes to start and stop the profiler. You can also start the profiler automatically and profile the entire code without any code changes using the <code class="docutils literal"><span class="pre">MXNET_PROFILER_AUTOSTART</span></code> environment variable.</p>
-<p>MXNet will start the profiler automatically if you run your code with the environment variable <code class="docutils literal"><span class="pre">MXNET_PROFILER_AUTOSTART</span></code> set to <code class="docutils literal"><span class="pre">1</span></code>. The profiler output is stored into <code class="docutils literal"><span class="pre">profile.json</span></code> in the current directory.</p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">MXNET_PROFILER_AUTOSTART=1</span> <span class="pre">python</span> <span class="pre">my_script.py</span></code></p>
+<p>MXNet will start the profiler automatically if you run your code with the environment variable <code class="docutils literal"><span class="pre">MXNET_PROFILER_AUTOSTART</span></code> set to <code class="docutils literal"><span class="pre">1</span></code>. The profiler output is stored in <code class="docutils literal"><span class="pre">profile.json</span></code> inside the current directory.</p>
 <p>Note that the profiler output could be large depending on your code. It might be helpful to profile only sections of your code using the <code class="docutils literal"><span class="pre">set_state</span></code> API described in the previous section.</p>
 </div>
 <div class="section" id="increasing-granularity-of-the-profiler-output">
 <span id="increasing-granularity-of-the-profiler-output"></span><h3>Increasing granularity of the profiler output<a class="headerlink" href="#increasing-granularity-of-the-profiler-output" title="Permalink to this headline">¶</a></h3>
 <p>MXNet executes computation graphs in ‘bulk mode’ which reduces kernel launch gaps in between symbolic operators for faster execution. This could reduce the granularity of the profiler output. If you need profiling result of every operator, please set the environment variables <code class="docutils literal"><span class="pre">MXNET_EXEC_BULK_EXEC_INFERENCE</span></code> and <code class="docutils literal"><span class="pre">MXNET_EXEC_BULK_EXEC_TRAIN</span></code> to <code class="docutils literal"><span class="pre">0</span></code> to disable the bulk execution mode.</p>
+<p>When working with networks created using the Gluon API, you will get a more granular profiling outputs if you profile networks that haven’t been hybridized. Operations can appear fused together in the profiling outputs after hybridization, which can make debugging tricky.</p>
 </div>
 <div class="section" id="viewing-profiler-output">
 <span id="viewing-profiler-output"></span><h3>Viewing profiler output<a class="headerlink" href="#viewing-profiler-output" title="Permalink to this headline">¶</a></h3>
-<p>There are a few ways to view the information collected by the profiler. You can view it in the console, you can view a more graphical version in a browser, or you can use a vendor tool such as Intel VTune or Nvidia NVProf to view output. For most scenarios the information you need can be obtained with MXNet’s built in profiler support, but if you want to investigate the performance of operators along side extra context about your hardware (e.g. cache hit rates, or CUDA kernel timings) then profiling jointly with vendor tools is recommended.</p>
+<p>There are a few ways to view the information collected by the profiler. You can view it in the console, you can view a more graphical version in a browser, or you can use a vendor tool such as Intel VTune or Nvidia NVProf to view output. For most scenarios the information you need can be obtained with MXNet’s built in profiler support, but if you want to investigate the performance of operators alongside extra context about your hardware (e.g. cache hit rates, or CUDA kernel timings) then profiling jointly with vendor tools is recommended.</p>
 <div class="section" id="view-in-console">
 <span id="view-in-console"></span><h4>1. View in console<a class="headerlink" href="#view-in-console" title="Permalink to this headline">¶</a></h4>
 <p>You can use the <code class="docutils literal"><span class="pre">profiler.dumps()</span></code> method to view the information collected by the profiler in the console. The collected information contains time taken by each operator, time taken by each C API and memory consumed in both CPU and GPU.</p>
@@ -396,22 +394,31 @@
 <p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profile_operators.png"/></p>
 <p>The above picture visualizes the sequence in which the operators were executed and the time taken by each operator.</p>
 </div>
-<div class="section" id="view-in-nvprof">
-<span id="view-in-nvprof"></span><h4>3. View in NVProf<a class="headerlink" href="#view-in-nvprof" title="Permalink to this headline">¶</a></h4>
-<p>You can view all MXNet profiler information alongside CUDA kernel information by using the MXNet profiler along with NVProf.  Use the MXNet profiler as in the samples above, but invoke your python script with the following wrapper process available on most systems that support CUDA:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>nvprof -o my_profile.nvvp python my_profiler_script.py
-<span class="o">==</span><span class="nv">11588</span><span class="o">==</span> NVPROF is profiling process <span class="m">11588</span>, command: python my_profiler_script.py
-<span class="o">==</span><span class="nv">11588</span><span class="o">==</span> Generated result file: /home/kellen/Development/incubator-mxnet/ci/my_profile.nvvp
-</pre></div>
 </div>
-<p>Your my_profile.nvvp file will automatically be annotated with NVTX ranges displayed alongside your standard NVProf timeline.  This can be very useful when you’re trying to find patterns between operators run by MXNet, and their associated CUDA kernel calls.</p>
-<p><img alt="Operator profiling" src="../../_images/profiler_nvprof.png"/></p>
-<p>In this picture we see a rough overlay of a few types of information plotted on a horizontal timeline.  At the top of the plot we have CPU tasks such as driver operations, memory copy calls, MXNet engine operator invocations, and imperative MXNet API calls.  Below we see the kernels active on the GPU during the same time period.</p>
-<p><img alt="Operator profiling" src="../../_images/profiler_nvprof_zoomed.png"/></p>
+</div>
+<div class="section" id="advanced-using-nvidia-profiling-tools">
+<span id="advanced-using-nvidia-profiling-tools"></span><h2>Advanced: Using NVIDIA Profiling Tools<a class="headerlink" href="#advanced-using-nvidia-profiling-tools" title="Permalink to this headline">¶</a></h2>
+<p>MXNet’s Profiler is the recommended starting point for profiling MXNet code, but NVIDIA also provides a couple of tools for low-level profiling of CUDA code: <a class="reference external" href="https://devblogs.nvidia.com/cuda-pro-tip-nvprof-your-handy-universal-gpu-profiler/">NVProf</a>, <a class="reference external" href="https://developer.nvidia.com/nvidia-visual-profiler">Visual Profiler</a> and <a class="reference external" href="https://developer.nvidia.com/nsight-compute">Nsight Compute</a>. You can use these tools to profile all kinds of executables, so they can be used for profiling Python scripts running MXNet. And you can use these in conjunction with the MXNet Profiler to see high-level information from MXNet alongside the low-level CUDA kernel information.</p>
+<div class="section" id="nvprof-and-visual-profiler">
+<span id="nvprof-and-visual-profiler"></span><h3>NVProf and Visual Profiler<a class="headerlink" href="#nvprof-and-visual-profiler" title="Permalink to this headline">¶</a></h3>
+<p>NVProf and Visual Profiler are available in CUDA 9 and CUDA 10 toolkits. You can get a timeline view of CUDA kernel executions, and also analyse the profiling results to get automated recommendations. It is useful for profiling end-to-end training but the interface can sometimes become slow and unresponsive.</p>
+<p>You can initiate the profiling directly from inside Visual Profiler or from the command line with <code class="docutils literal"><span class="pre">nvprof</span></code> which wraps the execution of your Python script. If it’s not on your path already, you can find <code class="docutils literal"><span class="pre">nvprof</span></code> inside your CUDA directory. See <a class="reference external" href="https://discuss.mxnet.io/t/using-nvidia-profiling-tools-visual-profiler-and-nsight-compute/">this discussion post</a> for more details on setup.</p>
+<p><code class="docutils literal"><span class="pre">$</span> <span class="pre">nvprof</span> <span class="pre">-o</span> <span class="pre">my_profile.nvvp</span> <span class="pre">python</span> <span class="pre">my_profiler_script.py</span></code></p>
+<p><code class="docutils literal"><span class="pre">==11588==</span> <span class="pre">NVPROF</span> <span class="pre">is</span> <span class="pre">profiling</span> <span class="pre">process</span> <span class="pre">11588,</span> <span class="pre">command:</span> <span class="pre">python</span> <span class="pre">my_profiler_script.py</span></code></p>
+<p><code class="docutils literal"><span class="pre">==11588==</span> <span class="pre">Generated</span> <span class="pre">result</span> <span class="pre">file:</span> <span class="pre">/home/user/Development/incubator-mxnet/ci/my_profile.nvvp</span></code></p>
+<p>We specified an output file called <code class="docutils literal"><span class="pre">my_profile.nvvp</span></code> and this will be annotated with NVTX ranges (for MXNet operations) that will be displayed alongside the standard NVProf timeline. This can be very useful when you’re trying to find patterns between operators run by MXNet, and their associated CUDA kernel calls.</p>
+<p>You can open this file in Visual Profiler to visualize the results.</p>
+<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_nvprof.png"/></p>
+<p>At the top of the plot we have CPU tasks such as driver operations, memory copy calls, MXNet engine operator invocations, and imperative MXNet API calls.  Below we see the kernels active on the GPU during the same time period.</p>
+<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_nvprof_zoomed.png"/></p>
 <p>Zooming in on a backwards convolution operator we can see that it is in fact made up of a number of different GPU kernel calls, including a cuDNN winograd convolution call, and a fast-fourier transform call.</p>
-<p><img alt="Operator profiling" src="../../_images/profiler_winograd.png"/></p>
+<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png"/></p>
 <p>Selecting any of these kernel calls (the winograd convolution call shown here) will get you some interesting GPU performance information such as occupancy rates (vs theoretical), shared memory usage and execution duration.</p>
 </div>
+<div class="section" id="nsight-compute">
+<span id="nsight-compute"></span><h3>Nsight Compute<a class="headerlink" href="#nsight-compute" title="Permalink to this headline">¶</a></h3>
+<p>Nsight Compute is available in CUDA 10 toolkit, but can be used to profile code running CUDA 9. You don’t get a timeline view, but you get many low level statistics about each individual kernel executed and can compare multiple runs (i.e. create a baseline).</p>
+<p><img alt="Nsight Compute" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profile_nsight_compute.png"/></p>
 </div>
 <div class="section" id="further-reading">
 <span id="further-reading"></span><h3>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h3>
@@ -422,7 +429,7 @@
 </ul>
 </div>
 <div class="btn-group" role="group">
-<div class="download-btn"><a download="profiler.ipynb" href="profiler.ipynb"><span class="glyphicon glyphicon-download-alt"></span> profiler.ipynb</a></div><div class="download-btn"><a download="profiler_bash.ipynb" href="profiler_bash.ipynb"><span class="glyphicon glyphicon-download-alt"></span> profiler_bash.ipynb</a></div></div></div>
+<div class="download-btn"><a download="profiler.ipynb" href="profiler.ipynb"><span class="glyphicon glyphicon-download-alt"></span> profiler.ipynb</a></div></div></div>
 </div>
 </div>
 </div>
@@ -436,14 +443,18 @@
 <li><a class="reference internal" href="#the-correct-way-to-profile">The correct way to profile</a><ul>
 <li><a class="reference internal" href="#setup-build-a-model">Setup: Build a model</a></li>
 <li><a class="reference internal" href="#starting-and-stopping-the-profiler-from-python">Starting and stopping the profiler from Python</a></li>
-<li><a class="reference internal" href="#starting-profiler-automatically-using-environment-variable">Starting profiler automatically using environment variable</a></li>
+<li><a class="reference internal" href="#starting-the-profiler-automatically-using-an-environment-variable">Starting the profiler automatically using an environment variable</a></li>
 <li><a class="reference internal" href="#increasing-granularity-of-the-profiler-output">Increasing granularity of the profiler output</a></li>
 <li><a class="reference internal" href="#viewing-profiler-output">Viewing profiler output</a><ul>
 <li><a class="reference internal" href="#view-in-console">1. View in console</a></li>
 <li><a class="reference internal" href="#view-in-browser">2. View in browser</a></li>
-<li><a class="reference internal" href="#view-in-nvprof">3. View in NVProf</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-using-nvidia-profiling-tools">Advanced: Using NVIDIA Profiling Tools</a><ul>
+<li><a class="reference internal" href="#nvprof-and-visual-profiler">NVProf and Visual Profiler</a></li>
+<li><a class="reference internal" href="#nsight-compute">Nsight Compute</a></li>
 <li><a class="reference internal" href="#further-reading">Further reading</a></li>
 </ul>
 </li>
