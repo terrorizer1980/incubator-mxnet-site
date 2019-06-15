@@ -50,6 +50,7 @@ var searchData=
   ['mx_5ffloat',['mx_float',['../c__api_8h.html#a4e709067707d9f90c534bd65494ae668',1,'mx_float():&#160;c_api.h'],['../c__predict__api_8h.html#a4e709067707d9f90c534bd65494ae668',1,'mx_float():&#160;c_predict_api.h']]],
   ['mx_5fuint',['mx_uint',['../c__api_8h.html#a796e7ef8260ef40b24af7d1082aa2d84',1,'mx_uint():&#160;c_api.h'],['../c__predict__api_8h.html#a796e7ef8260ef40b24af7d1082aa2d84',1,'mx_uint():&#160;c_predict_api.h']]],
   ['mxaggregateprofilestatsprint',['MXAggregateProfileStatsPrint',['../c__api_8h.html#a8bf1ddff0b76c162f0fbdc243e83001b',1,'c_api.h']]],
+  ['mxaggregateprofilestatsprintex',['MXAggregateProfileStatsPrintEx',['../c__api_8h.html#a7f98ed356f4b0190f564529e24008237',1,'c_api.h']]],
   ['mxapihandleexception',['MXAPIHandleException',['../c__api__error_8h.html#a9c47b362e3ce2850ce8764fdeb666763',1,'c_api_error.h']]],
   ['mxapisetlasterror',['MXAPISetLastError',['../c__api__error_8h.html#a4421f44ae0ced14e4bb0f867e2071f24',1,'c_api_error.h']]],
   ['mxautogradbackward',['MXAutogradBackward',['../c__api_8h.html#a133d10a566764530bf3172e52afbe561',1,'c_api.h']]],

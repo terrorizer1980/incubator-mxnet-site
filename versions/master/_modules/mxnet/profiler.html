@@ -373,17 +373,44 @@
     <span class="n">dump</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="dumps"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.dumps">[docs]</a><span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="dumps"><a class="viewcode-back" href="../../api/python/profiler/profiler.html#mxnet.profiler.dumps">[docs]</a><span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'table'</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="s1">'avg'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">"""Return a printable string of aggregate profile stats.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    reset: boolean</span>
-<span class="sd">        Indicates whether to clean aggeregate statistical data collected up to this point</span>
+<span class="sd">        indicates whether to clean aggeregate statistical data collected up to this point</span>
+<span class="sd">    format: string</span>
+<span class="sd">        whether to return the aggregate stats in table of json format</span>
+<span class="sd">        can take 'table' or 'json'</span>
+<span class="sd">        defaults to 'table'</span>
+<span class="sd">    sort_by: string</span>
+<span class="sd">        can take 'avg', 'min', 'max', or 'count'</span>
+<span class="sd">        by which stat to sort the entries in each category</span>
+<span class="sd">        defaults to 'avg'</span>
+<span class="sd">    ascending: boolean</span>
+<span class="sd">        whether to sort ascendingly</span>
+<span class="sd">        defaults to False</span>
 <span class="sd">    """</span>
     <span class="n">debug_str</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>
-    <span class="n">do_reset</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">reset</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="mi">0</span>
-    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXAggregateProfileStatsPrint</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">debug_str</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">do_reset</span><span class="p">)))</span>
+    <span class="n">reset_to_int</span> <span class="o">=</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">format_to_int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'table'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">sort_by_to_int</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'avg'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'count'</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+    <span class="n">asc_to_int</span> <span class="o">=</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">format_to_int</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
+            <span class="s2">"Invalid value provided for format: </span><span class="si">{0}</span><span class="s2">. Support: 'table', 'json'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">sort_by</span> <span class="ow">in</span> <span class="n">sort_by_to_int</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
+            <span class="s2">"Invalid value provided for sort_by: </span><span class="si">{0}</span><span class="s2">. Support: 'avg', 'min', 'max', 'count'"</span>\
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sort_by</span><span class="p">)</span>
+    <span class="k">assert</span>  <span class="n">ascending</span> <span class="ow">in</span> <span class="n">asc_to_int</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
+            <span class="s2">"Invalid value provided for ascending: </span><span class="si">{0}</span><span class="s2">. Support: False, True"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ascending</span><span class="p">)</span>
+    <span class="k">assert</span>  <span class="n">reset</span> <span class="ow">in</span> <span class="n">reset_to_int</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
+            <span class="s2">"Invalid value provided for reset: </span><span class="si">{0}</span><span class="s2">. Support: False, True"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reset</span><span class="p">)</span>
+    <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXAggregateProfileStatsPrintEx</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">debug_str</span><span class="p">),</span>
+                                                   <span class="n">reset_to_int</span><span class="p">[</span><span class="n">reset</span><span class="p">],</span>
+                                                   <span class="n">format_to_int</span><span class="p">[</span><span class="nb">format</span><span class="p">],</span>
+                                                   <span class="n">sort_by_to_int</span><span class="p">[</span><span class="n">sort_by</span><span class="p">],</span>
+                                                   <span class="n">asc_to_int</span><span class="p">[</span><span class="n">ascending</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">py_str</span><span class="p">(</span><span class="n">debug_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
 
