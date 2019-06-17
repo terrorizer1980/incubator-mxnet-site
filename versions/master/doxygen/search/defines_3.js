@@ -1,5 +1,9 @@
 var searchData=
 [
+  ['mkldnn_5fapi',['MKLDNN_API',['../mkldnn_8h.html#a14804afce5364c7a515f82d21c6b64f0',1,'mkldnn.h']]],
+  ['mkldnn_5fdeprecated',['MKLDNN_DEPRECATED',['../mkldnn_8h.html#a1072aba87992636bf4df6d4c32a510f2',1,'mkldnn.h']]],
+  ['mkldnn_5fhelper_5fdll_5fexport',['MKLDNN_HELPER_DLL_EXPORT',['../mkldnn_8h.html#aefdd0dc1dffa6297e38f870340f4a6ea',1,'mkldnn.h']]],
+  ['mkldnn_5fhelper_5fdll_5fimport',['MKLDNN_HELPER_DLL_IMPORT',['../mkldnn_8h.html#afce0e300481dc63d28140565bc54a683',1,'mkldnn.h']]],
   ['mx_5fapi_5fbegin',['MX_API_BEGIN',['../c__api__error_8h.html#a959a98c071ffbeb325ef0cdea9ddc3e2',1,'c_api_error.h']]],
   ['mx_5fapi_5fend',['MX_API_END',['../c__api__error_8h.html#a18ba3014a2d5200443d7fece1c5f709d',1,'c_api_error.h']]],
   ['mx_5fapi_5fend_5fhandle_5ferror',['MX_API_END_HANDLE_ERROR',['../c__api__error_8h.html#abb261882494eb12821e327f5561653a5',1,'c_api_error.h']]],

@@ -1,5 +1,10 @@
 var searchData=
 [
+  ['eltwise',['Eltwise',['../group__c__api__eltwise.html',1,'']]],
+  ['engine_20operations',['Engine operations',['../group__c__api__engine.html',1,'']]],
+  ['engine',['Engine',['../group__c__api__engine__types.html',1,'']]],
+  ['execution_20stream_20operations',['Execution stream operations',['../group__c__api__stream.html',1,'']]],
+  ['execution_20stream',['Execution stream',['../group__c__api__types__stream.html',1,'']]],
   ['elementwisesum',['ElementwiseSum',['../namespacemxnet.html#a15dfd6f3fa03dc2cf39dbab1225e1a51',1,'mxnet']]],
   ['elemwise_5fadd',['elemwise_add',['../namespacemxnet_1_1cpp.html#a9dc86a3606afe7cc7ed8d028f58cddc5',1,'mxnet::cpp::elemwise_add(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a11744b6b7d915633107650990dd00148',1,'mxnet::cpp::elemwise_add(Symbol lhs, Symbol rhs)']]],
   ['elemwise_5fdiv',['elemwise_div',['../namespacemxnet_1_1cpp.html#a3a21ba4707a30004aed65f61e10feae8',1,'mxnet::cpp::elemwise_div(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs)'],['../namespacemxnet_1_1cpp.html#a1d09f5f44e0dc4d06a98760325a7209d',1,'mxnet::cpp::elemwise_div(Symbol lhs, Symbol rhs)']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['f16c',['F16C',['../namespacemxnet_1_1features.html#acc0db6e66a7cd0ef1da18e87a470fc41a1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
+  ['f16c',['F16C',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
   ['factor_5ftype',['factor_type',['../classmxnet_1_1cpp_1_1Xavier.html#aecdf5a414d18167bbbd48a84531f61c7',1,'mxnet::cpp::Xavier']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html',1,'mxnet::cpp']]],
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html#abaabb6c44a38ac9ee5025c312eead44e',1,'mxnet::cpp::FactorScheduler']]],
@@ -22,6 +22,7 @@ var searchData=
   ['finferstoragetype',['FInferStorageType',['../namespacemxnet.html#a0a1395f21139ba975a6268539df6a15d',1,'mxnet']]],
   ['fit',['Fit',['../classmxnet_1_1cpp_1_1FeedForward.html#a0aaa2cef2f7dc3794430815c78d39563',1,'mxnet::cpp::FeedForward']]],
   ['fix',['fix',['../namespacemxnet_1_1cpp.html#acae3f2a8b1b2882faa9fd0db7332e555',1,'mxnet::cpp::fix(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#a9fdd2c357d6e02a795232469b71870a6',1,'mxnet::cpp::fix(Symbol data)']]],
+  ['flags',['flags',['../structmkldnn__batch__normalization__desc__t.html#abb072997a29f19acc17a1b9a3a1ccfcd',1,'mkldnn_batch_normalization_desc_t::flags()'],['../structmkldnn__rnn__cell__desc__t.html#ada6e21a52cc3e8b0ac6f11659fbee519',1,'mkldnn_rnn_cell_desc_t::flags()']]],
   ['flatten',['Flatten',['../namespacemxnet_1_1cpp.html#aa3470d98c61a10ac5a1c583304ca81e9',1,'mxnet::cpp::Flatten(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#ad503b97061cd6b0e2424e4f9d032e816',1,'mxnet::cpp::Flatten(Symbol data)']]],
   ['flatto1d',['FlatTo1D',['../classmxnet_1_1TBlob.html#a95bf7032c2b90627510a89ac8bb2946f',1,'mxnet::TBlob']]],
   ['flatto2d',['FlatTo2D',['../classmxnet_1_1TBlob.html#a23cc57be3b2c40a269c8c9f242fa0532',1,'mxnet::TBlob']]],
@@ -32,6 +33,7 @@ var searchData=
   ['fneedrequantize',['FNeedRequantize',['../namespacemxnet.html#a7f7c271f6d03ee358eb9e66486e41045',1,'mxnet']]],
   ['fnproperty',['FnProperty',['../namespacemxnet.html#a998b74220fab2b012cf8a179650e1b3b',1,'mxnet']]],
   ['foreach',['ForEach',['../classmxnet_1_1common_1_1LazyAllocArray.html#a43a89c8e7b4e1a09f346694073a2d998',1,'mxnet::common::LazyAllocArray']]],
+  ['format',['format',['../structmkldnn__rnn__packed__desc__t.html#aa1353607b9e8ce334c39929e5e1080a6',1,'mkldnn_rnn_packed_desc_t::format()'],['../structmkldnn__memory__desc__t.html#a99a2a66c29171fa838d1d5535dd3fbaf',1,'mkldnn_memory_desc_t::format()']]],
   ['forward',['Forward',['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()'],['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()']]],
   ['forwardinplaceoption',['ForwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#aad7a3e87866515a2b7100e849a2fe966',1,'mxnet::OperatorProperty']]],
   ['forwardresource',['ForwardResource',['../classmxnet_1_1OperatorProperty.html#a4623326f2919d6ae87a6d783bb9751c7',1,'mxnet::OperatorProperty']]],

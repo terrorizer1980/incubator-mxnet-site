@@ -1,6 +1,7 @@
 var searchData=
 [
   ['kcpu',['kCPU',['../namespacemxnet.html#a512ee02aece77cb0bf39b6e2ded77686',1,'mxnet']]],
+  ['kernel',['kernel',['../structmkldnn__pooling__desc__t.html#a7fe4d394ee37ddfae7f196627a0b15b6',1,'mkldnn_pooling_desc_t']]],
   ['key_5fvar_5fnum_5fargs',['key_var_num_args',['../structmxnet_1_1OperatorPropertyReg.html#af3aee96c6a2289e7554d7503186a540c',1,'mxnet::OperatorPropertyReg']]],
   ['kgpu',['kGPU',['../namespacemxnet.html#a43ebce8ff01c0bee0dddb4417ea1239d',1,'mxnet']]],
   ['kmaxdevid',['kMaxDevID',['../structmxnet_1_1Context.html#a958219ae412395685ef1d82af0dbbe67',1,'mxnet::Context']]],
