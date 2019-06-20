@@ -251,7 +251,8 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_real_t</span>
+
+<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_real_t</span><span class="p">,</span> <span class="n">MXNetError</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span>
@@ -579,7 +580,7 @@
                               <span class="s1">'save_parameters may resolve this error.'</span><span class="o">%</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.load_parameters"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                        <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">'current'</span><span class="p">):</span>
         <span class="sd">"""Load parameters from file previously saved by `save_parameters`.</span>
 
 <span class="sd">        Parameters</span>
@@ -596,7 +597,10 @@
 <span class="sd">        cast_dtype : bool, default False</span>
 <span class="sd">            Cast the data type of the NDArray loaded from the checkpoint to the dtype</span>
 <span class="sd">            provided by the Parameter if any.</span>
-
+<span class="sd">        dtype_source : str, default 'current'</span>
+<span class="sd">            must be in {'current', 'saved'}</span>
+<span class="sd">            Only valid if cast_dtype=True, specify the source of the dtype for casting</span>
+<span class="sd">            the parameters</span>
 <span class="sd">        References</span>
 <span class="sd">        ----------</span>
 <span class="sd">        `Saving and Loading Gluon Models \</span>
@@ -611,7 +615,8 @@
             <span class="c1"># legacy loading</span>
             <span class="k">del</span> <span class="n">loaded</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">)</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+                <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_missing</span><span class="p">:</span>
@@ -627,7 +632,7 @@
                     <span class="s2">"which contains parameters </span><span class="si">%s</span><span class="s2">. Set ignore_extra=True to ignore. "</span><span class="o">%</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">)</span></div>
+                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.load_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.load_params">[docs]</a>    <span class="k">def</span> <span class="nf">load_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1246,10 +1251,15 @@
         <span class="n">sym</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">input_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_names</span><span class="p">]</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">param_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get a valid type inference by using fp32</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mx_real_t</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Do not specify type, rely on saved params type instead</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">SymbolBlock</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">'saved'</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1381,7 +1391,11 @@
     <span class="c1"># Try to infer types of other parameters.</span>
     <span class="k">if</span> <span class="n">can_infer_input_type</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_sym_names</span><span class="p">,</span> <span class="n">input_sym_arg_types</span><span class="p">)}</span>
-        <span class="n">arg_types</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">out_params</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">arg_types</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">out_params</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MXNetError</span><span class="p">:</span>
+            <span class="c1"># Cannot infer type with current input</span>
+            <span class="n">arg_types</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">arg_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_types</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_params</span><span class="p">):</span>
         <span class="n">arg_types</span> <span class="o">=</span> <span class="p">[]</span>
