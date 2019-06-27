@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['_7edataiter',['~DataIter',['../classmxnet_1_1cpp_1_1DataIter.html#a5906f5aa2be3e2d67ab7b9b784793d9d',1,'mxnet::cpp::DataIter']]],
   ['_7edevicestore',['~DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#a701d38ae493688ee2136995fe8611aa0',1,'mxnet::common::cuda::DeviceStore']]],
   ['_7eengine',['~Engine',['../classmxnet_1_1Engine.html#aff025321827e15096c02342225f2395b',1,'mxnet::Engine']]],
   ['_7eexecutor',['~Executor',['../classmxnet_1_1Executor.html#adf445ff665c954061889d6bbee3c1c2a',1,'mxnet::Executor::~Executor()'],['../classmxnet_1_1cpp_1_1Executor.html#ad6a26ffaabff769ee829221ef47e29e6',1,'mxnet::cpp::Executor::~Executor()']]],
