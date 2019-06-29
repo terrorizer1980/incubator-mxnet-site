@@ -241,7 +241,7 @@
 <span class="c1"># under the License.</span>
 
 <span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable=unnecessary-pass</span>
+<span class="c1"># pylint: disable=unnecessary-pass, too-many-lines</span>
 <span class="sd">"""Neural network parameter."""</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'DeferredInitializationError'</span><span class="p">,</span> <span class="s1">'Parameter'</span><span class="p">,</span> <span class="s1">'Constant'</span><span class="p">,</span>
            <span class="s1">'ParameterDict'</span><span class="p">,</span> <span class="s1">'tensor_types'</span><span class="p">]</span>
@@ -1180,26 +1180,54 @@
                 <span class="k">assert</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">restore_prefix</span><span class="p">),</span> \
                     <span class="s2">"restore_prefix is '</span><span class="si">%s</span><span class="s2">' but Parameters name '</span><span class="si">%s</span><span class="s2">' does not start "</span> \
                     <span class="s2">"with '</span><span class="si">%s</span><span class="s2">'"</span><span class="o">%</span><span class="p">(</span><span class="n">restore_prefix</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">restore_prefix</span><span class="p">)</span>
-        <span class="n">lprefix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">restore_prefix</span><span class="p">)</span>
         <span class="n">ndarray_load</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">ndarray_load</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span>
+                       <span class="n">ignore_extra</span><span class="p">,</span> <span class="n">restore_prefix</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParameterDict.load_dict"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.ParameterDict.load_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">restore_prefix</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">dtype_source</span><span class="o">=</span><span class="s2">"current"</span><span class="p">):</span>
+        <span class="sd">"""Load parameters from dict</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param_dict : dict</span>
+<span class="sd">            Dictionary containing model parameters, preprended with arg: and aux: names</span>
+<span class="sd">        ctx : Context or list of Context</span>
+<span class="sd">            Context(s) initialize loaded parameters on.</span>
+<span class="sd">        allow_missing : bool, default False</span>
+<span class="sd">            Whether to silently skip loading parameters not represented in the file.</span>
+<span class="sd">        ignore_extra : bool, default False</span>
+<span class="sd">            Whether to silently ignore parameters from the file that are not</span>
+<span class="sd">            present in this ParameterDict.</span>
+<span class="sd">        restore_prefix : str, default ''</span>
+<span class="sd">            prepend prefix to names of stored parameters before loading</span>
+<span class="sd">        filename : str, default None</span>
+<span class="sd">        cast_dtype : bool, default False</span>
+<span class="sd">            Cast the data type of the NDArray loaded from the checkpoint to the dtype</span>
+<span class="sd">            provided by the Parameter if any</span>
+<span class="sd">        """</span>
+        <span class="n">lprefix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">restore_prefix</span><span class="p">)</span>
         <span class="n">loaded</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'arg:'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'aux:'</span><span class="p">)</span> <span class="k">else</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> \
-                  <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ndarray_load</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ndarray_load</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">ndarray_load</span>
+                  <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">param_dict</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">restore_prefix</span><span class="o">+</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">loaded</span><span class="p">}</span>
+        <span class="n">error_str</span> <span class="o">=</span> <span class="s2">"file: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">if</span> <span class="n">filename</span> <span class="k">else</span> <span class="s2">"param_dict"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_missing</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="p">,</span> \
-                    <span class="s2">"Parameter '</span><span class="si">%s</span><span class="s2">' is missing in file '</span><span class="si">%s</span><span class="s2">', which contains parameters: </span><span class="si">%s</span><span class="s2">. "</span> \
+                    <span class="s2">"Parameter '</span><span class="si">%s</span><span class="s2">' is missing in </span><span class="si">%s</span><span class="s2">, which contains parameters: </span><span class="si">%s</span><span class="s2">. "</span> \
                     <span class="s2">"Please make sure source and target networks have the same prefix."</span><span class="o">%</span><span class="p">(</span>
-                        <span class="n">name</span><span class="p">[</span><span class="n">lprefix</span><span class="p">:],</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                        <span class="n">name</span><span class="p">[</span><span class="n">lprefix</span><span class="p">:],</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">ignore_extra</span><span class="p">,</span> \
-                    <span class="s2">"Parameter '</span><span class="si">%s</span><span class="s2">' loaded from file '</span><span class="si">%s</span><span class="s2">' is not present in ParameterDict, "</span> \
+                    <span class="s2">"Parameter '</span><span class="si">%s</span><span class="s2">' loaded from </span><span class="si">%s</span><span class="s2"> is not present in ParameterDict, "</span> \
                     <span class="s2">"choices are: </span><span class="si">%s</span><span class="s2">. Set ignore_extra to True to ignore. "</span> \
                     <span class="s2">"Please make sure source and target networks have the same prefix."</span><span class="o">%</span><span class="p">(</span>
-                        <span class="n">name</span><span class="p">[</span><span class="n">lprefix</span><span class="p">:],</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                        <span class="n">name</span><span class="p">[</span><span class="n">lprefix</span><span class="p">:],</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="k">continue</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span>
+                                  <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div></div>
 </pre></div>
 </div>
 </div>

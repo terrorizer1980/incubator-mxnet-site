@@ -254,6 +254,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">bz2</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">npt</span>
@@ -1746,6 +1747,72 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"downloaded </span><span class="si">%s</span><span class="s2"> into </span><span class="si">%s</span><span class="s2"> successfully"</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fname</span></div>
 
+<div class="viewcode-block" id="download_model"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.download_model">[docs]</a><span class="k">def</span> <span class="nf">download_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dst_dir</span><span class="o">=</span><span class="s1">'./'</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Download a model from data.mxnet.io</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_name : str</span>
+<span class="sd">        Model name to download</span>
+<span class="sd">    dst_dir : str</span>
+<span class="sd">        Destination Directory to download the model</span>
+<span class="sd">    meta_info : dict of dict</span>
+<span class="sd">        Mapping from model_name to dict of the following structure:</span>
+<span class="sd">        {'symbol': url, 'params': url}</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Two element tuple containing model_name and epoch for the params saved</span>
+<span class="sd">    """</span>
+    <span class="n">_base_model_url</span> <span class="o">=</span> <span class="s1">'http://data.mxnet.io/models/'</span>
+    <span class="n">_default_model_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'imagenet1k-inception-bn'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/inception-bn/Inception-BN-symbol.json'</span><span class="p">,</span>
+                                    <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/inception-bn/Inception-BN-0126.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnet-18'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/18-layers/resnet-18-symbol.json'</span><span class="p">,</span>
+                                 <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/18-layers/resnet-18-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnet-34'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/34-layers/resnet-34-symbol.json'</span><span class="p">,</span>
+                                 <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/34-layers/resnet-34-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnet-50'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/50-layers/resnet-50-symbol.json'</span><span class="p">,</span>
+                                 <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/50-layers/resnet-50-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnet-101'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/101-layers/resnet-101-symbol.json'</span><span class="p">,</span>
+                                  <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/101-layers/resnet-101-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnet-152'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/152-layers/resnet-152-symbol.json'</span><span class="p">,</span>
+                                  <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnet/152-layers/resnet-152-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnext-50'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/50-layers/resnext-50-symbol.json'</span><span class="p">,</span>
+                                  <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/50-layers/resnext-50-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnext-101'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/101-layers/resnext-101-symbol.json'</span><span class="p">,</span>
+                                   <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/101-layers/resnext-101-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet1k-resnext-101-64x4d'</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/101-layers/resnext-101-64x4d-symbol.json'</span><span class="p">,</span>
+             <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet/resnext/101-layers/resnext-101-64x4d-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet11k-resnet-152'</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k/resnet-152/resnet-152-symbol.json'</span><span class="p">,</span>
+             <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k/resnet-152/resnet-152-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet11k-place365ch-resnet-152'</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k-place365-ch/resnet-152-symbol.json'</span><span class="p">,</span>
+             <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k-place365-ch/resnet-152-0000.params'</span><span class="p">},</span>
+        <span class="s1">'imagenet11k-place365ch-resnet-50'</span><span class="p">:</span>
+            <span class="p">{</span><span class="s1">'symbol'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k-place365-ch/resnet-50-symbol.json'</span><span class="p">,</span>
+             <span class="s1">'params'</span><span class="p">:</span><span class="n">_base_model_url</span><span class="o">+</span><span class="s1">'imagenet-11k-place365-ch/resnet-50-0000.params'</span><span class="p">},</span>
+    <span class="p">}</span>
+
+
+    <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">meta_info</span> <span class="o">=</span> <span class="n">_default_model_info</span>
+    <span class="n">meta_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_info</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta_info</span><span class="p">[</span><span class="n">model_name</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="s1">'symbol'</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">,</span> <span class="s2">"missing symbol url"</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+    <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">'symbol'</span><span class="p">],</span> <span class="n">model_name</span><span class="o">+</span><span class="s1">'-symbol.json'</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">'params'</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">,</span> <span class="s2">"mssing parameter file url"</span>
+    <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">'params'</span><span class="p">],</span> <span class="n">model_name</span><span class="o">+</span><span class="s1">'-0000.params'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="get_mnist"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.get_mnist">[docs]</a><span class="k">def</span> <span class="nf">get_mnist</span><span class="p">():</span>
     <span class="sd">"""Download and load the MNIST dataset</span>
 
@@ -2297,6 +2364,22 @@
     <span class="k">if</span> <span class="n">compare_states</span><span class="p">:</span>
         <span class="n">compare_ndarray_tuple</span><span class="p">(</span><span class="n">state1</span><span class="p">,</span> <span class="n">state2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
     <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">w1</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">w2</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="same_symbol_structure"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.same_symbol_structure">[docs]</a><span class="k">def</span> <span class="nf">same_symbol_structure</span><span class="p">(</span><span class="n">sym1</span><span class="p">,</span> <span class="n">sym2</span><span class="p">):</span>
+    <span class="sd">"""Compare two symbols to check if they have the same computation graph structure.</span>
+<span class="sd">    Returns true if operator corresponding to a particular node id is same in both</span>
+<span class="sd">    symbols for all nodes</span>
+<span class="sd">    """</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">sym1</span><span class="o">.</span><span class="n">tojson</span><span class="p">())</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s2">"nodes"</span><span class="p">]</span>
+    <span class="n">conf2</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">sym2</span><span class="o">.</span><span class="n">tojson</span><span class="p">())</span>
+    <span class="n">nodes2</span> <span class="o">=</span> <span class="n">conf2</span><span class="p">[</span><span class="s2">"nodes"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">node1</span><span class="p">,</span> <span class="n">node2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">nodes2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node1</span><span class="p">[</span><span class="s2">"op"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">node2</span><span class="p">[</span><span class="s2">"op"</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
 
 <div class="viewcode-block" id="EnvManager"><a class="viewcode-back" href="../../api/python/tools/test_utils.html#mxnet.test_utils.EnvManager">[docs]</a><span class="k">class</span> <span class="nc">EnvManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">"""Environment variable setter and unsetter via with idiom"""</span>

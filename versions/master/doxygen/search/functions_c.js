@@ -303,6 +303,7 @@ var searchData=
   ['mxrecordiowriterfree',['MXRecordIOWriterFree',['../c__api_8h.html#ab2a55917ffd918e334464f1b8a7a1ab9',1,'c_api.h']]],
   ['mxrecordiowritertell',['MXRecordIOWriterTell',['../c__api_8h.html#a6cc8e9f94ec431edf8d9502f20d7b833',1,'c_api.h']]],
   ['mxrecordiowriterwriterecord',['MXRecordIOWriterWriteRecord',['../c__api_8h.html#a0c380b6aa00446e7cb6021c8e2df75f3',1,'c_api.h']]],
+  ['mxreduceprecisionsymbol',['MXReducePrecisionSymbol',['../c__api_8h.html#a316ab0e6ede9a0ab46b52fe16240605f',1,'c_api.h']]],
   ['mxremovesubgraphpropertyopnames',['MXRemoveSubgraphPropertyOpNames',['../c__api__test_8h.html#a89b596297dc67b1a922afdac0aa48f35',1,'c_api_test.h']]],
   ['mxrtccreate',['MXRtcCreate',['../c__api_8h.html#a87e98002ae1a925b65a8cf0773f802d3',1,'c_api.h']]],
   ['mxrtccudakernelcall',['MXRtcCudaKernelCall',['../c__api_8h.html#ab538e41bfc6c0ce3185676dd028f8ccb',1,'c_api.h']]],

@@ -244,12 +244,14 @@
 <div class="section" id="data-loader-and-helper-functions">
 <span id="data-loader-and-helper-functions"></span><h2>Data loader and helper functions<a class="headerlink" href="#data-loader-and-helper-functions" title="Permalink to this headline">¶</a></h2>
 <p>For demonstration purposes we will use synthetic data loader.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
 <span class="kn">import</span> <span class="nn">mxnet.gluon</span> <span class="kn">as</span> <span class="nn">gluon</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span>
+<span class="kn">from</span> <span class="nn">mxnet.test_utils</span> <span class="kn">import</span> <span class="n">download_model</span>
 <span class="kn">import</span> <span class="nn">gluoncv</span> <span class="kn">as</span> <span class="nn">gcv</span>
 <span class="kn">from</span> <span class="nn">gluoncv.model_zoo</span> <span class="kn">import</span> <span class="n">get_model</span>
 
@@ -440,6 +442,43 @@
 <p>We got 60% speed increase from 3 additional lines of code!</p>
 </div>
 </div>
+<div class="section" id="inference-with-amp">
+<span id="inference-with-amp"></span><h2>Inference with AMP<a class="headerlink" href="#inference-with-amp" title="Permalink to this headline">¶</a></h2>
+<p>To do inference with mixed precision for a trained model in FP32, you can use the conversion APIs: <code class="docutils literal"><span class="pre">amp.convert_model</span></code> for symbolic model and <code class="docutils literal"><span class="pre">amp.convert_hybrid_block</span></code> for gluon models. The conversion APIs will take the FP32 model as input and will return a mixed precision model, which can be used to run inference. Below, we demonstrate for a gluon model and a symbolic model: 1. Conversion from FP32 model to mixed precision model 2. Run inference on the mixed precision model.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)):</span>
+    <span class="c1"># Below is an example of converting a gluon hybrid block to a mixed precision block</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s2">"resnet50_v1"</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">current_context</span><span class="p">())</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
+    <span class="n">model</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)))</span>
+    <span class="n">converted_model</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">convert_hybrid_block</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># Run dummy inference with the converted gluon model</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">converted_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span>
+                                                          <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+
+    <span class="c1"># Below is an example of converting a symbolic model to a mixed precision model</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s1">'model'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download_model</span><span class="p">(</span><span class="s2">"imagenet1k-resnet-18"</span><span class="p">,</span> <span class="n">dst_dir</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+    <span class="n">result_sym</span><span class="p">,</span> <span class="n">result_arg_params</span><span class="p">,</span> <span class="n">result_aux_params</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">convert_model</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span>
+                                                                         <span class="n">arg_params</span><span class="p">,</span>
+                                                                         <span class="n">aux_params</span><span class="p">)</span>
+
+    <span class="c1"># Run dummy inference with the converted symbolic model</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">result_sym</span><span class="p">,</span> <span class="n">data_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"data"</span><span class="p">],</span> <span class="n">label_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"softmax_label"</span><span class="p">],</span> <span class="n">context</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">current_context</span><span class="p">())</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">data_shapes</span><span class="o">=</span><span class="p">[[</span><span class="s1">'data'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)]],</span> <span class="n">label_shapes</span><span class="o">=</span><span class="p">[[</span><span class="s1">'softmax_label'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)]])</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">result_arg_params</span><span class="p">,</span> <span class="n">result_aux_params</span><span class="p">)</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">))],</span>
+                                <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))]))</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wait_to_read</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Conversion and Inference completed successfully"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="current-limitations-of-amp">
 <span id="current-limitations-of-amp"></span><h2>Current limitations of AMP<a class="headerlink" href="#current-limitations-of-amp" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -465,6 +504,7 @@
 <li><a class="reference internal" href="#dynamic-loss-scaling-in-the-training-loop">Dynamic loss scaling in the training loop</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#inference-with-amp">Inference with AMP</a></li>
 <li><a class="reference internal" href="#current-limitations-of-amp">Current limitations of AMP</a></li>
 </ul>
 </li>
