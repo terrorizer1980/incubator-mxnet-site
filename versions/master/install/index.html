@@ -254,7 +254,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#native-build">Native Build</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#nvidia-jetson-tx-family">Nvidia Jetson TX family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#nvidia-jetson-devices">NVIDIA Jetson Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#source-download">Source Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model_zoo/index.html">MXNet Model Zoo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
@@ -1139,68 +1139,9 @@ $ make cython <span class="c1"># You can set the python executable with `PYTHON`
 <p><em>Note - Because the complete MXNet library takes up a significant amount of the Raspberry Pi&#8217;s limited RAM, when loading training data or large models into memory, you might have to turn off the GUI and terminate running processes to free RAM.</em></p>
 </div> <!-- End of raspberry pi --><div class="nvidia-jetson"></div>
 </div>
-<div class="section" id="nvidia-jetson-tx-family">
-<span id="nvidia-jetson-tx-family"></span><h1>Nvidia Jetson TX family<a class="headerlink" href="#nvidia-jetson-tx-family" title="Permalink to this headline">¶</a></h1>
-<p>MXNet supports the Ubuntu Arch64 based operating system so you can run MXNet on NVIDIA Jetson Devices.</p>
-<p>These instructions will walk through how to build MXNet for the Pascal based <a class="reference external" href="http://www.nvidia.com/object/embedded-systems-dev-kits-modules.html">NVIDIA Jetson TX2</a> and install the corresponding python language bindings.</p>
-<p>For the purposes of this install guide we will assume that CUDA is already installed on your Jetson device.</p>
-<p><strong>Install MXNet</strong></p>
-<p>Installing MXNet is a two-step process:</p>
-<ol class="simple">
-<li>Build the shared library from the MXNet C++ source code.</li>
-<li>Install the supported language-specific packages for MXNet.</li>
-</ol>
-<p><strong>Step 1</strong> Build the Shared Library</p>
-<p>You need the following additional dependencies:</p>
-<ul class="simple">
-<li>Git (to pull code from GitHub)</li>
-<li>libatlas (for linear algebraic operations)</li>
-<li>libopencv (for computer vision operations)</li>
-<li>python pip (to load relevant python packages for our language bindings)</li>
-</ul>
-<p>Install these dependencies using the following commands in any directory:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">git</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">libatlas</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">dev</span> <span class="n">libopencv</span><span class="o">-</span><span class="n">dev</span> <span class="n">graphviz</span> <span class="n">python</span><span class="o">-</span><span class="n">pip</span>
-    <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pip</span> <span class="o">--</span><span class="n">upgrade</span>
-    <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span> <span class="n">numpy</span> <span class="o">--</span><span class="n">upgrade</span>
-    <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">graphviz</span><span class="o">==</span><span class="mf">0.8</span><span class="o">.</span><span class="mi">4</span> \
-                     <span class="n">jupyter</span>
-</pre></div>
-</div>
-<p>Clone the MXNet source code repository using the following <code class="docutils literal"><span class="pre">git</span></code> command in your home directory:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">incubator</span><span class="o">-</span><span class="n">mxnet</span><span class="o">.</span><span class="n">git</span> <span class="o">--</span><span class="n">recursive</span>
-    <span class="n">cd</span> <span class="n">incubator</span><span class="o">-</span><span class="n">mxnet</span>
-</pre></div>
-</div>
-<p>Edit the Makefile to install the MXNet with CUDA bindings to leverage the GPU on the Jetson:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">cp</span> <span class="n">make</span><span class="o">/</span><span class="n">crosscompile</span><span class="o">.</span><span class="n">jetson</span><span class="o">.</span><span class="n">mk</span> <span class="n">config</span><span class="o">.</span><span class="n">mk</span>
-</pre></div>
-</div>
-<p>Edit the Mshadow Makefile to ensure MXNet builds with Pascal&#8217;s hardware level low precision acceleration by editing 3rdparty/mshadow/make/mshadow.mk and adding the following after line 122:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MSHADOW_CFLAGS</span> <span class="o">+=</span> <span class="o">-</span><span class="n">DMSHADOW_USE_PASCAL</span><span class="o">=</span><span class="mi">1</span>
-</pre></div>
-</div>
-<p>Now you can build the complete MXNet library with the following command:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    make -j $(nproc)
-</pre></div>
-</div>
-<p>Executing this command creates a file called <code class="docutils literal"><span class="pre">libmxnet.so</span></code> in the mxnet/lib directory.</p>
-<p><strong>Step 2</strong> Install MXNet Python Bindings</p>
-<p>To install Python bindings run the following commands in the MXNet directory:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">cd</span> <span class="n">python</span>
-    <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span>
-    <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
-</pre></div>
-</div>
-<p>Note that the <code class="docutils literal"><span class="pre">-e</span></code> flag is optional. It is equivalent to <code class="docutils literal"><span class="pre">--editable</span></code> and means that if you edit the source files, these changes will be reflected in the package installed.</p>
-<p>Add the mxnet folder to the path:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    cd ..
-    export MXNET_HOME=$(pwd)
-    echo &quot;export PYTHONPATH=$MXNET_HOME/python:$PYTHONPATH&quot; &gt;&gt; ~/.rc
-    source ~/.rc
-</pre></div>
-</div>
-<p>You are now ready to run MXNet on your NVIDIA Jetson TX2 device.</p>
+<div class="section" id="nvidia-jetson-devices">
+<span id="nvidia-jetson-devices"></span><h1>NVIDIA Jetson Devices<a class="headerlink" href="#nvidia-jetson-devices" title="Permalink to this headline">¶</a></h1>
+<p>To install MXNet on a Jetson TX or Nano, please refer to the <a class="reference external" href="http://mxnet.io/install/install-jetson.html">Jetson installation guide</a>.</p>
 </div> <!-- End of jetson -->
 </div> <!-- End of devices --><!-- This # tag restarts the page and allows reuse
  of the div classes for validation sections, etc --><!-- Download -->
@@ -1226,7 +1167,7 @@ $ make cython <span class="c1"># You can set the python executable with `PYTHON`
 <li><a class="reference internal" href="#native-build">Native Build</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#nvidia-jetson-tx-family">Nvidia Jetson TX family</a></li>
+<li><a class="reference internal" href="#nvidia-jetson-devices">NVIDIA Jetson Devices</a></li>
 <li><a class="reference internal" href="#source-download">Source Download</a></li>
 </ul>
 
