@@ -395,6 +395,74 @@
 <p>The above picture visualizes the sequence in which the operators were executed and the time taken by each operator.</p>
 </div>
 </div>
+<div class="section" id="profiling-custom-operators">
+<span id="profiling-custom-operators"></span><h3>Profiling Custom Operators<a class="headerlink" href="#profiling-custom-operators" title="Permalink to this headline">¶</a></h3>
+<p>Should the existing NDArray operators fail to meet all your model’s needs, MXNet supports <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/gluon/customop.html">Custom Operators</a> that you can define in Python. In <code class="docutils literal"><span class="pre">forward()</span></code> and <code class="docutils literal"><span class="pre">backward()</span></code> of a custom operator, there are two kinds of code: “pure Python” code (NumPy operators included) and “sub-operators” (NDArray operators called within <code class="docutils literal"><span class="pre">forward()</span></code> and <code class="docutils literal"><span class="pre">backward()</span></code>). With that said, MXNet can profile the execution time of both kinds without additional setup. Specifically, the MXNet profiler will break a single custom operator call into a pure Python event and several sub-operator events if there are any. Furthermore, all of those events will have a prefix in their names, which is, conveniently, the name of the custom operator you called.</p>
+<p>Let’s try profiling custom operators with the following code example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">nd</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">profiler</span>
+
+<span class="k">class</span> <span class="nc">MyAddOne</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">CustomOp</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_train</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">in_data</span><span class="p">,</span> <span class="n">out_data</span><span class="p">,</span> <span class="n">aux</span><span class="p">):</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">out_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">in_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">out_grad</span><span class="p">,</span> <span class="n">in_data</span><span class="p">,</span> <span class="n">out_data</span><span class="p">,</span> <span class="n">in_grad</span><span class="p">,</span> <span class="n">aux</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">in_grad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out_grad</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="nd">@mx.operator.register</span><span class="p">(</span><span class="s1">'MyAddOne'</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">CustomAddOneProp</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">CustomOpProp</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomAddOneProp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">need_top_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">list_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">list_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">'output'</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">in_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">in_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">create_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">shapes</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MyAddOne</span><span class="p">()</span>
+
+
+<span class="n">inp</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'run'</span><span class="p">)</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Custom</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="s2">"MyAddOne"</span><span class="p">)</span>
+
+<span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span>
+
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'stop'</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here, we have created a custom operator called <code class="docutils literal"><span class="pre">MyAddOne</span></code>, and within its <code class="docutils literal"><span class="pre">forward()</span></code> function, we simply add one to the input. We can visualize the dump file in <code class="docutils literal"><span class="pre">chrome://tracing/</span></code>:</p>
+<p><img alt="Custom Operator Profiling Screenshot" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_output_custom_operator_chrome.png"/></p>
+<p>As shown by the screenshot, in the <strong>Custom Operator</strong> domain where all the custom operator-related events fall into, we can easily visualize the execution time of each segment of <code class="docutils literal"><span class="pre">MyAddOne</span></code>. We can tell that <code class="docutils literal"><span class="pre">MyAddOne::pure_python</span></code> is executed first. We also know that <code class="docutils literal"><span class="pre">CopyCPU2CPU</span></code> and <code class="docutils literal"><span class="pre">_plus_scalr</span></code> are two “sub-operators” of <code class="docutils literal"><span class="pre">MyAddOne</span></code> and the sequence in which they are executed.</p>
+<p>Please note that: to be able to see the previously described information, you need to set <code class="docutils literal"><span class="pre">profile_imperative</span></code> to <code class="docutils literal"><span class="pre">True</span></code> even when you are using custom operators in <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/basic/symbol.html">symbolic mode</a> (refer to the code snippet below, which is the symbolic-mode equivelent of the code example above). The reason is that within custom operators, pure python code and sub-operators are still called imperatively.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Set profile_all to True</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="c1"># OR, Explicitly Set profile_symbolic and profile_imperative to True</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_symbolic</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">profile_imperative</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> \
+    <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'run'</span><span class="p">)</span>
+<span class="c1"># Use Symbolic Mode</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="s1">'a'</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">Custom</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="s1">'MyAddOne'</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="n">inp</span><span class="p">})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
+<span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'stop'</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="advanced-using-nvidia-profiling-tools">
 <span id="advanced-using-nvidia-profiling-tools"></span><h2>Advanced: Using NVIDIA Profiling Tools<a class="headerlink" href="#advanced-using-nvidia-profiling-tools" title="Permalink to this headline">¶</a></h2>
@@ -450,6 +518,7 @@
 <li><a class="reference internal" href="#view-in-browser">2. View in browser</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#profiling-custom-operators">Profiling Custom Operators</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#advanced-using-nvidia-profiling-tools">Advanced: Using NVIDIA Profiling Tools</a><ul>
