@@ -37,6 +37,7 @@ var searchData=
   ['initpsenv',['InitPSEnv',['../classmxnet_1_1KVStore.html#a5d919a7a4c9495e9a569c8d733d6325f',1,'mxnet::KVStore']]],
   ['initquantizedbias',['InitQuantizedBias',['../classmxnet_1_1cpp_1_1Initializer.html#a638e7beccf306b125f8c1c2d367dd31c',1,'mxnet::cpp::Initializer']]],
   ['initquantizedweight',['InitQuantizedWeight',['../classmxnet_1_1cpp_1_1Initializer.html#a4fcb4e6d292f413c2c9543c8d497e9ae',1,'mxnet::cpp::Initializer']]],
+  ['inittensorrtparams',['InitTensorRTParams',['../namespacemxnet_1_1cpp_1_1contrib.html#a67bd72ddd796c7b84192ed02307785b0',1,'mxnet::cpp::contrib']]],
   ['initweight',['InitWeight',['../classmxnet_1_1cpp_1_1Initializer.html#ae94ab07a6d5c41917ccde3edfda72855',1,'mxnet::cpp::Initializer']]],
   ['initzero',['InitZero',['../classmxnet_1_1cpp_1_1Initializer.html#aff984d00cd195a88f9d818b915d2dd8f',1,'mxnet::cpp::Initializer']]],
   ['initzeros',['InitZeros',['../namespacemxnet_1_1common.html#aaa3cdf4e5f766e793e20d56b1fc4386e',1,'mxnet::common']]],
