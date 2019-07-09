@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['mkldnn_5fbfloat16_5ft',['mkldnn_bfloat16_t',['../mkldnn__types_8h.html#ab0d878f267a884d71cd9f15f3f66e17f',1,'mkldnn_types.h']]],
   ['mkldnn_5fdeconvolution_5fdesc_5ft',['mkldnn_deconvolution_desc_t',['../group__c__api__types__memory.html#ga22892e72c09157377e6d0358273025a3',1,'mkldnn_types.h']]],
   ['mkldnn_5fdims_5ft',['mkldnn_dims_t',['../group__c__api__types__memory.html#ga9acc437c5b1f7ca760c048dc2de1c44d',1,'mkldnn_types.h']]],
   ['mkldnn_5fengine_5ft',['mkldnn_engine_t',['../group__c__api__engine__types.html#ga40f5f917cdbf2215fa5324e4bf62d523',1,'mkldnn_types.h']]],
