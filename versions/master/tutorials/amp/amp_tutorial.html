@@ -444,7 +444,12 @@
 </div>
 <div class="section" id="inference-with-amp">
 <span id="inference-with-amp"></span><h2>Inference with AMP<a class="headerlink" href="#inference-with-amp" title="Permalink to this headline">¶</a></h2>
-<p>To do inference with mixed precision for a trained model in FP32, you can use the conversion APIs: <code class="docutils literal"><span class="pre">amp.convert_model</span></code> for symbolic model and <code class="docutils literal"><span class="pre">amp.convert_hybrid_block</span></code> for gluon models. The conversion APIs will take the FP32 model as input and will return a mixed precision model, which can be used to run inference. Below, we demonstrate for a gluon model and a symbolic model: 1. Conversion from FP32 model to mixed precision model 2. Run inference on the mixed precision model.</p>
+<p>To do inference with mixed precision for a trained model in FP32, you can use the conversion APIs: <code class="docutils literal"><span class="pre">amp.convert_model</span></code> for symbolic model and <code class="docutils literal"><span class="pre">amp.convert_hybrid_block</span></code> for gluon models. The conversion APIs will take the FP32 model as input and will return a mixed precision model, which can be used to run inference.
+Below, we demonstrate for a gluon model and a symbolic model:</p>
+<ul class="simple">
+<li>Conversion from FP32 model to mixed precision model.</li>
+<li>Run inference on the mixed precision model.</li>
+</ul>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)):</span>
     <span class="c1"># Below is an example of converting a gluon hybrid block to a mixed precision block</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s2">"resnet50_v1"</span><span class="p">)</span>
@@ -476,6 +481,47 @@
                                 <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))]))</span>
     <span class="n">mod</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wait_to_read</span><span class="p">()</span>
     <span class="k">print</span><span class="p">(</span><span class="s2">"Conversion and Inference completed successfully"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also customize the operators to run in FP16 versus the operator to run in FP32 or to conditionally run in FP32.
+Also, you can force cast the params wherever possible to FP16. Below is an example which demonstrates both these use cases
+for symbolic model. You can do the same for gluon hybrid block with <code class="docutils literal"><span class="pre">amp.convert_hybrid_block</span></code> API, <code class="docutils literal"><span class="pre">cast_optional_params</span></code> flag.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)):</span>
+    <span class="c1"># Below is an example of converting a symbolic model to a mixed precision model</span>
+    <span class="c1"># with only Convolution op being force casted to FP16.</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s1">'model'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download_model</span><span class="p">(</span><span class="s2">"imagenet1k-resnet-18"</span><span class="p">,</span> <span class="n">dst_dir</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+
+    <span class="c1"># All Convolution ops should run in FP16, SoftmaxOutput and FullyConnected should run in FP32</span>
+    <span class="c1"># cast_optional_params=True: Force cast params to FP16 wherever possible</span>
+    <span class="n">result_sym</span><span class="p">,</span> <span class="n">result_arg_params</span><span class="p">,</span> <span class="n">result_aux_params</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">convert_model</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span>
+                                                                         <span class="n">arg_params</span><span class="p">,</span>
+                                                                         <span class="n">aux_params</span><span class="p">,</span>
+                                                                         <span class="n">target_dtype_ops</span><span class="o">=</span><span class="p">[</span><span class="s2">"Convolution"</span><span class="p">],</span>
+                                                                         <span class="n">fp32_ops</span><span class="o">=</span><span class="p">[</span><span class="s2">"SoftmaxOutput"</span><span class="p">,</span> <span class="s2">"FullyConnected"</span><span class="p">],</span>
+                                                                         <span class="n">cast_optional_params</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c1"># Run dummy inference with the converted symbolic model</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">result_sym</span><span class="p">,</span> <span class="n">data_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"data"</span><span class="p">],</span> <span class="n">label_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"softmax_label"</span><span class="p">],</span> <span class="n">context</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">current_context</span><span class="p">())</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">data_shapes</span><span class="o">=</span><span class="p">[[</span><span class="s1">'data'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)]],</span> <span class="n">label_shapes</span><span class="o">=</span><span class="p">[[</span><span class="s1">'softmax_label'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)]])</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">result_arg_params</span><span class="p">,</span> <span class="n">result_aux_params</span><span class="p">)</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">DataBatch</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">))],</span>
+                                <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))]))</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wait_to_read</span><span class="p">()</span>
+
+    <span class="c1"># Assert that the params for conv are in FP16, this is because cast_optional_params is set to True</span>
+    <span class="k">assert</span> <span class="n">mod</span><span class="o">.</span><span class="n">_arg_params</span><span class="p">[</span><span class="s2">"conv0_weight"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span>
+    <span class="c1"># FullyConnected params stay in FP32</span>
+    <span class="k">assert</span> <span class="n">mod</span><span class="o">.</span><span class="n">_arg_params</span><span class="p">[</span><span class="s2">"fc1_bias"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"Conversion and Inference completed successfully"</span><span class="p">)</span>
+
+    <span class="c1"># Serialize AMP model and save to disk</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="s2">"amp_tutorial_model"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
