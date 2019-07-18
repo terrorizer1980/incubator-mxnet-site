@@ -1,6 +1,7 @@
 var searchData=
 [
   ['tblob',['TBlob',['../classmxnet_1_1TBlob.html',1,'mxnet']]],
+  ['tensorinspector',['TensorInspector',['../classmxnet_1_1TensorInspector.html',1,'mxnet']]],
   ['tshape',['TShape',['../classmxnet_1_1TShape.html',1,'mxnet']]],
   ['tuple',['Tuple',['../classmxnet_1_1Tuple.html',1,'mxnet']]],
   ['tuple_3c_20dim_5ft_20_3e',['Tuple&lt; dim_t &gt;',['../classmxnet_1_1Tuple.html',1,'mxnet']]],

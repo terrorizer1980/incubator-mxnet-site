@@ -2,6 +2,7 @@ var searchData=
 [
   ['cast_5fstoragestype',['Cast_storageStype',['../namespacemxnet_1_1cpp.html#aac92e2f3642173e36bb79eb4854728ff',1,'mxnet::cpp']]],
   ['castdtype',['CastDtype',['../namespacemxnet_1_1cpp.html#a8e907a5fbbe4ec21628e500b34a5f35d',1,'mxnet::cpp']]],
+  ['checkertype',['CheckerType',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303',1,'mxnet']]],
   ['convolution_5fv1cudnntune',['Convolution_v1CudnnTune',['../namespacemxnet_1_1cpp.html#aa32f4a10a37f253f9d102cfc96a9eafc',1,'mxnet::cpp']]],
   ['convolution_5fv1layout',['Convolution_v1Layout',['../namespacemxnet_1_1cpp.html#a97217f563c768120cd8db19573938635',1,'mxnet::cpp']]],
   ['convolutioncudnntune',['ConvolutionCudnnTune',['../namespacemxnet_1_1cpp.html#a8755a4574a3839da2ad93af004fb1ff5',1,'mxnet::cpp']]],

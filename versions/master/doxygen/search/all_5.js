@@ -80,5 +80,7 @@ var searchData=
   ['dst_5fiter_5fdesc',['dst_iter_desc',['../structmkldnn__rnn__desc__t.html#a33dcd86c922c81f6f0c9d8a65eab9ead',1,'mkldnn_rnn_desc_t']]],
   ['dst_5flayer_5fdesc',['dst_layer_desc',['../structmkldnn__rnn__desc__t.html#a1f788eb4d6893d26aa75d1d966546b99',1,'mkldnn_rnn_desc_t']]],
   ['dtype',['dtype',['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray']]],
+  ['dump_5fto_5ffile',['dump_to_file',['../classmxnet_1_1TensorInspector.html#a817a0addf872741c69b8209e4503617f',1,'mxnet::TensorInspector']]],
+  ['dump_5fto_5ffile_5ftag_5fcounter_5f',['dump_to_file_tag_counter_',['../structmxnet_1_1InspectorManager.html#a3917680ad2039f864be66f286678194a',1,'mxnet::InspectorManager']]],
   ['parameter',['parameter',['../namespacedmlc_1_1parameter.html',1,'dmlc']]]
 ];

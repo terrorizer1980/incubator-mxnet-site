@@ -30,5 +30,6 @@ var searchData=
   ['dptr_5f',['dptr_',['../classmxnet_1_1TBlob.html#a4e5f4953be2c16724ecff0afc5ea2e10',1,'mxnet::TBlob']]],
   ['dst_5fdesc',['dst_desc',['../structmkldnn__convolution__desc__t.html#ab3fa681b587982780c1fd657f470ad09',1,'mkldnn_convolution_desc_t::dst_desc()'],['../structmkldnn__pooling__desc__t.html#a1604893839196b8da368262d83e274af',1,'mkldnn_pooling_desc_t::dst_desc()'],['../structmkldnn__inner__product__desc__t.html#abe22f70b9bcb290d09bc22e40e39f8c9',1,'mkldnn_inner_product_desc_t::dst_desc()']]],
   ['dst_5fiter_5fdesc',['dst_iter_desc',['../structmkldnn__rnn__desc__t.html#a33dcd86c922c81f6f0c9d8a65eab9ead',1,'mkldnn_rnn_desc_t']]],
-  ['dst_5flayer_5fdesc',['dst_layer_desc',['../structmkldnn__rnn__desc__t.html#a1f788eb4d6893d26aa75d1d966546b99',1,'mkldnn_rnn_desc_t']]]
+  ['dst_5flayer_5fdesc',['dst_layer_desc',['../structmkldnn__rnn__desc__t.html#a1f788eb4d6893d26aa75d1d966546b99',1,'mkldnn_rnn_desc_t']]],
+  ['dump_5fto_5ffile_5ftag_5fcounter_5f',['dump_to_file_tag_counter_',['../structmxnet_1_1InspectorManager.html#a3917680ad2039f864be66f286678194a',1,'mxnet::InspectorManager']]]
 ];

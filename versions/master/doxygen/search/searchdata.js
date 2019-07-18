@@ -8,9 +8,9 @@ var indexSectionsWithContent =
   5: "abcdefghiklmnoprstuvw",
   6: "abcdefgikmnoprstuv",
   7: "abcdefgklmnoprstu",
-  8: "abcdfgijklmnopstu",
+  8: "abcdfgijklmnopstuz",
   9: ":imno",
-  10: "acdmnp",
+  10: "acdmnpqs",
   11: "abcdegilmopqrst",
   12: "t"
 };

@@ -28,5 +28,6 @@ var searchData=
   ['dot',['dot',['../namespacemxnet_1_1cpp.html#a14538ccec46c260488aa78c6b23ad898',1,'mxnet::cpp::dot(const std::string &amp;symbol_name, Symbol lhs, Symbol rhs, bool transpose_a=false, bool transpose_b=false, DotForwardStype forward_stype=DotForwardStype::kNone)'],['../namespacemxnet_1_1cpp.html#a0917025ca6b94c2ec34960af88e1d5a1',1,'mxnet::cpp::dot(Symbol lhs, Symbol rhs, bool transpose_a=false, bool transpose_b=false, DotForwardStype forward_stype=DotForwardStype::kNone)']]],
   ['dptr',['dptr',['../classmxnet_1_1TBlob.html#a3449ca0a9130e87c343130b041b68c53',1,'mxnet::TBlob']]],
   ['dropout',['Dropout',['../namespacemxnet_1_1cpp.html#a8bbd463db4c7583f23253d0cef9dacf4',1,'mxnet::cpp::Dropout(const std::string &amp;symbol_name, Symbol data, mx_float p=0.5, DropoutMode mode=DropoutMode::kTraining, Shape axes=Shape(), dmlc::optional&lt; bool &gt; cudnn_off=dmlc::optional&lt; bool &gt;(0))'],['../namespacemxnet_1_1cpp.html#ac206b1d253a64e83c53a281aaecf5014',1,'mxnet::cpp::Dropout(Symbol data, mx_float p=0.5, DropoutMode mode=DropoutMode::kTraining, Shape axes=Shape(), dmlc::optional&lt; bool &gt; cudnn_off=dmlc::optional&lt; bool &gt;(0))']]],
-  ['dtype',['dtype',['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray']]]
+  ['dtype',['dtype',['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray']]],
+  ['dump_5fto_5ffile',['dump_to_file',['../classmxnet_1_1TensorInspector.html#a817a0addf872741c69b8209e4503617f',1,'mxnet::TensorInspector']]]
 ];

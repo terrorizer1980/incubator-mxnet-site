@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['abnormalchecker',['AbnormalChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303a8dd3c3f3f02ca0da2fe3653fb7483373',1,'mxnet']]],
   ['abs',['abs',['../namespacemxnet_1_1cpp.html#accf8d710dd8d06612f9e7944d1183d3f',1,'mxnet::cpp::abs(const std::string &amp;symbol_name, Symbol data)'],['../namespacemxnet_1_1cpp.html#ae269ce90b13e450b6e9bf4575e58401a',1,'mxnet::cpp::abs(Symbol data)']]],
   ['accum_5fdata_5ftype',['accum_data_type',['../structmkldnn__convolution__desc__t.html#a755505cf62a730a64378562d4a96b4ee',1,'mkldnn_convolution_desc_t::accum_data_type()'],['../structmkldnn__pooling__desc__t.html#a283f1330595d8bc0bd226576654ea372',1,'mkldnn_pooling_desc_t::accum_data_type()'],['../structmkldnn__inner__product__desc__t.html#a998bb7a60862961aa69e791a703ee0e9',1,'mkldnn_inner_product_desc_t::accum_data_type()']]],
   ['accuracy',['Accuracy',['../classmxnet_1_1cpp_1_1Accuracy.html',1,'mxnet::cpp']]],
