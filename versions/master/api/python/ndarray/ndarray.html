@@ -9880,7 +9880,7 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.log_softmax">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">log_softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.log_softmax" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">log_softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>use_length=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.log_softmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log softmax of the input.
 This is equivalent to computing softmax followed by log.</p>
 <p>Examples:</p>
@@ -9903,6 +9903,7 @@ This is equivalent to computing softmax followed by log.</p>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – The axis along which to compute softmax.</li>
 <li><strong>temperature</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Temperature parameter in softmax</li>
 <li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – DType of the output in case this can’t be inferred. Defaults to the same as input’s dtype if not defined (dtype=None).</li>
+<li><strong>use_length</strong> (<em>boolean</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to use the length input as a mask over the data input.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -13352,7 +13353,7 @@ is 3.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.softmax">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmax" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmax</code><span class="sig-paren">(</span><em>data=None</em>, <em>length=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>use_length=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the softmax function.</p>
 <p>The resulting array contains elements in the range (0,1) and the elements along the given axis sum up to 1.</p>
 <div class="math">
@@ -13370,16 +13371,18 @@ is 3.</p>
                      <span class="p">[</span> <span class="mf">0.33333334</span><span class="p">,</span>  <span class="mf">0.33333334</span><span class="p">,</span>  <span class="mf">0.33333334</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/nn/softmax.cc:L93</p>
+<p>Defined in src/operator/nn/softmax.cc:L102</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array.</li>
+<li><strong>length</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The length array.</li>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – The axis along which to compute softmax.</li>
 <li><strong>temperature</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Temperature parameter in softmax</li>
 <li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – DType of the output in case this can’t be inferred. Defaults to the same as input’s dtype if not defined (dtype=None).</li>
+<li><strong>use_length</strong> (<em>boolean</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to use the length input as a mask over the data input.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -13450,7 +13453,7 @@ is 3.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.softmin">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmin</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">softmin</code><span class="sig-paren">(</span><em>data=None</em>, <em>axis=_Null</em>, <em>temperature=_Null</em>, <em>dtype=_Null</em>, <em>use_length=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.softmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the softmin function.</p>
 <p>The resulting array contains elements in the range (0,1) and the elements along the given axis sum
 up to 1.</p>
@@ -13469,7 +13472,7 @@ up to 1.</p>
                      <span class="p">[</span> <span class="mf">0.09003057</span><span class="p">,</span>  <span class="mf">0.24472848</span><span class="p">,</span>  <span class="mf">0.66524094</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/nn/softmax.cc:L153</p>
+<p>Defined in src/operator/nn/softmax.cc:L176</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13479,6 +13482,7 @@ up to 1.</p>
 <li><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='-1'</em>) – The axis along which to compute softmax.</li>
 <li><strong>temperature</strong> (<em>double</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Temperature parameter in softmax</li>
 <li><strong>dtype</strong> (<em>{None</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – DType of the output in case this can’t be inferred. Defaults to the same as input’s dtype if not defined (dtype=None).</li>
+<li><strong>use_length</strong> (<em>boolean</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to use the length input as a mask over the data input.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
