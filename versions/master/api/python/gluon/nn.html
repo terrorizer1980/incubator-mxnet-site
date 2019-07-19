@@ -1401,6 +1401,69 @@ For other layouts shape is permuted accordingly.</li>
 </dl>
 </dd></dl>
 <dl class="class">
+<dt id="mxnet.gluon.nn.GroupNorm">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">GroupNorm</code><span class="sig-paren">(</span><em>num_groups=1</em>, <em>epsilon=1e-05</em>, <em>center=True</em>, <em>scale=True</em>, <em>beta_initializer='zeros'</em>, <em>gamma_initializer='ones'</em>, <em>prefix=None</em>, <em>params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/basic_layers.html#GroupNorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.GroupNorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies group normalization to the n-dimensional input array.
+This operator takes an n-dimensional input array where the leftmost 2 axis are
+<cite>batch</cite> and <cite>channel</cite> respectively:</p>
+<div class="math">
+\[x = x.reshape((N, num_groups, C // num_groups, ...))
+axis = (2, ...)
+out = \frac{x - mean[x, axis]}{ \sqrt{Var[x, axis] + \epsilon}} * gamma + beta\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_groups</strong> (<em>int</em><em>, </em><em>default 1</em>) – Number of groups to separate the channel axis into.</li>
+<li><strong>epsilon</strong> (<em>float</em><em>, </em><em>default 1e-5</em>) – Small float added to variance to avoid dividing by zero.</li>
+<li><strong>center</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, add offset of <cite>beta</cite> to normalized tensor.
+If False, <cite>beta</cite> is ignored.</li>
+<li><strong>scale</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, multiply by <cite>gamma</cite>. If False, <cite>gamma</cite> is not used.</li>
+<li><strong>beta_initializer</strong> (str or <cite>Initializer</cite>, default ‘zeros’) – Initializer for the beta weight.</li>
+<li><strong>gamma_initializer</strong> (str or <cite>Initializer</cite>, default ‘ones’) – Initializer for the gamma weight.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>data</strong>: input tensor with shape (N, C, ...).</li>
+</ul>
+</dd>
+<dt>Outputs:</dt>
+<dd><ul class="first last simple">
+<li><strong>out</strong>: output tensor with the same shape as <cite>data</cite>.</li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://arxiv.org/pdf/1803.08494.pdf">Group Normalization</a></p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># Input of shape (2, 3, 4)</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">],</span>
+<span class="go">                      [ 4,  5,  6,  7],</span>
+<span class="go">                      [ 8,  9, 10, 11]],</span>
+<span class="go">                     [[12, 13, 14, 15],</span>
+<span class="go">                      [16, 17, 18, 19],</span>
+<span class="go">                      [20, 21, 22, 23]]])</span>
+<span class="gp">>>> </span><span class="c1"># Group normalization is calculated with the above formula</span>
+<span class="gp">>>> </span><span class="n">layer</span> <span class="o">=</span> <span class="n">GroupNorm</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">layer</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">[[[-1.5932543 -1.3035717 -1.0138891 -0.7242065]</span>
+<span class="go">  [-0.4345239 -0.1448413  0.1448413  0.4345239]</span>
+<span class="go">  [ 0.7242065  1.0138891  1.3035717  1.5932543]]</span>
+<span class="go"> [[-1.5932543 -1.3035717 -1.0138891 -0.7242065]</span>
+<span class="go">  [-0.4345239 -0.1448413  0.1448413  0.4345239]</span>
+<span class="go">  [ 0.7242065  1.0138891  1.3035717  1.5932543]]]</span>
+<span class="go"><NDArray 2x3x4 @cpu(0)></span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="class">
 <dt id="mxnet.gluon.nn.HybridLambda">
 <em class="property">class </em><code class="descclassname">mxnet.gluon.nn.</code><code class="descname">HybridLambda</code><span class="sig-paren">(</span><em>function</em>, <em>prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/basic_layers.html#HybridLambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.HybridLambda" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps an operator or an expression as a HybridBlock object.</p>

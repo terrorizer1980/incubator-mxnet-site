@@ -4083,6 +4083,41 @@ of sparse.FullyConnected.</p>
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.ndarray.GroupNorm">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">GroupNorm</code><span class="sig-paren">(</span><em>data=None</em>, <em>gamma=None</em>, <em>beta=None</em>, <em>num_groups=_Null</em>, <em>eps=_Null</em>, <em>output_mean_var=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.GroupNorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group normalization.</p>
+<p>The input channels are separated into <code class="docutils literal"><span class="pre">num_groups</span></code> groups, each containing <code class="docutils literal"><span class="pre">num_channels</span> <span class="pre">/</span> <span class="pre">num_groups</span></code> channels.
+The mean and standard-deviation are calculated separately over the each group.</p>
+<div class="math">
+\[data = data.reshape((N, num_groups, C // num_groups, ...))
+out = \frac{data - mean(data, axis)}{\sqrt{var(data, axis) + \epsilon}} * gamma + beta\]</div>
+<p>Both <code class="docutils literal"><span class="pre">gamma</span></code> and <code class="docutils literal"><span class="pre">beta</span></code> are learnable parameters.</p>
+<p>Defined in src/operator/nn/group_norm.cc:L77</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input data</li>
+<li><strong>gamma</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – gamma array</li>
+<li><strong>beta</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – beta array</li>
+<li><strong>num_groups</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Total number of groups.</li>
+<li><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=9.99999975e-06</em>) – An <cite>epsilon</cite> parameter to prevent division by 0.</li>
+<li><strong>output_mean_var</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Output the mean and std calculated along the given axis.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.ndarray.IdentityAttachKLSparseReg">
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">IdentityAttachKLSparseReg</code><span class="sig-paren">(</span><em>data=None</em>, <em>sparseness_target=_Null</em>, <em>penalty=_Null</em>, <em>momentum=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.IdentityAttachKLSparseReg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a sparse regularization to the output a sigmoid activation function.</p>
@@ -11185,6 +11220,382 @@ Samples will always be returned as a floating point data type.</p>
 <li><strong>shape</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Shape of the output.</li>
 <li><strong>ctx</strong> (<em>string</em><em>, </em><em>optional</em><em>, </em><em>default=''</em>) – Context of output, in format [cpu|gpu|cpu_pinned](n). Only used for imperative calls.</li>
 <li><strong>dtype</strong> (<em>{'None'</em><em>, </em><em>'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – DType of the output in case this can’t be inferred. Defaults to float32 if not defined (dtype=None).</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_dirichlet">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_dirichlet</code><span class="sig-paren">(</span><em>sample=None</em>, <em>alpha=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_dirichlet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+Dirichlet distributions with parameter <em>alpha</em>.</p>
+<p>The shape of <em>alpha</em> must match the leftmost subshape of <em>sample</em>.  That is, <em>sample</em>
+can have the same shape as <em>alpha</em>, in which case the output contains one density per
+distribution, or <em>sample</em> can be a tensor of tensors with that shape, in which case
+the output is a tensor of densities such that the densities at index <em>i</em> in the output
+are given by the samples at index <em>i</em> in <em>sample</em> parameterized by the value of <em>alpha</em>
+at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_dirichlet</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[</span><span class="mf">38.413498</span><span class="p">,</span> <span class="mf">199.60245</span><span class="p">,</span> <span class="mf">564.56085</span><span class="p">]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">]],</span>
+          <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">]]]</span>
+
+<span class="n">random_pdf_dirichlet</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">2.3257459e-02</span><span class="p">,</span> <span class="mf">5.8420084e-04</span><span class="p">,</span> <span class="mf">1.4674458e-05</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">9.2589635e-01</span><span class="p">,</span> <span class="mf">3.6860607e+01</span><span class="p">,</span> <span class="mf">1.4674468e+03</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L316</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>alpha</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Concentration parameters of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_exponential">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_exponential</code><span class="sig-paren">(</span><em>sample=None</em>, <em>lam=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_exponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+exponential distributions with parameters <em>lam</em> (rate).</p>
+<p>The shape of <em>lam</em> must match the leftmost subshape of <em>sample</em>.  That is, <em>sample</em>
+can have the same shape as <em>lam</em>, in which case the output contains one density per
+distribution, or <em>sample</em> can be a tensor of tensors with that shape, in which case
+the output is a tensor of densities such that the densities at index <em>i</em> in the output
+are given by the samples at index <em>i</em> in <em>sample</em> parameterized by the value of <em>lam</em>
+at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_exponential</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="n">lam</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.13533528</span><span class="p">,</span> <span class="mf">0.04978707</span><span class="p">]]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+
+<span class="n">random_pdf_exponential</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.13533528</span><span class="p">,</span> <span class="mf">0.04978707</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.30326533</span><span class="p">,</span> <span class="mf">0.18393973</span><span class="p">,</span> <span class="mf">0.11156508</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.1947002</span><span class="p">,</span>  <span class="mf">0.15163267</span><span class="p">,</span> <span class="mf">0.11809164</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L305</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>lam</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lambda (rate) parameters of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_gamma">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_gamma</code><span class="sig-paren">(</span><em>sample=None</em>, <em>alpha=None</em>, <em>beta=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+gamma distributions with parameters <em>alpha</em> (shape) and <em>beta</em> (rate).</p>
+<p><em>alpha</em> and <em>beta</em> must have the same shape, which must match the leftmost subshape
+of <em>sample</em>.  That is, <em>sample</em> can have the same shape as <em>alpha</em> and <em>beta</em>, in which
+case the output contains one density per distribution, or <em>sample</em> can be a tensor
+of tensors with that shape, in which case the output is a tensor of densities such that
+the densities at index <em>i</em> in the output are given by the samples at index <em>i</em> in <em>sample</em>
+parameterized by the values of <em>alpha</em> and <em>beta</em> at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_gamma</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]],</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">beta</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.01532831</span><span class="p">,</span> <span class="mf">0.09022352</span><span class="p">,</span> <span class="mf">0.16803136</span><span class="p">,</span> <span class="mf">0.19536681</span><span class="p">,</span> <span class="mf">0.17546739</span><span class="p">]]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]]</span>
+
+<span class="n">random_pdf_gamma</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="n">beta</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.01532831</span><span class="p">,</span> <span class="mf">0.09022352</span><span class="p">,</span> <span class="mf">0.16803136</span><span class="p">,</span> <span class="mf">0.19536681</span><span class="p">,</span> <span class="mf">0.17546739</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.03608941</span><span class="p">,</span> <span class="mf">0.10081882</span><span class="p">,</span> <span class="mf">0.15629345</span><span class="p">,</span> <span class="mf">0.17546739</span><span class="p">,</span> <span class="mf">0.16062315</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.05040941</span><span class="p">,</span> <span class="mf">0.10419563</span><span class="p">,</span> <span class="mf">0.14622283</span><span class="p">,</span> <span class="mf">0.16062315</span><span class="p">,</span> <span class="mf">0.14900276</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L303</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>alpha</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Alpha (shape) parameters of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>beta</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Beta (scale) parameters of the distributions.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_generalized_negative_binomial">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_generalized_negative_binomial</code><span class="sig-paren">(</span><em>sample=None</em>, <em>mu=None</em>, <em>alpha=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_generalized_negative_binomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+generalized negative binomial distributions with parameters <em>mu</em> (mean)
+and <em>alpha</em> (dispersion).  This can be understood as a reparameterization of
+the negative binomial, where <em>k</em> = <em>1 / alpha</em> and <em>p</em> = <em>1 / (mu * alpha + 1)</em>.</p>
+<p><em>mu</em> and <em>alpha</em> must have the same shape, which must match the leftmost subshape
+of <em>sample</em>.  That is, <em>sample</em> can have the same shape as <em>mu</em> and <em>alpha</em>, in which
+case the output contains one density per distribution, or <em>sample</em> can be a tensor
+of tensors with that shape, in which case the output is a tensor of densities such that
+the densities at index <em>i</em> in the output are given by the samples at index <em>i</em> in <em>sample</em>
+parameterized by the values of <em>mu</em> and <em>alpha</em> at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_generalized_negative_binomial</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mu</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.0625</span><span class="p">,</span> <span class="mf">0.03125</span><span class="p">]]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
+<span class="n">random_pdf_generalized_negative_binomial</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.6666</span><span class="p">],</span> <span class="n">mu</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.25</span><span class="p">,</span>       <span class="mf">0.125</span><span class="p">,</span>      <span class="mf">0.0625</span><span class="p">,</span>     <span class="mf">0.03125</span>   <span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.26517063</span><span class="p">,</span> <span class="mf">0.16573331</span><span class="p">,</span> <span class="mf">0.09667706</span><span class="p">,</span> <span class="mf">0.05437994</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L314</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>mu</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Means of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>alpha</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Alpha (dispersion) parameters of the distributions.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_negative_binomial">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_negative_binomial</code><span class="sig-paren">(</span><em>sample=None</em>, <em>k=None</em>, <em>p=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_negative_binomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of samples of
+negative binomial distributions with parameters <em>k</em> (failure limit) and <em>p</em> (failure probability).</p>
+<p><em>k</em> and <em>p</em> must have the same shape, which must match the leftmost subshape
+of <em>sample</em>.  That is, <em>sample</em> can have the same shape as <em>k</em> and <em>p</em>, in which
+case the output contains one density per distribution, or <em>sample</em> can be a tensor
+of tensors with that shape, in which case the output is a tensor of densities such that
+the densities at index <em>i</em> in the output are given by the samples at index <em>i</em> in <em>sample</em>
+parameterized by the values of <em>k</em> and <em>p</em> at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_negative_binomial</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span> <span class="n">k</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.0625</span><span class="p">,</span> <span class="mf">0.03125</span><span class="p">]]</span>
+
+<span class="c1"># Note that k may be real-valued</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
+<span class="n">random_pdf_negative_binomial</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.25</span><span class="p">,</span>       <span class="mf">0.125</span><span class="p">,</span>      <span class="mf">0.0625</span><span class="p">,</span>     <span class="mf">0.03125</span>   <span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.26516506</span><span class="p">,</span> <span class="mf">0.16572815</span><span class="p">,</span> <span class="mf">0.09667476</span><span class="p">,</span> <span class="mf">0.05437956</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L310</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>k</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Limits of unsuccessful experiments.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>p</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Failure probabilities in each experiment.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_normal">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_normal</code><span class="sig-paren">(</span><em>sample=None</em>, <em>mu=None</em>, <em>sigma=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+normal distributions with parameters <em>mu</em> (mean) and <em>sigma</em> (standard deviation).</p>
+<p><em>mu</em> and <em>sigma</em> must have the same shape, which must match the leftmost subshape
+of <em>sample</em>.  That is, <em>sample</em> can have the same shape as <em>mu</em> and <em>sigma</em>, in which
+case the output contains one density per distribution, or <em>sample</em> can be a tensor
+of tensors with that shape, in which case the output is a tensor of densities such that
+the densities at index <em>i</em> in the output are given by the samples at index <em>i</em> in <em>sample</em>
+parameterized by the values of <em>mu</em> and <em>sigma</em> at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+<span class="n">random_pdf_normal</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sigma</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.05399097</span><span class="p">,</span> <span class="mf">0.24197073</span><span class="p">,</span> <span class="mf">0.3989423</span><span class="p">,</span> <span class="mf">0.24197073</span><span class="p">,</span> <span class="mf">0.05399097</span><span class="p">]]</span>
+
+<span class="n">random_pdf_normal</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sigma</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.05399097</span><span class="p">,</span> <span class="mf">0.24197073</span><span class="p">,</span> <span class="mf">0.3989423</span><span class="p">,</span>  <span class="mf">0.24197073</span><span class="p">,</span> <span class="mf">0.05399097</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.12098537</span><span class="p">,</span> <span class="mf">0.17603266</span><span class="p">,</span> <span class="mf">0.19947115</span><span class="p">,</span> <span class="mf">0.17603266</span><span class="p">,</span> <span class="mf">0.12098537</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L300</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>mu</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Means of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>sigma</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Standard deviations of the distributions.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_poisson">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_poisson</code><span class="sig-paren">(</span><em>sample=None</em>, <em>lam=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_poisson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+Poisson distributions with parameters <em>lam</em> (rate).</p>
+<p>The shape of <em>lam</em> must match the leftmost subshape of <em>sample</em>.  That is, <em>sample</em>
+can have the same shape as <em>lam</em>, in which case the output contains one density per
+distribution, or <em>sample</em> can be a tensor of tensors with that shape, in which case
+the output is a tensor of densities such that the densities at index <em>i</em> in the output
+are given by the samples at index <em>i</em> in <em>sample</em> parameterized by the value of <em>lam</em>
+at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_poisson</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]],</span> <span class="n">lam</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.18393973</span><span class="p">,</span> <span class="mf">0.06131324</span><span class="p">]]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+
+<span class="n">random_pdf_poisson</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span> <span class="o">=</span>
+    <span class="p">[[</span><span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.36787945</span><span class="p">,</span> <span class="mf">0.18393973</span><span class="p">,</span> <span class="mf">0.06131324</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.13533528</span><span class="p">,</span> <span class="mf">0.27067056</span><span class="p">,</span> <span class="mf">0.27067056</span><span class="p">,</span> <span class="mf">0.18044704</span><span class="p">],</span>
+     <span class="p">[</span><span class="mf">0.04978707</span><span class="p">,</span> <span class="mf">0.14936121</span><span class="p">,</span> <span class="mf">0.22404182</span><span class="p">,</span> <span class="mf">0.22404182</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L307</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>lam</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lambda (rate) parameters of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.random_pdf_uniform">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">random_pdf_uniform</code><span class="sig-paren">(</span><em>sample=None</em>, <em>low=None</em>, <em>high=None</em>, <em>is_log=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.random_pdf_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the value of the PDF of <em>sample</em> of
+uniform distributions on the intervals given by <em>[low,high)</em>.</p>
+<p><em>low</em> and <em>high</em> must have the same shape, which must match the leftmost subshape
+of <em>sample</em>.  That is, <em>sample</em> can have the same shape as <em>low</em> and <em>high</em>, in which
+case the output contains one density per distribution, or <em>sample</em> can be a tensor
+of tensors with that shape, in which case the output is a tensor of densities such that
+the densities at index <em>i</em> in the output are given by the samples at index <em>i</em> in <em>sample</em>
+parameterized by the values of <em>low</em> and <em>high</em> at index <em>i</em>.</p>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">random_pdf_uniform</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span> <span class="n">low</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">high</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+          <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+<span class="n">low</span>  <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="n">high</span> <span class="o">=</span> <span class="p">[[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">]]</span>
+<span class="n">random_pdf_uniform</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">)</span> <span class="o">=</span>
+    <span class="p">[[[</span><span class="mf">0.2</span><span class="p">,</span>        <span class="mf">0.2</span><span class="p">,</span>        <span class="mf">0.2</span>    <span class="p">],</span>
+      <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span>        <span class="mf">0.1</span><span class="p">,</span>        <span class="mf">0.1</span>    <span class="p">]],</span>
+     <span class="p">[[</span><span class="mf">0.06667</span><span class="p">,</span>    <span class="mf">0.06667</span><span class="p">,</span>    <span class="mf">0.06667</span><span class="p">],</span>
+      <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span>       <span class="mf">0.05</span><span class="p">,</span>       <span class="mf">0.05</span>   <span class="p">]]]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/random/pdf_op.cc:L298</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Samples from the distributions.</li>
+<li><strong>low</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Lower bounds of the distributions.</li>
+<li><strong>is_log</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – If set, compute the density of the log-probability instead of the probability.</li>
+<li><strong>high</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Upper bounds of the distributions.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>

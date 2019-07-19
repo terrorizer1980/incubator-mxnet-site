@@ -899,6 +899,40 @@ Defined in src/operator/nn/fully_connected.cc:L277</pre></div><dl class="paramcm
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@Experimental</span><span class="args">()</span>
 </dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#GroupNorm" visbl="pub">
+<a id="GroupNorm(po:org.apache.mxnet.javaapi.GroupNormParam):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="GroupNorm(GroupNormParam):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">GroupNorm</span><span class="params">(<span name="po">po: <a class="extype" href="GroupNormParam.html" name="org.apache.mxnet.javaapi.GroupNormParam">GroupNormParam</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@GroupNorm(po:org.apache.mxnet.javaapi.GroupNormParam):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Group normalization.
+
+The input channels are separated into ``num_groups`` groups, each containing ``num_channels / num_groups`` channels.
+The mean and standard-deviation are calculated separately over the each group.
+
+.. math::
+
+  data = data.reshape((N, num_groups, C <span class="cmt">// num_groups, ...))</span>
+  out = \frac{data - mean(data, axis)}{\sqrt{<span class="kw">var</span>(data, axis) + \epsilon}} * gamma + beta
+
+Both ``gamma`` and ``beta`` are learnable parameters.
+
+
+
+Defined in src/operator/nn/group_norm.cc:L77</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
 </li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#IdentityAttachKLSparseReg" visbl="pub">
 <a id="IdentityAttachKLSparseReg(po:org.apache.mxnet.javaapi.IdentityAttachKLSparseRegParam):Array[org.apache.mxnet.javaapi.NDArray]"></a>
 <a id="IdentityAttachKLSparseReg(IdentityAttachKLSparseRegParam):Array[NDArray]"></a>
@@ -7244,6 +7278,362 @@ Example::
 
 
 Defined in src/operator/random/sample_op.cc:L113</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_dirichlet" visbl="pub">
+<a id="random_pdf_dirichlet(sample:org.apache.mxnet.javaapi.NDArray,alpha:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_dirichlet(NDArray,NDArray,Boolean,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_dirichlet</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="alpha">alpha: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_dirichlet(sample:org.apache.mxnet.javaapi.NDArray,alpha:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+Dirichlet distributions <span class="kw">with</span> parameter *alpha*.
+
+The shape of *alpha* must <span class="kw">match</span> the leftmost subshape of *sample*.  That is, *sample*
+can have the same shape as *alpha*, in which <span class="kw">case</span> the output contains one density per
+distribution, or *sample* can be a tensor of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span>
+the output is a tensor of densities such that the densities at index *i* in the output
+are given by the samples at index *i* in *sample* parameterized by the value of *alpha*
+at index *i*.
+
+Examples::
+
+    random_pdf_dirichlet(sample=`[ [<span class="num">1</span>,<span class="num">2</span>],[<span class="num">2</span>,<span class="num">3</span>],[<span class="num">3</span>,<span class="num">4</span>] ], alpha=[<span class="num">2.5</span>, <span class="num">2.5</span>]) =
+        [<span class="num">38.413498</span>, <span class="num">199.60245</span>, <span class="num">564.56085</span>]
+
+    sample = `[ `[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>], [<span class="num">100</span>, <span class="num">200</span>, <span class="num">300</span>] ],
+              `[ [<span class="num">0.1</span>, <span class="num">0.2</span>, <span class="num">0.3</span>], [<span class="num">0.01</span>, <span class="num">0.02</span>, <span class="num">0.03</span>], [<span class="num">0.001</span>, <span class="num">0.002</span>, <span class="num">0.003</span>] ] ]
+
+    random_pdf_dirichlet(sample=sample, alpha=[<span class="num">0.1</span>, <span class="num">0.4</span>, <span class="num">0.9</span>]) =
+        `[ [<span class="num">2.3257459e-02</span>, <span class="num">5.8420084e-04</span>, <span class="num">1.4674458e-05</span>],
+         [<span class="num">9.2589635e-01</span>, <span class="num">3.6860607e+01</span>, <span class="num">1.4674468e+03</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L316</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">alpha</dt><dd class="cmt"><p>Concentration parameters of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_exponential" visbl="pub">
+<a id="random_pdf_exponential(sample:org.apache.mxnet.javaapi.NDArray,lam:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_exponential(NDArray,NDArray,Boolean,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_exponential</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="lam">lam: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_exponential(sample:org.apache.mxnet.javaapi.NDArray,lam:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+exponential distributions <span class="kw">with</span> parameters *lam* (rate).
+
+The shape of *lam* must <span class="kw">match</span> the leftmost subshape of *sample*.  That is, *sample*
+can have the same shape as *lam*, in which <span class="kw">case</span> the output contains one density per
+distribution, or *sample* can be a tensor of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span>
+the output is a tensor of densities such that the densities at index *i* in the output
+are given by the samples at index *i* in *sample* parameterized by the value of *lam*
+at index *i*.
+
+Examples::
+
+  random_pdf_exponential(sample=`[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] ], lam=[<span class="num">1</span>]) =
+      `[ [<span class="num">0.36787945</span>, <span class="num">0.13533528</span>, <span class="num">0.04978707</span>] ]
+
+  sample = `[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+            [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+            [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>] ]
+
+  random_pdf_exponential(sample=sample, lam=[<span class="num">1</span>,<span class="num">0.5</span>,<span class="num">0.25</span>]) =
+      `[ [<span class="num">0.36787945</span>, <span class="num">0.13533528</span>, <span class="num">0.04978707</span>],
+       [<span class="num">0.30326533</span>, <span class="num">0.18393973</span>, <span class="num">0.11156508</span>],
+       [<span class="num">0.1947002</span>,  <span class="num">0.15163267</span>, <span class="num">0.11809164</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L305</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">lam</dt><dd class="cmt"><p>Lambda (rate) parameters of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_gamma" visbl="pub">
+<a id="random_pdf_gamma(sample:org.apache.mxnet.javaapi.NDArray,alpha:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,beta:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_gamma(NDArray,NDArray,Boolean,NDArray,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_gamma</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="alpha">alpha: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="beta">beta: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_gamma(sample:org.apache.mxnet.javaapi.NDArray,alpha:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,beta:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+gamma distributions <span class="kw">with</span> parameters *alpha* (shape) and *beta* (rate).
+
+*alpha* and *beta* must have the same shape, which must <span class="kw">match</span> the leftmost subshape
+of *sample*.  That is, *sample* can have the same shape as *alpha* and *beta*, in which
+<span class="kw">case</span> the output contains one density per distribution, or *sample* can be a tensor
+of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span> the output is a tensor of densities such that
+the densities at index *i* in the output are given by the samples at index *i* in *sample*
+parameterized by the values of *alpha* and *beta* at index *i*.
+
+Examples::
+
+  random_pdf_gamma(sample=`[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>] ], alpha=[<span class="num">5</span>], beta=[<span class="num">1</span>]) =
+      `[ [<span class="num">0.01532831</span>, <span class="num">0.09022352</span>, <span class="num">0.16803136</span>, <span class="num">0.19536681</span>, <span class="num">0.17546739</span>] ]
+
+  sample = `[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>],
+            [<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>],
+            [<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>] ]
+
+  random_pdf_gamma(sample=sample, alpha=[<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>], beta=[<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>]) =
+      `[ [<span class="num">0.01532831</span>, <span class="num">0.09022352</span>, <span class="num">0.16803136</span>, <span class="num">0.19536681</span>, <span class="num">0.17546739</span>],
+       [<span class="num">0.03608941</span>, <span class="num">0.10081882</span>, <span class="num">0.15629345</span>, <span class="num">0.17546739</span>, <span class="num">0.16062315</span>],
+       [<span class="num">0.05040941</span>, <span class="num">0.10419563</span>, <span class="num">0.14622283</span>, <span class="num">0.16062315</span>, <span class="num">0.14900276</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L303</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">alpha</dt><dd class="cmt"><p>Alpha (shape) parameters of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt class="param">beta</dt><dd class="cmt"><p>Beta (scale) parameters of the distributions.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_generalized_negative_binomial" visbl="pub">
+<a id="random_pdf_generalized_negative_binomial(sample:org.apache.mxnet.javaapi.NDArray,mu:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,alpha:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_generalized_negative_binomial(NDArray,NDArray,Boolean,NDArray,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_generalized_negative_binomial</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="mu">mu: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="alpha">alpha: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_generalized_negative_binomial(sample:org.apache.mxnet.javaapi.NDArray,mu:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,alpha:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+generalized negative binomial distributions <span class="kw">with</span> parameters *mu* (mean)
+and *alpha* (dispersion).  This can be understood as a reparameterization of
+the negative binomial, where *k* = *<span class="num">1</span> / alpha* and *p* = *<span class="num">1</span> / (mu \* alpha + <span class="num">1</span>)*.
+
+*mu* and *alpha* must have the same shape, which must <span class="kw">match</span> the leftmost subshape
+of *sample*.  That is, *sample* can have the same shape as *mu* and *alpha*, in which
+<span class="kw">case</span> the output contains one density per distribution, or *sample* can be a tensor
+of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span> the output is a tensor of densities such that
+the densities at index *i* in the output are given by the samples at index *i* in *sample*
+parameterized by the values of *mu* and *alpha* at index *i*.
+
+Examples::
+
+    random_pdf_generalized_negative_binomial(sample=`[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>] ], alpha=[<span class="num">1</span>], mu=[<span class="num">1</span>]) =
+        `[ [<span class="num">0.25</span>, <span class="num">0.125</span>, <span class="num">0.0625</span>, <span class="num">0.03125</span>] ]
+
+    sample = `[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>],
+              [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>] ]
+    random_pdf_generalized_negative_binomial(sample=sample, alpha=[<span class="num">1</span>, <span class="num">0.6666</span>], mu=[<span class="num">1</span>, <span class="num">1.5</span>]) =
+        `[ [<span class="num">0.25</span>,       <span class="num">0.125</span>,      <span class="num">0.0625</span>,     <span class="num">0.03125</span>   ],
+         [<span class="num">0.26517063</span>, <span class="num">0.16573331</span>, <span class="num">0.09667706</span>, <span class="num">0.05437994</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L314</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">mu</dt><dd class="cmt"><p>Means of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt class="param">alpha</dt><dd class="cmt"><p>Alpha (dispersion) parameters of the distributions.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_negative_binomial" visbl="pub">
+<a id="random_pdf_negative_binomial(sample:org.apache.mxnet.javaapi.NDArray,k:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,p:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_negative_binomial(NDArray,NDArray,Boolean,NDArray,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_negative_binomial</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="k">k: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="p">p: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_negative_binomial(sample:org.apache.mxnet.javaapi.NDArray,k:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,p:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of samples of
+negative binomial distributions <span class="kw">with</span> parameters *k* (failure limit) and *p* (failure probability).
+
+*k* and *p* must have the same shape, which must <span class="kw">match</span> the leftmost subshape
+of *sample*.  That is, *sample* can have the same shape as *k* and *p*, in which
+<span class="kw">case</span> the output contains one density per distribution, or *sample* can be a tensor
+of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span> the output is a tensor of densities such that
+the densities at index *i* in the output are given by the samples at index *i* in *sample*
+parameterized by the values of *k* and *p* at index *i*.
+
+Examples::
+
+    random_pdf_negative_binomial(sample=`[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>] ], k=[<span class="num">1</span>], p=a[<span class="num">0.5</span>]) =
+        `[ [<span class="num">0.25</span>, <span class="num">0.125</span>, <span class="num">0.0625</span>, <span class="num">0.03125</span>] ]
+
+    # Note that k may be real-valued
+    sample = `[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>],
+              [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>] ]
+    random_pdf_negative_binomial(sample=sample, k=[<span class="num">1</span>, <span class="num">1.5</span>], p=[<span class="num">0.5</span>, <span class="num">0.5</span>]) =
+        `[ [<span class="num">0.25</span>,       <span class="num">0.125</span>,      <span class="num">0.0625</span>,     <span class="num">0.03125</span>   ],
+         [<span class="num">0.26516506</span>, <span class="num">0.16572815</span>, <span class="num">0.09667476</span>, <span class="num">0.05437956</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L310</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">k</dt><dd class="cmt"><p>Limits of unsuccessful experiments.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt class="param">p</dt><dd class="cmt"><p>Failure probabilities in each experiment.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_normal" visbl="pub">
+<a id="random_pdf_normal(sample:org.apache.mxnet.javaapi.NDArray,mu:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,sigma:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_normal(NDArray,NDArray,Boolean,NDArray,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_normal</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="mu">mu: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="sigma">sigma: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_normal(sample:org.apache.mxnet.javaapi.NDArray,mu:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,sigma:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+normal distributions <span class="kw">with</span> parameters *mu* (mean) and *sigma* (standard deviation).
+
+*mu* and *sigma* must have the same shape, which must <span class="kw">match</span> the leftmost subshape
+of *sample*.  That is, *sample* can have the same shape as *mu* and *sigma*, in which
+<span class="kw">case</span> the output contains one density per distribution, or *sample* can be a tensor
+of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span> the output is a tensor of densities such that
+the densities at index *i* in the output are given by the samples at index *i* in *sample*
+parameterized by the values of *mu* and *sigma* at index *i*.
+
+Examples::
+
+    sample = `[ [-<span class="num">2</span>, -<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>] ]
+    random_pdf_normal(sample=sample, mu=[<span class="num">0</span>], sigma=[<span class="num">1</span>]) =
+        `[ [<span class="num">0.05399097</span>, <span class="num">0.24197073</span>, <span class="num">0.3989423</span>, <span class="num">0.24197073</span>, <span class="num">0.05399097</span>] ]
+
+    random_pdf_normal(sample=sample*<span class="num">2</span>, mu=[<span class="num">0</span>,<span class="num">0</span>], sigma=[<span class="num">1</span>,<span class="num">2</span>]) =
+        `[ [<span class="num">0.05399097</span>, <span class="num">0.24197073</span>, <span class="num">0.3989423</span>,  <span class="num">0.24197073</span>, <span class="num">0.05399097</span>],
+         [<span class="num">0.12098537</span>, <span class="num">0.17603266</span>, <span class="num">0.19947115</span>, <span class="num">0.17603266</span>, <span class="num">0.12098537</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L300</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">mu</dt><dd class="cmt"><p>Means of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt class="param">sigma</dt><dd class="cmt"><p>Standard deviations of the distributions.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_poisson" visbl="pub">
+<a id="random_pdf_poisson(sample:org.apache.mxnet.javaapi.NDArray,lam:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_poisson(NDArray,NDArray,Boolean,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_poisson</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="lam">lam: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_poisson(sample:org.apache.mxnet.javaapi.NDArray,lam:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+Poisson distributions <span class="kw">with</span> parameters *lam* (rate).
+
+The shape of *lam* must <span class="kw">match</span> the leftmost subshape of *sample*.  That is, *sample*
+can have the same shape as *lam*, in which <span class="kw">case</span> the output contains one density per
+distribution, or *sample* can be a tensor of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span>
+the output is a tensor of densities such that the densities at index *i* in the output
+are given by the samples at index *i* in *sample* parameterized by the value of *lam*
+at index *i*.
+
+Examples::
+
+    random_pdf_poisson(sample=`[ [<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>] ], lam=[<span class="num">1</span>]) =
+        `[ [<span class="num">0.36787945</span>, <span class="num">0.36787945</span>, <span class="num">0.18393973</span>, <span class="num">0.06131324</span>] ]
+
+    sample = `[ [<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+              [<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+              [<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>] ]
+
+    random_pdf_poisson(sample=sample, lam=[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]) =
+        `[ [<span class="num">0.36787945</span>, <span class="num">0.36787945</span>, <span class="num">0.18393973</span>, <span class="num">0.06131324</span>],
+         [<span class="num">0.13533528</span>, <span class="num">0.27067056</span>, <span class="num">0.27067056</span>, <span class="num">0.18044704</span>],
+         [<span class="num">0.04978707</span>, <span class="num">0.14936121</span>, <span class="num">0.22404182</span>, <span class="num">0.22404182</span>] ]
+
+
+Defined in src/operator/random/pdf_op.cc:L307</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">lam</dt><dd class="cmt"><p>Lambda (rate) parameters of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+<span class="name">@Experimental</span><span class="args">()</span>
+</dd></dl></div>
+</li><li data-isabs="true" fullcomment="yes" group="Ungrouped" name="org.apache.mxnet.javaapi.NDArrayBase#random_pdf_uniform" visbl="pub">
+<a id="random_pdf_uniform(sample:org.apache.mxnet.javaapi.NDArray,low:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,high:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+<a id="random_pdf_uniform(NDArray,NDArray,Boolean,NDArray,NDArray):Array[NDArray]"></a>
+<h4 class="signature">
+<span class="modifier_kind">
+<span class="modifier">abstract </span>
+<span class="kind">def</span>
+</span>
+<span class="symbol">
+<span class="name">random_pdf_uniform</span><span class="params">(<span name="sample">sample: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="low">low: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="is_log">is_log: <span class="extype" name="java.lang.Boolean">Boolean</span></span>, <span name="high">high: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>, <span name="out">out: <a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a class="extype" href="NDArray.html" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+</span>
+</h4><span class="permalink">
+<a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@random_pdf_uniform(sample:org.apache.mxnet.javaapi.NDArray,low:org.apache.mxnet.javaapi.NDArray,is_log:Boolean,high:org.apache.mxnet.javaapi.NDArray,out:org.apache.mxnet.javaapi.NDArray):Array[org.apache.mxnet.javaapi.NDArray]" target="_top" title="Permalink">
+<img src="../../../../lib/permalink.png"/>
+</a>
+</span>
+<p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Computes the value of the PDF of *sample* of
+uniform distributions on the intervals given by *[low,high)*.
+
+*low* and *high* must have the same shape, which must <span class="kw">match</span> the leftmost subshape
+of *sample*.  That is, *sample* can have the same shape as *low* and *high*, in which
+<span class="kw">case</span> the output contains one density per distribution, or *sample* can be a tensor
+of tensors <span class="kw">with</span> that shape, in which <span class="kw">case</span> the output is a tensor of densities such that
+the densities at index *i* in the output are given by the samples at index *i* in *sample*
+parameterized by the values of *low* and *high* at index *i*.
+
+Examples::
+
+    random_pdf_uniform(sample=`[ [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>] ], low=[<span class="num">0</span>], high=[<span class="num">10</span>]) = [<span class="num">0.1</span>, <span class="num">0.1</span>, <span class="num">0.1</span>, <span class="num">0.1</span>]
+
+    sample = `[ `[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+               [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] ],
+              `[ [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+               [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] ] ]
+    low  = `[ [<span class="num">0</span>, <span class="num">0</span>],
+            [<span class="num">0</span>, <span class="num">0</span>] ]
+    high = `[ [ <span class="num">5</span>, <span class="num">10</span>],
+            [<span class="num">15</span>, <span class="num">20</span>] ]
+    random_pdf_uniform(sample=sample, low=low, high=high) =
+        `[ `[ [<span class="num">0.2</span>,        <span class="num">0.2</span>,        <span class="num">0.2</span>    ],
+          [<span class="num">0.1</span>,        <span class="num">0.1</span>,        <span class="num">0.1</span>    ] ],
+         `[ [<span class="num">0.06667</span>,    <span class="num">0.06667</span>,    <span class="num">0.06667</span>],
+          [<span class="num">0.05</span>,       <span class="num">0.05</span>,       <span class="num">0.05</span>   ] ] ]
+
+
+
+Defined in src/operator/random/pdf_op.cc:L298</pre></div><dl class="paramcmts block"><dt class="param">sample</dt><dd class="cmt"><p>Samples from the distributions.</p></dd><dt class="param">low</dt><dd class="cmt"><p>Lower bounds of the distributions.</p></dd><dt class="param">is_log</dt><dd class="cmt"><p>If set, compute the density of the log-probability instead of the probability.</p></dd><dt class="param">high</dt><dd class="cmt"><p>Upper bounds of the distributions.</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
 <span class="name">@Experimental</span><span class="args">()</span>
 </dd></dl></div>

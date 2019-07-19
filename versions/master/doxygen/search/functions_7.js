@@ -69,5 +69,6 @@ var searchData=
   ['grad',['grad',['../classmxnet_1_1NDArray.html#aed729c3bc9db04ab346fd3969b4fc982',1,'mxnet::NDArray']]],
   ['grad_5fdict',['grad_dict',['../classmxnet_1_1cpp_1_1Executor.html#a4ca4e8a5517ac2a35824adda6c80f872',1,'mxnet::cpp::Executor']]],
   ['gridgenerator',['GridGenerator',['../namespacemxnet_1_1cpp.html#a6ba557fafd479004873f1c6afa6b497c',1,'mxnet::cpp::GridGenerator(const std::string &amp;symbol_name, Symbol data, GridGeneratorTransformType transform_type, Shape target_shape=Shape(0, 0))'],['../namespacemxnet_1_1cpp.html#ad6e1c5da8364f84e285d6139bbbc721f',1,'mxnet::cpp::GridGenerator(Symbol data, GridGeneratorTransformType transform_type, Shape target_shape=Shape(0, 0))']]],
-  ['group',['Group',['../classmxnet_1_1cpp_1_1Symbol.html#afc8a595aa2b3c2c03c825f5b27061f45',1,'mxnet::cpp::Symbol']]]
+  ['group',['Group',['../classmxnet_1_1cpp_1_1Symbol.html#afc8a595aa2b3c2c03c825f5b27061f45',1,'mxnet::cpp::Symbol']]],
+  ['groupnorm',['GroupNorm',['../namespacemxnet_1_1cpp.html#a6ffd87c2aa36d1b3cf6630e0397dadef',1,'mxnet::cpp::GroupNorm(const std::string &amp;symbol_name, Symbol data, Symbol gamma, Symbol beta, int num_groups=1, mx_float eps=9.99999975e-06, bool output_mean_var=false)'],['../namespacemxnet_1_1cpp.html#a6d4fa3d5645a74ba3d8a11ebd6022d9a',1,'mxnet::cpp::GroupNorm(Symbol data, Symbol gamma, Symbol beta, int num_groups=1, mx_float eps=9.99999975e-06, bool output_mean_var=false)']]]
 ];
