@@ -685,6 +685,7 @@ var searchData=
   ['mxnet_5fuse_5fopenmp',['MXNET_USE_OPENMP',['../libinfo_8h.html#a8f038d9a2b558609d61fdfdc87b6d312',1,'libinfo.h']]],
   ['mxnet_5fuse_5fsignal_5fhandler',['MXNET_USE_SIGNAL_HANDLER',['../libinfo_8h.html#a285a0873bf3128a5061fa3df5ed7b316',1,'libinfo.h']]],
   ['mxnet_5fuse_5ftensorrt',['MXNET_USE_TENSORRT',['../libinfo_8h.html#aa22417a28e05174533d1dec85c2a8427',1,'libinfo.h']]],
+  ['mxnet_5fuse_5ftvm_5fop',['MXNET_USE_TVM_OP',['../libinfo_8h.html#aa6d14d13664e025f088b77569f8bef4b',1,'libinfo.h']]],
   ['mxnet_5fversion',['MXNET_VERSION',['../include_2mxnet_2base_8h.html#a18d0da52a992a3360eaa481b43094e80',1,'base.h']]],
   ['mxnetcpp_2eh',['MxNetCpp.h',['../MxNetCpp_8h.html',1,'']]],
   ['mxnetcpp_5fregister_5foptimizer',['MXNETCPP_REGISTER_OPTIMIZER',['../optimizer_8h.html#af2d102c73cf9fe9bcc63a00e70083eaf',1,'optimizer.h']]],
