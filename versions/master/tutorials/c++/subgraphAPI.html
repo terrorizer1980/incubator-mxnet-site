@@ -320,7 +320,12 @@
 There’re 2 built-in attributes that used by MXNet executor.</p>
 <p><code class="docutils literal"><span class="pre">property_name</span></code>  : std::string, name of this property.</p>
 <p><code class="docutils literal"><span class="pre">inference_only</span></code> : bool, apply this property only for inference. Property will be skiped when need_grad=True. Default <code class="docutils literal"><span class="pre">false</span></code> if this attribute isn’t defined.</p>
-<p>After defining the subgraph property, we need to register it in .cc file.</p>
+<p>After defining the subgraph property, we need to register it under a backend in .cc file.</p>
+<p>Firstly, we need to register the backend</p>
+<div class="highlight-C++"><div class="highlight"><pre><span></span><span class="n">MXNET_REGISTER_SUBGRAPH_BACKEND</span><span class="p">(</span><span class="n">SgTest</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then register the property under it.</p>
 <div class="highlight-C++"><div class="highlight"><pre><span></span><span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -329,6 +334,7 @@ There’re 2 built-in attributes that used by MXNet executor.</p>
 <span class="cp">#include</span> <span class="cpf">"SgProperty2.h" // Define SgProperty2 class</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">"SgProperty3.h" // Define SgProperty3 class</span><span class="cp"></span>
 
+<span class="n">MXNET_REGISTER_SUBGRAPH_BACKEND</span><span class="p">(</span><span class="n">SgTest</span><span class="p">);</span>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>  <span class="c1">// Execution order 1.</span>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty2</span><span class="p">);</span> <span class="c1">// Execution order 2.</span>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty3</span><span class="p">);</span> <span class="c1">// Execution order 3.</span>
