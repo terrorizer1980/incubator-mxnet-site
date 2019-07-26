@@ -387,10 +387,10 @@
 <div class="section" id="view-in-browser">
 <span id="view-in-browser"></span><h4>2. View in browser<a class="headerlink" href="#view-in-browser" title="Permalink to this headline">¶</a></h4>
 <p>You can also dump the information collected by the profiler into a <code class="docutils literal"><span class="pre">json</span></code> file using the <code class="docutils literal"><span class="pre">profiler.dump()</span></code> function and view it in a browser.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">finished</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">dump()</span></code> creates a <code class="docutils literal"><span class="pre">json</span></code> file which can be viewed using a trace consumer like <code class="docutils literal"><span class="pre">chrome://tracing</span></code> in the Chrome browser. Here is a snapshot that shows the output of the profiling we did above.</p>
+<p><code class="docutils literal"><span class="pre">dump()</span></code> creates a <code class="docutils literal"><span class="pre">json</span></code> file which can be viewed using a trace consumer like <code class="docutils literal"><span class="pre">chrome://tracing</span></code> in the Chrome browser. Here is a snapshot that shows the output of the profiling we did above. Note that setting the <code class="docutils literal"><span class="pre">finished</span></code> parameter to <code class="docutils literal"><span class="pre">False</span></code> will prevent the profiler from finishing dumping to file. If you just use <code class="docutils literal"><span class="pre">profiler.dump()</span></code>, you will no longer be able to profile the remaining sections of your model.</p>
 <p><img alt="Tracing Screenshot" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_output_chrome.png"/></p>
 <p>Let’s zoom in to check the time taken by operators</p>
 <p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profile_operators.png"/></p>
@@ -401,11 +401,7 @@
 <span id="profiling-custom-operators"></span><h3>Profiling Custom Operators<a class="headerlink" href="#profiling-custom-operators" title="Permalink to this headline">¶</a></h3>
 <p>Should the existing NDArray operators fail to meet all your model’s needs, MXNet supports <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/gluon/customop.html">Custom Operators</a> that you can define in Python. In <code class="docutils literal"><span class="pre">forward()</span></code> and <code class="docutils literal"><span class="pre">backward()</span></code> of a custom operator, there are two kinds of code: “pure Python” code (NumPy operators included) and “sub-operators” (NDArray operators called within <code class="docutils literal"><span class="pre">forward()</span></code> and <code class="docutils literal"><span class="pre">backward()</span></code>). With that said, MXNet can profile the execution time of both kinds without additional setup. Specifically, the MXNet profiler will break a single custom operator call into a pure Python event and several sub-operator events if there are any. Furthermore, all of those events will have a prefix in their names, which is, conveniently, the name of the custom operator you called.</p>
 <p>Let’s try profiling custom operators with the following code example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">nd</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">profiler</span>
-
-<span class="k">class</span> <span class="nc">MyAddOne</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">CustomOp</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAddOne</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">CustomOp</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_train</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">in_data</span><span class="p">,</span> <span class="n">out_data</span><span class="p">,</span> <span class="n">aux</span><span class="p">):</span>  
         <span class="bp">self</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">out_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">in_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 
@@ -432,7 +428,8 @@
 
 <span class="n">inp</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
 
-<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> \
+                    <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'run'</span><span class="p">)</span>
 
 <span class="n">w</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Custom</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="s2">"MyAddOne"</span><span class="p">)</span>
@@ -440,7 +437,8 @@
 <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span>
 
 <span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'stop'</span><span class="p">)</span>
-<span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">profiler</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">finished</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Here, we have created a custom operator called <code class="docutils literal"><span class="pre">MyAddOne</span></code>, and within its <code class="docutils literal"><span class="pre">forward()</span></code> function, we simply add one to the input. We can visualize the dump file in <code class="docutils literal"><span class="pre">chrome://tracing/</span></code>:</p>
@@ -448,10 +446,10 @@
 <p>As shown by the screenshot, in the <strong>Custom Operator</strong> domain where all the custom operator-related events fall into, we can easily visualize the execution time of each segment of <code class="docutils literal"><span class="pre">MyAddOne</span></code>. We can tell that <code class="docutils literal"><span class="pre">MyAddOne::pure_python</span></code> is executed first. We also know that <code class="docutils literal"><span class="pre">CopyCPU2CPU</span></code> and <code class="docutils literal"><span class="pre">_plus_scalr</span></code> are two “sub-operators” of <code class="docutils literal"><span class="pre">MyAddOne</span></code> and the sequence in which they are executed.</p>
 <p>Please note that: to be able to see the previously described information, you need to set <code class="docutils literal"><span class="pre">profile_imperative</span></code> to <code class="docutils literal"><span class="pre">True</span></code> even when you are using custom operators in <a class="reference external" href="https://mxnet.incubator.apache.org/versions/master/tutorials/basic/symbol.html">symbolic mode</a> (refer to the code snippet below, which is the symbolic-mode equivelent of the code example above). The reason is that within custom operators, pure python code and sub-operators are still called imperatively.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Set profile_all to True</span>
-<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="c1"># OR, Explicitly Set profile_symbolic and profile_imperative to True</span>
-<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_symbolic</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">profile_imperative</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> \
-    <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_symbolic</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">profile_imperative</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> \
+                    <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">continuous_dump</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'run'</span><span class="p">)</span>
 <span class="c1"># Use Symbolic Mode</span>
@@ -461,9 +459,17 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
 <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span>
 <span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s1">'stop'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">profiler</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
 <span class="n">profiler</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="some-rules-to-pay-attention-to">
+<span id="some-rules-to-pay-attention-to"></span><h3>Some Rules to Pay Attention to<a class="headerlink" href="#some-rules-to-pay-attention-to" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li>Always use <code class="docutils literal"><span class="pre">profiler.dump(finished=False)</span></code> if you do not intend to finish dumping to file. Otherwise, calling <code class="docutils literal"><span class="pre">profiler.dump()</span></code> in the middle of your model may lead to unexpected behaviors; and if you subsequently call <code class="docutils literal"><span class="pre">profiler.set_config()</span></code>, the program will error out.</li>
+<li>You can only dump to one file. Do not change the target file by calling <code class="docutils literal"><span class="pre">profiler.set_config(filename='new_name.json')</span></code> in the middle of your model. This will lead to incomplete dump outputs.</li>
+</ol>
 </div>
 </div>
 <div class="section" id="advanced-using-nvidia-profiling-tools">
@@ -521,6 +527,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#profiling-custom-operators">Profiling Custom Operators</a></li>
+<li><a class="reference internal" href="#some-rules-to-pay-attention-to">Some Rules to Pay Attention to</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#advanced-using-nvidia-profiling-tools">Advanced: Using NVIDIA Profiling Tools</a><ul>
