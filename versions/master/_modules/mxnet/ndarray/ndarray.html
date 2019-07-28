@@ -1484,13 +1484,38 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NDArray.flatten"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Convenience fluent method for :py:func:`flatten`.</span>
+<div class="viewcode-block" id="NDArray.flatten"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Flatten this array without altering any data.</span>
 
-<span class="sd">        The arguments are the same as for :py:func:`flatten`, with</span>
-<span class="sd">        this array as data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inplace : bool, default False</span>
+<span class="sd">            If True, this method returns a **view** of this array</span>
+<span class="sd">            that shares data with this array. Otherwise, a copy is returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        NDArray</span>
+<span class="sd">            An array with flattened shape `(d1, d2*...*dk)` that shares data with</span>
+<span class="sd">            this array with shape `(d1, d2, ..., dk)`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> x = mx.nd.arange(30).reshape(5,2,3)</span>
+<span class="sd">        >>> y = x.flatten(inplace=True)</span>
+<span class="sd">        >>> z = x.flatten()</span>
+<span class="sd">        >>> y.shape</span>
+<span class="sd">        (5, 6)</span>
+<span class="sd">        >>> y[0].asnumpy()</span>
+<span class="sd">        array([0., 1., 2., 3., 4., 5.], dtype=float32)</span>
+<span class="sd">        >>> y[:] = -1</span>
+<span class="sd">        >>> x[0].asnumpy()</span>
+<span class="sd">        array([[-1., -1., -1.],</span>
+<span class="sd">               [-1., -1., -1.]], dtype=float32)</span>
+<span class="sd">        >>> z[0].asnumpy()</span>
+<span class="sd">        array([0., 1., 2., 3., 4., 5.], dtype=float32)</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="NDArray.shape_array"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.shape_array">[docs]</a>    <span class="k">def</span> <span class="nf">shape_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""Convenience fluent method for :py:func:`shape_array`.</span>
@@ -1508,13 +1533,52 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">size_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NDArray.expand_dims"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.expand_dims">[docs]</a>    <span class="k">def</span> <span class="nf">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Convenience fluent method for :py:func:`expand_dims`.</span>
+<div class="viewcode-block" id="NDArray.expand_dims"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.expand_dims">[docs]</a>    <span class="k">def</span> <span class="nf">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Adds an additional dimension to the current array without altering any data.</span>
 
-<span class="sd">        The arguments are the same as for :py:func:`expand_dims`, with</span>
-<span class="sd">        this array as data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        axis : int</span>
+<span class="sd">            Position where new axis is to be inserted.</span>
+<span class="sd">            Suppose that the input NDArray's dimension is ndim,</span>
+<span class="sd">            the range of the inserted axis is [-ndim, ndim].</span>
+<span class="sd">        inplace : bool, default False</span>
+<span class="sd">            If True, this method returns a **view** of this array</span>
+<span class="sd">            that shares data with this array. Otherwise, a copy is returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        NDArray</span>
+<span class="sd">            An array with expanded shape `(d1, d2, ..., 1, di, ..., dk)`</span>
+<span class="sd">            that shares data with this array with shape `(d1, d2, ..., dk)`,</span>
+<span class="sd">            given input axis `i`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        >>> x = mx.nd.arange(6).reshape(2,3)</span>
+<span class="sd">        >>> y = x.expand_dims(1, inplace=True)</span>
+<span class="sd">        >>> z = x.expand_dims(1)</span>
+<span class="sd">        >>> y.shape</span>
+<span class="sd">        (2, 1, 3)</span>
+<span class="sd">        >>> y[0].asnumpy()</span>
+<span class="sd">        array([[0., 1., 2.]], dtype=float32)</span>
+<span class="sd">        >>> y[:] = -1</span>
+<span class="sd">        >>> x.asnumpy()</span>
+<span class="sd">        array([[-1., -1., -1.],</span>
+<span class="sd">               [-1., -1., -1.]], dtype=float32)</span>
+<span class="sd">        >>> z[0].asnumpy()</span>
+<span class="sd">        array([[0., 1., 2.]], dtype=float32)</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="o"><=</span> <span class="n">axis</span> <span class="o"><=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">),</span> \
+                    <span class="s2">"axis </span><span class="si">{}</span><span class="s2"> is out of range for </span><span class="si">{}</span><span class="s2">d array"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">axis</span> <span class="o"><</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">axis</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">new_shape</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="NDArray.tile"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.tile">[docs]</a>    <span class="k">def</span> <span class="nf">tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""Convenience fluent method for :py:func:`tile`.</span>
@@ -1924,13 +1988,45 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">softmin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NDArray.squeeze"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.squeeze">[docs]</a>    <span class="k">def</span> <span class="nf">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Convenience fluent method for :py:func:`squeeze`.</span>
+<div class="viewcode-block" id="NDArray.squeeze"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.squeeze">[docs]</a>    <span class="k">def</span> <span class="nf">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Remove dimensions with size 1 from this array without altering any data.</span>
 
-<span class="sd">        The arguments are the same as for :py:func:`squeeze`, with</span>
-<span class="sd">        this array as data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        axis : int, tuple of int, or None</span>
+<span class="sd">            Selects a subset of the single-dimensional entries in the shape.</span>
+<span class="sd">            If an axis is selected with shape entry greater than one, an error is raised.</span>
+<span class="sd">        inplace : bool, default False</span>
+<span class="sd">            If True, this method returns a **view** of this array</span>
+<span class="sd">            that shares data with this array. Otherwise, a copy is returned.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">axis</span> <span class="c1"># rename variable for readability</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">axes</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">axes</span><span class="p">)),</span> \
+                    <span class="s2">"axis </span><span class="si">{}</span><span class="s2"> contains duplicate which is not allowed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+                <span class="n">resolved_axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">if</span> <span class="n">i</span> <span class="o">>=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">i</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">arg_axis</span><span class="p">,</span> <span class="n">actual_axis</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">resolved_axes</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span> <span class="o"><=</span> <span class="n">arg_axis</span> <span class="o"><</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">),</span> \
+                        <span class="s2">"axis </span><span class="si">{}</span><span class="s2"> is out of range for </span><span class="si">{}</span><span class="s2">d array"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_axis</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">))</span>
+                    <span class="n">axis_size</span> <span class="o">=</span> <span class="n">new_shape</span><span class="p">[</span><span class="n">actual_axis</span><span class="p">]</span>
+                    <span class="k">assert</span> <span class="n">axis_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+                        <span class="s2">"Squeeze target axis </span><span class="si">{}</span><span class="s2"> must be size 1, got </span><span class="si">{}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_axis</span><span class="p">,</span> <span class="n">axis_size</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">resolved_axes</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">del</span> <span class="n">new_shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_shape</span><span class="p">))):</span>
+                    <span class="k">if</span> <span class="n">new_shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">del</span> <span class="n">new_shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_shape</span><span class="p">:</span>
+                <span class="n">new_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span></div>
 
     <span class="c1"># pylint: disable= undefined-variable</span>
 <div class="viewcode-block" id="NDArray.broadcast_to"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.broadcast_to">[docs]</a>    <span class="k">def</span> <span class="nf">broadcast_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
