@@ -254,16 +254,24 @@ to temporarily disable recording.</p>
 <p>To compute gradient with respect to an <code class="docutils literal"><span class="pre">NDArray</span></code> <code class="docutils literal"><span class="pre">x</span></code>, first call <code class="docutils literal"><span class="pre">x.attach_grad()</span></code>
 to allocate space for the gradient. Then, start a <code class="docutils literal"><span class="pre">with</span> <span class="pre">autograd.record()</span></code> block,
 and do some computation. Finally, call <code class="docutils literal"><span class="pre">backward()</span></code> on the result:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
-<span class="gp">>>> </span><span class="n">x</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
-<span class="gp">>>> </span><span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="gp">>>> </span><span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="gp">>>> </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-<span class="go">[ 2.  4.  6.  8.]</span>
-<span class="go"><NDArray 4 @cpu(0)></span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">x</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Which outputs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mf">2.</span>  <span class="mf">4.</span>  <span class="mf">6.</span>  <span class="mf">8.</span><span class="p">]</span>
+<span class="o"><</span><span class="n">NDArray</span> <span class="mi">4</span> <span class="nd">@cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">></span>
+</pre></div>
+</div>
+<p>Gradient recording is enabled during the scope of the <code class="docutils literal"><span class="pre">with</span> <span class="pre">mx.autograd.record():</span></code> statement, then
+disabled when we go out of that scope.</p>
+<p>It can be also set manually by executing <code class="docutils literal"><span class="pre">mx.autograd.set_recording(True)</span></code>, and turning it off after
+we no longer want to record operations with <code class="docutils literal"><span class="pre">mx.autograd.set_recording(False)</span></code>.</p>
 </div>
 <div class="section" id="train-mode-and-predict-mode">
 <span id="train-mode-and-predict-mode"></span><h2>Train mode and Predict Mode<a class="headerlink" href="#train-mode-and-predict-mode" title="Permalink to this headline">¶</a></h2>
@@ -283,8 +291,52 @@ use a <code class="docutils literal"><span class="pre">with</span> <span class="
 or <code class="docutils literal"><span class="pre">with</span> <span class="pre">autograd.predict_mode():</span></code> block.</p>
 <p>Detailed tutorials are available in Part 1 of
 <a class="reference external" href="http://gluon.mxnet.io/">the MXNet gluon book</a>.</p>
-<script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script></div>
-<div class="section" id="autograd">
+</div>
+</div>
+<div class="section" id="higher-order-gradient">
+<span id="higher-order-gradient"></span><h1>Higher order gradient<a class="headerlink" href="#higher-order-gradient" title="Permalink to this headline">¶</a></h1>
+<p>Some operators support higher order gradients. Some operators support differentiating multiple
+times, and others two, most just once.</p>
+<p>For calculating higher order gradients, we can use the <code class="docutils literal"><span class="pre">mx.autograd.grad</span></code> function while recording
+and then call backward, or call <code class="docutils literal"><span class="pre">mx.autograd.grad</span></code> two times. If we do the latter, is important that
+the first call uses <code class="docutils literal"><span class="pre">create_graph=True</span></code> and <code class="docutils literal"><span class="pre">retain_graph=True</span></code> and the second call uses
+<code class="docutils literal"><span class="pre">create_graph=False</span></code> and <code class="docutils literal"><span class="pre">retain_graph=True</span></code>. Otherwise we will not get the results that we want. If
+we would be to recreate the graph in the second call, we would end up with a graph of just the
+backward nodes, not the full initial graph that includes the forward nodes.</p>
+<p>The pattern to calculate higher order gradients is the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">nd</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span> <span class="k">as</span> <span class="n">ag</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">x</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># Any function which supports higher oder gradient</span>
+    <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the operators used in <code class="docutils literal"><span class="pre">f</span></code> don’t support higher order gradients you will get an error like
+<code class="docutils literal"><span class="pre">operator</span> <span class="pre">...</span> <span class="pre">is</span> <span class="pre">non-differentiable</span> <span class="pre">because</span> <span class="pre">it</span> <span class="pre">didn't</span> <span class="pre">register</span> <span class="pre">FGradient</span> <span class="pre">attribute.</span></code>. This means
+that it doesn’t support getting the gradient of the gradient. Which is, running backward on
+the backward graph.</p>
+<p>Using mxnet.autograd.grad multiple times:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ag</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x_grad</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">heads</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x_grad_grad</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">heads</span><span class="o">=</span><span class="n">x_grad</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Running backward on the backward graph:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ag</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x_grad</span> <span class="o">=</span> <span class="n">ag</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">heads</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">x_grad</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">x_grad_grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+</div>
+<p>Both methods are equivalent, except that in the second case, retain_graph on running backward is set
+to False by default. But both calls are running a backward pass as on the graph as usual to get the
+gradient of the first gradient <code class="docutils literal"><span class="pre">x_grad</span></code> with respect to <code class="docutils literal"><span class="pre">x</span></code> evaluated at the value of <code class="docutils literal"><span class="pre">x</span></code>.</p>
+<p>For more examples, check the <a class="reference external" href="https://github.com/apache/incubator-mxnet/blob/master/tests/python/unittest/test_higher_order_grad.py">higher order gradient unit tests</a>.</p>
+<script src="../../../_static/js/auto_module_index.js" type="text/javascript"></script><div class="section" id="autograd">
 <span id="autograd"></span><h2>Autograd<a class="headerlink" href="#autograd" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -480,6 +532,8 @@ without changing the recording states.</p>
 <dt id="mxnet.autograd.mark_variables">
 <code class="descclassname">mxnet.autograd.</code><code class="descname">mark_variables</code><span class="sig-paren">(</span><em>variables</em>, <em>gradients</em>, <em>grad_reqs='write'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/autograd.html#mark_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.autograd.mark_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark NDArrays as variables to compute gradient for autograd.</p>
+<p>This is equivalent to the function .attach_grad() in a variable, but with this
+call we can set the gradient to any value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -638,6 +692,9 @@ and returns as many NDArrays as forward’s inputs.</p>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#record-vs-pause">Record vs Pause</a></li>
 <li><a class="reference internal" href="#train-mode-and-predict-mode">Train mode and Predict Mode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#higher-order-gradient">Higher order gradient</a><ul>
 <li><a class="reference internal" href="#autograd">Autograd</a></li>
 <li><a class="reference internal" href="#api-reference">API Reference</a></li>
 </ul>
