@@ -387,6 +387,49 @@ so that feature contributors can receive feedback.</p>
 </table>
 </div>
 </div>
+<div class="section" id="estimator">
+<span id="estimator"></span><h3>Estimator<a class="headerlink" href="#estimator" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"/>
+<col width="90%"/>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><code class="xref py py-obj docutils literal"><span class="pre">Estimator</span></code></a></td>
+<td>Estimator Class for easy model training</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="eventhandler">
+<span id="eventhandler"></span><h4>EventHandler<a class="headerlink" href="#eventhandler" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"/>
+<col width="90%"/>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.StoppingHandler" title="mxnet.gluon.contrib.estimator.StoppingHandler"><code class="xref py py-obj docutils literal"><span class="pre">StoppingHandler</span></code></a></td>
+<td>Stop conditions to stop training Stop training if maximum number of batches or epochs reached.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.MetricHandler" title="mxnet.gluon.contrib.estimator.MetricHandler"><code class="xref py py-obj docutils literal"><span class="pre">MetricHandler</span></code></a></td>
+<td>Metric Handler that update metric values at batch end</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="mxnet.gluon.contrib.estimator.ValidationHandler"><code class="xref py py-obj docutils literal"><span class="pre">ValidationHandler</span></code></a></td>
+<td>Validation Handler that evaluate model on validation dataset</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.LoggingHandler" title="mxnet.gluon.contrib.estimator.LoggingHandler"><code class="xref py py-obj docutils literal"><span class="pre">LoggingHandler</span></code></a></td>
+<td>Basic Logging Handler that applies to every Gluon estimator by default.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="mxnet.gluon.contrib.estimator.CheckpointHandler"><code class="xref py py-obj docutils literal"><span class="pre">CheckpointHandler</span></code></a></td>
+<td>Save the model after user define period</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.contrib.estimator.EarlyStoppingHandler" title="mxnet.gluon.contrib.estimator.EarlyStoppingHandler"><code class="xref py py-obj docutils literal"><span class="pre">EarlyStoppingHandler</span></code></a></td>
+<td>Early stop training if monitored value is not improving</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div class="section" id="api-reference">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
@@ -1366,6 +1409,226 @@ If None, a default vocabulary is created.</li>
 </tbody>
 </table>
 </dd></dl>
+<span class="target" id="module-mxnet.gluon.contrib.estimator"></span><p>Gluon Estimator Module</p>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.CheckpointHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">CheckpointHandler</code><span class="sig-paren">(</span><em>model_dir</em>, <em>model_prefix='model'</em>, <em>monitor=None</em>, <em>verbose=0</em>, <em>save_best=False</em>, <em>mode='auto'</em>, <em>epoch_period=1</em>, <em>batch_period=None</em>, <em>max_checkpoints=5</em>, <em>resume_from_checkpoint=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#CheckpointHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the model after user define period</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="mxnet.gluon.contrib.estimator.CheckpointHandler"><code class="xref py py-class docutils literal"><span class="pre">CheckpointHandler</span></code></a> saves the network architecture after first batch if the model
+can be fully hybridized, saves model parameters and trainer states after user defined period,
+default saves every epoch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_dir</strong> (<em>str</em>) – File directory to save all the model related files including model architecture,
+model parameters, and trainer states.</li>
+<li><strong>model_prefix</strong> (<em>str default 'model'</em>) – Prefix to add for all checkpoint file names.</li>
+<li><strong>monitor</strong> (<a class="reference internal" href="../metric/metric.html#mxnet.metric.EvalMetric" title="mxnet.metric.EvalMetric"><em>EvalMetric</em></a><em>, </em><em>default None</em>) – The metrics to monitor and determine if model has improved</li>
+<li><strong>verbose</strong> (<em>int</em><em>, </em><em>default 0</em>) – Verbosity mode, 1 means inform user every time a checkpoint is saved</li>
+<li><strong>save_best</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, monitor must not be None, <a class="reference internal" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="mxnet.gluon.contrib.estimator.CheckpointHandler"><code class="xref py py-class docutils literal"><span class="pre">CheckpointHandler</span></code></a> will save the
+model parameters and trainer states with the best monitored value.</li>
+<li><strong>mode</strong> (<em>str</em><em>, </em><em>default 'auto'</em>) – One of {auto, min, max}, if <cite>save_best=True</cite>, the comparison to make
+and determine if the monitored value has improved. if ‘auto’ mode,
+<a class="reference internal" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="mxnet.gluon.contrib.estimator.CheckpointHandler"><code class="xref py py-class docutils literal"><span class="pre">CheckpointHandler</span></code></a> will try to use min or max based on
+the monitored metric name.</li>
+<li><strong>epoch_period</strong> (<em>int</em><em>, </em><em>default 1</em>) – Epoch intervals between saving the network. By default, checkpoints are
+saved every epoch.</li>
+<li><strong>batch_period</strong> (<em>int</em><em>, </em><em>default None</em>) – Batch intervals between saving the network.
+By default, checkpoints are not saved based on the number of batches.</li>
+<li><strong>max_checkpoints</strong> (<em>int</em><em>, </em><em>default 5</em>) – Maximum number of checkpoint files to keep in the model_dir, older checkpoints
+will be removed. Best checkpoint file is not counted.</li>
+<li><strong>resume_from_checkpoint</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to resume training from checkpoint in model_dir. If True and checkpoints
+found, <a class="reference internal" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="mxnet.gluon.contrib.estimator.CheckpointHandler"><code class="xref py py-class docutils literal"><span class="pre">CheckpointHandler</span></code></a> will load net parameters and trainer states,
+and train the remaining of epochs and batches.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.EarlyStoppingHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">EarlyStoppingHandler</code><span class="sig-paren">(</span><em>monitor</em>, <em>min_delta=0</em>, <em>patience=0</em>, <em>mode='auto'</em>, <em>baseline=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#EarlyStoppingHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.EarlyStoppingHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Early stop training if monitored value is not improving</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>monitor</strong> (<a class="reference internal" href="../metric/metric.html#mxnet.metric.EvalMetric" title="mxnet.metric.EvalMetric"><em>EvalMetric</em></a>) – The metric to monitor, and stop training if this metric does not improve.</li>
+<li><strong>min_delta</strong> (<em>float</em><em>, </em><em>default 0</em>) – Minimal change in monitored value to be considered as an improvement.</li>
+<li><strong>patience</strong> (<em>int</em><em>, </em><em>default 0</em>) – Number of epochs to wait for improvement before terminate training.</li>
+<li><strong>mode</strong> (<em>str</em><em>, </em><em>default 'auto'</em>) – One of {auto, min, max}, if <cite>save_best_only=True</cite>, the comparison to make
+and determine if the monitored value has improved. if ‘auto’ mode, checkpoint
+handler will try to use min or max based on the monitored metric name.</li>
+<li><strong>baseline</strong> (<em>float</em>) – Baseline value to compare the monitored value with.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.Estimator">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">Estimator</code><span class="sig-paren">(</span><em>net</em>, <em>loss</em>, <em>metrics=None</em>, <em>initializer=None</em>, <em>trainer=None</em>, <em>context=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimator Class for easy model training</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><code class="xref py py-class docutils literal"><span class="pre">Estimator</span></code></a> can be used to facilitate the training &amp; validation process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>net</strong> (<a class="reference internal" href="gluon.html#mxnet.gluon.Block" title="mxnet.gluon.Block"><em>Block</em></a>) – The model used for training.</li>
+<li><strong>loss</strong> (<a class="reference internal" href="loss.html#mxnet.gluon.loss.Loss" title="mxnet.gluon.loss.Loss"><em>gluon.loss.Loss</em></a><em> or </em><em>list of gluon.loss.Loss</em>) – Loss(objective functions) to calculate during training.</li>
+<li><strong>metrics</strong> (<a class="reference internal" href="../metric/metric.html#mxnet.metric.EvalMetric" title="mxnet.metric.EvalMetric"><em>EvalMetric</em></a><em> or </em><em>list of EvalMetric</em>) – Metrics for evaluating models.</li>
+<li><strong>initializer</strong> (<a class="reference internal" href="../optimization/optimization.html#mxnet.initializer.Initializer" title="mxnet.initializer.Initializer"><em>Initializer</em></a>) – Initializer to initialize the network.</li>
+<li><strong>trainer</strong> (<a class="reference internal" href="gluon.html#mxnet.gluon.Trainer" title="mxnet.gluon.Trainer"><em>Trainer</em></a>) – Trainer to apply optimizer on network parameters.</li>
+<li><strong>context</strong> (<em>Context</em><em> or </em><em>list of Context</em>) – Device(s) to run the training on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.estimator.Estimator.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>val_data</em>, <em>val_metrics</em>, <em>batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate model on validation data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>val_data</strong> (<a class="reference internal" href="data.html#mxnet.gluon.data.DataLoader" title="mxnet.gluon.data.DataLoader"><em>DataLoader</em></a>) – Validation data loader with data and labels.</li>
+<li><strong>val_metrics</strong> (<a class="reference internal" href="../metric/metric.html#mxnet.metric.EvalMetric" title="mxnet.metric.EvalMetric"><em>EvalMetric</em></a><em> or </em><em>list of EvalMetrics</em>) – Metrics to update validation result.</li>
+<li><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the validation data into devices.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.estimator.Estimator.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>train_data</em>, <em>val_data=None</em>, <em>epochs=None</em>, <em>event_handlers=None</em>, <em>batches=None</em>, <em>batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the model with a given <code class="xref py py-class docutils literal"><span class="pre">DataLoader</span></code> for a specified
+number of epochs or batches. The batch size is inferred from the
+data loader’s batch_size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>train_data</strong> (<a class="reference internal" href="data.html#mxnet.gluon.data.DataLoader" title="mxnet.gluon.data.DataLoader"><em>DataLoader</em></a>) – Training data loader with data and labels.</li>
+<li><strong>val_data</strong> (<a class="reference internal" href="data.html#mxnet.gluon.data.DataLoader" title="mxnet.gluon.data.DataLoader"><em>DataLoader</em></a><em>, </em><em>default None</em>) – Validation data loader with data and labels.</li>
+<li><strong>epochs</strong> (<em>int</em><em>, </em><em>default None</em>) – Number of epochs to iterate on the training data.
+You can only specify one and only one type of iteration(epochs or batches).</li>
+<li><strong>event_handlers</strong> (<em>EventHandler</em><em> or </em><em>list of EventHandler</em>) – List of <code class="xref py py-class docutils literal"><span class="pre">EventHandlers</span></code> to apply during training.</li>
+<li><strong>batches</strong> (<em>int</em><em>, </em><em>default None</em>) – Number of batches to iterate on the training data.
+You can only specify one and only one type of iteration(epochs or batches).</li>
+<li><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the training data into devices.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.estimator.Estimator.prepare_loss_and_metrics">
+<code class="descname">prepare_loss_and_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.prepare_loss_and_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.prepare_loss_and_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Based on loss functions and training metrics in estimator
+Create metric wrappers to record loss values,
+Create copies of train loss/metric objects to record validation values
+Returns train_metrics and val_metrics</p>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.LoggingHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">LoggingHandler</code><span class="sig-paren">(</span><em>file_name=None</em>, <em>file_location=None</em>, <em>filemode='a'</em>, <em>verbose=1</em>, <em>train_metrics=None</em>, <em>val_metrics=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#LoggingHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.LoggingHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic Logging Handler that applies to every Gluon estimator by default.</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.LoggingHandler" title="mxnet.gluon.contrib.estimator.LoggingHandler"><code class="xref py py-class docutils literal"><span class="pre">LoggingHandler</span></code></a> logs hyper-parameters, training statistics,
+and other useful information during training</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_name</strong> (<em>str</em>) – File name to save the logs.</li>
+<li><strong>file_location</strong> (<em>str</em>) – File location to save the logs.</li>
+<li><strong>filemode</strong> (<em>str</em><em>, </em><em>default 'a'</em>) – Logging file mode, default using append mode.</li>
+<li><strong>verbose</strong> (<em>int</em><em>, </em><em>default LOG_PER_EPOCH</em>) – Limit the granularity of metrics displayed during training process.
+verbose=LOG_PER_EPOCH: display metrics every epoch
+verbose=LOG_PER_BATCH: display metrics every batch</li>
+<li><strong>train_metrics</strong> (<em>list of EvalMetrics</em>) – Training metrics to be logged, logged at batch end, epoch end, train end.</li>
+<li><strong>val_metrics</strong> (<em>list of EvalMetrics</em>) – Validation metrics to be logged, logged at epoch end, train end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.MetricHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">MetricHandler</code><span class="sig-paren">(</span><em>train_metrics</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#MetricHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.MetricHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metric Handler that update metric values at batch end</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.MetricHandler" title="mxnet.gluon.contrib.estimator.MetricHandler"><code class="xref py py-class docutils literal"><span class="pre">MetricHandler</span></code></a> takes model predictions and true labels
+and update the metrics, it also update metric wrapper for loss with loss values.
+Validation loss and metrics will be handled by <a class="reference internal" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="mxnet.gluon.contrib.estimator.ValidationHandler"><code class="xref py py-class docutils literal"><span class="pre">ValidationHandler</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>train_metrics</strong> (<em>List of EvalMetrics</em>) – Training metrics to be updated at batch end.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.StoppingHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">StoppingHandler</code><span class="sig-paren">(</span><em>max_epoch=None</em>, <em>max_batch=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#StoppingHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.StoppingHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop conditions to stop training
+Stop training if maximum number of batches or epochs
+reached.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_epoch</strong> (<em>int</em><em>, </em><em>default None</em>) – Number of maximum epochs to train.</li>
+<li><strong>max_batch</strong> (<em>int</em><em>, </em><em>default None</em>) – Number of maximum batches to train.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.ValidationHandler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.contrib.estimator.</code><code class="descname">ValidationHandler</code><span class="sig-paren">(</span><em>val_data</em>, <em>eval_fn</em>, <em>val_metrics=None</em>, <em>epoch_period=1</em>, <em>batch_period=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#ValidationHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validation Handler that evaluate model on validation dataset</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="mxnet.gluon.contrib.estimator.ValidationHandler"><code class="xref py py-class docutils literal"><span class="pre">ValidationHandler</span></code></a> takes validation dataset, an evaluation function,
+metrics to be evaluated, and how often to run the validation. You can provide custom
+evaluation function or use the one provided my <a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><code class="xref py py-class docutils literal"><span class="pre">Estimator</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>val_data</strong> (<a class="reference internal" href="data.html#mxnet.gluon.data.DataLoader" title="mxnet.gluon.data.DataLoader"><em>DataLoader</em></a>) – Validation data set to run evaluation.</li>
+<li><strong>eval_fn</strong> (<em>function</em>) – A function defines how to run evaluation and
+calculate loss and metrics.</li>
+<li><strong>val_metrics</strong> (<em>List of EvalMetrics</em>) – Validation metrics to be updated.</li>
+<li><strong>epoch_period</strong> (<em>int</em><em>, </em><em>default 1</em>) – How often to run validation at epoch end, by default
+<a class="reference internal" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="mxnet.gluon.contrib.estimator.ValidationHandler"><code class="xref py py-class docutils literal"><span class="pre">ValidationHandler</span></code></a> validate every epoch.</li>
+<li><strong>batch_period</strong> (<em>int</em><em>, </em><em>default None</em>) – How often to run validation at batch end, by default
+<a class="reference internal" href="#mxnet.gluon.contrib.estimator.ValidationHandler" title="mxnet.gluon.contrib.estimator.ValidationHandler"><code class="xref py py-class docutils literal"><span class="pre">ValidationHandler</span></code></a> does not validate at batch end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 <script>auto_index("api-reference");</script></div>
 </div>
 </div>
@@ -1382,6 +1645,10 @@ If None, a default vocabulary is created.</li>
 <li><a class="reference internal" href="#recurrent-neural-network">Recurrent neural network</a></li>
 <li><a class="reference internal" href="#data">Data</a><ul>
 <li><a class="reference internal" href="#text-dataset">Text dataset</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#estimator">Estimator</a><ul>
+<li><a class="reference internal" href="#eventhandler">EventHandler</a></li>
 </ul>
 </li>
 </ul>
