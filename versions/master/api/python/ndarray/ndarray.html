@@ -1080,6 +1080,12 @@ broadcasting enabled by default.</li>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.unravel_index" title="mxnet.ndarray.unravel_index"><code class="xref py py-obj docutils literal"><span class="pre">unravel_index</span></code></a></td>
 <td>Converts an array of flat indices into a batch of index arrays.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mxnet.ndarray.gather_nd" title="mxnet.ndarray.gather_nd"><code class="xref py py-obj docutils literal"><span class="pre">gather_nd</span></code></a></td>
+<td>Gather elements or slices from <cite>data</cite> and store to a tensor whose shape is defined by <cite>indices</cite>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mxnet.ndarray.scatter_nd" title="mxnet.ndarray.scatter_nd"><code class="xref py py-obj docutils literal"><span class="pre">scatter_nd</span></code></a></td>
+<td>Scatters data into a new tensor according to indices.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12066,7 +12072,7 @@ At most one dimension of shape can be -1.</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.reshape_like">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">reshape_like</code><span class="sig-paren">(</span><em>lhs=None</em>, <em>rhs=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.reshape_like" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">reshape_like</code><span class="sig-paren">(</span><em>lhs=None</em>, <em>rhs=None</em>, <em>lhs_begin=_Null</em>, <em>lhs_end=_Null</em>, <em>rhs_begin=_Null</em>, <em>rhs_end=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.reshape_like" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reshape some or all dimensions of <cite>lhs</cite> to have the same shape as some or all dimensions of <cite>rhs</cite>.</p>
 <p>Returns a <strong>view</strong> of the <cite>lhs</cite> array with a new shape without altering any data.</p>
 <p>Example:</p>
@@ -12098,6 +12104,10 @@ At most one dimension of shape can be -1.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>lhs</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – First input.</li>
 <li><strong>rhs</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Second input.</li>
+<li><strong>lhs_begin</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to 0. The beginning index along which the lhs dimensions are to be reshaped. Supports negative indices.</li>
+<li><strong>lhs_end</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to None. The ending index along which the lhs dimensions are to be used for reshaping. Supports negative indices.</li>
+<li><strong>rhs_begin</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to 0. The beginning index along which the rhs dimensions are to be used for reshaping. Supports negative indices.</li>
+<li><strong>rhs_end</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to None. The ending index along which the rhs dimensions are to be used for reshaping. Supports negative indices.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -12912,23 +12922,19 @@ only the row slices whose indices appear in grad.indices are updated:</p>
 </dd></dl>
 <dl class="function">
 <dt id="mxnet.ndarray.shape_array">
-<code class="descclassname">mxnet.ndarray.</code><code class="descname">shape_array</code><span class="sig-paren">(</span><em>data=None</em>, <em>lhs_begin=_Null</em>, <em>lhs_end=_Null</em>, <em>rhs_begin=_Null</em>, <em>rhs_end=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.shape_array" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">shape_array</code><span class="sig-paren">(</span><em>data=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.shape_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a 1D int64 array containing the shape of data.</p>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">shape_array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L572</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L573</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input Array.</li>
-<li><strong>lhs_begin</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to 0. The beginning index along which the lhs dimensions are to be reshaped. Supports negative indices.</li>
-<li><strong>lhs_end</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to None. The ending index along which the lhs dimensions are to be used for reshaping. Supports negative indices.</li>
-<li><strong>rhs_begin</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to 0. The beginning index along which the rhs dimensions are to be used for reshaping. Supports negative indices.</li>
-<li><strong>rhs_end</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default='None'</em>) – Defaults to None. The ending index along which the rhs dimensions are to be used for reshaping. Supports negative indices.</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>

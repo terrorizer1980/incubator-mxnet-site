@@ -4002,7 +4002,7 @@ Defined in src/operator/tensor/matrix_op.cc:L202
 `reverse`: If true then the special values are inferred from right to left (optional)
 `target-shape`: (Deprecated! Use ``shape`` instead.) Target new shape. One and only one dim can be 0, in which case it will be inferred from the rest of dims (optional)
 `keep-highest`: (Deprecated! Use ``shape`` instead.) Whether keep the highest dim unchanged.If set to true, then the first dim in target_shape is ignored,and always fixed as input (optional)
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-reshape-like"><h3>reshape-like</h3><div class="usage"><code>(reshape-like lhs rhs)</code><code>(reshape-like {:keys [lhs rhs out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Reshape some or all dimensions of `lhs` to have the same shape as some or all dimensions of `rhs`.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-reshape-like"><h3>reshape-like</h3><div class="usage"><code>(reshape-like lhs rhs)</code><code>(reshape-like {:keys [lhs rhs lhs-begin lhs-end rhs-begin rhs-end out], :or {lhs-begin nil, lhs-end nil, rhs-begin nil, rhs-end nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Reshape some or all dimensions of `lhs` to have the same shape as some or all dimensions of `rhs`.
 
 Returns a **view** of the `lhs` array with a new shape without altering any data.
 
@@ -4033,6 +4033,10 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L513
 
 `lhs`: First input.
 `rhs`: Second input.
+`lhs-begin`: Defaults to 0. The beginning index along which the lhs dimensions are to be reshaped. Supports negative indices. (optional)
+`lhs-end`: Defaults to None. The ending index along which the lhs dimensions are to be used for reshaping. Supports negative indices. (optional)
+`rhs-begin`: Defaults to 0. The beginning index along which the rhs dimensions are to be used for reshaping. Supports negative indices. (optional)
+`rhs-end`: Defaults to None. The ending index along which the rhs dimensions are to be used for reshaping. Supports negative indices. (optional)
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-reverse"><h3>reverse</h3><div class="usage"><code>(reverse data axis)</code><code>(reverse {:keys [data axis out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Reverses the order of elements along given axis while preserving array shape.
 
 Note: reverse and flip are equivalent. We use reverse in the following examples.
@@ -4627,7 +4631,7 @@ Defined in src/operator/optimizer_op.cc:L522
 `rescale-grad`: Rescale gradient to grad = rescale_grad*grad. (optional)
 `clip-gradient`: Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient &lt;= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient). (optional)
 `lazy-update`: If true, lazy updates are applied if gradient's stype is row_sparse. (optional)
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-shape-array"><h3>shape-array</h3><div class="usage"><code>(shape-array {:keys [data lhs-begin lhs-end rhs-begin rhs-end out], :or {lhs-begin nil, lhs-end nil, rhs-begin nil, rhs-end nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns a 1D int64 array containing the shape of data.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-shape-array"><h3>shape-array</h3><div class="usage"><code>(shape-array {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns a 1D int64 array containing the shape of data.
 
 Example::
 
@@ -4635,13 +4639,9 @@ Example::
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L572
+Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L573
 
 `data`: Input Array.
-`lhs-begin`: Defaults to 0. The beginning index along which the lhs dimensions are to be reshaped. Supports negative indices. (optional)
-`lhs-end`: Defaults to None. The ending index along which the lhs dimensions are to be used for reshaping. Supports negative indices. (optional)
-`rhs-begin`: Defaults to 0. The beginning index along which the rhs dimensions are to be used for reshaping. Supports negative indices. (optional)
-`rhs-end`: Defaults to None. The ending index along which the rhs dimensions are to be used for reshaping. Supports negative indices. (optional)
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-sigmoid"><h3>sigmoid</h3><div class="usage"><code>(sigmoid {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Computes sigmoid of x element-wise.
 
 .. math::
