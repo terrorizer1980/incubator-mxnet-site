@@ -42,7 +42,6 @@ var searchData=
   ['clear',['Clear',['../classmxnet_1_1Imperative_1_1AGInfo.html#ac1285664cc551c266fdc506fa8f8e8ad',1,'mxnet::Imperative::AGInfo::Clear()'],['../classmxnet_1_1common_1_1LazyAllocArray.html#a3af1ab75feb0ba07db5af7e6ef5717b1',1,'mxnet::common::LazyAllocArray::Clear()']]],
   ['clip',['clip',['../namespacemxnet_1_1cpp.html#a27262dd0794c017d77f20fab5d9fe715',1,'mxnet::cpp::clip(const std::string &amp;symbol_name, Symbol data, mx_float a_min, mx_float a_max)'],['../namespacemxnet_1_1cpp.html#a82601afa30b710cc1b184f9819c3cc4e',1,'mxnet::cpp::clip(Symbol data, mx_float a_min, mx_float a_max)']]],
   ['clipping',['clipping',['../structmkldnn__rnn__cell__desc__t.html#a6d6c936048a7a0dc1cff86af8d7f180b',1,'mkldnn_rnn_cell_desc_t']]],
-  ['close_5flib',['close_lib',['../library_8h.html#a12c780292ca46ac7725ff82c568028a9',1,'library.h']]],
   ['computecapabilitymajor',['ComputeCapabilityMajor',['../cuda__utils_8h.html#aa79f548df23452162de37663f171e99d',1,'cuda_utils.h']]],
   ['computecapabilityminor',['ComputeCapabilityMinor',['../cuda__utils_8h.html#a7c16e8770e4f399cabed1fc231ffd9b6',1,'cuda_utils.h']]],
   ['concat',['Concat',['../namespacemxnet_1_1cpp.html#a58ec45705c88219a949dd3dfb11ce058',1,'mxnet::cpp::Concat(const std::string &amp;symbol_name, const std::vector&lt; Symbol &gt; &amp;data, int num_args, int dim=1)'],['../namespacemxnet_1_1cpp.html#a44eb74174eaae169df46a0594eeb1b08',1,'mxnet::cpp::Concat(const std::vector&lt; Symbol &gt; &amp;data, int num_args, int dim=1)']]],

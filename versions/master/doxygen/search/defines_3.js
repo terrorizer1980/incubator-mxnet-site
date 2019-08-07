@@ -7,7 +7,6 @@ var searchData=
   ['mx_5fapi_5fbegin',['MX_API_BEGIN',['../c__api__error_8h.html#a959a98c071ffbeb325ef0cdea9ddc3e2',1,'c_api_error.h']]],
   ['mx_5fapi_5fend',['MX_API_END',['../c__api__error_8h.html#a18ba3014a2d5200443d7fece1c5f709d',1,'c_api_error.h']]],
   ['mx_5fapi_5fend_5fhandle_5ferror',['MX_API_END_HANDLE_ERROR',['../c__api__error_8h.html#abb261882494eb12821e327f5561653a5',1,'c_api_error.h']]],
-  ['mxlib_5finitialize_5fstr',['MXLIB_INITIALIZE_STR',['../lib__api_8h.html#ad5405711bcd25d56b2fc2a3fd827ea3c',1,'lib_api.h']]],
   ['mxnet_5fapi',['MXNET_API',['../include_2mxnet_2base_8h.html#a91a09948aaaffa1eb64508db79009a05',1,'base.h']]],
   ['mxnet_5fcuda_5fallow_5ftensor_5fcore_5fdefault',['MXNET_CUDA_ALLOW_TENSOR_CORE_DEFAULT',['../cuda__utils_8h.html#aa7ba00b841d6b7ba443b0e58dac9ab88',1,'cuda_utils.h']]],
   ['mxnet_5fcuda_5ftensor_5fop_5fmath_5fallow_5fconversion_5fdefault',['MXNET_CUDA_TENSOR_OP_MATH_ALLOW_CONVERSION_DEFAULT',['../cuda__utils_8h.html#aa16d34c218441b0d4074baa8c66a5521',1,'cuda_utils.h']]],
