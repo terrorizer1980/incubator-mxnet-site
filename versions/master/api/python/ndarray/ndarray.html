@@ -9048,6 +9048,58 @@ column of the ith matrix.</p>
 </table>
 </dd></dl>
 <dl class="function">
+<dt id="mxnet.ndarray.linalg_det">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">linalg_det</code><span class="sig-paren">(</span><em>A=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg_det" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the determinant of a matrix.
+Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
+<p>If <em>n=2</em>, <em>A</em> is a square matrix. We compute:</p>
+<blockquote>
+<div><em>out</em> = <em>det(A)</em></div></blockquote>
+<p>If <em>n>2</em>, <em>det</em> is performed separately on the trailing two dimensions
+for all inputs (batch mode).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The operator supports float32 and float64 data types only.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There is no gradient backwarded when A is non-invertible (which is
+equivalent to det(A) = 0) because zero is rarely hit upon in float
+point computation and the Jacobi’s formula on determinant gradient
+is not computationally efficient when A is non-invertible.</p>
+</div>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">determinant</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]]</span>
+<span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.</span><span class="p">]</span>
+
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">determinant</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]]]</span>
+<span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/tensor/la_op.cc:L970</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Tensor of square matrix</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
 <dt id="mxnet.ndarray.linalg_extractdiag">
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">linalg_extractdiag</code><span class="sig-paren">(</span><em>A=None</em>, <em>offset=_Null</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg_extractdiag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the diagonal entries of a square matrix.
@@ -9059,7 +9111,7 @@ Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">diagonal</span> <span class="n">extraction</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">diagonal</span> <span class="n">extraction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
      <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 
@@ -9067,7 +9119,7 @@ Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
 
 <span class="n">extractdiag</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">diagonal</span> <span class="n">extraction</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">diagonal</span> <span class="n">extraction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
       <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]],</span>
      <span class="p">[[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">],</span>
@@ -9116,7 +9168,7 @@ Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">triagonal</span> <span class="n">extraction</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">triagonal</span> <span class="n">extraction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
      <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 
@@ -9125,7 +9177,7 @@ Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
 <span class="n">extracttrian</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]</span>
 <span class="n">extracttrian</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">triagonal</span> <span class="n">extraction</span>
+<span class="n">Batch</span> <span class="n">triagonal</span> <span class="n">extraction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
       <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]],</span>
      <span class="p">[[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">],</span>
@@ -9180,7 +9232,7 @@ inputs (batch mode).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">LQ</span> <span class="n">factorization</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">LQ</span> <span class="n">factorization</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]]</span>
 <span class="n">Q</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">gelqf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="n">Q</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.26726124</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.53452248</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.80178373</span><span class="p">],</span>
@@ -9188,7 +9240,7 @@ inputs (batch mode).</p>
 <span class="n">L</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">3.74165739</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
      <span class="p">[</span><span class="o">-</span><span class="mf">8.55235974</span><span class="p">,</span> <span class="mf">1.96396101</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">LQ</span> <span class="n">factorization</span>
+<span class="n">Batch</span> <span class="n">LQ</span> <span class="n">factorization</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]],</span>
      <span class="p">[[</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">],</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]]]</span>
 <span class="n">Q</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">gelqf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -9255,14 +9307,14 @@ Tensor Cores on suitable NVIDIA GPUs. This can sometimes give significant speedu
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span><span class="o">-</span><span class="n">add</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span><span class="o">-</span><span class="n">add</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">C</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">gemm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
         <span class="o">=</span> <span class="p">[[</span><span class="mf">14.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">14.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span><span class="o">-</span><span class="n">add</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span><span class="o">-</span><span class="n">add</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]]</span>
 <span class="n">C</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">10.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.01</span><span class="p">]]]</span>
@@ -9329,13 +9381,13 @@ Tensor Cores on suitable NVIDIA GPUs. This can sometimes give significant speedu
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">gemm2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
          <span class="o">=</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]]</span>
 <span class="n">gemm2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
@@ -9382,11 +9434,11 @@ for all inputs (batch mode).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">inversion</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">inverse</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]]</span>
 <span class="n">inverse</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">inversion</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">inverse</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]],</span>
      <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]]]</span>
 <span class="n">inverse</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]],</span>
@@ -9425,7 +9477,7 @@ If <em>n>1</em>, then <em>A</em> represents a batch of diagonals of square matri
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">diagonal</span> <span class="n">matrix</span> <span class="n">construction</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">diagonal</span> <span class="n">matrix</span> <span class="n">construction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
 
 <span class="n">makediag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>    <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
@@ -9435,7 +9487,7 @@ If <em>n>1</em>, then <em>A</em> represents a batch of diagonals of square matri
                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">diagonal</span> <span class="n">matrix</span> <span class="n">construction</span>
+<span class="n">Batch</span> <span class="n">diagonal</span> <span class="n">matrix</span> <span class="n">construction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
      <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 
@@ -9480,7 +9532,7 @@ diagonal with zero entries to the square matrix.</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span>  <span class="n">matrix</span> <span class="n">construction</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span>  <span class="n">matrix</span> <span class="n">construction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
 
 <span class="n">maketrian</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>              <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
@@ -9496,7 +9548,7 @@ diagonal with zero entries to the square matrix.</p>
                              <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
                              <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">construction</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">construction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
      <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]]</span>
 
@@ -9553,11 +9605,11 @@ positive diagonal entries, and:</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">factorization</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">factorization</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">]]</span>
 <span class="n">potrf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">factorization</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">factorization</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">17.0</span><span class="p">]]]</span>
 <span class="n">potrf</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]]</span>
 </pre></div>
@@ -9609,11 +9661,11 @@ cannot use the Cholesky factor <em>A</em> (<em>potrf</em>), together with backsu
 (<em>trsm</em>). The latter is numerically much safer, and also cheaper.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">inverse</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">inverse</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]</span>
 <span class="n">potri</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.26563</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0625</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0625</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">inverse</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">inverse</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]]</span>
 <span class="n">potri</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">0.26563</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0625</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0625</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]],</span>
             <span class="p">[[</span><span class="mf">0.06641</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01562</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01562</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0625</span><span class="p">]]]</span>
@@ -9626,6 +9678,67 @@ cannot use the Cholesky factor <em>A</em> (<em>potrf</em>), together with backsu
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>A</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Tensor of lower triangular matrices</li>
+<li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – The output of this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.linalg_slogdet">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">linalg_slogdet</code><span class="sig-paren">(</span><em>A=None</em>, <em>out=None</em>, <em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.linalg_slogdet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the sign and log of the determinant of a matrix.
+Input is a tensor <em>A</em> of dimension <em>n >= 2</em>.</p>
+<p>If <em>n=2</em>, <em>A</em> is a square matrix. We compute:</p>
+<blockquote>
+<div><em>sign</em> = <em>sign(det(A))</em>
+<em>logabsdet</em> = <em>log(abs(det(A)))</em></div></blockquote>
+<p>If <em>n>2</em>, <em>slogdet</em> is performed separately on the trailing two dimensions
+for all inputs (batch mode).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The operator supports float32 and float64 data types only.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The gradient is not properly defined on sign, so the gradient of
+it is not backwarded.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No gradient is backwarded when A is non-invertible. Please see
+the docs of operator det for detail.</p>
+</div>
+<p>Examples:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">signed</span> <span class="n">log</span> <span class="n">determinant</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]]</span>
+<span class="n">sign</span><span class="p">,</span> <span class="n">logabsdet</span> <span class="o">=</span> <span class="n">slogdet</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sign</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">]</span>
+<span class="n">logabsdet</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.609438</span><span class="p">]</span>
+
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">signed</span> <span class="n">log</span> <span class="n">determinant</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]],</span>
+     <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]]]</span>
+<span class="n">sign</span><span class="p">,</span> <span class="n">logabsdet</span> <span class="o">=</span> <span class="n">slogdet</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sign</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]</span>
+<span class="n">logabsdet</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.609438</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="mf">1.609438</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/tensor/la_op.cc:L1027</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Tensor of square matrix</li>
 <li><strong>out</strong> (<a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</li>
 </ul>
 </td>
@@ -9653,11 +9766,11 @@ inputs (batch mode).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">reduction</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">reduction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]]</span>
 <span class="n">sumlogdiag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.9459</span><span class="p">]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">reduction</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">reduction</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">17.0</span><span class="p">]]]</span>
 <span class="n">sumlogdiag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.9459</span><span class="p">,</span> <span class="mf">3.9318</span><span class="p">]</span>
 </pre></div>
@@ -9701,7 +9814,7 @@ inputs (batch mode).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]]</span>
 <span class="n">syrk</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
          <span class="o">=</span> <span class="p">[[</span><span class="mf">14.</span><span class="p">,</span> <span class="mf">32.</span><span class="p">],</span>
@@ -9711,7 +9824,7 @@ inputs (batch mode).</p>
             <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">29.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">],</span>
             <span class="p">[</span><span class="mf">27.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]]]</span>
 <span class="n">syrk</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">4.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.04</span><span class="p">]]]</span>
 </pre></div>
@@ -9760,12 +9873,12 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">triangular</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">triangular</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">trmm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">triangular</span> <span class="n">matrix</span> <span class="n">multiply</span>
+<span class="n">Batch</span> <span class="n">triangular</span> <span class="n">matrix</span> <span class="n">multiply</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]]]</span>
 <span class="n">trmm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]],</span>
@@ -9819,12 +9932,12 @@ identity or the matrix transposition (depending on <em>transpose</em>).</p>
 <p class="last">The operator supports float32 and float64 data types only.</p>
 </div>
 <p>Examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Single</span> <span class="n">matrix</span> <span class="n">solve</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Single</span> <span class="n">matrix</span> <span class="n">solve</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]</span>
 <span class="n">trsm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
 
-<span class="o">//</span> <span class="n">Batch</span> <span class="n">matrix</span> <span class="n">solve</span>
+<span class="n">Batch</span> <span class="n">matrix</span> <span class="n">solve</span>
 <span class="n">A</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]]</span>
 <span class="n">B</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]],</span>
      <span class="p">[[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]]]</span>

@@ -224,6 +224,7 @@ var searchData=
   ['mxlistallopnames',['MXListAllOpNames',['../c__api_8h.html#ac5a3fafe6616c4d246b24e4d11c65238',1,'c_api.h']]],
   ['mxlistdataiters',['MXListDataIters',['../c__api_8h.html#aa13fb35019b0c42dcfee185b2f9e09d0',1,'c_api.h']]],
   ['mxlistfunctions',['MXListFunctions',['../c__api_8h.html#a553e6791f689a41e63e4cdfbdbbd5c58',1,'c_api.h']]],
+  ['mxloadlib',['MXLoadLib',['../c__api_8h.html#ad96b3048ecfb919379fc73eaf491cdf4',1,'c_api.h']]],
   ['mxndarrayat',['MXNDArrayAt',['../c__api_8h.html#a90fbe78325ba9d67d3629be442623cee',1,'c_api.h']]],
   ['mxndarraycalldlpackdeleter',['MXNDArrayCallDLPackDeleter',['../c__api_8h.html#a7f63c3ce58079b97360c26bae3a679fb',1,'c_api.h']]],
   ['mxndarraycreate',['MXNDArrayCreate',['../c__api_8h.html#a097e93ed9fd8c8cfb8ae76aa32441b72',1,'c_api.h']]],
