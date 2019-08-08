@@ -1013,7 +1013,7 @@ Defined in src/operator/tensor/dot.cc:L126
 `transpose-a`: If true then transpose the first input before dot. (optional)
 `transpose-b`: If true then transpose the second input before dot. (optional)
 `forward-stype`: The desired storage type of the forward output given by user, if thecombination of input storage types and this hint does not matchany implemented ones, the dot operator will perform fallback operationand still produce an output of the desired storage type. (optional)
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-batch-norm"><h3>batch-norm</h3><div class="usage"><code>(batch-norm data gamma beta moving-mean moving-var)</code><code>(batch-norm {:keys [data gamma beta moving-mean moving-var eps momentum fix-gamma use-global-stats output-mean-var axis cudnn-off out], :or {eps nil, momentum nil, fix-gamma nil, use-global-stats nil, output-mean-var nil, axis nil, cudnn-off nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Batch normalization.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-batch-norm"><h3>batch-norm</h3><div class="usage"><code>(batch-norm data gamma beta moving-mean moving-var)</code><code>(batch-norm {:keys [data gamma beta moving-mean moving-var eps momentum fix-gamma use-global-stats output-mean-var axis cudnn-off min-calib-range max-calib-range out], :or {output-mean-var nil, axis nil, cudnn-off nil, fix-gamma nil, eps nil, max-calib-range nil, use-global-stats nil, out nil, min-calib-range nil, momentum nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Batch normalization.
 
 Normalizes a data batch by mean and variance, and applies a scale ``gamma`` as
 well as offset ``beta``.
@@ -1078,6 +1078,8 @@ Defined in src/operator/nn/batch_norm.cc:L573
 `output-mean-var`: Output the mean and inverse std  (optional)
 `axis`: Specify which shape axis the channel is specified (optional)
 `cudnn-off`: Do not select CUDNN operator, if available (optional)
+`min-calib-range`: The minimum scalar value in the form of float32 obtained through calibration. If present, it will be used to by quantized batch norm op to calculate primitive scale.Note: this calib_range is to calib bn output. (optional)
+`max-calib-range`: The maximum scalar value in the form of float32 obtained through calibration. If present, it will be used to by quantized batch norm op to calculate primitive scale.Note: this calib_range is to calib bn output. (optional)
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-batch-norm-v1"><h3>batch-norm-v1</h3><div class="usage"><code>(batch-norm-v1 data gamma beta)</code><code>(batch-norm-v1 {:keys [data gamma beta eps momentum fix-gamma use-global-stats output-mean-var out], :or {eps nil, momentum nil, fix-gamma nil, use-global-stats nil, output-mean-var nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Batch normalization.
 
 This operator is DEPRECATED. Perform BatchNorm on the input.
