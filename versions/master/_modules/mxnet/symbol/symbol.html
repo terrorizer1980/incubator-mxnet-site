@@ -255,7 +255,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="k">import</span> <span class="n">Number</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_numpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_numpy</span>  <span class="c1"># pylint: disable=relative-import</span>
 
 <span class="kn">from</span> <span class="nn">..attribute</span> <span class="k">import</span> <span class="n">AttrScope</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">c_handle_array</span>
@@ -285,6 +285,17 @@
 
     <span class="c1"># Make numpy functions return Symbol instead of numpy object array</span>
     <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mf">1000.0</span>
+
+<div class="viewcode-block" id="Symbol.as_np_ndarray"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.as_np_ndarray">[docs]</a>    <span class="k">def</span> <span class="nf">as_np_ndarray</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Convert mx.sym.Symbol to mx.sym.np._Symbol."""</span>
+        <span class="kn">from</span> <span class="nn">.numpy</span> <span class="k">import</span> <span class="n">_Symbol</span>
+        <span class="n">hdl</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXShallowCopySymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">hdl</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">_Symbol</span><span class="p">(</span><span class="n">hdl</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Symbol.as_nd_ndarray"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.as_nd_ndarray">[docs]</a>    <span class="k">def</span> <span class="nf">as_nd_ndarray</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Returns self. For the convenience of conversion between legacy and np symbols."""</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Symbol.__repr__"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Gets a string representation of the symbol."""</span>
@@ -373,6 +384,8 @@
 <span class="sd">        array([[-2., -2., -2.],</span>
 <span class="sd">               [-2., -2., -2.]], dtype=float32)</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_RMinusScalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -421,6 +434,8 @@
 <span class="sd">        array([[ 0.33333334,  0.33333334,  0.33333334],</span>
 <span class="sd">               [ 0.33333334,  0.33333334,  0.33333334]], dtype=float32)</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_RDivScalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -451,6 +466,8 @@
 <span class="sd">        array([[ 1.,  1.,  1.,</span>
 <span class="sd">               [ 1.,  1.,  1., dtype=float32)</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="fm">__mod__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_RModScalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -480,8 +497,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'type </span><span class="si">%s</span><span class="s1"> not supported'</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span></div>
 
-    <span class="k">def</span> <span class="nf">__rpow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">NotImplementedForSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__rpow__</span><span class="p">,</span> <span class="s1">'y**x'</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+<div class="viewcode-block" id="Symbol.__rpow__"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.__rpow__">[docs]</a>    <span class="k">def</span> <span class="nf">__rpow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">"""x.__rpow__(y) <=> y ** x"""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_rpower_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'type </span><span class="si">%s</span><span class="s1"> not supported'</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="Symbol.__neg__"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Symbol.__neg__">[docs]</a>    <span class="k">def</span> <span class="nf">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""x.__neg__() <=> -x</span>
@@ -2896,8 +2919,12 @@
 <span class="n">Variable</span> <span class="o">=</span> <span class="n">var</span>
 
 
-<div class="viewcode-block" id="Group"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Group">[docs]</a><span class="k">def</span> <span class="nf">Group</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+<div class="viewcode-block" id="Group"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.Group">[docs]</a><span class="k">def</span> <span class="nf">Group</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">create_fn</span><span class="o">=</span><span class="n">Symbol</span><span class="p">):</span>
     <span class="sd">"""Creates a symbol that contains a collection of other symbols, grouped together.</span>
+<span class="sd">    A classic symbol (`mx.sym.Symbol`) will be returned if all the symbols in the list</span>
+<span class="sd">    are of that type; a numpy symbol (`mx.sym.np._Symbol`) will be returned if all the</span>
+<span class="sd">    symbols in the list are of that type. A type error will be raised if a list of mixed</span>
+<span class="sd">    classic and numpy symbols are provided.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -2911,6 +2938,9 @@
 <span class="sd">    symbols : list</span>
 <span class="sd">        List of symbols to be grouped.</span>
 
+<span class="sd">    create_fn : mx.sym.Symbol or mx.sym.np._Symbol</span>
+<span class="sd">        Symbol class for creating the grouped symbol.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    sym : Symbol</span>
@@ -2922,7 +2952,7 @@
     <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolCreateGroup</span><span class="p">(</span>
         <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">)),</span>
         <span class="n">c_handle_array</span><span class="p">(</span><span class="n">symbols</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">create_fn</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../api/python/symbol/symbol.html#mxnet.symbol.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>

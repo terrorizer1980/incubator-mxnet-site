@@ -251,7 +251,6 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
-
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_real_t</span><span class="p">,</span> <span class="n">MXNetError</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
@@ -259,6 +258,10 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span>
 <span class="kn">from</span> <span class="nn">.parameter</span> <span class="k">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterDict</span><span class="p">,</span> <span class="n">DeferredInitializationError</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">,</span> <span class="n">HookHandle</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_check_same_symbol_type</span><span class="p">,</span> <span class="n">_check_all_np_ndarrays</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">numpy_extension</span> <span class="k">as</span> <span class="n">_mx_npx</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="n">util</span> <span class="kn">import</span> <span class="nn">is_np_array</span><span class="o">,</span> <span class="nn">np_shape</span><span class="o">,</span> <span class="nn">np_array</span>
 
 
 <span class="k">class</span> <span class="nc">_BlockScope</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -557,7 +560,8 @@
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">()</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span> <span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
+        <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
+        <span class="n">save_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.save_params"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.save_params">[docs]</a>    <span class="k">def</span> <span class="nf">save_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">"""[Deprecated] Please use save_parameters. Note that if you want load</span>
@@ -606,7 +610,28 @@
 <span class="sd">        `Saving and Loading Gluon Models \</span>
 <span class="sd">        <https://mxnet.incubator.apache.org/tutorials/gluon/save_load_params.html>`_</span>
 <span class="sd">        """</span>
-        <span class="n">loaded</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+            <span class="c1"># failure may happen when loading parameters saved as NDArrays within</span>
+            <span class="c1"># NumPy semantics. Check the failure type and recover from it if it happens.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">loaded</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">MXNetError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">err_msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">'is_np_shape'</span> <span class="ow">in</span> <span class="n">err_msg</span><span class="p">:</span>
+                    <span class="c1"># Loading failure due to parameters saved without numpy semantics.</span>
+                    <span class="c1"># Temporarily disable numpy semantics and load parameters. After it's</span>
+                    <span class="c1"># done, resume the numpy semantics. This is fine because the cases</span>
+                    <span class="c1"># numpy ndarray covers is a superset of the legacy ndarray's.</span>
+                    <span class="k">with</span> <span class="n">np_array</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">np_shape</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+                            <span class="n">loaded_nds</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded_nds</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span>\
+                        <span class="s1">'expecting a dict type, got </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">loaded_nds</span><span class="p">)))</span>
+                    <span class="n">loaded</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">loaded_nds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">loaded_nds</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loaded</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">loaded</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">return</span>
@@ -774,7 +799,8 @@
 
         <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">is_np_array</span><span class="p">():</span>
+            <span class="n">_check_all_np_ndarrays</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
 <div class="viewcode-block" id="Block.forward"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -964,9 +990,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">:</span>
             <span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">></span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data</span><span class="si">%d</span><span class="s1">'</span><span class="o">%</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))]</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data</span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span>
+                          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+                          <span class="k">else</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data</span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)]</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span>
+                          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+                          <span class="k">else</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)]</span>
             <span class="n">grouped_inputs</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -974,7 +1004,7 @@
                 <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="o">*</span><span class="n">grouped_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># pylint: disable=no-value-for-parameter</span>
             <span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">_check_same_symbol_type</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span>
 
@@ -1130,7 +1160,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span>
                 <span class="n">arg_dict</span><span class="p">[</span><span class="s1">'aux:</span><span class="si">%s</span><span class="s1">'</span><span class="o">%</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
-        <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">-</span><span class="si">%04d</span><span class="s1">.params'</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="p">),</span> <span class="n">arg_dict</span><span class="p">)</span></div>
+        <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
+        <span class="n">save_fn</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">-</span><span class="si">%04d</span><span class="s1">.params'</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="p">),</span> <span class="n">arg_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HybridBlock.forward"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">"""Defines the forward computation. Arguments can be either</span>
@@ -1283,7 +1314,7 @@
 
         <span class="n">syms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">)</span>
         <span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">_check_same_symbol_type</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
 
         <span class="n">input_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">syms</span><span class="p">:</span>

@@ -265,6 +265,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">ndarray</span>
 <span class="kn">from</span> <span class="nn">..util</span> <span class="k">import</span> <span class="n">is_np_shape</span>
 
+
 <div class="viewcode-block" id="split_data"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.utils.split_data">[docs]</a><span class="k">def</span> <span class="nf">split_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num_slice</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">even_split</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">"""Splits an NDArray into `num_slice` slices along `batch_axis`.</span>
 <span class="sd">    Usually used for data parallelism where each slices is sent</span>
@@ -333,7 +334,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    list of NDArray</span>
+<span class="sd">    list of NDArrays</span>
 <span class="sd">        Each corresponds to a context in `ctx_list`.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
@@ -639,6 +640,7 @@
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
+
 <span class="k">def</span> <span class="nf">shape_is_known</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
     <span class="sd">"""Check whether a shape is completely known with or without np semantics.</span>
 
@@ -655,6 +657,47 @@
         <span class="k">assert</span> <span class="n">dim_size</span> <span class="o">></span> <span class="n">unknown_dim_size</span><span class="p">,</span> <span class="s2">"shape dimension size cannot be less than </span><span class="si">{}</span><span class="s2">, while "</span> \
                                             <span class="s2">"received </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unknown_dim_size</span><span class="p">,</span> <span class="n">dim_size</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">_check_same_symbol_type</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+    <span class="sd">"""Check whether all the symbols in the list are of the same type.</span>
+<span class="sd">    Raise type error if the types are different. Return the class of</span>
+<span class="sd">    the symbols."""</span>
+    <span class="kn">from</span> <span class="nn">..symbol.numpy</span> <span class="k">import</span> <span class="n">_Symbol</span> <span class="k">as</span> <span class="n">np_symbol</span>
+    <span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span> <span class="k">as</span> <span class="n">nd_symbol</span>
+    <span class="n">is_np_sym</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np_symbol</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="n">is_np_sym</span> <span class="o">!=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">np_symbol</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Found both classic symbol (mx.sym.Symbol) and numpy symbol '</span>
+                            <span class="s1">'(mx.sym.np._Symbol) in outputs. This will prevent you from building '</span>
+                            <span class="s1">'a computation graph by grouping them since different types of symbols '</span>
+                            <span class="s1">'are not allowed to be grouped in Gluon to form a computation graph. '</span>
+                            <span class="s1">'You will need to convert them to the same type of symbols, either '</span>
+                            <span class="s1">'classic or numpy following this rule: if you want numpy ndarray '</span>
+                            <span class="s1">'output(s) from the computation graph, please convert all the classic '</span>
+                            <span class="s1">'symbols in the list to numpy symbols by calling `as_np_ndarray()` '</span>
+                            <span class="s1">'on each of them; if you want classic ndarray output(s) from the '</span>
+                            <span class="s1">'computation graph, please convert all the numpy symbols in the list '</span>
+                            <span class="s1">'to classic symbols by calling `as_nd_ndarray()` on each of them.'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_symbol</span> <span class="k">if</span> <span class="n">is_np_sym</span> <span class="k">else</span> <span class="n">nd_symbol</span>
+
+
+<span class="k">def</span> <span class="nf">_check_all_np_ndarrays</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+    <span class="sd">"""Check if ndarrays/symbols in out are all np.ndarray/np._Symbol."""</span>
+    <span class="kn">from</span> <span class="nn">..numpy</span> <span class="k">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">np_ndarray</span>
+    <span class="kn">from</span> <span class="nn">..symbol.numpy</span> <span class="k">import</span> <span class="n">_Symbol</span> <span class="k">as</span> <span class="n">np_symbol</span>
+    <span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span> <span class="k">as</span> <span class="n">nd_symbol</span>
+    <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span> <span class="k">as</span> <span class="n">nd_ndarray</span>
+
+    <span class="c1"># pylint: disable=no-else-raise</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="n">nd_ndarray</span><span class="p">,</span> <span class="n">nd_symbol</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="n">np_ndarray</span><span class="p">,</span> <span class="n">np_symbol</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Block's output ndarrays/symbols must be of type `mxnet.numpy.ndarray`"</span>
+                        <span class="s2">" or `mxnet.symbol.numpy._Symbol`, while got output type </span><span class="si">{}</span><span class="s2">"</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+            <span class="n">_check_all_np_ndarrays</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># pylint: enable=no-else-raise</span>
 </pre></div>
 </div>
 </div>
