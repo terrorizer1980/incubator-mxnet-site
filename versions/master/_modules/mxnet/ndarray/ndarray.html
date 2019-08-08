@@ -243,9 +243,10 @@
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable=too-many-lines, protected-access</span>
 <span class="c1"># pylint: disable=import-error, no-name-in-module, undefined-variable</span>
+
 <span class="sd">"""NDArray API of MXNet."""</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">__builtin__</span> <span class="k">import</span> <span class="nb">slice</span> <span class="k">as</span> <span class="n">py_slice</span>
@@ -635,19 +636,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1"># pylint: disable=line-too-long</span>
 <div class="viewcode-block" id="NDArray.__setitem__"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__setitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">"""x.__setitem__(i, y) <=> x[i]=y</span>
 
-<span class="sd">        Sets value to self[key]. This functions supports advanced indexing defined in the following reference with</span>
-<span class="sd">        some restrictions.</span>
+<span class="sd">        Sets ``self[key]`` to ``value``.</span>
 
-<span class="sd">        https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#combining-advanced-and-basic-indexing</span>
-
-<span class="sd">        - If key is a list type, only a list of integers is supported, e.g. key=[1, 2] is supported,</span>
-<span class="sd">          while not for key=[[1, 2]].</span>
-<span class="sd">        - Ellipsis (...) and np.newaxis are not supported.</span>
-<span class="sd">        - Boolean array indexing is not supported.</span>
+<span class="sd">        This functions supports advanced indexing as defined in `the NumPy</span>
+<span class="sd">        advanced indexing documentation</span>
+<span class="sd">        <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#advanced-indexing>`_,</span>
+<span class="sd">        with the restriction that boolean array indexing is not supported.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -658,27 +655,24 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        >>> x = mx.nd.zeros((2,3))</span>
+<span class="sd">        >>> x = mx.nd.zeros((2, 3))</span>
 <span class="sd">        >>> x[:] = 1</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 1.,  1.,  1.],</span>
 <span class="sd">               [ 1.,  1.,  1.]], dtype=float32)</span>
-<span class="sd">        >>> x.asnumpy()</span>
-<span class="sd">        array([[ 1.,  1.,  1.],</span>
-<span class="sd">               [ 1.,  1.,  1.]], dtype=float32)</span>
-<span class="sd">        >>> x[:,1:2] = 2</span>
+<span class="sd">        >>> x[:, 1:2] = 2</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 1.,  2.,  1.],</span>
 <span class="sd">               [ 1.,  2.,  1.]], dtype=float32)</span>
-<span class="sd">        >>> x[1:2,1:] = 3</span>
+<span class="sd">        >>> x[1:2, 1:] = 3</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 1.,  2.,  1.],</span>
 <span class="sd">               [ 1.,  3.,  3.]], dtype=float32)</span>
-<span class="sd">        >>> x[1:,0:2] = mx.nd.zeros((1,2))</span>
+<span class="sd">        >>> x[1:, 0:2] = mx.nd.zeros((1, 2))</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 1.,  2.,  1.],</span>
 <span class="sd">               [ 0.,  0.,  3.]], dtype=float32)</span>
-<span class="sd">        >>> x[1,2] = 4</span>
+<span class="sd">        >>> x[1, 2] = 4</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 1.,  2.,  1.],</span>
 <span class="sd">               [ 0.,  0.,  4.]], dtype=float32)</span>
@@ -691,31 +685,51 @@
 <span class="sd">        array([[ 6.,  5.,  5.],</span>
 <span class="sd">               [ 6.,  0.,  4.]], dtype=float32)</span>
 <span class="sd">        """</span>
-        <span class="n">indexing_dispatch_code</span> <span class="o">=</span> <span class="n">_get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_BASIC_INDEXING</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_nd_basic_indexing</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_nd_advanced_indexing</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Indexing NDArray with index=</span><span class="si">%s</span><span class="s1"> and type=</span><span class="si">%s</span><span class="s1"> is not supported'</span>
-                             <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span></div>
-    <span class="c1"># pylint: enable=line-too-long</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="n">_internal</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                            <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">slc_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="c1"># pylint: disable=line-too-long</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">'too few indices after normalization: expected `ndim` (</span><span class="si">{}</span><span class="s1">) '</span>
+                <span class="s1">'but got </span><span class="si">{}</span><span class="s1">. This is a bug, please report it!'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s1">'too many indices (</span><span class="si">{}</span><span class="s1">) for array with </span><span class="si">{}</span><span class="s1"> dimensions'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">indexing_dispatch_code</span> <span class="o">=</span> <span class="n">_get_indexing_dispatch_code</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_BASIC_INDEXING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_nd_basic_indexing</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_nd_advanced_indexing</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'Indexing NDArray with index </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1"> is not supported'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="p">)</span></div>
+
 <div class="viewcode-block" id="NDArray.__getitem__"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">"""x.__getitem__(i) <=> x[i]</span>
 
-<span class="sd">        Returns a sliced view of this array if the elements fetched are contiguous in memory;</span>
-<span class="sd">        otherwise, returns a newly created NDArray.</span>
-<span class="sd">        This functions supports advanced indexing defined in the following reference with</span>
-<span class="sd">        some restrictions.</span>
+<span class="sd">        Returns the subarray ``self[key]``.</span>
 
-<span class="sd">        https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#combining-advanced-and-basic-indexing</span>
+<span class="sd">        For basic indexing, i.e., if ``key`` consists only of integers,</span>
+<span class="sd">        ``slice``, ``Ellipsis`` (``...``) and ``None``, a mutable view is</span>
+<span class="sd">        returned that shares memory with this array if the accessed portion is</span>
+<span class="sd">        contiguous in memory.</span>
+<span class="sd">        Otherwise, a newly created ``NDArray`` is returned.</span>
 
-<span class="sd">        - If key is a list type, only a list of integers is supported, e.g. key=[1, 2] is supported,</span>
-<span class="sd">          while not for key=[[1, 2]].</span>
-<span class="sd">        - Ellipsis (...) and np.newaxis are not supported.</span>
-<span class="sd">        - Boolean array indexing is not supported.</span>
+<span class="sd">        This functions supports advanced indexing as defined in `the NumPy</span>
+<span class="sd">        advanced indexing documentation</span>
+<span class="sd">        <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#advanced-indexing>`_,</span>
+<span class="sd">        with the restriction that boolean array indexing is not supported.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -724,196 +738,142 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        >>> x = mx.nd.arange(0,6).reshape((2,3))</span>
+<span class="sd">        The default is to give explicit indices for all axes:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 6).reshape((2, 3))</span>
 <span class="sd">        >>> x.asnumpy()</span>
 <span class="sd">        array([[ 0.,  1.,  2.],</span>
 <span class="sd">               [ 3.,  4.,  5.]], dtype=float32)</span>
-<span class="sd">        >>> x[1].asnumpy()</span>
-<span class="sd">        array([ 3.,  4.,  5.], dtype=float32)</span>
-<span class="sd">        >>> y = x[0:1]</span>
-<span class="sd">        >>> y[:] = 2</span>
+<span class="sd">        >>> x[0, :].asnumpy()</span>
+<span class="sd">        array([0., 1., 2.], dtype=float32)</span>
+<span class="sd">        >>> x[0, :2].asnumpy()</span>
+<span class="sd">        array([0., 1.], dtype=float32)</span>
+<span class="sd">        >>> x[:, :-1].asnumpy()</span>
+<span class="sd">        array([[0., 1.],</span>
+<span class="sd">               [3., 4.]], dtype=float32)</span>
+
+<span class="sd">        If fewer indices are given, they are automatically supplemented by an</span>
+<span class="sd">        appropriate number of ``slice(None)`` ("``:``") to the right. For</span>
+<span class="sd">        instance, a single integer indexes along the first axis:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 6).reshape((2, 3))</span>
+<span class="sd">        >>> x[0].asnumpy()</span>
+<span class="sd">        array([0., 1., 2.], dtype=float32)</span>
+<span class="sd">        >>> x[1:].asnumpy()</span>
+<span class="sd">        array([[3., 4., 5.]], dtype=float32)</span>
+
+<span class="sd">        To omit a range of axes that should be kept as-is, an `Ellipsis`</span>
+<span class="sd">        ("``...``") can be used:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 16).reshape((2, 2, 2, 2))</span>
+<span class="sd">        >>> x[0, ..., 1].asnumpy()</span>
+<span class="sd">        array([[1., 3.],</span>
+<span class="sd">               [5., 7.]], dtype=float32)</span>
+<span class="sd">        >>> x[0, :, :, 1].asnumpy()  # equivalent</span>
+<span class="sd">        array([[1., 3.],</span>
+<span class="sd">               [5., 7.]], dtype=float32)</span>
+
+<span class="sd">        New axes of length 1 can be created by inserting ``None``</span>
+<span class="sd">        (`numpy.newaxis`) in the index:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 6).reshape((2, 3))</span>
+<span class="sd">        >>> x[None, :, :].asnumpy()</span>
+<span class="sd">        array([[[0., 1., 2.],</span>
+<span class="sd">                [3., 4., 5.]]], dtype=float32)</span>
+<span class="sd">        >>> x[None, :, :].shape</span>
+<span class="sd">        (1, 2, 3)</span>
+
+<span class="sd">        If the indexed portion of the array is contiguous in memory, no data</span>
+<span class="sd">        is copied. Instead, a shared-memory view of the original array is</span>
+<span class="sd">        returned, and changes to that view affect the original array:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 8).reshape((2, 2, 2))</span>
+<span class="sd">        >>> y = x[0]  # contiguous</span>
+<span class="sd">        >>> y.asnumpy()</span>
+<span class="sd">        array([[0., 1.],</span>
+<span class="sd">               [2., 3.]], dtype=float32)</span>
+<span class="sd">        >>> y[:] = -1</span>
 <span class="sd">        >>> x.asnumpy()</span>
-<span class="sd">        array([[ 2.,  2.,  2.],</span>
-<span class="sd">               [ 3.,  4.,  5.]], dtype=float32)</span>
-<span class="sd">        >>> x = mx.nd.arange(0, 8, dtype='int32').reshape((2, 2, 2))</span>
-<span class="sd">        >>> x[[0, 1]]</span>
-<span class="sd">        [[[0 1]</span>
-<span class="sd">          [2 3]]</span>
-<span class="sd">         [[4 5]</span>
-<span class="sd">          [6 7]]]</span>
-<span class="sd">        >>> x[1:, [0, 1]]</span>
-<span class="sd">        [[[4 5]</span>
-<span class="sd">          [6 7]]]</span>
+<span class="sd">        array([[[-1., -1.],</span>
+<span class="sd">                [-1., -1.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[ 4.,  5.],</span>
+<span class="sd">                [ 6.,  7.]]], dtype=float32)</span>
+<span class="sd">        >>> x = mx.nd.arange(0, 8).reshape((2, 2, 2))</span>
+<span class="sd">        >>> y = x[1, :1, :]  # contiguous</span>
+<span class="sd">        >>> y.asnumpy()</span>
+<span class="sd">        array([[4., 5.]], dtype=float32)</span>
+<span class="sd">        >>> y[:] = -1</span>
+<span class="sd">        >>> x.asnumpy()</span>
+<span class="sd">        array([[[ 0.,  1.],</span>
+<span class="sd">                [ 2.,  3.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[-1., -1.],</span>
+<span class="sd">                [ 6.,  7.]]], dtype=float32)</span>
+<span class="sd">        >>> x = mx.nd.arange(0, 8).reshape((2, 2, 2))</span>
+<span class="sd">        >>> y = x[:, :, 1]  # not contiguous</span>
+<span class="sd">        >>> y.asnumpy()</span>
+<span class="sd">        array([[1., 3.],</span>
+<span class="sd">               [5., 7.]], dtype=float32)</span>
+<span class="sd">        >>> y[:] = -1</span>
+<span class="sd">        >>> x.asnumpy()</span>
+<span class="sd">        array([[[0., 1.],</span>
+<span class="sd">                [2., 3.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[4., 5.],</span>
+<span class="sd">                [6., 7.]]], dtype=float32)</span>
+
+<span class="sd">        If the indexing key contains `list`, `numpy.ndarray` or `NDArray`</span>
+<span class="sd">        objects, advanced indexing is triggered, which always returns a</span>
+<span class="sd">        copy:</span>
+
+<span class="sd">        >>> x = mx.nd.arange(0, 8).reshape((2, 2, 2))</span>
+<span class="sd">        >>> x[[0, 1]].asnumpy()</span>
+<span class="sd">        array([[[0., 1.],</span>
+<span class="sd">                [2., 3.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[4., 5.],</span>
+<span class="sd">                [6., 7.]]], dtype=float32)</span>
+<span class="sd">        >>> x[[0, 1], :].asnumpy()  # equivalent</span>
+<span class="sd">        array([[[0., 1.],</span>
+<span class="sd">                [2., 3.]],</span>
+<span class="sd">        <BLANKLINE></span>
+<span class="sd">               [[4., 5.],</span>
+<span class="sd">                [6., 7.]]], dtype=float32)</span>
 <span class="sd">        >>> y = np.array([0, 1], dtype='int32')</span>
-<span class="sd">        >>> x[1:, y]</span>
-<span class="sd">        [[[4 5]</span>
-<span class="sd">          [6 7]]]</span>
+<span class="sd">        >>> x[1:, y].asnumpy()</span>
+<span class="sd">        array([[[4., 5.],</span>
+<span class="sd">                [6., 7.]]], dtype=float32)</span>
 <span class="sd">        >>> y = mx.nd.array([0, 1], dtype='int32')</span>
-<span class="sd">        >>> x[1:, y]</span>
-<span class="sd">        [[[4 5]</span>
-<span class="sd">          [6 7]]]</span>
+<span class="sd">        >>> x[1:, y].asnumpy()</span>
+<span class="sd">        array([[[4., 5.],</span>
+<span class="sd">                [6., 7.]]], dtype=float32)</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'indexing key cannot be an empty tuple'</span><span class="p">)</span>
+
         <span class="n">indexing_dispatch_code</span> <span class="o">=</span> <span class="n">_get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_BASIC_INDEXING</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nd_basic_indexing</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">indexing_dispatch_code</span> <span class="o">==</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nd_advanced_indexing</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Indexing NDArray with index=</span><span class="si">%s</span><span class="s1"> and type=</span><span class="si">%s</span><span class="s1"> is not supported'</span>
-                             <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span></div>
-    <span class="c1"># pylint: enable=line-too-long</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_index_nd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">"""Returns an index array for use in scatter_nd and gather_nd."""</span>
-        <span class="k">def</span> <span class="nf">_is_advanced_index</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-            <span class="sd">"""The definition of advanced index here includes integers as well, while</span>
-<span class="sd">            integers are considered as basic index type when the key contains only</span>
-<span class="sd">            slices and integers."""</span>
-            <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_prepare_value_nd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">new_axes</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="p">):</span>
+        <span class="sd">"""Return a broadcast `NDArray` with same context and dtype as ``self``.</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">)):</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,)</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>\
-            <span class="s1">'index=</span><span class="si">%s</span><span class="s1"> must be a NDArray, or np.ndarray, or list, or tuple '</span> \
-            <span class="s1">' type to use advanced indexing, received type=</span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
-
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">></span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Cannot slice with empty indices"</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">>=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>\
-            <span class="s2">"Slicing dimensions exceeds array dimensions, </span><span class="si">%d</span><span class="s2"> vs </span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="s1">'int32'</span>  <span class="c1"># index data type passed to gather_nd op</span>
-        <span class="n">need_broadcast</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">advanced_indices</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># include list, NDArray, np.ndarray, integer</span>
-        <span class="n">basic_indices</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># include only slices</span>
-        <span class="n">advanced_index_bshape</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># final advanced index shape</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="n">is_advanced_index</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                <span class="n">idx_i</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="n">advanced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
-                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">_get_index_range</span><span class="p">(</span><span class="n">idx_i</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
-                <span class="n">idx_i</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="n">basic_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">is_advanced_index</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">_get_index_range</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="n">idx_i</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="n">advanced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
-                    <span class="n">idx_i</span> <span class="o">=</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-                <span class="n">advanced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">'Indexing NDArray with index=</span><span class="si">%s</span><span class="s1"> of type=</span><span class="si">%s</span><span class="s1"> is not supported'</span>
-                                 <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
-            <span class="k">if</span> <span class="n">is_advanced_index</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">advanced_index_bshape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">advanced_index_bshape</span> <span class="o">=</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">shape</span>
-                <span class="k">elif</span> <span class="n">advanced_index_bshape</span> <span class="o">!=</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                    <span class="n">need_broadcast</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="n">advanced_index_bshape</span> <span class="o">=</span> <span class="n">_get_broadcast_shape</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">,</span> <span class="n">idx_i</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx_i</span><span class="p">)</span>
-
-        <span class="c1"># Get final index shape for gather_nd. See the following reference</span>
-        <span class="c1"># for determining the output array shape.</span>
-        <span class="c1"># https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#combining-advanced-and-basic-indexing  # pylint: disable=line-too-long</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">advanced_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Advanced index tuple must contain at least one of the following types:'</span>
-                             <span class="s1">' list, tuple, NDArray, np.ndarray, integer, received index=</span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
-        <span class="c1"># determine the output array's shape by checking whether advanced_indices are all adjacent</span>
-        <span class="c1"># or separated by slices</span>
-        <span class="n">advanced_indices_adjacent</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">advanced_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">advanced_indices_adjacent</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">break</span>
-
-        <span class="n">index_bshape_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># index broadcasted shape</span>
-        <span class="k">if</span> <span class="n">advanced_indices_adjacent</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="n">index_bshape_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">need_broadcast</span> <span class="ow">and</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">advanced_index_bshape</span><span class="p">:</span>
-                    <span class="n">need_broadcast</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">index_bshape_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">advanced_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">need_broadcast</span> <span class="ow">and</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">advanced_index_bshape</span><span class="p">:</span>
-                    <span class="n">need_broadcast</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="n">index_bshape_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">index_bshape_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">basic_indices</span><span class="p">:</span>
-                <span class="n">index_bshape_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">need_broadcast</span> <span class="ow">and</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">advanced_index_bshape</span><span class="p">:</span>
-                    <span class="n">need_broadcast</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">index_bshape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">index_bshape_list</span><span class="p">)</span>
-
-        <span class="c1"># Need to broadcast all ndarrays in indices to the final shape.</span>
-        <span class="c1"># For example, suppose an array has shape=(5, 6, 7, 8) and</span>
-        <span class="c1"># key=(slice(1, 5), [[1, 2]], slice(2, 5), [1]).</span>
-        <span class="c1"># Since key[1] and key[3] are two advanced indices here and they are</span>
-        <span class="c1"># separated by basic indices key[0] and key[2], the output shape</span>
-        <span class="c1"># is (1, 2, 4, 3), where the first two elements come from the shape</span>
-        <span class="c1"># that key[1] and key[3] should broadcast to, which is (1, 2), and</span>
-        <span class="c1"># the last two elements come from the shape of two basic indices.</span>
-        <span class="c1"># In order to broadcast all basic and advanced indices to the output shape,</span>
-        <span class="c1"># we need to reshape them based on their axis. For example, to broadcast key[0],</span>
-        <span class="c1"># with shape=(4,), we first need to reshape it into (1, 1, 4, 1), and then</span>
-        <span class="c1"># broadcast the reshaped array to (1, 2, 4, 3); to broadcast key[1], we first</span>
-        <span class="c1"># reshape it into (1, 2, 1, 1), then broadcast the reshaped array to (1, 2, 4, 3).</span>
-        <span class="k">if</span> <span class="n">need_broadcast</span><span class="p">:</span>
-            <span class="n">broadcasted_indices</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">idx_rshape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_bshape</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">advanced_indices_adjacent</span><span class="p">:</span>
-                <span class="n">advanced_index_bshape_start</span> <span class="o">=</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># start index of advanced_index_bshape in index_shape</span>
-                <span class="n">advanced_index_bshape_stop</span> <span class="o">=</span> <span class="n">advanced_index_bshape_start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">_is_advanced_index</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-                        <span class="n">k</span> <span class="o">=</span> <span class="n">advanced_index_bshape_stop</span>
-                        <span class="c1"># find the reshaped shape for indices[i]</span>
-                        <span class="k">for</span> <span class="n">dim_size</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                            <span class="n">k</span> <span class="o">-=</span> <span class="mi">1</span>
-                            <span class="n">idx_rshape</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_size</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">i</span> <span class="o"><</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1"># slice is on the left side of advanced indices</span>
-                            <span class="n">idx_rshape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="k">elif</span> <span class="n">i</span> <span class="o">></span> <span class="n">advanced_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># slice is on the right side of advanced indices</span>
-                            <span class="n">idx_rshape</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'basic index i=</span><span class="si">%d</span><span class="s1"> cannot be between advanced index i=</span><span class="si">%d</span><span class="s1"> and i=</span><span class="si">%d</span><span class="s1">'</span>
-                                             <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">advanced_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-                    <span class="c1"># broadcast current index to the final shape</span>
-                    <span class="n">broadcasted_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">idx_rshape</span><span class="p">))</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">index_bshape</span><span class="p">))</span>
-                    <span class="c1"># reset idx_rshape to ones</span>
-                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx_rshape</span><span class="p">):</span>
-                        <span class="n">idx_rshape</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">basic_index_offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">_is_advanced_index</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-                        <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">advanced_index_bshape</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">dim_size</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                            <span class="n">k</span> <span class="o">-=</span> <span class="mi">1</span>
-                            <span class="n">idx_rshape</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_size</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">idx_rshape</span><span class="p">[</span><span class="n">basic_index_offset</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">basic_index_offset</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="c1"># broadcast current index to the final shape</span>
-                    <span class="n">broadcasted_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">idx_rshape</span><span class="p">))</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">index_bshape</span><span class="p">))</span>
-                    <span class="c1"># reset idx_rshape to ones</span>
-                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx_rshape</span><span class="p">):</span>
-                        <span class="n">idx_rshape</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
-            <span class="n">indices</span> <span class="o">=</span> <span class="n">broadcasted_indices</span>
-        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_prepare_value_nd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">vshape</span><span class="p">):</span>
-        <span class="sd">"""Given value and vshape, create an `NDArray` from value with the same</span>
-<span class="sd">        context and dtype as the current one and broadcast it to vshape."""</span>
+<span class="sd">        Before broadcasting, ``new_axes`` of length 1 will be added to</span>
+<span class="sd">        ``value``. This is done in contrast to blindly reshaping based on</span>
+<span class="sd">        ``bcast_shape``, since the latter would silently ignore wrongly shaped</span>
+<span class="sd">        ``value`` arrays, e.g. ``nd.zeros((2, 3))[:, :1] = nd.ones(2)``.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">vshape</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">new_axes</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># ignore for scalar</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
             <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
@@ -922,168 +882,461 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">value_nd</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'NDArray does not support assignment with non-array-like'</span>
-                                <span class="s1">' object </span><span class="si">%s</span><span class="s1"> of type </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span>
-        <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">vshape</span><span class="p">:</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">vshape</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'NDArray does not support assignment with non-array-like '</span>
+                                <span class="s1">'object </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="c1"># First reshape `value_nd` to a new shape that incorporates existing</span>
+        <span class="c1"># axes, new axes and broadcasting axes in the right way.</span>
+        <span class="n">tmp_shape</span> <span class="o">=</span> <span class="n">_shape_for_bcast</span><span class="p">(</span>
+            <span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">target_ndim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">),</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">new_axes</span>
+        <span class="p">)</span>
+        <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">bcast_shape</span><span class="p">:</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value_nd</span>
 
-    <span class="k">def</span> <span class="nf">_set_nd_basic_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">"""This function is called by __setitem__ when key is a basic index, i.e.</span>
-<span class="sd">        an integer, or a slice, or a tuple of integers and slices. No restrictions</span>
-<span class="sd">        on the values of slices' steps."""</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o"><</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">+=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o"><</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">>=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o"><</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">key</span> <span class="o">-=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">'index </span><span class="si">%d</span><span class="s1"> is out of bounds for axis 0 with size </span><span class="si">%d</span><span class="s1">'</span>
-                                 <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">py_slice</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># key must be >= 0 here</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_basic_indexing_key_to_begin_end_step</span><span class="p">(</span><span class="n">idcs</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">keep_none</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">"""Map a tuple of ``slice`` and ``None`` (ignored) to begin, end, step tuples."""</span>
+        <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idcs</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">)</span> <span class="k">else</span> <span class="n">_int_to_slice</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idcs</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
-            <span class="n">assign_to_self</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="n">assign_to_self</span> <span class="o">&amp;=</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="n">assign_to_self</span> <span class="o">&amp;=</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span> <span class="o">==</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">assign_to_self</span><span class="p">:</span>  <span class="c1"># trivial case, assign value to self</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
-                            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-                        <span class="n">value</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-                    <span class="n">_internal</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                                    <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_copyfrom</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># value might be a list or a tuple</span>
-                    <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
-                    <span class="n">value_nd</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">return</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># non-trivial case, use _slice_assign or _slice_assign_scalar</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,)</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="s2">"key=</span><span class="si">%s</span><span class="s2"> must be a tuple of slices and integers"</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o"><=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="s2">"Indexing dimensions exceed array dimensions, </span><span class="si">%d</span><span class="s2"> vs </span><span class="si">%d</span><span class="s2">"</span>\
-                                       <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
-        <span class="n">begin</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">oshape</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># output shape of slice using key</span>
-        <span class="n">vshape</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># value shape of data[key]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">slice_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="n">dim_size</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_i</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
-                <span class="n">begin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-                <span class="n">end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-                <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
-                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">_get_index_range</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">slice_i</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
-                                                     <span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">slice_i</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
-                <span class="n">dim_size</span> <span class="o">=</span> <span class="n">_get_dim_size</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
-                <span class="n">vshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_size</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_i</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-                <span class="n">begin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="p">)</span>
-                <span class="n">end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">slice_i</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"basic indexing does not support index=</span><span class="si">%s</span><span class="s2"> of type=</span><span class="si">%s</span><span class="s2">"</span>
-                                 <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slice_i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">slice_i</span><span class="p">))))</span>
-            <span class="n">oshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_size</span><span class="p">)</span>
-
-        <span class="n">oshape</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">):])</span>
-        <span class="n">vshape</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">):])</span>
-        <span class="c1"># if key contains all integers, vshape should be (1,)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vshape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">vshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">oshape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span>
-        <span class="n">vshape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">vshape</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-            <span class="n">_internal</span><span class="o">.</span><span class="n">_slice_assign_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">=</span><span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
-                                           <span class="n">step</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">keep_none</span><span class="p">:</span>
+            <span class="n">sss_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">slc</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">slc</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">slc</span><span class="o">.</span><span class="n">step</span><span class="p">)</span> <span class="k">for</span> <span class="n">slc</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idcs</span><span class="p">,</span> <span class="n">shape</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">vshape</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">vshape</span> <span class="o">!=</span> <span class="n">oshape</span><span class="p">:</span>
-                <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span>
-            <span class="n">_internal</span><span class="o">.</span><span class="n">_slice_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_nd</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">sss_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">slc</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">slc</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idcs</span><span class="p">,</span> <span class="n">shape</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sss_list</span><span class="p">))</span>
+    <span class="c1"># pylint: enable=invalid-name</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_basic_indexing_key_int_to_slice</span><span class="p">(</span><span class="n">idcs</span><span class="p">):</span>
+        <span class="sd">"""Return the converted indexing tuple and the integer axes."""</span>
+        <span class="n">int_axes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">conv_idcs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idcs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
+                <span class="n">conv_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_int_to_slice</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+                <span class="n">int_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">conv_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">conv_idcs</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">int_axes</span><span class="p">)</span>
+    <span class="c1"># pylint: enable=invalid-name</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_new_axes_after_basic_indexing</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">key_nd</span><span class="p">):</span>
+        <span class="sd">"""Return indices of ``axes`` after slicing with ``key_nd``.</span>
+
+<span class="sd">        This function is used to calculate the positions where new axes should</span>
+<span class="sd">        end up after indexing, taking into account the removal of axes by</span>
+<span class="sd">        integer indexing.</span>
+
+<span class="sd">        The ``key_nd`` sequence should contain slices and integers only, no</span>
+<span class="sd">        ``None`` entries.</span>
+<span class="sd">        """</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+                       <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key_nd</span><span class="p">]</span>
+        <span class="n">cum_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="n">axes_in_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span> <span class="k">if</span> <span class="n">ax</span> <span class="o"><</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum_steps</span><span class="p">)]</span>
+        <span class="n">axes_out_of_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span> <span class="k">if</span> <span class="n">ax</span> <span class="o">>=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum_steps</span><span class="p">)]</span>
+        <span class="n">axes_after</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">cum_steps</span><span class="p">[</span><span class="n">axes_in_bounds</span><span class="p">])</span>
+        <span class="n">oob_offsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes_out_of_bounds</span><span class="p">]</span>
+        <span class="n">axes_after</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">cum_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span> <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="n">oob_offsets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">axes_after</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_basic_indexing_slice_is_contiguous</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="sd">"""Whether indexing with the given key results in a contiguous array.</span>
+
+<span class="sd">        The rule is: From right to left, if in an axis, a slice produces a</span>
+<span class="sd">        proper subset, no later axis can produce a proper subset or use</span>
+<span class="sd">        a step different from 1.</span>
+
+<span class="sd">        The ``slc_key`` sequence must have the same length as ``shape`` and</span>
+<span class="sd">        only contain `slice` objects.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">slc_key</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">shape</span><span class="p">)):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">num</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">subset</span> <span class="ow">or</span> <span class="n">step</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="c1"># pylint: enable=invalid-name</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_basic_indexing_sliced_shape</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="sd">"""Return the shape after slicing with the given key."""</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">sliced_shape</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
+            <span class="n">sliced_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">)</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_basic_indexing_contiguous_flat_begin_end</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="sd">"""Return the flat indices of begin and end for contiguous slicing."""</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">slc_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">=</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">flat_begin</span> <span class="o">*=</span> <span class="n">n</span>
+            <span class="n">flat_end</span> <span class="o">*=</span> <span class="n">n</span>
+            <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">flat_begin</span> <span class="o">+=</span> <span class="n">begin</span>
+            <span class="n">flat_end</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="c1"># pylint: enable=invalid-name</span>
+
+    <span class="k">def</span> <span class="nf">_set_nd_basic_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">"""This function indexes ``self`` with a tuple of ``slice`` objects only."""</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">py_slice</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s1">'`key` may only contain `slice` or integer objects in the '</span>
+                    <span class="s1">'basic implementation, got object of type </span><span class="si">{}</span><span class="s1">. '</span>
+                    <span class="s1">'This is a bug, please report it!'</span>
+                    <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+        <span class="n">int_axes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">ax</span><span class="p">],</span> <span class="n">integer_types</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_key_to_begin_end_step</span><span class="p">(</span>
+            <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">keep_none</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">indexed_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">_get_dim_size</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">can_assign_directly</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">indexed_shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">s</span> <span class="o">></span> <span class="mi">0</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">step</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_key_to_begin_end_step</span><span class="p">(</span>
+            <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">keep_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">can_assign_directly</span><span class="p">:</span>
+            <span class="c1"># Easy case, overwrite whole array.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">:</span>
+                    <span class="c1"># Need to do this before `broadcast_to`.</span>
+                    <span class="n">tmp_shape</span> <span class="o">=</span> <span class="n">_shape_for_bcast</span><span class="p">(</span>
+                        <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">target_ndim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">int_axes</span>
+                    <span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">_internal</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">)):</span>
+                <span class="n">tmp_shape</span> <span class="o">=</span> <span class="n">_shape_for_bcast</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">target_ndim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">int_axes</span>
+                <span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sync_copyfrom</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Other array-like</span>
+                <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">int_axes</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+                <span class="n">value_nd</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+            <span class="n">_internal</span><span class="o">.</span><span class="n">_slice_assign_scalar</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">int_axes</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">indexed_shape</span>
+            <span class="p">)</span>
+            <span class="n">_internal</span><span class="o">.</span><span class="n">_slice_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_nd</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_nd_basic_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">"""This function indexes ``self`` with a tuple of `slice` objects only."""</span>
+        <span class="n">key_nd</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">'too few indices after normalization: expected `ndim` (</span><span class="si">{}</span><span class="s1">) '</span>
+                <span class="s1">'but got </span><span class="si">{}</span><span class="s1">. This is a bug, please report it!'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s1">'too many indices (</span><span class="si">{}</span><span class="s1">) for array with </span><span class="si">{}</span><span class="s1"> dimensions'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">none_axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># pylint: disable=invalid-name</span>
+        <span class="n">slc_key</span><span class="p">,</span> <span class="n">int_axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_key_int_to_slice</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span>
+        <span class="n">new_axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_axes_after_basic_indexing</span><span class="p">(</span><span class="n">none_axes</span><span class="p">,</span> <span class="n">key_nd</span><span class="p">)</span>
+
+        <span class="c1"># Check bounds for integer axes</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">int_axes</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o"><=</span> <span class="n">key_nd</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                    <span class="s1">'index </span><span class="si">{}</span><span class="s1"> is out of bounds for axis </span><span class="si">{}</span><span class="s1"> with size </span><span class="si">{}</span><span class="s1">'</span>
+                    <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key_nd</span><span class="p">[</span><span class="n">ax</span><span class="p">],</span> <span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]))</span>
+
+        <span class="c1"># Make sure we don't accidentally have advanced indexing or</span>
+        <span class="c1"># unsupported entries.</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">slc_key</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s1">'found object of type </span><span class="si">{}</span><span class="s1"> instead of `slice`. '</span>
+                    <span class="s1">'This is a bug, please report it!'</span>
+                    <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+
+        <span class="c1"># Convert to begin, end and step, and return immediately if the slice</span>
+        <span class="c1"># is empty</span>
+        <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_key_to_begin_end_step</span><span class="p">(</span>
+            <span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">keep_none</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="c1"># Pylint is wrong about this</span>
+        <span class="c1"># pylint: disable=bad-continuation</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">b</span> <span class="o">>=</span> <span class="n">e</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">></span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">b</span> <span class="o"><=</span> <span class="n">e</span> <span class="ow">and</span> <span class="n">s</span> <span class="o"><</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="n">array</span><span class="p">([],</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="c1"># pylint: enable=bad-continuation</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_slice_is_contiguous</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="c1"># Create a shared-memory view by using low-level flat slicing</span>
+            <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_contiguous_flat_begin_end</span><span class="p">(</span>
+                <span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
+            <span class="n">flat_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">check_call</span><span class="p">(</span>
+                <span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArraySlice</span><span class="p">(</span>
+                    <span class="n">flat_self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
+                    <span class="n">mx_uint</span><span class="p">(</span><span class="n">flat_begin</span><span class="p">),</span>
+                    <span class="n">mx_uint</span><span class="p">(</span><span class="n">flat_end</span><span class="p">),</span>
+                    <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">sliced_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_sliced_shape</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">sliced</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">,</span> <span class="n">writable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">writable</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_key_to_begin_end_step</span><span class="p">(</span>
+                <span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">keep_none</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">sliced</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+
+        <span class="c1"># Reshape to final shape due to integer and `None` entries in `key`.</span>
+        <span class="n">final_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">sliced</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sliced</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+                       <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">int_axes</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">new_axes</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
+            <span class="n">final_shape</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">final_shape</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="c1"># Override for single element indexing</span>
+            <span class="n">final_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">sliced</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">final_shape</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="sd">"""Convert ``idx`` to `NDArray` for advanced indexing.</span>
+
+<span class="sd">        The ``ax_len`` is used to convert `slice` objects to integer arrays.</span>
+<span class="sd">        """</span>
+        <span class="n">idx_dtype</span> <span class="o">=</span> <span class="s1">'int32'</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">idx_dtype</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">idx_dtype</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">idx</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">idx_dtype</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">idx</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">idx_dtype</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">ax_len</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">idx_dtype</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'illegal index type </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_broadcast_advanced_indices</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">block_axes</span><span class="p">):</span>
+        <span class="sd">"""Broadcast arrays according to position in the sequence.</span>
+
+<span class="sd">        Here, "according to position" means that an array of dimension 1</span>
+<span class="sd">        (which is the case for all except ``block_axes``) will have shape</span>
+<span class="sd">        ``(1, ..., 1, N, 1, ..., 1)``, where ``N`` is the length, and the</span>
+<span class="sd">        position of ``N`` in the shape is the same as the position of the</span>
+<span class="sd">        array in the ``arrays`` sequence, plus extra dimensions of the</span>
+<span class="sd">        advanced block if it is left of the array.</span>
+
+<span class="sd">        The arrays at ``block_axes`` are the advanced indices. They are assumed to</span>
+<span class="sd">        be ready for mutual broadcasting to produce the advanced indexing block.</span>
+<span class="sd">        It is further assumed that the numbers in ``block_axes`` are consecutive.</span>
+
+<span class="sd">        The return value is a tuple containing the arrays with broadcast shapes.</span>
+<span class="sd">        """</span>
+        <span class="n">block_shape</span> <span class="o">=</span> <span class="n">_broadcast_shapes</span><span class="p">([</span><span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">block_axes</span><span class="p">])</span>
+        <span class="n">ndim_blk</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_shape</span><span class="p">)</span>
+        <span class="n">ndim_blk_delta</span> <span class="o">=</span> <span class="n">ndim_blk</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_axes</span><span class="p">)</span>
+        <span class="n">ndim_lead</span> <span class="o">=</span> <span class="n">block_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ndim_trail</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">block_axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">bcast_shape</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim_lead</span><span class="p">))</span> <span class="o">+</span>
+            <span class="n">block_shape</span> <span class="o">+</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">block_axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)))</span>
+        <span class="p">)</span>
+
+        <span class="n">bcast_arrays</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">block_axes</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">block_shape</span><span class="p">)</span>
+            <span class="n">shp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">ndim_lead</span> <span class="o">+</span> <span class="n">block_shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">ndim_trail</span>
+            <span class="n">bcast_arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shp</span><span class="p">)</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">block_axes</span><span class="p">):</span>
+            <span class="n">shp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ax</span> <span class="o"><</span> <span class="n">ndim_lead</span><span class="p">:</span>
+                <span class="n">shp</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shp</span><span class="p">[</span><span class="n">ax</span> <span class="o">+</span> <span class="n">ndim_blk_delta</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bcast_arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shp</span><span class="p">)</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bcast_arrays</span><span class="p">)</span>
+    <span class="c1"># pylint: enable=invalid-name</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_drop_slice_none_at_end</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="sd">"""Remove ``slice(None)`` at the end of a key.</span>
+
+<span class="sd">        This is used for efficiency in advanced indexing, to avoid generating</span>
+<span class="sd">        ``arange(n)`` arrays for these axes. The `gather_nd` and `scatter_nd`</span>
+<span class="sd">        handle implicit full trailing axes automatically.</span>
+<span class="sd">        """</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">py_slice</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">key</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_index_nd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">"""Return an index array for use in `scatter_nd` and `gather_nd`."""</span>
+        <span class="n">key_nd</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">'too few indices after normalization: expected `ndim` (</span><span class="si">{}</span><span class="s1">) '</span>
+                <span class="s1">'but got </span><span class="si">{}</span><span class="s1">. This is a bug, please report it!'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="s1">'too many indices (</span><span class="si">{}</span><span class="s1">) for array with </span><span class="si">{}</span><span class="s1"> dimensions'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span>
+
+        <span class="c1"># --- Preparation --- #</span>
+
+        <span class="c1"># - Make lists for bookkeeping of advanced indices &amp; axes</span>
+        <span class="c1"># - Drop trailing `slice(None)` entries in `key` for efficiency</span>
+        <span class="c1"># - Determine whether the advanced indices are adjacent in `key`</span>
+        <span class="c1"># - Depending on that, make index permutations to move around indices</span>
+
+        <span class="n">adv_axs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">if</span> <span class="n">_is_advanced_index</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span>
+        <span class="n">adv_axs_nd</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span> <span class="k">if</span> <span class="n">_is_advanced_index</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span>
+        <span class="n">adv_idcs_are_adjacent</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">adv_axs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">nonadv_axs_nd</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)</span> <span class="k">if</span> <span class="n">ax</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adv_axs_nd</span><span class="p">]</span>
+        <span class="n">adv_idcs_nd</span> <span class="o">=</span> <span class="p">[</span><span class="n">key_nd</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">adv_axs_nd</span><span class="p">]</span>
+        <span class="n">idcs_short</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_slice_none_at_end</span><span class="p">(</span><span class="n">key_nd</span><span class="p">)</span>
+        <span class="n">dropped_axs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idcs_short</span><span class="p">),</span> <span class="n">ndim</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">adv_idcs_are_adjacent</span><span class="p">:</span>
+            <span class="c1"># The easy case: the advanced block can stay at its position, and no</span>
+            <span class="c1"># permutation needs to be done (identity permutation)</span>
+            <span class="n">axs_nd_permut</span> <span class="o">=</span> <span class="n">axs_nd_permut_inv</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">))</span>
+            <span class="n">idcs_permut_short</span> <span class="o">=</span> <span class="n">idcs_short</span>
+            <span class="n">block_axs_nd</span> <span class="o">=</span> <span class="n">adv_axs_nd</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The more complicated case: during broadcasting, we need to use the</span>
+            <span class="c1"># indices in the *permuted* order, where the advanced block is</span>
+            <span class="c1"># at the beginning, while the final index for `gather_nd` is stacked</span>
+            <span class="c1"># in the *original* order, so that the association of index with</span>
+            <span class="c1"># array axis remains the same.</span>
+
+            <span class="c1"># This order is used for broadcasting: advanced block at the beginning</span>
+            <span class="n">idcs_permut_short</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">adv_idcs_nd</span> <span class="o">+</span>
+                <span class="p">[</span><span class="n">key_nd</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)</span>
+                 <span class="k">if</span> <span class="n">ax</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adv_axs_nd</span> <span class="ow">and</span> <span class="n">ax</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dropped_axs</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">block_axs_nd</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">adv_axs_nd</span><span class="p">)))</span>
+            <span class="n">axs_nd_permut</span> <span class="o">=</span> <span class="n">adv_axs_nd</span> <span class="o">+</span> <span class="n">nonadv_axs_nd</span>
+            <span class="n">axs_nd_permut_inv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axs_nd_permut</span><span class="p">))</span>
+
+        <span class="c1"># --- Conversion, broadcasting and index stacking --- #</span>
+
+        <span class="c1"># - Convert all indices in `key` to arrays: integers to 1-element arrays,</span>
+        <span class="c1">#   `slice` objects to arrays with explicit indices</span>
+        <span class="c1"># - Reshape arrays for broadcasting according to their position in the</span>
+        <span class="c1">#   *permuted* key</span>
+        <span class="c1"># - Broadcast and stack the indices in the *original* order</span>
+
+        <span class="n">shape_nd_permut</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs_nd_permut</span><span class="p">)</span>
+        <span class="n">converted_idcs_short</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idcs_permut_short</span><span class="p">,</span> <span class="n">shape_nd_permut</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">bcast_idcs_permut_short</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_broadcast_advanced_indices</span><span class="p">(</span>
+            <span class="n">converted_idcs_short</span><span class="p">,</span> <span class="n">block_axes</span><span class="o">=</span><span class="n">block_axs_nd</span>
+        <span class="p">)</span>
+        <span class="c1"># Undo the permutation to restore the original order</span>
+        <span class="n">bcast_idcs_short</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bcast_idcs_permut_short</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs_nd_permut_inv</span>
+            <span class="k">if</span> <span class="n">axs_nd_permut</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dropped_axs</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">bcast_idcs_short</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_nd_advanced_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">"""This function is called by __setitem__ when key is an advanced index."""</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_index_nd</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">vshape</span> <span class="o">=</span> <span class="n">_get_oshape_of_gather_nd_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">indices</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">vshape</span><span class="p">)</span>
-        <span class="n">_internal</span><span class="o">.</span><span class="n">_scatter_set_nd</span><span class="p">(</span><span class="n">lhs</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">value_nd</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
-                                  <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_nd_basic_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">"""This function is called when key is a slice, or an integer,</span>
-<span class="sd">        or a tuple of slices or integers"""</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">></span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                    <span class="s1">'index </span><span class="si">{}</span><span class="s1"> is out of bounds for axis 0 with size </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_at</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"slice step cannot be zero"</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">begin</span><span class="o">=</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">start</span><span class="p">,),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">stop</span><span class="p">,),</span> <span class="n">step</span><span class="o">=</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">step</span><span class="p">,))</span>
-            <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'index=</span><span class="si">%s</span><span class="s1"> must be a slice, or an ineger, or a tuple'</span>
-                             <span class="s1">' of slices and integers to use basic indexing, received type=</span><span class="si">%s</span><span class="s1">'</span>
-                             <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'basic index cannot be an empty tuple'</span>
-        <span class="n">begin</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">step</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">kept_axes</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># axes where slice_i is a slice</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">slice_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_i</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-                <span class="n">begin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="p">)</span>
-                <span class="n">end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">slice_i</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="n">step</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_i</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">slice_i</span><span class="o">.</span><span class="n">step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'basic index=</span><span class="si">%s</span><span class="s1"> cannot have slice=</span><span class="si">%s</span><span class="s1"> with step = 0'</span>
-                                     <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">slice_i</span><span class="p">)))</span>
-                <span class="n">begin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-                <span class="n">end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-                <span class="n">step</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_i</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
-                <span class="n">kept_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'basic_indexing does not support slicing with '</span>
-                                 <span class="s1">'index=</span><span class="si">%s</span><span class="s1"> of type=</span><span class="si">%s</span><span class="s1">.'</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slice_i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">slice_i</span><span class="p">))))</span>
-        <span class="n">kept_axes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)))</span>
-        <span class="n">sliced_nd</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kept_axes</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">sliced_nd</span>
-        <span class="c1"># squeeze sliced_shape to remove the axes indexed by integers</span>
-        <span class="n">oshape</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">sliced_shape</span> <span class="o">=</span> <span class="n">sliced_nd</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">kept_axes</span><span class="p">:</span>
-            <span class="n">oshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
-        <span class="c1"># if key is a tuple of integers, still need to keep 1 dim</span>
-        <span class="c1"># while in Numpy, the output will become an value instead of an ndarray</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">oshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">oshape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">),</span> <span class="s1">'oshape=</span><span class="si">%s</span><span class="s1"> has different size'</span>\
-                                                         <span class="s1">' than sliced_shape=</span><span class="si">%s</span><span class="s1">'</span>\
-                                                         <span class="o">%</span> <span class="p">(</span><span class="n">oshape</span><span class="p">,</span> <span class="n">sliced_shape</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sliced_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">oshape</span><span class="p">)</span>
+        <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="p">[],</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">vshape</span><span class="p">)</span>
+        <span class="n">_internal</span><span class="o">.</span><span class="n">_scatter_set_nd</span><span class="p">(</span>
+            <span class="n">lhs</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">value_nd</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_nd_advanced_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">"""Get item when key is a tuple of any objects of the following types:</span>
@@ -2625,30 +2878,123 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">to_dlpack_for_write</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
+
+<span class="k">def</span> <span class="nf">_indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    <span class="sd">"""Make implicit axes explicit by adding ``slice(None)``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    >>> shape = (3, 4, 5)</span>
+<span class="sd">    >>> _indexing_key_expand_implicit_axes(np.s_[2, 1, 1], shape)</span>
+<span class="sd">    (2, 1, 1)</span>
+<span class="sd">    >>> _indexing_key_expand_implicit_axes(np.s_[0], shape)</span>
+<span class="sd">    (0, slice(None, None, None), slice(None, None, None))</span>
+<span class="sd">    >>> _indexing_key_expand_implicit_axes(np.s_[0, ...], shape)  # equivalent</span>
+<span class="sd">    (0, slice(None, None, None), slice(None, None, None))</span>
+<span class="sd">    >>> _indexing_key_expand_implicit_axes(np.s_[:2, None, 0, ...], shape)</span>
+<span class="sd">    (slice(None, 2, None), None, 0, slice(None, None, None))</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,)</span>
+
+    <span class="c1"># We need to loop explicitly since tuple functions like `index()` or</span>
+    <span class="c1"># `count()` use `==` internally, which doesn't play well with fancy</span>
+    <span class="c1"># indexing.</span>
+    <span class="n">ell_idx</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_none</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">nonell_key</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="bp">Ellipsis</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ell_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                    <span class="s1">'Cannot use more than one ellipsis (`...`) for indexing'</span>
+                <span class="p">)</span>
+            <span class="n">ell_idx</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">num_none</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="n">nonell_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nonell_key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ell_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># This handles the case of "too few" indices, e.g., `nd.zeros((2, 3))[0]`,</span>
+        <span class="c1"># where the ellipsis is implicitly after the last entry.</span>
+        <span class="n">ell_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonell_key</span><span class="p">)</span>
+
+    <span class="n">ell_ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_none</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonell_key</span><span class="p">)</span>
+    <span class="n">expanded_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">nonell_key</span><span class="p">[:</span><span class="n">ell_idx</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),)</span> <span class="o">*</span> <span class="n">ell_ndim</span> <span class="o">+</span>
+                    <span class="n">nonell_key</span><span class="p">[</span><span class="n">ell_idx</span><span class="p">:])</span>
+
+    <span class="k">return</span> <span class="n">expanded_key</span>
+
+
+<span class="k">def</span> <span class="nf">_int_to_slice</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+    <span class="sd">"""Return a slice that indexes the same entries as a single int."""</span>
+    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Avoid slice(-1, 0)</span>
+        <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_shape_for_bcast</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">target_ndim</span><span class="p">,</span> <span class="n">new_axes</span><span class="p">):</span>
+    <span class="sd">"""Return shape with added axes for broadcasting in ``target_ndim`` dimensions.</span>
+
+<span class="sd">    If ``shape`` is shorter than ``target_ndim``, fixed ``1`` entries are inserted</span>
+<span class="sd">    into the returned shape, in locations indexed by ``new_axes``. The rest is</span>
+<span class="sd">    filled from the back with ``shape`` while possible.</span>
+<span class="sd">    """</span>
+    <span class="n">new_shape</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">target_ndim</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o"><</span> <span class="n">target_ndim</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">new_ax</span> <span class="ow">in</span> <span class="n">new_axes</span><span class="p">:</span>
+            <span class="n">new_shape</span><span class="p">[</span><span class="n">new_ax</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Replace `None` from the right with `shape` entries from the right as</span>
+    <span class="c1"># long as possible, thereafter with 1.</span>
+    <span class="n">ax_s</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_shape</span><span class="p">[</span><span class="o">-</span><span class="n">ax</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_shape</span><span class="p">[</span><span class="o">-</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="n">ax_s</span><span class="p">]</span>
+                <span class="n">ax_s</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="n">new_shape</span><span class="p">[</span><span class="o">-</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_advanced_index</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+    <span class="sd">"""Return whether ``idx`` is an advanced index (array-like or integer).</span>
+
+<span class="sd">    Note that in contrast to basic indexing, integers are considered advanced</span>
+<span class="sd">    indices in the context of advanced indexing as they participate in</span>
+<span class="sd">    broadcasting.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">)</span> <span class="ow">or</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'illegal index type </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+
+
 <span class="k">def</span> <span class="nf">_get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">"""Returns a dispatch code for calling basic or advanced indexing functions."""</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="c1"># TODO(junwu): Add support for nested lists besides integer list</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Indexing NDArray only supports a list of integers as index'</span>
-                                <span class="s1">' when key is of list type, received element=</span><span class="si">%s</span><span class="s1"> of type=</span><span class="si">%s</span><span class="s1">'</span>
-                                <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">))))</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">integer_types</span><span class="p">,</span> <span class="n">py_slice</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">py_slice</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"NDArray does not support slicing with key </span><span class="si">%s</span><span class="s2"> of type </span><span class="si">%s</span><span class="s2">."</span>
-                                 <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">))))</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_UNSUPPORTED_INDEXING</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">py_slice</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">))</span> <span class="ow">or</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'NDArray does not support slicing with key </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1">.'</span>
+                <span class="s1">''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span>
 
 
 <span class="k">def</span> <span class="nf">_get_index_range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -2708,6 +3054,8 @@
     <span class="sd">"""Given start, stop, and stop, calculate the number of elements</span>
 <span class="sd">    of this slice."""</span>
     <span class="k">assert</span> <span class="n">step</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">stop</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="n">step</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">start</span> <span class="o"><</span> <span class="n">stop</span>
         <span class="n">dim_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span>
@@ -2736,6 +3084,14 @@
         <span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span> <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">a</span>
         <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_broadcast_shapes</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">"""Return the broadcast shape of all advanced indices in ``seq``.</span>
+
+<span class="sd">    All entries are assumed to have a ``shape`` property.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">_get_broadcast_shape</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">],</span> <span class="p">())</span>
 
 
 <div class="viewcode-block" id="onehot_encode"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.onehot_encode">[docs]</a><span class="k">def</span> <span class="nf">onehot_encode</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
@@ -2850,9 +3206,18 @@
                 <span class="n">source_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">source_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'source_array must be array like object'</span><span class="p">)</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">source_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
-    <span class="n">arr</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">source_array</span>
-    <span class="k">return</span> <span class="n">arr</span>
+
+    <span class="k">if</span> <span class="n">source_array</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+        <span class="c1"># In this case we can't assign, so we need to go through an auxiliary array</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">source_array</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())</span>
+    <span class="k">elif</span> <span class="n">source_array</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">empty</span><span class="p">(</span><span class="n">source_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">source_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">source_array</span>
+        <span class="k">return</span> <span class="n">arr</span>
 
 
 <div class="viewcode-block" id="moveaxis"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.moveaxis">[docs]</a><span class="k">def</span> <span class="nf">moveaxis</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
