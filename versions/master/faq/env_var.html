@@ -259,6 +259,11 @@ library is in <code class="docutils literal"><span class="pre">python/mxnet/libi
 <div class="section" id="set-the-number-of-threads">
 <span id="set-the-number-of-threads"></span><h2>Set the Number of Threads<a class="headerlink" href="#set-the-number-of-threads" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li>MXNET_OMP_MAX_THREADS<ul>
+<li>Values: Int <code class="docutils literal"><span class="pre">(default=Number</span> <span class="pre">of</span> <span class="pre">processors</span> <span class="pre">/</span> <span class="pre">Number</span> <span class="pre">of</span> <span class="pre">processors</span> <span class="pre">*</span> <span class="pre">2</span> <span class="pre">in</span> <span class="pre">X86)</span></code></li>
+<li>Maximum number of threads to use in individual operators through OpenMP. If not set, OMP_NUM_THREADS is considered after.</li>
+</ul>
+</li>
 <li>MXNET_GPU_WORKER_NTHREADS<ul>
 <li>Values: Int <code class="docutils literal"><span class="pre">(default=2)</span></code></li>
 <li>The maximum number of threads to use on each GPU. This parameter is used to parallelize the computation within a single GPU card.</li>
@@ -271,7 +276,7 @@ library is in <code class="docutils literal"><span class="pre">python/mxnet/libi
 </li>
 <li>MXNET_CPU_WORKER_NTHREADS<ul>
 <li>Values: Int <code class="docutils literal"><span class="pre">(default=1)</span></code></li>
-<li>The maximum number of scheduling threads on CPU. It specifies how many operators can be run in parallel. Note that most CPU operators are parallelized by OpenMP. To change the number of threads used by individual operators, please set <code class="docutils literal"><span class="pre">OMP_NUM_THREADS</span></code> instead.</li>
+<li>The maximum number of scheduling threads on CPU. It specifies how many operators can be run in parallel. Note that most CPU operators are parallelized by OpenMP. To change the number of threads used by individual operators, please set <code class="docutils literal"><span class="pre">MXNET_OMP_MAX_THREADS</span></code> instead.</li>
 </ul>
 </li>
 <li>MXNET_CPU_PRIORITY_NTHREADS<ul>
@@ -286,12 +291,17 @@ library is in <code class="docutils literal"><span class="pre">python/mxnet/libi
 </li>
 <li>MXNET_MP_WORKER_NTHREADS<ul>
 <li>Values: Int <code class="docutils literal"><span class="pre">(default=1)</span></code></li>
-<li>The number of scheduling threads on CPU given to multiprocess workers. Enlarge this number allows more operators to run in parallel in individual workers but please consider reducing the overall <code class="docutils literal"><span class="pre">num_workers</span></code> to avoid thread contention (not available on Windows).</li>
+<li>The number of scheduling threads on CPU given to multiprocess workers (after fork). Enlarge this number allows more operators to run in parallel in individual workers but please consider reducing the overall <code class="docutils literal"><span class="pre">num_workers</span></code> to avoid thread contention (not available on Windows).</li>
 </ul>
 </li>
 <li>MXNET_MP_OPENCV_NUM_THREADS<ul>
 <li>Values: Int <code class="docutils literal"><span class="pre">(default=0)</span></code></li>
 <li>The number of OpenCV execution threads given to multiprocess workers. OpenCV multithreading is disabled if <code class="docutils literal"><span class="pre">MXNET_MP_OPENCV_NUM_THREADS</span></code> < 1 (default). Enlarge this number may boost the performance of individual workers when executing underlying OpenCV functions but please consider reducing the overall <code class="docutils literal"><span class="pre">num_workers</span></code> to avoid thread contention (not available on Windows).</li>
+</ul>
+</li>
+<li>MXNET_GPU_COPY_NTHREADS<ul>
+<li>Values:: Int <code class="docutils literal"><span class="pre">(default=2)</span></code></li>
+<li>Number of threads for copying data from CPU to GPU.</li>
 </ul>
 </li>
 </ul>

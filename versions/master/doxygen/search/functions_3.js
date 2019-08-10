@@ -20,7 +20,6 @@ var searchData=
   ['checklabelshapes',['CheckLabelShapes',['../classmxnet_1_1cpp_1_1EvalMetric.html#a624ac9ba2f3b6e9ecadc352321f88065',1,'mxnet::cpp::EvalMetric']]],
   ['clear',['Clear',['../classmxnet_1_1Imperative_1_1AGInfo.html#ac1285664cc551c266fdc506fa8f8e8ad',1,'mxnet::Imperative::AGInfo::Clear()'],['../classmxnet_1_1common_1_1LazyAllocArray.html#a3af1ab75feb0ba07db5af7e6ef5717b1',1,'mxnet::common::LazyAllocArray::Clear()']]],
   ['clip',['clip',['../namespacemxnet_1_1cpp.html#a27262dd0794c017d77f20fab5d9fe715',1,'mxnet::cpp::clip(const std::string &amp;symbol_name, Symbol data, mx_float a_min, mx_float a_max)'],['../namespacemxnet_1_1cpp.html#a82601afa30b710cc1b184f9819c3cc4e',1,'mxnet::cpp::clip(Symbol data, mx_float a_min, mx_float a_max)']]],
-  ['close_5flib',['close_lib',['../library_8h.html#a12c780292ca46ac7725ff82c568028a9',1,'library.h']]],
   ['computecapabilitymajor',['ComputeCapabilityMajor',['../cuda__utils_8h.html#aa79f548df23452162de37663f171e99d',1,'cuda_utils.h']]],
   ['computecapabilityminor',['ComputeCapabilityMinor',['../cuda__utils_8h.html#a7c16e8770e4f399cabed1fc231ffd9b6',1,'cuda_utils.h']]],
   ['concat',['Concat',['../namespacemxnet_1_1cpp.html#a58ec45705c88219a949dd3dfb11ce058',1,'mxnet::cpp::Concat(const std::string &amp;symbol_name, const std::vector&lt; Symbol &gt; &amp;data, int num_args, int dim=1)'],['../namespacemxnet_1_1cpp.html#a44eb74174eaae169df46a0594eeb1b08',1,'mxnet::cpp::Concat(const std::vector&lt; Symbol &gt; &amp;data, int num_args, int dim=1)']]],
@@ -56,6 +55,7 @@ var searchData=
   ['cudamax',['CudaMax',['../namespacemxnet_1_1common_1_1cuda.html#a6f3ee04eb382c57e10916108db3efd80',1,'mxnet::common::cuda']]],
   ['cudamin',['CudaMin',['../namespacemxnet_1_1common_1_1cuda.html#a03888f252f813f6d052ae84bf8801498',1,'mxnet::common::cuda']]],
   ['curandgeterrorstring',['CurandGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#a97c06b2f4d26445a7386b0f54fae1feb',1,'mxnet::common::cuda']]],
+  ['current_5fprocess_5fid',['current_process_id',['../namespacemxnet_1_1common.html#a17af88f97948c889f2f4ce88190122c1',1,'mxnet::common']]],
   ['cusolvergeterrorstring',['CusolverGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#abf9bcb4cb696e9ae61b818510dac39c8',1,'mxnet::common::cuda']]],
   ['custom',['Custom',['../namespacemxnet_1_1cpp.html#aa4569bf622fc0b5109a958998451d785',1,'mxnet::cpp::Custom(const std::string &amp;symbol_name, const std::vector&lt; Symbol &gt; &amp;data, const std::string &amp;op_type)'],['../namespacemxnet_1_1cpp.html#a7667f538b000216fade42cb15ba39a8f',1,'mxnet::cpp::Custom(const std::vector&lt; Symbol &gt; &amp;data, const std::string &amp;op_type)']]]
 ];
