@@ -1157,14 +1157,24 @@
             <span class="p">)</span>
             <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
             <span class="n">flat_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">check_call</span><span class="p">(</span>
-                <span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArraySlice</span><span class="p">(</span>
-                    <span class="n">flat_self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
-                    <span class="n">mx_uint</span><span class="p">(</span><span class="n">flat_begin</span><span class="p">),</span>
-                    <span class="n">mx_uint</span><span class="p">(</span><span class="n">flat_end</span><span class="p">),</span>
-                    <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">),</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">></span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">_int64_enabled</span><span class="p">():</span>
+                <span class="n">check_call</span><span class="p">(</span>
+                    <span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArraySlice64</span><span class="p">(</span>
+                        <span class="n">flat_self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">(</span><span class="n">flat_begin</span><span class="p">),</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">(</span><span class="n">flat_end</span><span class="p">),</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">),</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">check_call</span><span class="p">(</span>
+                    <span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArraySlice</span><span class="p">(</span>
+                        <span class="n">flat_self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">(</span><span class="n">flat_begin</span><span class="p">),</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">(</span><span class="n">flat_end</span><span class="p">),</span>
+                        <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="n">sliced_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_indexing_sliced_shape</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="n">sliced</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">,</span> <span class="n">writable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">writable</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1460,8 +1470,12 @@
             <span class="k">if</span> <span class="n">idx</span> <span class="o"><</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">'index </span><span class="si">%d</span><span class="s1"> is out of bounds for axis 0 with size </span><span class="si">%d</span><span class="s1">'</span>
                                  <span class="o">%</span> <span class="p">(</span><span class="n">idx</span><span class="o">-</span><span class="n">length</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
-        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayAt</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">></span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">_int64_enabled</span><span class="p">():</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayAt64</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayAt</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">,</span> <span class="n">writable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">writable</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NDArray.reshape"><a class="viewcode-back" href="../../../api/python/ndarray/ndarray.html#mxnet.ndarray.NDArray.reshape">[docs]</a>    <span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
