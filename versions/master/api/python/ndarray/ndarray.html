@@ -1844,7 +1844,10 @@ with the restriction that boolean array indexing is not supported.</p>
 <dt id="mxnet.ndarray.NDArray.__getitem__">
 <code class="descname">__getitem__</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>x.__getitem__(i) <=> x[i]</p>
-<p>Returns the subarray <code class="docutils literal"><span class="pre">self[key]</span></code>.</p>
+<p>Returns a sliced view of this array if the elements fetched are contiguous in memory;
+otherwise, returns a newly created NDArray.
+This functions supports advanced indexing defined in the following reference with
+some restrictions.</p>
 <p>For basic indexing, i.e., if <code class="docutils literal"><span class="pre">key</span></code> consists only of integers,
 <code class="docutils literal"><span class="pre">slice</span></code>, <code class="docutils literal"><span class="pre">Ellipsis</span></code> (<code class="docutils literal"><span class="pre">...</span></code>) and <code class="docutils literal"><span class="pre">None</span></code>, a mutable view is
 returned that shares memory with this array if the accessed portion is
@@ -3046,6 +3049,96 @@ and <code class="docutils literal"><span class="pre">other</span></code> will po
 <span class="go">       [ 1.,  1.,  1.]], dtype=float32)</span>
 </pre></div>
 </div>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.ndarray.NDArray.slice_assign_scalar">
+<code class="descname">slice_assign_scalar</code><span class="sig-paren">(</span><em>value</em>, <em>begin</em>, <em>end</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.slice_assign_scalar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.slice_assign_scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the scalar to a cropped subset of this NDArray. Value will broadcast to the shape of the cropped shape
+and will be cast to the same dtype of the NDArray.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<em>numeric value</em>) – Value and this NDArray should be of the same data type.
+The shape of rhs should be the same as the cropped shape of this NDArray.</li>
+<li><strong>begin</strong> (<em>tuple of begin indices</em>) – </li>
+<li><strong>end</strong> (<em>tuple of end indices</em>) – </li>
+<li><strong>step</strong> (<em>tuple of step lenghths</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">This NDArray.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="k">import</span> <span class="n">nd</span>
+<span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">slice_assign_scalar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span>
+<span class="go">[[[0. 0.]</span>
+<span class="go">[1. 1.]]</span>
+</pre></div>
+</div>
+<p>[[1. 1.]
+[1. 1.]]]
+<NDArray 2x2x2 @cpu(0)>
+>>> x
+[[[0. 0.]
+[1. 1.]]</p>
+<p>[[1. 1.]
+[1. 1.]]]
+<NDArray 2x2x2 @cpu(0)></p>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.ndarray.NDArray.slice_assign">
+<code class="descname">slice_assign</code><span class="sig-paren">(</span><em>rhs</em>, <em>begin</em>, <em>end</em>, <em>step</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#NDArray.slice_assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.NDArray.slice_assign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the rhs to a cropped subset of this NDarray in place.
+Returns the view of this NDArray.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rhs</strong> (<em>NDArray.</em>) – rhs and this NDArray should be of the same data type, and on the same device.
+The shape of rhs should be the same as the cropped shape of this NDArray.</li>
+<li><strong>begin</strong> (<em>tuple of begin indices</em>) – </li>
+<li><strong>end</strong> (<em>tuple of end indices</em>) – </li>
+<li><strong>step</strong> (<em>tuple of step lenghths</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">This NDArray.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">assigned</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">slice_assign</span><span class="p">(</span><span class="n">assigned</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="gp">>>> </span><span class="n">y</span>
+<span class="go">[[[0. 0.]</span>
+<span class="go">[1. 1.]]</span>
+</pre></div>
+</div>
+<p>[[1. 1.]
+[1. 1.]]]
+<NDArray 2x2x2 @cpu(0)>
+>>> x
+[[[0. 0.]
+[1. 1.]]</p>
+<p>[[1. 1.]
+[1. 1.]]]
+<NDArray 2x2x2 @cpu(0)></p>
 </dd></dl>
 <dl class="method">
 <dt id="mxnet.ndarray.NDArray.as_in_context">
@@ -7862,7 +7955,7 @@ Clipping <code class="docutils literal"><span class="pre">x</span></code> betwee
 <li>clip(csr, a_min > 0, a_max > 0) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/matrix_op.cc:L729</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L732</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8205,7 +8298,7 @@ and <span class="math">\(y\)</span> is the output tensor of layout <span class="
                           <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">23</span><span class="p">]]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L1058</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L1061</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8786,7 +8879,7 @@ which behaves similar to mxnet.ndarray.reshape((-1,)).</p>
                       <span class="p">[</span> <span class="mf">9.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L906</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L909</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12158,7 +12251,7 @@ elements:</p>
                                  <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L803</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L806</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -12337,7 +12430,7 @@ At most one dimension of shape can be -1.</p>
                       <span class="p">[</span> <span class="mf">9.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L906</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L909</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13518,7 +13611,7 @@ to the <cite>end</cite> index.</p>
                                            <span class="p">[</span> <span class="mf">10.</span><span class="p">,</span>  <span class="mf">11.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L599</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L602</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13583,7 +13676,7 @@ is 3.</p>
                                <span class="p">[</span>  <span class="mf">9.</span><span class="p">,</span>  <span class="mf">10.</span><span class="p">,</span>  <span class="mf">11.</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L668</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L671</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13893,7 +13986,7 @@ and <span class="math">\(y\)</span> is the output tensor of layout <span class="
                           <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">]]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/matrix_op.cc:L1112</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L1115</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -14559,7 +14652,7 @@ shape <code class="docutils literal"><span class="pre">(2,2)</span></code> array
 </div>
 </li>
 </ul>
-<p>Defined in src/operator/tensor/matrix_op.cc:L865</p>
+<p>Defined in src/operator/tensor/matrix_op.cc:L868</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -16349,6 +16442,66 @@ This is only available for c-contiguous arrays, i.e. array.flags[C_CONTIGUOUS] =
 <dl class="function">
 <dt id="mxnet.ndarray.zeros">
 <code class="descclassname">mxnet.ndarray.</code><code class="descname">zeros</code><span class="sig-paren">(</span><em>shape</em>, <em>ctx=None</em>, <em>dtype=None</em>, <em>stype=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/utils.html#zeros"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.zeros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new array of given shape and type, filled with zeros.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>int</em><em> or </em><em>tuple of int</em>) – The shape of the empty array</li>
+<li><strong>ctx</strong> (<em>Context</em><em>, </em><em>optional</em>) – An optional device context (default is the current default context)</li>
+<li><strong>dtype</strong> (<em>str</em><em> or </em><em>numpy.dtype</em><em>, </em><em>optional</em>) – An optional value type (default is <cite>float32</cite>)</li>
+<li><strong>stype</strong> (<em>string</em><em>, </em><em>optional</em>) – The storage type of the empty array, such as ‘row_sparse’, ‘csr’, etc.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A created array</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a>, <a class="reference internal" href="sparse.html#mxnet.ndarray.sparse.CSRNDArray" title="mxnet.ndarray.sparse.CSRNDArray">CSRNDArray</a> or <a class="reference internal" href="sparse.html#mxnet.ndarray.sparse.RowSparseNDArray" title="mxnet.ndarray.sparse.RowSparseNDArray">RowSparseNDArray</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">stype</span><span class="o">=</span><span class="s1">'csr'</span><span class="p">)</span>
+<span class="go"><CSRNDArray 1x2 @cpu(0)></span>
+<span class="gp">>>> </span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="s1">'float16'</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="s1">'row_sparse'</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="go">array([[ 0.,  0.]], dtype=float16)</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.indexing_key_expand_implicit_axes">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">indexing_key_expand_implicit_axes</code><span class="sig-paren">(</span><em>key</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#indexing_key_expand_implicit_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.indexing_key_expand_implicit_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make implicit axes explicit by adding <code class="docutils literal"><span class="pre">slice(None)</span></code>.
+.. rubric:: Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
+<span class="go">(2, 1, 1)</span>
+<span class="gp">>>> </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
+<span class="go">(0, slice(None, None, None), slice(None, None, None))</span>
+<span class="gp">>>> </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>  <span class="c1"># equivalent</span>
+<span class="go">(0, slice(None, None, None), slice(None, None, None))</span>
+<span class="gp">>>> </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
+<span class="go">(slice(None, 2, None), None, 0, slice(None, None, None))</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.get_indexing_dispatch_code">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">get_indexing_dispatch_code</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#get_indexing_dispatch_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.get_indexing_dispatch_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dispatch code for calling basic or advanced indexing functions.</p>
+</dd></dl>
+<dl class="function">
+<dt id="mxnet.ndarray.get_oshape_of_gather_nd_op">
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">get_oshape_of_gather_nd_op</code><span class="sig-paren">(</span><em>dshape</em>, <em>ishape</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/ndarray.html#get_oshape_of_gather_nd_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.get_oshape_of_gather_nd_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given data and index shapes, get the output <cite>NDArray</cite> shape.
+This basically implements the infer shape logic of op gather_nd.</p>
+</dd></dl>
+<dl class="function">
+<dt>
+<code class="descclassname">mxnet.ndarray.</code><code class="descname">zeros</code><span class="sig-paren">(</span><em>shape</em>, <em>ctx=None</em>, <em>dtype=None</em>, <em>stype=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/ndarray/utils.html#zeros"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return a new array of given shape and type, filled with zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
