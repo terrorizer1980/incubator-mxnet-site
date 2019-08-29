@@ -729,7 +729,7 @@ var searchData=
   ['mxprofilepause',['MXProfilePause',['../c__api_8h.html#a319802a4e02b4d9d082a337bb25d01b5',1,'c_api.h']]],
   ['mxprofilesetcounter',['MXProfileSetCounter',['../c__api_8h.html#a8f577ea610a762865b617529632d5589',1,'c_api.h']]],
   ['mxprofilesetmarker',['MXProfileSetMarker',['../c__api_8h.html#ad579dc41376dac04e0fba7e61afabc1b',1,'c_api.h']]],
-  ['mxquantizesymbol',['MXQuantizeSymbol',['../c__api_8h.html#a41804f8b96a9063db93ee33da1f2404e',1,'c_api.h']]],
+  ['mxquantizesymbol',['MXQuantizeSymbol',['../c__api_8h.html#a87315a3840ee44be15c84495bf9cc220',1,'c_api.h']]],
   ['mxrandomseed',['MXRandomSeed',['../c__api_8h.html#a05e3ead36464b62cd1a9264187640f5a',1,'c_api.h']]],
   ['mxrandomseedcontext',['MXRandomSeedContext',['../c__api_8h.html#a146217b1db0d73614debf333665e16f1',1,'c_api.h']]],
   ['mxrecordioreadercreate',['MXRecordIOReaderCreate',['../c__api_8h.html#a4464ddbe13b8a4542d3f91bf055d50af',1,'c_api.h']]],
