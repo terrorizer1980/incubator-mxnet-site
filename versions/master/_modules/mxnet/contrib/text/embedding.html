@@ -260,6 +260,9 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">nd</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">registry</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">base</span>
+<span class="kn">from</span> <span class="nn">...util</span> <span class="k">import</span> <span class="n">is_np_array</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">numpy_extension</span> <span class="k">as</span> <span class="n">_mx_npx</span>
 
 
 <div class="viewcode-block" id="register"><a class="viewcode-back" href="../../../../api/python/contrib/text.html#mxnet.contrib.text.embedding.register">[docs]</a><span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">embedding_cls</span><span class="p">):</span>
@@ -520,12 +523,15 @@
                     <span class="n">tokens</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vec_len</span> <span class="o">=</span> <span class="n">vec_len</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_elems</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vec_len</span><span class="p">))</span>
+        <span class="n">array_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">(</span><span class="n">all_elems</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vec_len</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">loaded_unknown_vec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_unknown_vec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vec_len</span><span class="p">)</span>
+            <span class="n">init_val</span> <span class="o">=</span> <span class="n">init_unknown_vec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vec_len</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">]</span> <span class="o">=</span>\
+                <span class="n">init_val</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">init_val</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">]</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">loaded_unknown_vec</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">]</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">(</span><span class="n">loaded_unknown_vec</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_index_tokens_from_vocabulary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_to_idx</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">token_to_idx</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> \
@@ -553,7 +559,8 @@
 <span class="sd">        """</span>
 
         <span class="n">new_vec_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">embed</span><span class="o">.</span><span class="n">vec_len</span> <span class="k">for</span> <span class="n">embed</span> <span class="ow">in</span> <span class="n">token_embeddings</span><span class="p">)</span>
-        <span class="n">new_idx_to_vec</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">vocab_len</span><span class="p">,</span> <span class="n">new_vec_len</span><span class="p">))</span>
+        <span class="n">zeros_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">zeros</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span>
+        <span class="n">new_idx_to_vec</span> <span class="o">=</span> <span class="n">zeros_fn</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">vocab_len</span><span class="p">,</span> <span class="n">new_vec_len</span><span class="p">))</span>
 
         <span class="n">col_start</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Concatenate all the embedding vectors in token_embeddings.</span>
@@ -622,7 +629,13 @@
                        <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_to_idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">)</span>
                        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
 
-        <span class="n">vecs</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_vec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+            <span class="n">embedding_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">embedding</span>
+            <span class="n">array_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">embedding_fn</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Embedding</span>
+            <span class="n">array_fn</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span>
+        <span class="n">vecs</span> <span class="o">=</span> <span class="n">embedding_fn</span><span class="p">(</span><span class="n">array_fn</span><span class="p">(</span><span class="n">indices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_vec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">vecs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">to_reduce</span> <span class="k">else</span> <span class="n">vecs</span>
@@ -650,7 +663,8 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokens</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">new_vectors</span> <span class="o">=</span> <span class="n">new_vectors</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">expand_dims_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">expand_dims</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">expand_dims</span>
+                <span class="n">new_vectors</span> <span class="o">=</span> <span class="n">expand_dims_fn</span><span class="p">(</span><span class="n">new_vectors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_vectors</span><span class="p">,</span> <span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> \
@@ -669,7 +683,8 @@
                                  <span class="s1">'`unknown_token` </span><span class="si">%s</span><span class="s1"> in `tokens`. This is to avoid unintended '</span>
                                  <span class="s1">'updates.'</span> <span class="o">%</span> <span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_to_token</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">UNKNOWN_IDX</span><span class="p">]))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)]</span> <span class="o">=</span> <span class="n">new_vectors</span>
+        <span class="n">array_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_to_vec</span><span class="p">[</span><span class="n">array_fn</span><span class="p">(</span><span class="n">indices</span><span class="p">)]</span> <span class="o">=</span> <span class="n">new_vectors</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_check_pretrained_file_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pretrained_file_name</span><span class="p">):</span>

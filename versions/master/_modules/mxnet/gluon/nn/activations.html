@@ -247,6 +247,7 @@
 
 <span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..block</span> <span class="k">import</span> <span class="n">HybridBlock</span>
+<span class="kn">from</span> <span class="nn">...util</span> <span class="k">import</span> <span class="n">is_np_array</span>
 
 
 <div class="viewcode-block" id="Activation"><a class="viewcode-back" href="../../../../api/python/gluon/nn.html#mxnet.gluon.nn.Activation">[docs]</a><span class="k">class</span> <span class="nc">Activation</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
@@ -273,7 +274,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_type</span>
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">act_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'fwd'</span><span class="p">)</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">activation</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">F</span><span class="o">.</span><span class="n">Activation</span>
+        <span class="k">return</span> <span class="n">act</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">act_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'fwd'</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{name}</span><span class="s1">(</span><span class="si">{_act_type}</span><span class="s1">)'</span>
@@ -313,7 +315,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
 
     <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'leaky'</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'fwd'</span><span class="p">)</span>
+        <span class="n">leaky_relu</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">leaky_relu</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">F</span><span class="o">.</span><span class="n">LeakyReLU</span>
+        <span class="k">return</span> <span class="n">leaky_relu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">act_type</span><span class="o">=</span><span class="s1">'leaky'</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'fwd'</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{name}</span><span class="s1">(</span><span class="si">{alpha}</span><span class="s1">)'</span>
