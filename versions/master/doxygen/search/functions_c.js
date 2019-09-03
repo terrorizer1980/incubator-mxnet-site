@@ -280,6 +280,7 @@ var searchData=
   ['mxndlistfree',['MXNDListFree',['../c__predict__api_8h.html#af7db1b8ab8c7f3aab5b06f5c1f75ac62',1,'c_predict_api.h']]],
   ['mxndlistget',['MXNDListGet',['../c__predict__api_8h.html#a0fa7cfab6362f3f66c1ca44a8b809674',1,'c_predict_api.h']]],
   ['mxnotifyshutdown',['MXNotifyShutdown',['../c__api_8h.html#aa837df9930bbb46d0ca1674523f63e1c',1,'c_api.h']]],
+  ['mxoptimizeforbackend',['MXOptimizeForBackend',['../c__api_8h.html#a968c79913ef68e02d0f0d277c3f58056',1,'c_api.h']]],
   ['mxpredcreate',['MXPredCreate',['../c__predict__api_8h.html#a2ce2bd607a3690b34f45491b040efb02',1,'c_predict_api.h']]],
   ['mxpredcreateex',['MXPredCreateEx',['../c__predict__api_8h.html#a27e4f4e04c89addba14ba71188922be2',1,'c_predict_api.h']]],
   ['mxpredcreatemultithread',['MXPredCreateMultiThread',['../c__predict__api_8h.html#aedff4c0789403f4474dec0d1d57348ca',1,'c_predict_api.h']]],
