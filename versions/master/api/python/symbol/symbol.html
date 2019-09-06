@@ -4274,8 +4274,9 @@ the shape of an output array is (d1, ..., dK, output_dim).
 All the input values should be integers in the range [0, input_dim).</p>
 <p>If the input_dim is ip0 and output_dim is op0, then shape of the embedding weight matrix must be
 (ip0, op0).</p>
-<p>By default, if any index mentioned is too large, it is replaced by the index that addresses
-the last vector in an embedding matrix.</p>
+<p>When “sparse_grad” is False, if any index mentioned is too large, it is replaced by the index that
+addresses the last vector in an embedding matrix.
+When “sparse_grad” is True, an error will be raised if invalid indices are found.</p>
 <p>Examples:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">input_dim</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">5</span>
@@ -4307,7 +4308,7 @@ and Adam. Note that by default lazy updates is turned on, which may perform diff
 from standard updates. For more details, please check the Optimization API at:
 <a class="reference external" href="https://mxnet.incubator.apache.org/api/python/optimization/optimization.html">https://mxnet.incubator.apache.org/api/python/optimization/optimization.html</a></p>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L529</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L530</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6501,7 +6502,7 @@ The output is in the closed interval <span class="math">\([0, \pi]\)</span></p>
 <div class="math">
 \[arccos([-1, -.707, 0, .707, 1]) = [\pi, 3\pi/4, \pi/2, \pi/4, 0]\]</div>
 <p>The storage type of <code class="docutils literal"><span class="pre">arccos</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L205</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L206</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6526,7 +6527,7 @@ The output is in the closed interval <span class="math">\([0, \pi]\)</span></p>
 <code class="descclassname">mxnet.symbol.</code><code class="descname">arccosh</code><span class="sig-paren">(</span><em>data=None</em>, <em>name=None</em>, <em>attr=None</em>, <em>out=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.arccosh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the element-wise inverse hyperbolic cosine of the input array, computed element-wise.</p>
 <p>The storage type of <code class="docutils literal"><span class="pre">arccosh</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L373</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L403</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6562,7 +6563,7 @@ The output is in the closed interval of [<span class="math">\(-\pi/2\)</span>, <
 <li>arcsin(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L186</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L187</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6594,7 +6595,7 @@ The output is in the closed interval of [<span class="math">\(-\pi/2\)</span>, <
 <li>arcsinh(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L359</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L389</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6629,7 +6630,7 @@ The output is in the closed interval of [<span class="math">\(-\pi/2\)</span>, <
 <li>arctan(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L226</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L227</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6661,7 +6662,7 @@ The output is in the closed interval of [<span class="math">\(-\pi/2\)</span>, <
 <li>arctanh(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L390</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L420</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -6904,7 +6905,7 @@ an output array of shape <code class="docutils literal"><span class="pre">(i0,)<
 <span class="n">batch_take</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">4.</span>  <span class="mf">5.</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L763</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L764</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8210,7 +8211,7 @@ This function support variable length of positional input.</p>
 <div class="math">
 \[cos([0, \pi/4, \pi/2]) = [1, 0.707, 0]\]</div>
 <p>The storage type of <code class="docutils literal"><span class="pre">cos</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L89</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L90</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8237,7 +8238,7 @@ This function support variable length of positional input.</p>
 <div class="math">
 \[cosh(x) = 0.5\times(exp(x) + exp(-x))\]</div>
 <p>The storage type of <code class="docutils literal"><span class="pre">cosh</span></code> output is always dense</p>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L298</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L328</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -8437,7 +8438,7 @@ information on the definition and the algorithm.</p>
 <li>degrees(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L245</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L274</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11326,7 +11327,7 @@ in an output array of shape <code class="docutils literal"><span class="pre">(i0
                                     <span class="p">[</span> <span class="mf">1.</span>  <span class="mf">0.</span>  <span class="mf">0.</span><span class="p">]]]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/tensor/indexing_op.cc:L810</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L811</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -11604,7 +11605,7 @@ NOT in axis instead.</p>
 <li>radians(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L264</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L293</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13621,7 +13622,7 @@ weight = weight - learning_rate * sign(state)</dd>
 <li>sin(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L46</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L47</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -13655,7 +13656,7 @@ weight = weight - learning_rate * sign(state)</dd>
 <li>sinh(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L283</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L313</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -14706,7 +14707,7 @@ in an output tensor of rank q + (r - 1).</p>
 <li>take(csr, default, axis=0) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/indexing_op.cc:L705</p>
+<p>Defined in src/operator/tensor/indexing_op.cc:L706</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -14744,7 +14745,7 @@ in an output tensor of rank q + (r - 1).</p>
 <li>tan(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L139</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L140</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
@@ -14778,7 +14779,7 @@ in an output tensor of rank q + (r - 1).</p>
 <li>tanh(csr) = csr</li>
 </ul>
 </div></blockquote>
-<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L316</p>
+<p>Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L346</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>

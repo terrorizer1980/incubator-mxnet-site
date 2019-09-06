@@ -821,7 +821,7 @@ The storage type of ``arccos`` output is always dense
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L205
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L206
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arccosh"><h3>arccosh</h3><div class="usage"><code>(arccosh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the element-wise inverse hyperbolic cosine of the input array, \
@@ -831,7 +831,7 @@ The storage type of ``arccosh`` output is always dense
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L373
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L403
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arcsin"><h3>arcsin</h3><div class="usage"><code>(arcsin {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns element-wise inverse sine of the input array.
@@ -850,7 +850,7 @@ The storage type of ``arcsin`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L186
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L187
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arcsinh"><h3>arcsinh</h3><div class="usage"><code>(arcsinh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the element-wise inverse hyperbolic sine of the input array, \
@@ -864,7 +864,7 @@ The storage type of ``arcsinh`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L359
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L389
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arctan"><h3>arctan</h3><div class="usage"><code>(arctan {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns element-wise inverse tangent of the input array.
@@ -882,7 +882,7 @@ The storage type of ``arctan`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L226
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L227
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arctanh"><h3>arctanh</h3><div class="usage"><code>(arctanh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the element-wise inverse hyperbolic tangent of the input array, \
@@ -896,7 +896,7 @@ The storage type of ``arctanh`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L390
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L420
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-argmax"><h3>argmax</h3><div class="usage"><code>(argmax {:keys [data axis keepdims out], :or {axis nil, keepdims nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns indices of the maximum values along an axis.
@@ -1165,7 +1165,7 @@ Examples::
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L763
+Defined in src/operator/tensor/indexing_op.cc:L764
 
 `a`: The input array
 `indices`: The index array
@@ -2077,7 +2077,7 @@ The storage type of ``cos`` output is always dense
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L89
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L90
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-cosh"><h3>cosh</h3><div class="usage"><code>(cosh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the hyperbolic cosine  of the input array, computed element-wise.
@@ -2089,7 +2089,7 @@ The storage type of ``cosh`` output is always dense
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L298
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L328
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-crop"><h3>crop</h3><div class="usage"><code>(crop data num-args)</code><code>(crop {:keys [data num-args offset h-w center-crop out], :or {offset nil, h-w nil, center-crop nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">
@@ -2195,7 +2195,7 @@ The storage type of ``degrees`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L245
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L274
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-depth-to-space"><h3>depth-to-space</h3><div class="usage"><code>(depth-to-space data block-size)</code><code>(depth-to-space {:keys [data block-size out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Rearranges(permutes) data from depth into blocks of spatial data.
@@ -2456,8 +2456,9 @@ All the input values should be integers in the range [0, input_dim).
 If the input_dim is ip0 and output_dim is op0, then shape of the embedding weight matrix must be
 (ip0, op0).
 
-By default, if any index mentioned is too large, it is replaced by the index that addresses
-the last vector in an embedding matrix.
+When "sparse_grad" is False, if any index mentioned is too large, it is replaced by the index that
+addresses the last vector in an embedding matrix.
+When "sparse_grad" is True, an error will be raised if invalid indices are found.
 
 Examples::
 
@@ -2494,7 +2495,7 @@ The storage type of weight can be either row_sparse or default.
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L529
+Defined in src/operator/tensor/indexing_op.cc:L530
 
 `data`: The input array to the embedding operator.
 `weight`: The embedding weight matrix.
@@ -3628,7 +3629,7 @@ Examples::
                                       [ 1.  0.  0.]]]
 
 
-Defined in src/operator/tensor/indexing_op.cc:L810
+Defined in src/operator/tensor/indexing_op.cc:L811
 
 `indices`: array of locations where to set on_value
 `depth`: Depth of the one hot dimension.
@@ -3935,7 +3936,7 @@ The storage type of ``radians`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L264
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L293
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rcbrt"><h3>rcbrt</h3><div class="usage"><code>(rcbrt {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns element-wise inverse cube-root value of the input.
@@ -4817,7 +4818,7 @@ The storage type of ``sin`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L46
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L47
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-sinh"><h3>sinh</h3><div class="usage"><code>(sinh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the hyperbolic sine of the input array, computed element-wise.
@@ -4833,7 +4834,7 @@ The storage type of ``sinh`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L283
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L313
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-size-array"><h3>size-array</h3><div class="usage"><code>(size-array {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns a 1D int64 array containing the size of data.
@@ -5601,7 +5602,7 @@ The storage type of ``take`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/indexing_op.cc:L705
+Defined in src/operator/tensor/indexing_op.cc:L706
 
 `a`: The input array.
 `indices`: The indices of the values to be extracted.
@@ -5622,7 +5623,7 @@ The storage type of ``tan`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L139
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L140
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-tanh"><h3>tanh</h3><div class="usage"><code>(tanh {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns the hyperbolic tangent of the input array, computed element-wise.
@@ -5638,7 +5639,7 @@ The storage type of ``tanh`` output depends upon the input storage type:
 
 
 
-Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L316
+Defined in src/operator/tensor/elemwise_unary_op_trig.cc:L346
 
 `data`: The input array.
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-tile"><h3>tile</h3><div class="usage"><code>(tile data reps)</code><code>(tile {:keys [data reps out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Repeats the whole array multiple times.
