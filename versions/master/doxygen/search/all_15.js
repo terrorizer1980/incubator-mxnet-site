@@ -35,7 +35,7 @@ var searchData=
   ['tuple_2eh',['tuple.h',['../tuple_8h.html',1,'']]],
   ['tuple_3c_20dim_5ft_20_3e',['Tuple&lt; dim_t &gt;',['../classmxnet_1_1Tuple.html',1,'mxnet']]],
   ['tvm_5fop',['TVM_OP',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da50f59931484f8d025b9eb2e645bdd142',1,'mxnet::features']]],
-  ['type',['Type',['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630',1,'mxnet::ResourceRequest::Type()'],['../structmxnet_1_1ResourceRequest.html#ad67cb809ea1e0db24629ffbd3db00a63',1,'mxnet::ResourceRequest::type()'],['../classmxnet_1_1KVStore.html#a722b2150dbf50d528fce62307809f949',1,'mxnet::KVStore::type()']]],
+  ['type',['type',['../structmxnet_1_1ResourceRequest.html#ad67cb809ea1e0db24629ffbd3db00a63',1,'mxnet::ResourceRequest::type()'],['../classmxnet_1_1KVStore.html#a722b2150dbf50d528fce62307809f949',1,'mxnet::KVStore::type()'],['../structmxnet_1_1ResourceRequest.html#aba2ee7560afb89ebdd00c7c735149630',1,'mxnet::ResourceRequest::Type()']]],
   ['type_5f',['type_',['../classmxnet_1_1KVStore.html#ad1023ca677c6e87ccc7d92c4df48bd40',1,'mxnet::KVStore']]],
   ['type_5fflag_5f',['type_flag_',['../classmxnet_1_1TBlob.html#a4649b740b80a6045754cb2389cfcca61',1,'mxnet::TBlob']]],
   ['type_5fmask',['type_mask',['../structmxnet_1_1NDArrayFunctionReg.html#a0b24615f30e4fbe69ee75c7b319735bf',1,'mxnet::NDArrayFunctionReg']]],

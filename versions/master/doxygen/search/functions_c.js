@@ -214,6 +214,8 @@ var searchData=
   ['mxkvstorepullwithsparseex',['MXKVStorePullWithSparseEx',['../c__api_8h.html#a6a97bfb49fbf1820ea65534a2a1e8aab',1,'c_api.h']]],
   ['mxkvstorepush',['MXKVStorePush',['../c__api_8h.html#a91a9a49d276131b159e51d12ef6f7eeb',1,'c_api.h']]],
   ['mxkvstorepushex',['MXKVStorePushEx',['../c__api_8h.html#a3aa3c862c6389212cc22843964c56864',1,'c_api.h']]],
+  ['mxkvstorepushpull',['MXKVStorePushPull',['../c__api_8h.html#a23c3cbab42455b0e0329d8c120c949e3',1,'c_api.h']]],
+  ['mxkvstorepushpullex',['MXKVStorePushPullEx',['../c__api_8h.html#a1ab7f6de52162678c0a01343592a25aa',1,'c_api.h']]],
   ['mxkvstorerunserver',['MXKVStoreRunServer',['../c__api_8h.html#a732c3edf14dc24784abb27fe2613a10a',1,'c_api.h']]],
   ['mxkvstoresendcommmandtoservers',['MXKVStoreSendCommmandToServers',['../c__api_8h.html#a5de45491037df7bf6b757b627100acd7',1,'c_api.h']]],
   ['mxkvstoresetbarrierbeforeexit',['MXKVStoreSetBarrierBeforeExit',['../c__api_8h.html#add5b8e9bbd098e8fef5deab4c7ab2737',1,'c_api.h']]],

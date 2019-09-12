@@ -536,6 +536,72 @@ other pull actions.</li>
 </div>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.kvstore.KVStore.pushpull">
+<code class="descname">pushpull</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>out=None</em>, <em>priority=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/kvstore.html#KVStore.pushpull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.kvstore.KVStore.pushpull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs push and pull a single value or a sequence of values from the store.</p>
+<p>This function is coalesced form of push and pull operations. This function returns
+immediately after adding an operator to the engine. Subsequent attempts to read
+from the <cite>out</cite> variable will be blocked until the pull operation completes.</p>
+<p><cite>value</cite> is pushed to the kvstore server for the specified keys and the updated
+values are pulled from the server to <cite>out</cite>. If <cite>out</cite> is not specified the pulled
+values are written to <cite>value</cite>. The returned values are guaranteed to be the latest
+values in the store.</p>
+<p>pushpull with <cite>RowSparseNDArray</cite> is not supported for dist kvstore.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<em>str</em><em>, </em><em>int</em><em>, or </em><em>sequence of str</em><em> or </em><em>int</em>) – Keys.</li>
+<li><strong>value</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><a class="reference internal" href="../ndarray/sparse.html#mxnet.ndarray.sparse.RowSparseNDArray" title="mxnet.ndarray.sparse.RowSparseNDArray"><em>RowSparseNDArray</em></a><em>, </em><em>list of NDArray</em><em> or </em><a class="reference internal" href="../ndarray/sparse.html#mxnet.ndarray.sparse.RowSparseNDArray" title="mxnet.ndarray.sparse.RowSparseNDArray"><em>RowSparseNDArray</em></a><em>,</em>) – or list of list of NDArray or RowSparseNDArray
+Values corresponding to the keys.</li>
+<li><strong>out</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em> or </em><em>list of NDArray</em><em> or </em><em>list of list of NDArray</em>) – Values corresponding to the keys.</li>
+<li><strong>priority</strong> (<em>int</em><em>, </em><em>optional</em>) – The priority of the pull operation.
+Higher priority pull operations are likely to be executed before
+other pull actions.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># push a single key-value pair</span>
+<span class="gp">>>> </span><span class="n">kv</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="s1">'3'</span><span class="p">,</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">a</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="go">[[ 8.  8.  8.]</span>
+<span class="go">[ 8.  8.  8.]]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># aggregate the value and the push</span>
+<span class="gp">>>> </span><span class="n">gpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+<span class="gp">>>> </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">gpu</span><span class="p">)</span> <span class="k">for</span> <span class="n">gpu</span> <span class="ow">in</span> <span class="n">gpus</span><span class="p">]</span>
+<span class="gp">>>> </span><span class="n">kv</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="s1">'3'</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">a</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="go">[[ 4.  4.  4.]</span>
+<span class="go">[ 4.  4.  4.]]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># push a list of keys.</span>
+<span class="gp">>>> </span><span class="c1"># single device</span>
+<span class="gp">>>> </span><span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'4'</span><span class="p">,</span> <span class="s1">'5'</span><span class="p">,</span> <span class="s1">'6'</span><span class="p">]</span>
+<span class="gp">>>> </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">kv</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="go">[[ 1.  1.  1.]</span>
+<span class="go">[ 1.  1.  1.]]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="c1"># multiple devices:</span>
+<span class="gp">>>> </span><span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'7'</span><span class="p">,</span> <span class="s1">'8'</span><span class="p">,</span> <span class="s1">'9'</span><span class="p">]</span>
+<span class="gp">>>> </span><span class="n">b</span> <span class="o">=</span> <span class="p">[[</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">gpu</span><span class="p">)</span> <span class="k">for</span> <span class="n">gpu</span> <span class="ow">in</span> <span class="n">gpus</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">kv</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="nb">print</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="go">[[ 4.  4.  4.]</span>
+<span class="go">[ 4.  4.  4.]]</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.kvstore.KVStore.row_sparse_pull">
 <code class="descname">row_sparse_pull</code><span class="sig-paren">(</span><em>key</em>, <em>out=None</em>, <em>priority=0</em>, <em>row_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/kvstore.html#KVStore.row_sparse_pull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.kvstore.KVStore.row_sparse_pull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pulls a single RowSparseNDArray value or a sequence of RowSparseNDArray values         from the store with specified row_ids. When there is only one row_id, KVStoreRowSparsePull         is invoked just once and the result is broadcast to all the rest of outputs.</p>

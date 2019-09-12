@@ -531,6 +531,67 @@ element, and <cite>__len__</cite>, which returns the total number elements.</p>
 <p class="last">An mxnet or numpy array can be directly used as a dataset.</p>
 </div>
 <dl class="method">
+<dt id="mxnet.gluon.data.Dataset.filter">
+<code class="descname">filter</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new dataset with samples filtered by the
+filter function <cite>fn</cite>.</p>
+<p>Note that if the Dataset is the result of a lazily transformed one with
+transform(lazy=False), the filter is eagerly applied to the transformed
+samples without materializing the transformed result. That is, the
+transformation will be applied again whenever a sample is retrieved after
+filter().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fn</strong> (<em>callable</em>) – A filter function that takes a sample as input and
+returns a boolean. Samples that return False are discarded.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The filtered dataset.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mxnet.gluon.data.Dataset" title="mxnet.gluon.data.Dataset">Dataset</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.gluon.data.Dataset.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><em>sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new dataset with elements sampled by the sampler.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sampler</strong> (<a class="reference internal" href="#mxnet.gluon.data.Sampler" title="mxnet.gluon.data.Sampler"><em>Sampler</em></a>) – A Sampler that returns the indices of sampled elements.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result dataset.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mxnet.gluon.data.Dataset" title="mxnet.gluon.data.Dataset">Dataset</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="mxnet.gluon.data.Dataset.take">
+<code class="descname">take</code><span class="sig-paren">(</span><em>count</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.take" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new dataset with at most <cite>count</cite> number of samples in it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>count</strong> (<em>int</em><em> or </em><em>None</em>) – A integer representing the number of elements of this dataset that
+should be taken to form the new dataset. If count is None, or if count
+is greater than the size of this dataset, the new dataset will contain
+all elements of this dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The result dataset.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mxnet.gluon.data.Dataset" title="mxnet.gluon.data.Dataset">Dataset</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.gluon.data.Dataset.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>fn</em>, <em>lazy=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new dataset with each sample transformed by the
@@ -588,6 +649,23 @@ get the same result on all epochs.</li>
 </tbody>
 </table>
 </dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="mxnet.gluon.data.FilterSampler">
+<em class="property">class </em><code class="descclassname">mxnet.gluon.data.</code><code class="descname">FilterSampler</code><span class="sig-paren">(</span><em>fn</em>, <em>dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/sampler.html#FilterSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.FilterSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Samples elements from a Dataset for which <cite>fn</cite> returns True.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fn</strong> (<em>callable</em>) – A callable function that takes a sample and returns a boolean</li>
+<li><strong>dataset</strong> (<a class="reference internal" href="#mxnet.gluon.data.Dataset" title="mxnet.gluon.data.Dataset"><em>Dataset</em></a>) – The dataset to filter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.data.RandomSampler">
