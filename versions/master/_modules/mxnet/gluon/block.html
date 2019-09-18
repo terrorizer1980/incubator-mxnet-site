@@ -815,6 +815,19 @@
         <span class="c1"># pylint: disable= invalid-name</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
+<div class="viewcode-block" id="Block.register_op_hook"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.register_op_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Install callback monitor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : function</span>
+<span class="sd">            Takes a string and a NDArrayHandle.</span>
+<span class="sd">        monitor_all : bool, default False</span>
+<span class="sd">            If true, monitor both input and output, otherwise monitor output only.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">cld</span><span class="o">.</span><span class="n">register_op_hook</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Block.summary"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.Block.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
         <span class="sd">"""Print the summary of the model's output and parameters.</span>
 
@@ -979,6 +992,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="HybridBlock.__setattr__"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock.__setattr__">[docs]</a>    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">"""Registers parameters."""</span>
@@ -1058,6 +1073,12 @@
     <span class="k">def</span> <span class="nf">_call_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_cache</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">,</span> <span class="s2">"cached op is not None"</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="o">.</span><span class="n">_register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">)</span> <span class="o">>=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"register_op_hook is experimental when static_alloc=True / static_shape=True "</span>
+                              <span class="s2">" and may not work correctly"</span><span class="p">)</span>
 
         <span class="n">args</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">fmt</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span><span class="p">,</span> <span class="s2">"Invalid input format"</span>
@@ -1162,6 +1183,22 @@
                 <span class="n">arg_dict</span><span class="p">[</span><span class="s1">'aux:</span><span class="si">%s</span><span class="s1">'</span><span class="o">%</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
         <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
         <span class="n">save_fn</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">-</span><span class="si">%04d</span><span class="s1">.params'</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="p">),</span> <span class="n">arg_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HybridBlock.register_op_hook"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock.register_op_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">"""Install op hook for block recursively.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : function</span>
+<span class="sd">            Takes a string and a NDArrayHandle.</span>
+<span class="sd">        monitor_all : bool, default False</span>
+<span class="sd">            If true, monitor both input and output, otherwise monitor output only.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span>
+        <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">cld</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span>
+            <span class="n">cld</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span></div>
 
 <div class="viewcode-block" id="HybridBlock.forward"><a class="viewcode-back" href="../../../api/python/gluon/gluon.html#mxnet.gluon.HybridBlock.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">"""Defines the forward computation. Arguments can be either</span>

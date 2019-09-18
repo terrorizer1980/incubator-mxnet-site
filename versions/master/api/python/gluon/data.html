@@ -287,7 +287,7 @@ and processing tools, as well as common public datasets.</p>
 <td>Base class for samplers.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mxnet.gluon.data.SequentialSampler" title="mxnet.gluon.data.SequentialSampler"><code class="xref py py-obj docutils literal"><span class="pre">SequentialSampler</span></code></a></td>
-<td>Samples elements from [0, length) sequentially.</td>
+<td>Samples elements from [start, start+length) sequentially.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#mxnet.gluon.data.RandomSampler" title="mxnet.gluon.data.RandomSampler"><code class="xref py py-obj docutils literal"><span class="pre">RandomSampler</span></code></a></td>
 <td>Samples elements from [0, length) randomly without replacement.</td>
@@ -572,6 +572,31 @@ returns a boolean. Samples that return False are discarded.</td>
 </table>
 </dd></dl>
 <dl class="method">
+<dt id="mxnet.gluon.data.Dataset.shard">
+<code class="descname">shard</code><span class="sig-paren">(</span><em>num_shards</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.shard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.shard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new dataset includes only 1/num_shards of this dataset.</p>
+<p>For distributed training, be sure to shard before you randomize the dataset
+(such as shuffle), if you want each worker to reach a unique subset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_shards</strong> (<em>int</em>) – A integer representing the number of data shards.</li>
+<li><strong>index</strong> (<em>int</em>) – A integer representing the index of the current shard.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result dataset.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mxnet.gluon.data.Dataset" title="mxnet.gluon.data.Dataset">Dataset</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
 <dt id="mxnet.gluon.data.Dataset.take">
 <code class="descname">take</code><span class="sig-paren">(</span><em>count</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataset.html#Dataset.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.Dataset.take" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new dataset with at most <cite>count</cite> number of samples in it.</p>
@@ -703,13 +728,17 @@ methods.</p>
 </dd></dl>
 <dl class="class">
 <dt id="mxnet.gluon.data.SequentialSampler">
-<em class="property">class </em><code class="descclassname">mxnet.gluon.data.</code><code class="descname">SequentialSampler</code><span class="sig-paren">(</span><em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/sampler.html#SequentialSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.SequentialSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Samples elements from [0, length) sequentially.</p>
+<em class="property">class </em><code class="descclassname">mxnet.gluon.data.</code><code class="descname">SequentialSampler</code><span class="sig-paren">(</span><em>length</em>, <em>start=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/sampler.html#SequentialSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.SequentialSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Samples elements from [start, start+length) sequentially.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name"/>
 <col class="field-body"/>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>length</strong> (<em>int</em>) – Length of the sequence.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>length</strong> (<em>int</em>) – Length of the sequence.</li>
+<li><strong>start</strong> (<em>int</em><em>, </em><em>default is 0</em>) – The start of the sequence index.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>

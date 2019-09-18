@@ -289,6 +289,37 @@
         <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">FilterSampler</span>
         <span class="k">return</span> <span class="n">_SampledDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FilterSampler</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
 
+<div class="viewcode-block" id="Dataset.shard"><a class="viewcode-back" href="../../../../api/python/gluon/data.html#mxnet.gluon.data.Dataset.shard">[docs]</a>    <span class="k">def</span> <span class="nf">shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_shards</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">"""Returns a new dataset includes only 1/num_shards of this dataset.</span>
+
+<span class="sd">        For distributed training, be sure to shard before you randomize the dataset</span>
+<span class="sd">        (such as shuffle), if you want each worker to reach a unique subset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_shards : int</span>
+<span class="sd">            A integer representing the number of data shards.</span>
+<span class="sd">        index : int</span>
+<span class="sd">            A integer representing the index of the current shard.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dataset</span>
+<span class="sd">            The result dataset.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="o"><</span> <span class="n">num_shards</span><span class="p">,</span> <span class="s1">'Shard index of out bound: </span><span class="si">%d</span><span class="s1"> out of </span><span class="si">%d</span><span class="s1">'</span><span class="o">%</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">num_shards</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">num_shards</span> <span class="o">></span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Number of shards must be greater than 0'</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="o">>=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Index must be non-negative'</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">shard_len</span> <span class="o">=</span> <span class="n">length</span> <span class="o">//</span> <span class="n">num_shards</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="n">length</span> <span class="o">%</span> <span class="n">num_shards</span>
+        <span class="c1"># Compute the start index for this partition</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">shard_len</span> <span class="o">*</span> <span class="n">index</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span>
+        <span class="c1"># Compute the end index for this partition</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">shard_len</span> <span class="o">+</span> <span class="p">(</span><span class="n">index</span> <span class="o"><</span> <span class="n">rest</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">SequentialSampler</span>
+        <span class="k">return</span> <span class="n">_SampledDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">start</span><span class="p">))</span></div>
+
 <div class="viewcode-block" id="Dataset.take"><a class="viewcode-back" href="../../../../api/python/gluon/data.html#mxnet.gluon.data.Dataset.take">[docs]</a>    <span class="k">def</span> <span class="nf">take</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
         <span class="sd">"""Returns a new dataset with at most `count` number of samples in it.</span>
 

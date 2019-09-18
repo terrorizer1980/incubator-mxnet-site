@@ -1,6 +1,7 @@
 var searchData=
 [
   ['cachedophandle',['CachedOpHandle',['../c__api_8h.html#aac4a2be6e40b0869bcc390a573a7e489',1,'c_api.h']]],
+  ['cachedopmonitorcallback',['CachedOpMonitorCallback',['../c__api_8h.html#a2daecd314602cbf2d04aae649ad2a3e6',1,'c_api.h']]],
   ['callbackoncomplete',['CallbackOnComplete',['../classmxnet_1_1Engine.html#a16b757432556f835d27f1b5e1dbe1b06',1,'mxnet::Engine']]],
   ['const_5fmkldnn_5fop_5fdesc_5ft',['const_mkldnn_op_desc_t',['../group__c__api__types__op__descs.html#gac7e49603b052255540a6f6dc072a627c',1,'mkldnn_types.h']]],
   ['const_5fmkldnn_5fpost_5fops_5ft',['const_mkldnn_post_ops_t',['../group__c__api__primitive__attr.html#ga9b9ffe469ad6e2c68a490c61af3bf882',1,'mkldnn_types.h']]],

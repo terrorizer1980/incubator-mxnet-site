@@ -136,6 +136,7 @@ var searchData=
   ['mxautogradsetisrecording',['MXAutogradSetIsRecording',['../c__api_8h.html#a75939e5be09a150d4d8905c9fd6e986e',1,'c_api.h']]],
   ['mxautogradsetistraining',['MXAutogradSetIsTraining',['../c__api_8h.html#a9cf2b0aa3ff66119fe793f6ed82b61b8',1,'c_api.h']]],
   ['mxbuildsubgraphbyopnames',['MXBuildSubgraphByOpNames',['../c__api__test_8h.html#a6bc6a3c7b5a7dea6acd93a98d3d293d2',1,'c_api_test.h']]],
+  ['mxcachedopregisterophook',['MXCachedOpRegisterOpHook',['../c__api_8h.html#a7d4d65764a5e1b5e1556aa66191d101e',1,'c_api.h']]],
   ['mxcreatecachedop',['MXCreateCachedOp',['../c__api_8h.html#a46d056bad70ea014110923da41524cfc',1,'c_api.h']]],
   ['mxcreatecachedopex',['MXCreateCachedOpEx',['../c__api_8h.html#a43627f2162552f27a6ced69309a9d269',1,'c_api.h']]],
   ['mxcustomfunctionrecord',['MXCustomFunctionRecord',['../c__api_8h.html#ae1f7686cd08133d865ed6b9ea23eb31b',1,'c_api.h']]],
