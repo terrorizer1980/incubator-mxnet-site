@@ -249,6 +249,7 @@
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">multiprocessing.queues</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.reduction</span> <span class="k">import</span> <span class="n">ForkingPickler</span>
@@ -651,7 +652,8 @@
 <span class="k">class</span> <span class="nc">_MultiWorkerIter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">"""Internal multi-worker iterator for DataLoader."""</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker_pool</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">worker_fn</span><span class="o">=</span><span class="n">_worker_fn</span><span class="p">,</span> <span class="n">prefetch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">data_loader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">worker_pool</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
@@ -664,6 +666,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span> <span class="o">=</span> <span class="n">pin_device_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_loader</span> <span class="o">=</span> <span class="n">data_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
         <span class="c1"># pre-fetch</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">prefetch</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_push_next</span><span class="p">()</span>
@@ -690,12 +693,29 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o"><</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sent_idx</span><span class="p">,</span> <span class="s2">"rcvd_idx must be smaller than sent_idx"</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="p">,</span> <span class="s2">"fatal error with _push_next, rcvd_idx missing"</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span><span class="p">)</span>
-        <span class="n">batch</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">())</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">:</span>
-            <span class="n">batch</span> <span class="o">=</span> <span class="n">_as_in_context</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">cpu_pinned</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span><span class="p">))</span>
-        <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">batch</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">batch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">_as_in_context</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">cpu_pinned</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span><span class="p">))</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">batch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rcvd_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">batch</span>
+        <span class="k">except</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">'''Worker timed out after </span><span class="si">{}</span><span class="s1"> seconds. This might be caused by </span><span class="se">\n</span><span class="s1"></span>
+<span class="s1">            - Slow transform. Please increase timeout to allow slower data loading in each worker.</span>
+<span class="s1">            '''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">ThreadPool</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s1">'''- Insufficient shared_memory if `timeout` is large enough.</span>
+<span class="s1">            Please consider reduce `num_workers` or increase shared_memory in system.</span>
+<span class="s1">            '''</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
@@ -762,16 +782,22 @@
 <span class="sd">        If ``True``, use threading pool instead of multiprocessing pool. Using threadpool</span>
 <span class="sd">        can avoid shared memory usage. If `DataLoader` is more IO bounded or GIL is not a killing</span>
 <span class="sd">        problem, threadpool version may achieve better performance than multiprocessing.</span>
-
+<span class="sd">    timeout : int, default is 120</span>
+<span class="sd">        The timeout in seconds for each worker to fetch a batch data. Only modify this number</span>
+<span class="sd">        unless you are experiencing timeout and you know it's due to slow data loading.</span>
+<span class="sd">        Sometimes full `shared_memory` will cause all workers to hang and causes timeout. In these</span>
+<span class="sd">        cases please reduce `num_workers` or increase system `shared_memory` size instead.</span>
 <span class="sd">    """</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">last_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">prefetch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thread_pool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">prefetch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thread_pool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span> <span class="o">=</span> <span class="n">pin_device_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="o">=</span> <span class="n">thread_pool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="k">assert</span> <span class="n">timeout</span> <span class="o">></span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"timeout must be positive, given </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">batch_sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -802,9 +828,13 @@
                                                <span class="n">initializer</span><span class="o">=</span><span class="n">_thread_worker_initializer</span><span class="p">,</span>
                                                <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()))</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># set ignore keyboard interupt signal before forking processes</span>
+                <span class="n">original_sigint_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_initializer</span><span class="p">,</span>
                     <span class="n">initargs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()])</span>
+                <span class="c1"># resume keyboard interupt signal in main process</span>
+                <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">original_sigint_handler</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">batchify_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_workers</span> <span class="o">></span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_mp_batchify_fn</span>
@@ -829,7 +859,7 @@
                                 <span class="n">worker_fn</span><span class="o">=</span><span class="n">_thread_worker_fn</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="k">else</span> <span class="n">_worker_fn</span><span class="p">,</span>
                                 <span class="n">prefetch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span><span class="p">,</span>
                                 <span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-                                <span class="n">data_loader</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+                                <span class="n">data_loader</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">)</span>
