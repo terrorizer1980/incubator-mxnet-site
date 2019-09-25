@@ -34,6 +34,7 @@ var searchData=
   ['kmapper',['kMapper',['../namespacemshadow_1_1expr_1_1type.html#aa700f17fa964d262266efd336d5c50ca',1,'mshadow::expr::type']]],
   ['kmaxdevid',['kMaxDevID',['../structmxnet_1_1Context.html#a958219ae412395685ef1d82af0dbbe67',1,'mxnet::Context']]],
   ['kmaxdevtype',['kMaxDevType',['../structmxnet_1_1Context.html#a7433936d1daf38f7dced0de49fbe6a4b',1,'mxnet::Context']]],
+  ['kmaxnumgpus',['kMaxNumGpus',['../cuda__utils_8h.html#a7d0d1e932a096c498381cec82a650cfa',1,'cuda_utils.h']]],
   ['kminnumrandomperthread',['kMinNumRandomPerThread',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4.html#ad59a015f903f3f139a841d61d510b8eb',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::kMinNumRandomPerThread()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4.html#a38fd552186f00f675dcbd4cd078c0fec',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::kMinNumRandomPerThread()']]],
   ['kmovingmean',['kMovingMean',['../structnnvm_1_1top_1_1BatchNormParam.html#a0788c9cbc76bbc40bdf1bc8ab28c424e',1,'nnvm::top::BatchNormParam']]],
   ['kmovingvariance',['kMovingVariance',['../structnnvm_1_1top_1_1BatchNormParam.html#a63354276f74f8984de09eded75a6b4aa',1,'nnvm::top::BatchNormParam']]],

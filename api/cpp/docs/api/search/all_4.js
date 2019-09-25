@@ -181,6 +181,7 @@ var searchData=
   ['cuda_5frtc',['CUDA_RTC',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da2a156cce6af5a7ba883a99a89972e17c',1,'mxnet::features']]],
   ['cuda_5funroll',['CUDA_UNROLL',['../cuda__utils_8h.html#a685e3713856baaafb1d4edea43725c83',1,'cuda_utils.h']]],
   ['cuda_5futils_2eh',['cuda_utils.h',['../cuda__utils_8h.html',1,'']]],
+  ['cudaattributelookup',['cudaAttributeLookup',['../cuda__utils_8h.html#a31f4237a3ff5be2d420461a9baaffd1e',1,'cuda_utils.h']]],
   ['cudakernelhandle',['CudaKernelHandle',['../include_2mxnet_2c__api_8h.html#a879a534941e7727cf9deea865c3144b0',1,'c_api.h']]],
   ['cudamax',['CudaMax',['../namespacemxnet_1_1common_1_1cuda.html#a6f3ee04eb382c57e10916108db3efd80',1,'mxnet::common::cuda']]],
   ['cudamin',['CudaMin',['../namespacemxnet_1_1common_1_1cuda.html#a03888f252f813f6d052ae84bf8801498',1,'mxnet::common::cuda']]],

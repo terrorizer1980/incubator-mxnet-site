@@ -84,6 +84,7 @@ var searchData=
   ['croppingexp',['CroppingExp',['../structmshadow_1_1expr_1_1CroppingExp.html#ae70078fe3b80b13e4b6512d1ece79845',1,'mshadow::expr::CroppingExp::CroppingExp(const SrcExp &amp;src, Shape&lt; 2 &gt; cshape)'],['../structmshadow_1_1expr_1_1CroppingExp.html#a6a3670e13144f88cd109df5613903709',1,'mshadow::expr::CroppingExp::CroppingExp(const SrcExp &amp;src, Shape&lt; 2 &gt; cshape, index_t start_height, index_t start_width)']]],
   ['ctx',['ctx',['../classmxnet_1_1NDArray.html#a5e2eb64751872f537ae3cb25f949fff1',1,'mxnet::NDArray']]],
   ['cublasgeterrorstring',['CublasGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#a9feee613a4f16a954dd68e55345a72ac',1,'mxnet::common::cuda']]],
+  ['cudaattributelookup',['cudaAttributeLookup',['../cuda__utils_8h.html#a31f4237a3ff5be2d420461a9baaffd1e',1,'cuda_utils.h']]],
   ['cudamax',['CudaMax',['../namespacemxnet_1_1common_1_1cuda.html#a6f3ee04eb382c57e10916108db3efd80',1,'mxnet::common::cuda']]],
   ['cudamin',['CudaMin',['../namespacemxnet_1_1common_1_1cuda.html#a03888f252f813f6d052ae84bf8801498',1,'mxnet::common::cuda']]],
   ['curandgeterrorstring',['CurandGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#a97c06b2f4d26445a7386b0f54fae1feb',1,'mxnet::common::cuda']]],
