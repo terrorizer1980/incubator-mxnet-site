@@ -462,15 +462,13 @@ In either case, the dataset typically must be managed by the CPU.</p>
 
 <p>To compute the transformation of a neural network quickly, we need both the parameters and data points to make it into GPU memory. For any example <em>X</em>, the parameters <em>W</em> are the same. Moreover the size of the model tends to dwarf the size of an individual example. So we might arrive at the natural insight that parameters should always live on the GPU, even if the dataset itself must live on the CPU or stream in. This prevents IO from becoming the bottleneck during training or inference.</p>
 
-<p>Fortunately, <em>MXNet</em> makes this kind of assignment easy.
-```python
-import mxnet.ndarray as nd</p>
+<p>Fortunately, <em>MXNet</em> makes this kind of assignment easy.</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">mxnet.ndarray</span> <span class="k">as</span> <span class="n">nd</span>
 
-<p>X  = nd.zeros((10000, 40000), mx.cpu(0))           #Allocate an array to store 1000 datapoints (of 40k dimensions) that lives on the CPU
-W1 = nd.zeros(shape=(40000, 1024), mx.gpu(0))      #Allocate a 40k x 1024 weight matrix on GPU for the 1st layer of the net
-W2 = nd.zeros(shape=(1024, 10), mx.gpu(0))         #Allocate a 1024 x 1024 weight matrix on GPU for the 2nd layer of the net
-```</p>
-
+<span class="n">X</span>  <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">40000</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>           <span class="c1">#Allocate an array to store 1000 datapoints (of 40k dimensions) that lives on the CPU
+</span><span class="n">W1</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">40000</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>      <span class="c1">#Allocate a 40k x 1024 weight matrix on GPU for the 1st layer of the net
+</span><span class="n">W2</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>         <span class="c1">#Allocate a 1024 x 1024 weight matrix on GPU for the 2nd layer of the net
+</span></code></pre></div>
 <!-- * __Talk about how mxnet also makes it easy to assign a context (on which device the computation happens__ -->
 
 <p>Similarly, <em>MXNet</em> makes it easy to specify the computing device</p>
