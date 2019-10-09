@@ -35,6 +35,7 @@ var searchData=
   ['mshadow_5fstand_5falone',['MSHADOW_STAND_ALONE',['../3rdparty_2mshadow_2mshadow_2base_8h.html#adb97209063773b312b79a275688a2093',1,'base.h']]],
   ['mshadow_5fthrow_5fexception',['MSHADOW_THROW_EXCEPTION',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a53a342d1f8cc22d36ed49e4c51c19f0c',1,'base.h']]],
   ['mshadow_5ftype_5fswitch',['MSHADOW_TYPE_SWITCH',['../3rdparty_2mshadow_2mshadow_2base_8h.html#af67c41c06afea92ccf285ae8501e2316',1,'base.h']]],
+  ['mshadow_5ftype_5fswitch_5fwith_5fbool',['MSHADOW_TYPE_SWITCH_WITH_BOOL',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a2c0869fdb46669460e7c56cec04dfaa7',1,'base.h']]],
   ['mshadow_5ftype_5fswitch_5fwith_5fhalf2',['MSHADOW_TYPE_SWITCH_WITH_HALF2',['../3rdparty_2mshadow_2mshadow_2base_8h.html#aa64d490fe5bbc0ec7b9fe44fb1edaf72',1,'base.h']]],
   ['mshadow_5fuse_5fcblas',['MSHADOW_USE_CBLAS',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a6c5fbf2591134429036ca9af316e4600',1,'base.h']]],
   ['mshadow_5fuse_5fcuda',['MSHADOW_USE_CUDA',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a52e5c06e325bfed605a4f63a48fe0020',1,'base.h']]],

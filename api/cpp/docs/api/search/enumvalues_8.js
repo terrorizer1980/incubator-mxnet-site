@@ -9,6 +9,7 @@ var searchData=
   ['kbinarycc',['kBinaryCC',['../namespacemshadow_1_1op_1_1complex.html#af062961d218e28c7307bed158f71db06ad5e995d0e8de7a4c7054d44e74f87c48',1,'mshadow::op::complex']]],
   ['kbinarycr',['kBinaryCR',['../namespacemshadow_1_1op_1_1complex.html#af062961d218e28c7307bed158f71db06a01d847c43bc8b3d1f5334881a1ee6ad5',1,'mshadow::op::complex']]],
   ['kbinaryrc',['kBinaryRC',['../namespacemshadow_1_1op_1_1complex.html#af062961d218e28c7307bed158f71db06a7387690bce3508c36dcdd6ee37f5db8e',1,'mshadow::op::complex']]],
+  ['kbool',['kBool',['../namespacemshadow.html#a936bbfe6aeead8902973c098b87f18c1ad2f7fcc5a34a6b27898cfd5d1626882a',1,'mshadow']]],
   ['kbroadcast',['kBroadcast',['../namespacennvm_1_1compiler.html#aafc152b15e768d3ff58a2ae792c5c65dae7bf0b2a21008ef1b5cf4c0067a374a6',1,'nnvm::compiler']]],
   ['kcdhwn',['kCDHWN',['../namespacemshadow.html#abbe2dc827052234b64ab2d40a5b2fdb4a30ea75730b725ac965fb4e43c34622d8',1,'mshadow']]],
   ['kchwn',['kCHWN',['../namespacemshadow.html#abbe2dc827052234b64ab2d40a5b2fdb4a6e334c4df779fcc6fa6b24411fce1289',1,'mshadow']]],
