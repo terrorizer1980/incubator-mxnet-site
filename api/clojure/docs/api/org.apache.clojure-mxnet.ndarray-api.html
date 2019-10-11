@@ -798,7 +798,7 @@ Defined in src/operator/tensor/amp_cast.cc:L37
 
 `data`: The input.
 `dtype`: Output data type.
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-amp-multicast"><h3>amp-multicast</h3><div class="usage"><code>(amp-multicast data num-outputs)</code><code>(amp-multicast {:keys [data num-outputs out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Cast function used by AMP, that casts its inputs to the common widest type.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-amp-multicast"><h3>amp-multicast</h3><div class="usage"><code>(amp-multicast data num-outputs)</code><code>(amp-multicast {:keys [data num-outputs cast-narrow out], :or {cast-narrow nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Cast function used by AMP, that casts its inputs to the common widest type.
 
 It casts only between low precision float/FP32 and does not do anything for other types.
 
@@ -808,6 +808,7 @@ Defined in src/operator/tensor/amp_cast.cc:L71
 
 `data`: Weights
 `num-outputs`: Number of input/output pairs to be casted to the widest type.
+`cast-narrow`: Whether to cast to the narrowest type (optional)
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-arccos"><h3>arccos</h3><div class="usage"><code>(arccos {:keys [data out], :or {out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Returns element-wise inverse cosine of the input array.
 
 The input should be in range `[-1, 1]`.
@@ -2849,7 +2850,7 @@ operation is also known as `contrast normalization`.
 If the input data is of shape [batch, channel, spacial_dim1, spacial_dim2, ...],
 `gamma` and `beta` parameters must be vectors of shape [channel].
 
-This implementation is based on paper:
+This implementation is based on this paper [1]_
 
 .. [1] Instance Normalization: The Missing Ingredient for Fast Stylization,
    D. Ulyanov, A. Vedaldi, V. Lempitsky, 2016 (arXiv:1607.08022v2).

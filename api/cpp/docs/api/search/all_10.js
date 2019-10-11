@@ -7,6 +7,7 @@ var searchData=
   ['oc',['oc',['../structmkldnn__wino__desc__t.html#a4d1e331529273a5fe8fa5f40624f9f8a',1,'mkldnn_wino_desc_t']]],
   ['oc2_5fblock',['oc2_block',['../structmkldnn__wino__desc__t.html#a5e62e2882a9163b7eff96d36b50b9c97',1,'mkldnn_wino_desc_t']]],
   ['oc_5fblock',['oc_block',['../structmkldnn__wino__desc__t.html#a47b3d2a7106931317f6d78102afd1215',1,'mkldnn_wino_desc_t']]],
+  ['off',['Off',['../namespacemxnet.html#a2a487cb76fa5483d32c5d87ca448e94eaebed4fa3c7982aa607d3e0c7b65f7375',1,'mxnet']]],
   ['offset',['offset',['../structdmlc_1_1RowBlock.html#ae3c81282e6a2531aaaa9f9ec94a8ab80',1,'dmlc::RowBlock::offset()'],['../classmxnet_1_1cpp_1_1NDArray.html#a4781db24d70e2151c84434791e23eeba',1,'mxnet::cpp::NDArray::Offset(size_t h=0, size_t w=0) const '],['../classmxnet_1_1cpp_1_1NDArray.html#a1523650245063ccefc00003cfceec8c8',1,'mxnet::cpp::NDArray::Offset(size_t c, size_t h, size_t w) const ']]],
   ['offset_5fcompensation',['offset_compensation',['../structmkldnn__rnn__packed__desc__t.html#a0653d6ce8928edd52e8326c444d8b8db',1,'mkldnn_rnn_packed_desc_t']]],
   ['offset_5fpadding',['offset_padding',['../structmkldnn__blocking__desc__t.html#adc8fd26e935fee00dc25bb098a204138',1,'mkldnn_blocking_desc_t']]],
