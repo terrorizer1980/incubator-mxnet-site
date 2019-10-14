@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['canonicalizeaxes',['CanonicalizeAxes',['../namespacemxnet_1_1common.html#a4ce8b75eb931216c17862500600d7a0b',1,'mxnet::common']]],
   ['cast',['Cast',['../structmxnet_1_1engine_1_1Var.html#af71c04da3c374220356efa98cc215590',1,'mxnet::engine::Var']]],
   ['castnondefaultstorage',['CastNonDefaultStorage',['../namespacemxnet_1_1common.html#a12f6653ed0571a1bc16afdfcf525c841',1,'mxnet::common']]],
   ['caststoragedispatch',['CastStorageDispatch',['../namespacemxnet_1_1common.html#afd53ea405dcc105e6b306148009ff827',1,'mxnet::common']]],
