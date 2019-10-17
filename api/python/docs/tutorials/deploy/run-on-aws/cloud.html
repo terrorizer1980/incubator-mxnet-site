@@ -87,7 +87,7 @@
         
 <a id="button-show-source"
     class="mdl-button mdl-js-button mdl-button--icon"
-    href="../../../_sources/tutorials/deploy/run-on-aws/cloud.rst" rel="nofollow">
+    href="../../../_sources/tutorials/deploy/run-on-aws/cloud.ipynb" rel="nofollow">
   <i class="material-icons">code</i>
 </a>
 <div class="mdl-tooltip" data-mdl-for="button-show-source">
@@ -167,8 +167,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../../packages/gluon/training/learning_rates/index.html">Learning Rates</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../../packages/gluon/training/normalization/index.html">Normalization Blocks</a></li>
@@ -428,8 +427,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../../packages/gluon/training/learning_rates/index.html">Learning Rates</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../packages/gluon/training/learning_rates/learning_rate_schedules_advanced.html">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../../packages/gluon/training/normalization/index.html">Normalization Blocks</a></li>
@@ -623,102 +621,22 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <div class="section" id="mxnet-on-the-cloud">
-<h1>MXNet on the Cloud<a class="headerlink" href="#mxnet-on-the-cloud" title="Permalink to this headline">¶</a></h1>
-<p>Deep learning can require extremely powerful hardware, often for
-unpredictable durations of time. Moreover, <em>MXNet</em> can benefit from both
-multiple GPUs and multiple machines. Accordingly, cloud computing, as
-offered by AWS and others, is especially well suited to training deep
-learning models. Using AWS, we can rapidly fire up multiple machines
-with multiple GPUs each at will and maintain the resources for precisely
-the amount of time needed.</p>
-<div class="section" id="set-up-an-aws-gpu-cluster-from-scratch">
-<h2>Set Up an AWS GPU Cluster from Scratch<a class="headerlink" href="#set-up-an-aws-gpu-cluster-from-scratch" title="Permalink to this headline">¶</a></h2>
-<p>In this document, we provide a step-by-step guide that will teach you
-how to set up an AWS cluster with <em>MXNet</em>. We show how to:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Use</span> <span class="pre">Amazon</span> <span class="pre">S3</span> <span class="pre">to</span> <span class="pre">host</span> <span class="pre">data</span></code>_</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">up</span> <span class="pre">an</span> <span class="pre">EC2</span> <span class="pre">GPU</span> <span class="pre">instance</span> <span class="pre">with</span> <span class="pre">all</span> <span class="pre">dependencies</span> <span class="pre">installed</span></code>_</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Build</span> <span class="pre">and</span> <span class="pre">run</span> <span class="pre">MXNet</span> <span class="pre">on</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">computer</span></code>_</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">up</span> <span class="pre">an</span> <span class="pre">EC2</span> <span class="pre">GPU</span> <span class="pre">cluster</span> <span class="pre">for</span> <span class="pre">distributed</span> <span class="pre">training</span></code>_</p></li>
-</ul>
-<p>Use Amazon S3 to Host Data
-<sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:`~````````</sub>~`~~</p>
-<p>Amazon S3 provides distributed data storage which proves especially
-convenient for hosting large datasets. To use S3, you need
-<code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">credentials</span></code>_, including an <code class="docutils literal notranslate"><span class="pre">ACCESS_KEY_ID</span></code> and a
-<code class="docutils literal notranslate"><span class="pre">SECRET_ACCESS_KEY</span></code>.</p>
-<p>To use <em>MXNet</em> with S3, set the environment variables
-<code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> by adding the
-following two lines in <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> (replacing the strings with the
-correct ones):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE export
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</p>
-<p>There are several ways to upload data to S3. One simple way is to use
-<code class="docutils literal notranslate"><span class="pre">s3cmd</span></code>_. For example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>wget <a class="reference external" href="http://data.mxnet.io/mxnet/data/mnist.zip">http://data.mxnet.io/mxnet/data/mnist.zip</a> unzip mnist.zip &amp;&amp; s3cmd
-put t*-ubyte s3://dmlc/mnist/</p>
-<p>Use Pre-installed EC2 GPU Instance
-<sub>:sub:`~</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:`~````````````</sub>~~</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Deep</span> <span class="pre">Learning</span> <span class="pre">AMI</span></code>_ is an Amazon Linux image supported and
-maintained by Amazon Web Services for use on Amazon Elastic Compute
-Cloud (Amazon EC2). It contains <code class="docutils literal notranslate"><span class="pre">MXNet-v0.9.3</span> <span class="pre">tag</span></code>_ and the
-necessary components to get going with deep learning, including Nvidia
-drivers, CUDA, cuDNN, Anaconda, Python2 and Python3. The AMI IDs are the
-following:</p>
-<ul class="simple">
-<li><p>us-east-1: ami-e7c96af1</p></li>
-<li><p>us-west-2: ami-dfb13ebf</p></li>
-<li><p>eu-west-1: ami-6e5d6808</p></li>
-</ul>
-<p>Now you can launch <em>MXNet</em> directly on an EC2 GPU instance. You can also
-use <code class="docutils literal notranslate"><span class="pre">Jupyter</span></code>_ notebook on EC2 machine. Here is a
-<code class="docutils literal notranslate"><span class="pre">good</span> <span class="pre">tutorial</span></code>_ on how to connect to a Jupyter notebook running on
-an EC2 instance.</p>
-<p>Set Up an EC2 GPU Instance from Scratch
-<sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>~`````</sub><sub>:sub:</sub><sub>:sub:</sub><sub>:sub:</sub><sub>~``````</sub><sub>:sub:`~``</sub></p>
-<p><em>MXNet</em> requires the following libraries:</p>
-<ul class="simple">
-<li><p>C++ compiler with C++11 support, such as <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">&gt;=</span> <span class="pre">4.8</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CUDA</span></code> (<code class="docutils literal notranslate"><span class="pre">CUDNN</span></code> in optional) for GPU linear algebra</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">BLAS</span></code> (cblas, open-blas, atblas, mkl, or others)</p></li>
-</ul>
-<p>an EC2 GPU instance with all dependencies installed:
-#set-up-an-ec2-gpu-instance .. _Build and run MXNet on a single
-computer: #build-and-run-mxnet-on-a-gpu-instance .. _Set up an EC2 GPU
-cluster for distributed training:
-#set-up-an-ec2-gpu-cluster-for-distributed-training .. _AWS
-credentials:
-<a class="reference external" href="http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html">http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html</a>
-.. _s3cmd: <a class="reference external" href="http://s3tools.org/s3cmd">http://s3tools.org/s3cmd</a> .. <em>Deep Learning AMI:
-https://aws.amazon.com/marketplace/pp/B01M0AXXQB?qid=1475211685369&amp;sr=0-1&amp;ref</em>=srh_res_product_title
-.. _MXNet-v0.9.3 tag: <a class="reference external" href="https://github.com/apache/incubator-mxnet">https://github.com/apache/incubator-mxnet</a> .. _Jupyter:
-<a class="reference external" href="http://jupyter.org">http://jupyter.org</a></p>
-</div>
+  <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="MXNet-on-the-Cloud">
+<h1>MXNet on the Cloud<a class="headerlink" href="#MXNet-on-the-Cloud" title="Permalink to this headline">¶</a></h1>
+<p>Deep learning can require extremely powerful hardware, often for unpredictable durations of time. Moreover, <em>MXNet</em> can benefit from both multiple GPUs and multiple machines. Accordingly, cloud computing, as offered by AWS and others, is especially well suited to training deep learning models. Using AWS, we can rapidly fire up multiple machines with multiple GPUs each at will and maintain the resources for precisely the amount of time needed.</p>
+<p>Here are some ways you can use MXNet on AWS:</p>
+<ol class="arabic simple">
+<li><p>Use <a class="reference external" href="https://aws.amazon.com/sagemaker/developer-resources/">Amazon SageMaker</a></p></li>
+<li><p>Use the <a class="reference external" href="https://docs.aws.amazon.com/dlami/latest/devguide/overview-conda.html">AWS Deep Learning AMI with Conda</a></p></li>
+<li><p>Use an <a class="reference external" href="https://docs.aws.amazon.com/dlami/latest/devguide/deep-learning-containers.html">AWS Deep Learning Container</a></p></li>
+<li><p>Install MXNet on a <a class="reference external" href="https://docs.aws.amazon.com/dlami/latest/devguide/overview-base.html">AWS Deep Learning Base AMI</a></p></li>
+</ol>
 </div>
 
 
         </div>
         <div class="side-doc-outline">
             <div class="side-doc-outline--content"> 
-<div class="localtoc">
-    <p class="caption">
-      <span class="caption-text">Table Of Contents</span>
-    </p>
-    <ul>
-<li><a class="reference internal" href="#">MXNet on the Cloud</a><ul>
-<li><a class="reference internal" href="#set-up-an-aws-gpu-cluster-from-scratch">Set Up an AWS GPU Cluster from Scratch</a></li>
-</ul>
-</li>
-</ul>
-
-</div>
             </div>
         </div>                    
 

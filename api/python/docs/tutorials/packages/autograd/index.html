@@ -166,8 +166,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../gluon/training/learning_rates/index.html">Learning Rates</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../gluon/training/normalization/index.html">Normalization Blocks</a></li>
@@ -427,8 +426,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../gluon/training/learning_rates/index.html">Learning Rates</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../gluon/training/learning_rates/learning_rate_schedules_advanced.html">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../gluon/training/normalization/index.html">Normalization Blocks</a></li>
@@ -634,17 +632,17 @@ Show Source
 <div class="section" id="Long-Answer:">
 <h3>Long Answer:<a class="headerlink" href="#Long-Answer:" title="Permalink to this headline">¶</a></h3>
 <p>Under the hood, neural networks are composed of operators (e.g. sums, products, convolutions, etc) some of which use parameters (e.g. the weights in convolution kernels) for their computation, and it’s our job to find the optimal values for these parameters. Gradients lead us to the solution!</p>
-<p>Gradients tell us how much a given variable increases or decreases when we change a variable it depends on. What we’re interested in is the effect of changing a each parameter on the performance of the network. We usually define performance using a loss metric that we try to minimize, i.e. a metric that tells us how bad the predictions of a network are given ground truth. As an example, for regression we might try to minimize the <a class="reference external" href="http://beta.mxnet.io/api/gluon/_autogen/mxnet.gluon.loss.L2Loss.html?highlight=l2#mxnet.gluon.loss.L2Loss">L2
-loss</a> (also known as the Euclidean distance) between our predictions and true values, and for classification we minimize the <a class="reference external" href="http://beta.mxnet.io/api/gluon/_autogen/mxnet.gluon.loss.SoftmaxCrossEntropyLoss.html">cross entropy loss</a>.</p>
-<p>Assuming we’ve calculated the gradient of each parameter with respect to the loss (details in next section), we can then use an optimizer such as <a class="reference external" href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">stochastic gradient descent</a> to shift the parameters slightly in the <em>opposite direction</em> of the gradient. See <a class="reference external" href="http://beta.mxnet.io/api/gluon-related/mxnet.optimizer.html">Optimizers</a> for more information on these methods. We repeat the process of calculating gradients and updating
-parameters over and over again, until the parameters of the network start to stabilize and converge to a good solution.</p>
+<p>Gradients tell us how much a given variable increases or decreases when we change a variable it depends on. What we’re interested in is the effect of changing a each parameter on the performance of the network. We usually define performance using a loss metric that we try to minimize, i.e. a metric that tells us how bad the predictions of a network are given ground truth. As an example, for regression we might try to minimize the <a class="reference external" href="/api/python/docs/api/gluon/loss/index.html#mxnet.gluon.loss.L2Loss">L2
+loss</a> (also known as the Euclidean distance) between our predictions and true values, and for classification we minimize the <a class="reference external" href="/api/python/docs/api/gluon/loss/index.html#mxnet.gluon.loss.SoftmaxCrossEntropyLoss">cross entropy loss</a>.</p>
+<p>Assuming we’ve calculated the gradient of each parameter with respect to the loss (details in next section), we can then use an optimizer such as <a class="reference external" href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">stochastic gradient descent</a> to shift the parameters slightly in the <em>opposite direction</em> of the gradient. See <a class="reference external" href="/api/python/docs/api/optimizer/index.html">Optimizers</a> for more information on these methods. We repeat the process of calculating gradients and updating parameters over and
+over again, until the parameters of the network start to stabilize and converge to a good solution.</p>
 </div>
 </div>
 <div class="section" id="How-do-we-calculate-gradients?">
 <h2>How do we calculate gradients?<a class="headerlink" href="#How-do-we-calculate-gradients?" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Short-Answer:">
 <span id="short-answer-1"></span><h3>Short Answer:<a class="headerlink" href="#Short-Answer:" title="Permalink to this headline">¶</a></h3>
-<p>We differentiate. <a class="reference external" href="http://beta.mxnet.io/api/gluon/index.html">MXNet Gluon</a> uses Reverse Mode Automatic Differentiation (<code class="docutils literal notranslate"><span class="pre">autograd</span></code>) to backprogate gradients from the loss metric to the network parameters.</p>
+<p>We differentiate. <a class="reference external" href="/api/python/docs/tutorials/packages/gluon/index.html">MXNet Gluon</a> uses Reverse Mode Automatic Differentiation (<code class="docutils literal notranslate"><span class="pre">autograd</span></code>) to backprogate gradients from the loss metric to the network parameters.</p>
 <p><img alt="forward-backward" src="_static/autograd/autograd_forward_backward.png" /></p>
 </div>
 <div class="section" id="Long-Answer:">
@@ -742,7 +740,7 @@ methods exist, they’re suited to ‘fan-out’ situations where few parameters
 </pre></div>
 </div>
 <p>We called <code class="docutils literal notranslate"><span class="pre">dropout</span></code> while <code class="docutils literal notranslate"><span class="pre">autograd</span></code> was recording this time, so our network was in training mode and we see dropout of the input this time. Since the probability of dropout was 50%, the output is automatically scaled by 1/0.5=2 to preserve the average activation.</p>
-<p>We can force some operators to behave as they would during training, even in inference mode. One example is setting <code class="docutils literal notranslate"><span class="pre">mode='always'</span></code> on the <a class="reference external" href="https://mxnet.apache.org/api/python/ndarray/ndarray.html?highlight=dropout#mxnet.ndarray.Dropout">Dropout</a> operator, but this usage is uncommon.</p>
+<p>We can force some operators to behave as they would during training, even in inference mode. One example is setting <code class="docutils literal notranslate"><span class="pre">mode='always'</span></code> on the <a class="reference external" href="/api/python/ndarray/ndarray.html#mxnet.ndarray.Dropout">Dropout</a> operator, but this usage is uncommon.</p>
 </div>
 <div class="section" id="Advanced:-Skipping-the-calculation-of-parameter-gradients">
 <h2>Advanced: Skipping the calculation of parameter gradients<a class="headerlink" href="#Advanced:-Skipping-the-calculation-of-parameter-gradients" title="Permalink to this headline">¶</a></h2>
@@ -769,7 +767,7 @@ have gradients for all of the parameters.</p>
 </div>
 <div class="section" id="Advanced:-Using-Python-control-flow">
 <h2>Advanced: Using Python control flow<a class="headerlink" href="#Advanced:-Using-Python-control-flow" title="Permalink to this headline">¶</a></h2>
-<p>As mentioned before, one of the main advantages of <code class="docutils literal notranslate"><span class="pre">autograd</span></code> is the ability to automatically calculate gradients of dynamic graphs (i.e. graphs where the operators could be different on every forward pass). One example of this would be applying a tree structured recurrent network to parse a sentence using its parse tree. And we can use Python control flow operators to create a dynamic flow that depends on the data, rather than using <a class="reference external" href="https://mxnet.apache.org/versions/master/tutorials/control_flow/ControlFlowTutorial.html">MXNet’s control flow
+<p>As mentioned before, one of the main advantages of <code class="docutils literal notranslate"><span class="pre">autograd</span></code> is the ability to automatically calculate gradients of dynamic graphs (i.e. graphs where the operators could be different on every forward pass). One example of this would be applying a tree structured recurrent network to parse a sentence using its parse tree. And we can use Python control flow operators to create a dynamic flow that depends on the data, rather than using <a class="reference external" href="/api/python/docs/tutorials/packages/autograd/index.html#Advanced:-Using-Python-control-flow">MXNet’s control flow
 operators</a>.</p>
 <p>We’ll write a function as a toy example of a dynamic network. We’ll add an <code class="docutils literal notranslate"><span class="pre">if</span></code> condition and a loop with a variable number of iterations, both of which will depend on the input data. Although these can now be used in static graphs (with conditional operators) it’s still much more natural to use native control flow.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>

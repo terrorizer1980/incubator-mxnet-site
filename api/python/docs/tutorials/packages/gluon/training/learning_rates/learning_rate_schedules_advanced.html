@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>Custom Schedule Shapes &#8212; Apache MXNet  documentation</title>
+    <title>Advanced Learning Rate Schedules &#8212; Apache MXNet  documentation</title>
 
     <link rel="stylesheet" href="../../../../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
@@ -66,7 +66,7 @@
             <a class="mdl-navigation__link" href="../../index.html">Gluon</a><i class="material-icons">navigate_next</i>
             <a class="mdl-navigation__link" href="../index.html">Training</a><i class="material-icons">navigate_next</i>
             <a class="mdl-navigation__link" href="index.html">Learning Rates</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active">Custom Schedule Shapes</a>
+            <a class="mdl-navigation__link is-active">Advanced Learning Rate Schedules</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -169,8 +169,7 @@ Show Source
 <li class="toctree-l5 current"><a class="reference internal" href="index.html">Learning Rates</a><ul class="current">
 <li class="toctree-l6"><a class="reference internal" href="learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6 current"><a class="current reference internal" href="#">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../normalization/index.html">Normalization Blocks</a></li>
@@ -430,8 +429,7 @@ Show Source
 <li class="toctree-l5 current"><a class="reference internal" href="index.html">Learning Rates</a><ul class="current">
 <li class="toctree-l6"><a class="reference internal" href="learning_rate_finder.html">Learning Rate Finder</a></li>
 <li class="toctree-l6"><a class="reference internal" href="learning_rate_schedules.html">Learning Rate Schedules</a></li>
-<li class="toctree-l6 current"><a class="current reference internal" href="#">Custom Schedule Shapes</a></li>
-<li class="toctree-l6"><a class="reference internal" href="#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">Advanced Learning Rate Schedules</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../normalization/index.html">Normalization Blocks</a></li>
@@ -625,7 +623,8 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><p># Advanced Learning Rate Schedules</p>
+  <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="Advanced-Learning-Rate-Schedules">
+<h1>Advanced Learning Rate Schedules<a class="headerlink" href="#Advanced-Learning-Rate-Schedules" title="Permalink to this headline">¶</a></h1>
 <p>Given the importance of learning rate and the learning rate schedule for training neural networks, there have been a number of research papers published recently on the subject. Although many practitioners are using simple learning rate schedules such as stepwise decay, research has shown that there are other strategies that work better in most situations. We implement a number of different schedule shapes in this tutorial and introduce cyclical schedules.</p>
 <p>See the “Learning Rate Schedules” tutorial for a more basic overview of learning rates, and an example of how to use them while training your own models.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
@@ -647,9 +646,9 @@ Show Source
 </pre></div>
 </div>
 <div class="section" id="Custom-Schedule-Shapes">
-<h1>Custom Schedule Shapes<a class="headerlink" href="#Custom-Schedule-Shapes" title="Permalink to this headline">¶</a></h1>
+<h2>Custom Schedule Shapes<a class="headerlink" href="#Custom-Schedule-Shapes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="(Slanted)-Triangular">
-<h2>(Slanted) Triangular<a class="headerlink" href="#(Slanted)-Triangular" title="Permalink to this headline">¶</a></h2>
+<h3>(Slanted) Triangular<a class="headerlink" href="#(Slanted)-Triangular" title="Permalink to this headline">¶</a></h3>
 <p>While trying to push the boundaries of batch size for faster training, <a class="reference external" href="https://arxiv.org/abs/1706.02677">Priya Goyal et al. (2017)</a> found that having a smooth linear warm up in the learning rate at the start of training improved the stability of the optimizer and lead to better solutions. It was found that a smooth increases gave improved performance over stepwise increases.</p>
 <p>We look at “warm-up” in more detail later in the tutorial, but this could be viewed as a specific case of the <strong>“triangular”</strong> schedule that was proposed by <a class="reference external" href="https://arxiv.org/abs/1506.01186">Leslie N. Smith (2015)</a>. Quite simply, the schedule linearly increases then decreases between a lower and upper bound. Originally it was suggested this schedule be used as part of a cyclical schedule but more recently researchers have been using a single cycle.</p>
 <p>One adjustment proposed by <a class="reference external" href="https://arxiv.org/abs/1801.06146">Jeremy Howard, Sebastian Ruder (2018)</a> was to change the ratio between the increasing and decreasing stages, instead of the 50:50 split. Changing the increasing fraction (<code class="docutils literal notranslate"><span class="pre">inc_fraction!=0.5</span></code>) leads to a <strong>“slanted triangular”</strong> schedule. Using <code class="docutils literal notranslate"><span class="pre">inc_fraction&lt;0.5</span></code> tends to give better results.</p>
@@ -685,7 +684,7 @@ Show Source
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_schedules/adv_sgdr.png" /></p>
 </div>
 <div class="section" id="Cosine">
-<h2>Cosine<a class="headerlink" href="#Cosine" title="Permalink to this headline">¶</a></h2>
+<h3>Cosine<a class="headerlink" href="#Cosine" title="Permalink to this headline">¶</a></h3>
 <p>Continuing with the idea that smooth decay profiles give improved performance over stepwise decay, <a class="reference external" href="https://arxiv.org/abs/1608.03983">Ilya Loshchilov, Frank Hutter (2016)</a> used <strong>“cosine annealing”</strong> schedules to good effect. As with triangular schedules, the original idea was that this should be used as part of a cyclical schedule, but we begin by implementing the cosine annealing component before the full Stochastic Gradient Descent with Warm Restarts (SGDR) method later in the tutorial.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CosineAnnealingSchedule</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_lr</span><span class="p">,</span> <span class="n">max_lr</span><span class="p">,</span> <span class="n">cycle_length</span><span class="p">):</span>
@@ -716,12 +715,12 @@ Show Source
 </div>
 </div>
 <div class="section" id="Custom-Schedule-Modifiers">
-<h1>Custom Schedule Modifiers<a class="headerlink" href="#Custom-Schedule-Modifiers" title="Permalink to this headline">¶</a></h1>
+<h2>Custom Schedule Modifiers<a class="headerlink" href="#Custom-Schedule-Modifiers" title="Permalink to this headline">¶</a></h2>
 <p>We now take a look some adjustments that can be made to existing schedules. We see how to add linear warm-up and its compliment linear cool-down, before using this to implement the “1-Cycle” schedule used by <a class="reference external" href="https://arxiv.org/abs/1708.07120">Leslie N. Smith, Nicholay Topin (2017)</a> for “super-convergence”. We then look at cyclical schedules and implement the original cyclical schedule from <a class="reference external" href="https://arxiv.org/abs/1506.01186">Leslie N. Smith (2015)</a> before finishing with a look at <a class="reference external" href="https://arxiv.org/abs/1608.03983">“SGDR:
 Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutter (2016)</a>.</p>
 <p>Unlike the schedules above and those implemented in <code class="docutils literal notranslate"><span class="pre">mx.lr_scheduler</span></code>, these classes are designed to modify existing schedules so they take the argument <code class="docutils literal notranslate"><span class="pre">schedule</span></code> (for initialized schedules) or <code class="docutils literal notranslate"><span class="pre">schedule_class</span></code> when being initialized.</p>
 <div class="section" id="Warm-Up">
-<h2>Warm-Up<a class="headerlink" href="#Warm-Up" title="Permalink to this headline">¶</a></h2>
+<h3>Warm-Up<a class="headerlink" href="#Warm-Up" title="Permalink to this headline">¶</a></h3>
 <p>Using the idea of linear warm-up of the learning rate proposed in <a class="reference external" href="https://arxiv.org/abs/1706.02677">“Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour” by Priya Goyal et al. (2017)</a>, we implement a wrapper class that adds warm-up to an existing schedule. Going from <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to the initial learning rate of the <code class="docutils literal notranslate"><span class="pre">schedule</span></code> over <code class="docutils literal notranslate"><span class="pre">length</span></code> iterations, this adjustment is useful when training with large batch sizes.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LinearWarmUp</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedule</span><span class="p">,</span> <span class="n">start_lr</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
@@ -753,7 +752,7 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_schedules/adv_sgdr.png" /></p>
 </div>
 <div class="section" id="Cool-Down">
-<h2>Cool-Down<a class="headerlink" href="#Cool-Down" title="Permalink to this headline">¶</a></h2>
+<h3>Cool-Down<a class="headerlink" href="#Cool-Down" title="Permalink to this headline">¶</a></h3>
 <p>Similarly, we could add a linear cool-down period to our schedule and this is used in the “1-Cycle” schedule proposed by <a class="reference external" href="https://arxiv.org/abs/1708.07120">Leslie N. Smith, Nicholay Topin (2017)</a> to train neural networks very quickly in certain circumstances (coined “super-convergence”). We reduce the learning rate from its value at <code class="docutils literal notranslate"><span class="pre">start_idx</span></code> of <code class="docutils literal notranslate"><span class="pre">schedule</span></code> to <code class="docutils literal notranslate"><span class="pre">finish_lr</span></code> over a period of <code class="docutils literal notranslate"><span class="pre">length</span></code>, and then maintain <code class="docutils literal notranslate"><span class="pre">finish_lr</span></code> thereafter.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LinearCoolDown</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedule</span><span class="p">,</span> <span class="n">finish_lr</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
@@ -789,7 +788,7 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 </div>
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_schedules/adv_sgdr.png" /></p>
 <div class="section" id="1-Cycle:-for-“Super-Convergence”">
-<h3>1-Cycle: for “Super-Convergence”<a class="headerlink" href="#1-Cycle:-for-“Super-Convergence”" title="Permalink to this headline">¶</a></h3>
+<h4>1-Cycle: for “Super-Convergence”<a class="headerlink" href="#1-Cycle:-for-“Super-Convergence”" title="Permalink to this headline">¶</a></h4>
 <p>So we can implement the “1-Cycle” schedule proposed by <a class="reference external" href="https://arxiv.org/abs/1708.07120">Leslie N. Smith, Nicholay Topin (2017)</a> we use a single and symmetric cycle of the triangular schedule above (i.e. <code class="docutils literal notranslate"><span class="pre">inc_fraction=0.5</span></code>), followed by a cool-down period of <code class="docutils literal notranslate"><span class="pre">cooldown_length</span></code> iterations.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OneCycleSchedule</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_lr</span><span class="p">,</span> <span class="n">max_lr</span><span class="p">,</span> <span class="n">cycle_length</span><span class="p">,</span> <span class="n">cooldown_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">finish_lr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -822,7 +821,7 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 </div>
 </div>
 <div class="section" id="Cyclical">
-<h2>Cyclical<a class="headerlink" href="#Cyclical" title="Permalink to this headline">¶</a></h2>
+<h3>Cyclical<a class="headerlink" href="#Cyclical" title="Permalink to this headline">¶</a></h3>
 <p>Originally proposed by <a class="reference external" href="https://arxiv.org/abs/1506.01186">Leslie N. Smith (2015)</a>, the idea of cyclically increasing and decreasing the learning rate has been shown to give faster convergence and more optimal solutions. We implement a wrapper class that loops existing cycle-based schedules such as <code class="docutils literal notranslate"><span class="pre">TriangularSchedule</span></code> and <code class="docutils literal notranslate"><span class="pre">CosineAnnealingSchedule</span></code> to provide infinitely repeating schedules. We pass the schedule class (rather than an instance) because one feature of the <code class="docutils literal notranslate"><span class="pre">CyclicalSchedule</span></code>
 is to vary the <code class="docutils literal notranslate"><span class="pre">cycle_length</span></code> over time as seen in <a class="reference external" href="https://arxiv.org/abs/1608.03983">Ilya Loshchilov, Frank Hutter (2016)</a> using <code class="docutils literal notranslate"><span class="pre">cycle_length_decay</span></code>. Another feature is the ability to decay the cycle magnitude over time with <code class="docutils literal notranslate"><span class="pre">cycle_magnitude_decay</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CyclicalSchedule</span><span class="p">():</span>
@@ -870,6 +869,7 @@ is to vary the <code class="docutils literal notranslate"><span class="pre">cycl
 <p><strong>Want to learn more?</strong> Checkout the “Learning Rate Schedules” tutorial for a more basic overview of learning rates found in <code class="docutils literal notranslate"><span class="pre">mx.lr_scheduler</span></code>, and an example of how to use them while training your own models.</p>
 <!-- INSERT SOURCE DOWNLOAD BUTTONS --></div>
 </div>
+</div>
 
 
         </div>
@@ -880,7 +880,8 @@ is to vary the <code class="docutils literal notranslate"><span class="pre">cycl
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">Custom Schedule Shapes</a><ul>
+<li><a class="reference internal" href="#">Advanced Learning Rate Schedules</a><ul>
+<li><a class="reference internal" href="#Custom-Schedule-Shapes">Custom Schedule Shapes</a><ul>
 <li><a class="reference internal" href="#(Slanted)-Triangular">(Slanted) Triangular</a></li>
 <li><a class="reference internal" href="#Cosine">Cosine</a></li>
 </ul>
@@ -892,6 +893,8 @@ is to vary the <code class="docutils literal notranslate"><span class="pre">cycl
 </ul>
 </li>
 <li><a class="reference internal" href="#Cyclical">Cyclical</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
