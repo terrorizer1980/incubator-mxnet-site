@@ -675,8 +675,11 @@
 <span class="sd">    clip_gradient : float, optional, default None</span>
 <span class="sd">        Clip the gradient by projecting onto the box ``[-clip_gradient, clip_gradient]``.</span>
 
-<span class="sd">    learning_rate : float, optional, default 0.01</span>
-<span class="sd">        The initial learning rate.</span>
+<span class="sd">    learning_rate : float, optional, default None</span>
+<span class="sd">        The initial learning rate. If None, the optimization will use the</span>
+<span class="sd">        learning rate from ``lr_scheduler``. If not None, it will overwrite</span>
+<span class="sd">        the learning rate in ``lr_scheduler``. If None and ``lr_scheduler``</span>
+<span class="sd">        is also None, then it will be set to 0.01 by default.</span>
 
 <span class="sd">    lr_scheduler : LRScheduler, optional, default None</span>
 <span class="sd">        The learning rate scheduler.</span>
@@ -709,14 +712,19 @@
 <span class="sd">        optimizer, its learning rate can be accessed as optimizer.learning_rate.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">param_idx2name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
-                 <span class="n">clip_gradient</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">clip_gradient</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">begin_num_update</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">multi_precision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">rescale_grad</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span>
-        <span class="k">if</span> <span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">learning_rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">learning_rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">!=</span> <span class="n">learning_rate</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;learning rate from ``lr_scheduler`` has been &quot;</span>
+                                  <span class="s2">&quot;overwritten by ``learning_rate`` in optimizer.&quot;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">base_lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wd</span> <span class="o">=</span> <span class="n">wd</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr_mult</span> <span class="o">=</span> <span class="p">{}</span>
