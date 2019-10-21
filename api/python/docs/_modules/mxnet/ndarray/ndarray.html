@@ -1349,6 +1349,19 @@
             <span class="n">squeeze_axes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">squeeze_axes</span> <span class="k">if</span> <span class="n">ax</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span><span class="p">)])</span>
             <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">squeeze_axes</span><span class="p">))</span>
 
+        <span class="c1"># handle the cases like the following</span>
+        <span class="c1"># a = nd.zeros((3, 3)), b = nd.ones((1, 1, 1, 1, 3)), a[0] = b</span>
+        <span class="c1"># b cannot broadcast directly to a[0].shape unless its leading 1-size axes are trimmed</span>
+        <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">):</span>
+            <span class="n">squeeze_axes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">value_nd</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">squeeze_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">squeeze_axes</span><span class="p">:</span>
+                <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">squeeze_axes</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">bcast_shape</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
