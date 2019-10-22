@@ -26,7 +26,7 @@ var searchData=
   ['_7eoptimizer',['~Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html#afbf49dabe167d93b686985604f7db510',1,'mxnet::cpp::Optimizer']]],
   ['_7eoptional',['~optional',['../classdmlc_1_1optional.html#aacd056f3191890afa191f8ad50ebf27f',1,'dmlc::optional']]],
   ['_7eostream',['~ostream',['../classdmlc_1_1ostream.html#af0f8b262f987bbb01c43a188717cabdd',1,'dmlc::ostream']]],
-  ['_7eproducer',['~Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html#a43510386577352cd53848c3bcef1585d',1,'dmlc::ThreadedIter::Producer']]],
+  ['_7eproducer',['~Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html#a1a69d1204ac93703db0ad7ae34dc7ace',1,'dmlc::ThreadedIter::Producer']]],
   ['_7erandom',['~Random',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a37b7e8cbe08d7c0f6699039cc0bad8b2',1,'mshadow::Random&lt; cpu, DType &gt;::~Random()'],['../classmshadow_1_1Random_3_01gpu_00_01DType_01_4.html#a6600fb034b3c840dd568458b9cea397c',1,'mshadow::Random&lt; gpu, DType &gt;::~Random()']]],
   ['_7eresourcemanager',['~ResourceManager',['../classmxnet_1_1ResourceManager.html#a2b53c0843ddbaf7ccb9e06f448b20cac',1,'mxnet::ResourceManager']]],
   ['_7escopedthread',['~ScopedThread',['../classdmlc_1_1ScopedThread.html#a00818d57a92d7c549c0e7e4c63723362',1,'dmlc::ScopedThread']]],
