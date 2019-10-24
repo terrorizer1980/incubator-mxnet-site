@@ -1003,13 +1003,13 @@ Defined in src/operator/tensor/ordering_op.cc:L181
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-batch-dot"><h3>batch-dot</h3><div class="usage"><code>(batch-dot lhs rhs)</code><code>(batch-dot {:keys [lhs rhs transpose-a transpose-b forward-stype out], :or {transpose-a nil, transpose-b nil, forward-stype nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Batchwise dot product.
 
 ``batch_dot`` is used to compute dot product of ``x`` and ``y`` when ``x`` and
-``y`` are data in batch, namely 3D arrays in shape of `(batch_size, :, :)`.
+``y`` are data in batch, namely N-D (N &gt;= 3) arrays in shape of `(B0, ..., B_i, :, :)`.
 
-For example, given ``x`` with shape `(batch_size, n, m)` and ``y`` with shape
-`(batch_size, m, k)`, the result array will have shape `(batch_size, n, k)`,
+For example, given ``x`` with shape `(B_0, ..., B_i, N, M)` and ``y`` with shape
+`(B_0, ..., B_i, M, K)`, the result array will have shape `(B_0, ..., B_i, N, K)`,
 which is computed by::
 
-   batch_dot(x,y)[i,:,:] = dot(x[i,:,:], y[i,:,:])
+   batch_dot(x,y)[b_0, ..., b_i, :, :] = dot(x[b_0, ..., b_i, :, :], y[b_0, ..., b_i, :, :])
 
 
 
