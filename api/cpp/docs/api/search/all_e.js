@@ -704,7 +704,7 @@ var searchData=
   ['mxinitpsenv',['MXInitPSEnv',['../include_2mxnet_2c__api_8h.html#a98c2eac513cb090ca3a4d7d3bba74905',1,'c_api.h']]],
   ['mxinvokecachedop',['MXInvokeCachedOp',['../include_2mxnet_2c__api_8h.html#ad4c2297db07b9610d39f1d0e12fdc2b9',1,'c_api.h']]],
   ['mxinvokecachedopex',['MXInvokeCachedOpEx',['../include_2mxnet_2c__api_8h.html#afe351ede356dcbc6603d9969e7b642de',1,'c_api.h']]],
-  ['mxisnumpyshape',['MXIsNumpyShape',['../include_2mxnet_2c__api_8h.html#a1f2f6351c86ea64c85e03afe46649652',1,'c_api.h']]],
+  ['mxisnumpyshape',['MXIsNumpyShape',['../include_2mxnet_2c__api_8h.html#af71c12a0819519f02e73baf8b97dd789',1,'c_api.h']]],
   ['mxkvstorebarrier',['MXKVStoreBarrier',['../include_2mxnet_2c__api_8h.html#a96e8df6a3170c52b369954215dabe71c',1,'c_api.h']]],
   ['mxkvstorecreate',['MXKVStoreCreate',['../include_2mxnet_2c__api_8h.html#a2ef1a35e886c0addf294429e27ea9637',1,'c_api.h']]],
   ['mxkvstorefree',['MXKVStoreFree',['../include_2mxnet_2c__api_8h.html#a915215184517bf663b0214fed32af6e7',1,'c_api.h']]],

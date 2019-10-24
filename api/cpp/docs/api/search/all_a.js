@@ -105,7 +105,7 @@ var searchData=
   ['is_5fintegral',['is_integral',['../structdmlc_1_1is__integral.html',1,'dmlc']]],
   ['is_5fnil',['is_nil',['../classdmlc_1_1LuaRef.html#a9122b82f2125d103a528a2882cbef6f6',1,'dmlc::LuaRef']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
-  ['is_5fnp_5fshape',['is_np_shape',['../classmxnet_1_1Imperative.html#aa3703d3d283ade74c85efead444e314e',1,'mxnet::Imperative']]],
+  ['is_5fnp_5fshape',['is_np_shape',['../classmxnet_1_1Imperative.html#a369e47122d074736a2f880341a70769e',1,'mxnet::Imperative']]],
   ['is_5fpod',['is_pod',['../structdmlc_1_1is__pod.html',1,'dmlc']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
   ['is_5fshutdown_5frequested',['is_shutdown_requested',['../classdmlc_1_1ThreadGroup_1_1Thread.html#ab5eacbab7075ecb042ed58f731d4d000',1,'dmlc::ThreadGroup::Thread']]],

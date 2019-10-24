@@ -46,7 +46,7 @@ var searchData=
   ['is_5ffloat',['is_float',['../namespacemxnet_1_1common.html#a5e0a47792e9132c71a77897d1cdf6f0b',1,'mxnet::common']]],
   ['is_5fnil',['is_nil',['../classdmlc_1_1LuaRef.html#a9122b82f2125d103a528a2882cbef6f6',1,'dmlc::LuaRef']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
-  ['is_5fnp_5fshape',['is_np_shape',['../classmxnet_1_1Imperative.html#aa3703d3d283ade74c85efead444e314e',1,'mxnet::Imperative']]],
+  ['is_5fnp_5fshape',['is_np_shape',['../classmxnet_1_1Imperative.html#a369e47122d074736a2f880341a70769e',1,'mxnet::Imperative']]],
   ['is_5frecording',['is_recording',['../classmxnet_1_1Imperative.html#a62790da5baceaad22abdf23326770239',1,'mxnet::Imperative']]],
   ['is_5fshutdown_5frequested',['is_shutdown_requested',['../classdmlc_1_1ThreadGroup_1_1Thread.html#ab5eacbab7075ecb042ed58f731d4d000',1,'dmlc::ThreadGroup::Thread']]],
   ['is_5fsubdim',['is_subdim',['../classnnvm_1_1Layout.html#ae049046dad65a594a3f2fb9e4ddffaeb',1,'nnvm::Layout']]],
