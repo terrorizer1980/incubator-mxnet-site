@@ -595,6 +595,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../api/kvstore/" title="Key-Value Store" class="md-nav__link">
+      Key-Value Store
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../api/visualize/" title="Network Visualization" class="md-nav__link">
       Network Visualization
     </a>
@@ -810,8 +822,8 @@ julia&gt; mx.srand(42)
 
 julia&gt; a = NDArray(undef, 2, 3)
 2×3 NDArray{Float32,2} @ CPU0:
- 1.786631f25  5.201349f-8   1.03047764f21
- 6.891884f34  2.7301842f-6  1.8058751f28
+ 1.786631f25  5.201349f-8   5.2013092f-8
+ 6.891884f34  2.5639344f-9  2.5639344f-9
 
 julia&gt; a[:] = 0.5              # set all elements to a scalar
 0.5
@@ -824,8 +836,8 @@ ERROR: rand(rng, dims) is discontinued; try rand(rng, Float64, dims)
 
 julia&gt; b = NDArray(undef, size(a))
 2×3 NDArray{Float32,2} @ CPU0:
- 1.786631f25  5.201349f-8   1.03047764f21
- 6.891884f34  4.4159784f-5  1.8058751f28
+ 1.786631f25  5.201349f-8      5.2013092f-8
+ 6.891884f34  0.00016898368f0  0.00016898368f0
 
 julia&gt; b[:] = a                # copying and assignment between NDArrays
 2×3 NDArray{Float32,2} @ CPU0:
@@ -982,25 +994,67 @@ a
 <h3 id="symbols-and-composition">Symbols and Composition</h3>
 <p>The way we build deep learning models in MXNet.jl is to use the powerful symbolic composition system. It is like <a href="http://deeplearning.net/software/theano/">Theano</a>, except that we avoided long expression compilation time by providing <em>larger</em> neural network related building blocks to guarantee computation performance.</p>
 <p>The basic type is <code>mx.SymbolicNode</code>. The following is a trivial example of composing two symbols with the <code>+</code> operation.</p>
-<p>```@example sym1
-A = mx.Variable(:A)
+<pre><code class="julia">A = mx.Variable(:A)
 B = mx.Variable(:B)
 C = A + B
-print(C)  # debug printing</p>
-<pre><code>
+print(C)  # debug printing
+</code></pre>
 
-We get a new `SymbolicNode` by composing existing `SymbolicNode`s by some *operations*. A hierarchical architecture of a deep neural network could be realized by recursive composition. For example, the following code snippet shows a simple 2-layer MLP construction, using a hidden layer of 128 units and a `ReLU` activation function.
+<pre><code>Symbol Outputs:
+    output[0]=_plus0(0)
+Variable:A
+Variable:B
+--------------------
+Op:elemwise_add, Name=_plus0
+Inputs:
+    arg[0]=A(0) version=0
+    arg[1]=B(0) version=0
+</code></pre>
 
-
-
-
-```@example fcnet
-net = mx.Variable(:data)
+<p>We get a new <code>SymbolicNode</code> by composing existing <code>SymbolicNode</code>s by some <em>operations</em>. A hierarchical architecture of a deep neural network could be realized by recursive composition. For example, the following code snippet shows a simple 2-layer MLP construction, using a hidden layer of 128 units and a <code>ReLU</code> activation function.</p>
+<pre><code class="julia">net = mx.Variable(:data)
 net = mx.FullyConnected(net, name=:fc1, num_hidden=128)
 net = mx.Activation(net, name=:relu1, act_type=:relu)
 net = mx.FullyConnected(net, name=:fc2, num_hidden=64)
 net = mx.SoftmaxOutput(net, name=:out)
 print(net)  # debug printing
+</code></pre>
+
+<pre><code>Symbol Outputs:
+    output[0]=out(0)
+Variable:data
+Variable:fc1_weight
+Variable:fc1_bias
+--------------------
+Op:FullyConnected, Name=fc1
+Inputs:
+    arg[0]=data(0) version=0
+    arg[1]=fc1_weight(0) version=0
+    arg[2]=fc1_bias(0) version=0
+Attrs:
+    num_hidden=128
+--------------------
+Op:Activation, Name=relu1
+Inputs:
+    arg[0]=fc1(0)
+Attrs:
+    act_type=relu
+Variable:fc2_weight
+Variable:fc2_bias
+--------------------
+Op:FullyConnected, Name=fc2
+Inputs:
+    arg[0]=relu1(0)
+    arg[1]=fc2_weight(0) version=0
+    arg[2]=fc2_bias(0) version=0
+Attrs:
+    num_hidden=64
+Variable:out_label
+--------------------
+Op:SoftmaxOutput, Name=out
+Inputs:
+    arg[0]=fc2(0)
+    arg[1]=out_label(0) version=0
 </code></pre>
 
 <p>Each time we take the previous symbol, and compose with an operation. Unlike the simple <code>+</code> example above, the <em>operations</em> here are "bigger" ones, that correspond to common computation layers in deep neural networks.</p>
@@ -1012,12 +1066,12 @@ print(net)  # debug printing
 </code></pre>
 
 <pre><code>6-element Array{Symbol,1}:
- :data
+ :data      
  :fc1_weight
- :fc1_bias
+ :fc1_bias  
  :fc2_weight
- :fc2_bias
- :out_label
+ :fc2_bias  
+ :out_label 
 </code></pre>
 
 <p>Note the names of the arguments are generated according to the provided name for each layer. We can also specify those names explicitly:</p>

@@ -36,7 +36,7 @@
     
     
       
-        <title>Kvstore - MXNet.jl</title>
+        <title>Key-Value Store - MXNet.jl</title>
       
     
     
@@ -105,7 +105,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Kvstore
+                Key-Value Store
               
             </span>
           
@@ -334,10 +334,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
     
     <label class="md-nav__link" for="nav-4">
       API Documentation
@@ -485,6 +487,27 @@
           
           
 
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Key-Value Store" class="md-nav__link md-nav__link--active">
+      Key-Value Store
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
 
   <li class="md-nav__item">
     <a href="../visualize/" title="Network Visualization" class="md-nav__link">
@@ -538,7 +561,7 @@
 <h1 id="key-value-store">Key-Value Store</h1>
 <p><a id='MXNet.mx.KVStore' href='#MXNet.mx.KVStore'>#</a>
 <strong><code>MXNet.mx.KVStore</code></strong> &mdash; <em>Type</em>.</p>
-<pre><code>KVStore(kv_type = :local)
+<pre><code class="julia">KVStore(kv_type = :local)
 </code></pre>
 
 <p>For single machine training, there are two commonly used types:</p>
@@ -552,18 +575,18 @@
 <li><code>dist_device_sync</code>: Identical to <code>dist_sync</code> with the difference similar to <code>device</code> vs <code>local</code>.</li>
 <li><code>dist_async</code>: Performs asynchronous updates. The weights are updated whenever gradients are received from any machine. No two updates happen on the same weight at the same time. However, the order is not guaranteed.</li>
 </ul>
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L20-L45' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L20-L45' class='documenter-source'>source</a><br></p>
 <p><a id='MXNet.mx.barrier-Tuple{KVStore}' href='#MXNet.mx.barrier-Tuple{KVStore}'>#</a>
 <strong><code>MXNet.mx.barrier</code></strong> &mdash; <em>Method</em>.</p>
-<pre><code>barrier(kv::KVStore)
+<pre><code class="julia">barrier(kv::KVStore)
 </code></pre>
 
 <p>Invokes global barrier among all worker nodes.</p>
 <p>For example, assume there are <code>n</code> machines. We would like machine <code>0</code> to first <code>init</code> the values and then have all the workers <code>pull</code> the initialized value. Before pulling, we can place invoke <code>barrier(kv)</code> to guarantee that the initialization is finished.</p>
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L237-L246' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L237-L246' class='documenter-source'>source</a><br></p>
 <p><a id='MXNet.mx.init!-Tuple{KVStore,Int64,NDArray}' href='#MXNet.mx.init!-Tuple{KVStore,Int64,NDArray}'>#</a>
 <strong><code>MXNet.mx.init!</code></strong> &mdash; <em>Method</em>.</p>
-<pre><code>init!(kv::KVStore, key::Int, val::NDArray)
+<pre><code class="julia">init!(kv::KVStore, key::Int, val::NDArray)
 init!(kv::KVStore, keys, vals)
 </code></pre>
 
@@ -575,7 +598,7 @@ mx.KVStore @ local
 julia&gt; init!(kv, 42, mx.rand(2, 3))
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L80-L97' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L80-L97' class='documenter-source'>source</a><br></p>
 <p><a id='MXNet.mx.pull!-Tuple{KVStore,Int64,NDArray}' href='#MXNet.mx.pull!-Tuple{KVStore,Int64,NDArray}'>#</a>
 <strong><code>MXNet.mx.pull!</code></strong> &mdash; <em>Method</em>.</p>
 <p>Pulls a single value or a sequence of values from the store.</p>
@@ -583,10 +606,10 @@ julia&gt; init!(kv, 42, mx.rand(2, 3))
 <p><code>pull</code> is executed asynchronously after all previous <code>pull</code> calls and only the last <code>push</code> call for the same input key(s) are finished.</p>
 <p>The returned values are guaranteed to be the latest values in the store.</p>
 <p>See <a href="./#MXNet.mx.pull!-Tuple{KVStore,Int64,NDArray}"><code>pull!</code></a> for more examples.</p>
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L189-L202' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L189-L202' class='documenter-source'>source</a><br></p>
 <p><a id='MXNet.mx.setoptimizer!-Tuple{KVStore,AbstractOptimizer}' href='#MXNet.mx.setoptimizer!-Tuple{KVStore,AbstractOptimizer}'>#</a>
 <strong><code>MXNet.mx.setoptimizer!</code></strong> &mdash; <em>Method</em>.</p>
-<pre><code>setoptimizer!(kv::KVStore, opt)
+<pre><code class="julia">setoptimizer!(kv::KVStore, opt)
 </code></pre>
 
 <p>Registers an optimizer with the kvstore.</p>
@@ -618,10 +641,10 @@ julia&gt; W
  -0.2  -0.2  -0.2
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L300-L337' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L300-L337' class='documenter-source'>source</a><br></p>
 <p><a id='MXNet.mx.setupdater!-Tuple{KVStore,Any}' href='#MXNet.mx.setupdater!-Tuple{KVStore,Any}'>#</a>
 <strong><code>MXNet.mx.setupdater!</code></strong> &mdash; <em>Method</em>.</p>
-<pre><code>setupdater!(kv, updater)
+<pre><code class="julia">setupdater!(kv, updater)
 </code></pre>
 
 <p>Sets a <code>push!</code> updater into the store.</p>
@@ -648,10 +671,10 @@ julia&gt; x
  1.2  1.2  1.2
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L261-L291' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L261-L291' class='documenter-source'>source</a><br></p>
 <p><a id='Base.push!-Tuple{KVStore,Int64,NDArray}' href='#Base.push!-Tuple{KVStore,Int64,NDArray}'>#</a>
 <strong><code>Base.push!</code></strong> &mdash; <em>Method</em>.</p>
-<pre><code>push!(kv::KVStore, key,  val;  priority = 0)
+<pre><code class="julia">push!(kv::KVStore, key,  val;  priority = 0)
 push!(kv::KVStore, key,  vals; priority = 0)
 push!(kv::KVStore, keys, vals; priority = 0)
 </code></pre>
@@ -701,7 +724,7 @@ julia&gt; y, z = NDArray(undef, 2, 3), NDArray(undef, 2, 3);
 julia&gt; pull!(kv, keys, [y, z])
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/dd4eaf5c23046d07a4578a219e2dd3622e5620fa/julia/src/kvstore.jl#L112-L172' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/apache/incubator-mxnet/blob/ef5633448517e8e67f3985fe8984efa8612c32dd/julia/src/kvstore.jl#L112-L172' class='documenter-source'>source</a><br></p>
                 
                   
                 
@@ -718,6 +741,41 @@ julia&gt; pull!(kv, keys, [y, z])
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../executor/" title="Executor" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Executor
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../visualize/" title="Network Visualization" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Network Visualization
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
