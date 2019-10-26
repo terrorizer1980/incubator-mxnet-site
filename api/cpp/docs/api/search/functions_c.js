@@ -211,6 +211,7 @@ var searchData=
   ['mxexecutorsetmonitorcallbackex',['MXExecutorSetMonitorCallbackEX',['../include_2mxnet_2c__api_8h.html#a992ced6e9b9aacb58b1ce47ecd9fd28f',1,'c_api.h']]],
   ['mxexecutorsimplebind',['MXExecutorSimpleBind',['../include_2mxnet_2c__api_8h.html#ab7a30f522e76a93a382480deae0cdb6e',1,'c_api.h']]],
   ['mxexecutorsimplebindex',['MXExecutorSimpleBindEx',['../include_2mxnet_2c__api_8h.html#add219a64e6a27c6bc9aec258671cc0c4',1,'c_api.h']]],
+  ['mxexecutorsimplebindex64',['MXExecutorSimpleBindEx64',['../include_2mxnet_2c__api_8h.html#a04089c92c3709e4b7705aa07685c9236',1,'c_api.h']]],
   ['mxfreecachedop',['MXFreeCachedOp',['../include_2mxnet_2c__api_8h.html#a83a34d6df4290e5efd737293cf875a9c',1,'c_api.h']]],
   ['mxfuncdescribe',['MXFuncDescribe',['../include_2mxnet_2c__api_8h.html#a6fff84c13fed92ea3a005f4d60ef50cd',1,'c_api.h']]],
   ['mxfuncgetinfo',['MXFuncGetInfo',['../include_2mxnet_2c__api_8h.html#aba600ef5bc7b27ba226f4328abfda97e',1,'c_api.h']]],
