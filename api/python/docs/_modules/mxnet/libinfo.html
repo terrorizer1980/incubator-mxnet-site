@@ -742,6 +742,37 @@
                                <span class="s1">&#39; or &#39;</span> <span class="o">+</span> <span class="n">src_incl_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="find_conf_path"><a class="viewcode-back" href="../../api/mxnet/libinfo/index.html#mxnet.libinfo.find_conf_path">[docs]</a><span class="k">def</span> <span class="nf">find_conf_path</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tvmop&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find TVM op config files.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    conf_path : string</span>
+<span class="sd">        Path to the config files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conf_from_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MXNET_CONF_PATH&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">conf_from_env</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">conf_from_env</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">conf_from_env</span><span class="p">):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;MXNET_CONF_PATH should be an absolute path, instead of: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">conf_from_env</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">conf_from_env</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;MXNET_CONF_PATH &#39;</span><span class="si">%s</span><span class="s2">&#39; doesn&#39;t exist&quot;</span><span class="p">,</span> <span class="n">conf_from_env</span><span class="p">)</span>
+
+    <span class="n">curr_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+    <span class="n">makefile_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">curr_path</span><span class="p">,</span> <span class="s1">&#39;../../lib/&#39;</span><span class="p">)</span>
+    <span class="n">cmake_build_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">curr_path</span><span class="p">,</span> <span class="s1">&#39;../../build/&#39;</span><span class="p">)</span>
+    <span class="n">candidates_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">makefile_path</span><span class="p">,</span> <span class="n">cmake_build_path</span><span class="p">]</span>
+    <span class="n">candidates_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;.conf&#39;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">candidates_path</span><span class="p">]</span>
+    <span class="n">conf_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">candidates_path</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conf_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot find the TVM op config.</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                           <span class="s1">&#39;List of candidates:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">candidates_path</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">conf_path</span></div>
+
+
 <span class="c1"># current version</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.6.0&quot;</span>
 </pre></div>
