@@ -1322,15 +1322,76 @@
 
 <div class="viewcode-block" id="set_np"><a class="viewcode-back" href="../../api/mxnet/util/index.html#mxnet.util.set_np">[docs]</a><span class="k">def</span> <span class="nf">set_np</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Setting NumPy shape and array semantics at the same time.</span>
-<span class="sd">    It is required to keep NumPy shape semantics active when activating NumPy array semantics.</span>
+<span class="sd">    It is required to keep NumPy shape semantics active while activating NumPy array semantics.</span>
 <span class="sd">    Deactivating NumPy shape semantics while NumPy array semantics is still active is not allowed.</span>
+<span class="sd">    It is highly recommended to set these two flags to `True` at the same time to fully enable</span>
+<span class="sd">    NumPy-like behaviors. Please refer to the Examples section for a better understanding.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    shape : bool</span>
 <span class="sd">        A boolean value indicating whether the NumPy-shape semantics should be turned on or off.</span>
+<span class="sd">        When this flag is set to `True`, zero-size and zero-dim shapes are all valid shapes in</span>
+<span class="sd">        shape inference process, instead of treated as unknown shapes in legacy mode.</span>
 <span class="sd">    array : bool</span>
 <span class="sd">        A boolean value indicating whether the NumPy-array semantics should be turned on or off.</span>
+<span class="sd">        When this flag is set to `True`, it enables Gluon code flow to use or generate `mxnet.numpy.ndarray`s</span>
+<span class="sd">        instead of `mxnet.ndarray.NDArray`. For example, a `Block` would create parameters of type</span>
+<span class="sd">        `mxnet.numpy.ndarray`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import mxnet as mx</span>
+
+<span class="sd">    Creating zero-dim ndarray in legacy mode would fail at shape inference.</span>
+
+<span class="sd">    &gt;&gt;&gt; mx.nd.ones(shape=())</span>
+<span class="sd">    mxnet.base.MXNetError: Operator _ones inferring shapes failed.</span>
+
+<span class="sd">    &gt;&gt;&gt; mx.nd.ones(shape=(2, 0, 3))</span>
+<span class="sd">    mxnet.base.MXNetError: Operator _ones inferring shapes failed.</span>
+
+<span class="sd">    In legacy mode, Gluon layers would create parameters and outputs of type `mx.nd.NDArray`.</span>
+
+<span class="sd">    &gt;&gt;&gt; from mxnet.gluon import nn</span>
+<span class="sd">    &gt;&gt;&gt; dense = nn.Dense(2)</span>
+<span class="sd">    &gt;&gt;&gt; dense.initialize()</span>
+<span class="sd">    &gt;&gt;&gt; dense(mx.nd.ones(shape=(3, 2)))</span>
+<span class="sd">    [[0.01983214 0.07832371]</span>
+<span class="sd">     [0.01983214 0.07832371]</span>
+<span class="sd">     [0.01983214 0.07832371]]</span>
+<span class="sd">    &lt;NDArray 3x2 @cpu(0)&gt;</span>
+
+<span class="sd">    &gt;&gt;&gt; [p.data() for p in dense.collect_params().values()]</span>
+<span class="sd">    [</span>
+<span class="sd">    [[0.0068339  0.01299825]</span>
+<span class="sd">     [0.0301265  0.04819721]]</span>
+<span class="sd">    &lt;NDArray 2x2 @cpu(0)&gt;,</span>
+<span class="sd">    [0. 0.]</span>
+<span class="sd">    &lt;NDArray 2 @cpu(0)&gt;]</span>
+
+<span class="sd">    When the `shape` flag is `True`, both shape inferences are successful.</span>
+
+<span class="sd">    &gt;&gt;&gt; from mxnet import np, npx</span>
+<span class="sd">    &gt;&gt;&gt; npx.set_np()  # this is required to activate NumPy-like behaviors</span>
+
+<span class="sd">    &gt;&gt;&gt; np.ones(shape=())</span>
+<span class="sd">    array(1.)</span>
+<span class="sd">    &gt;&gt;&gt; np.ones(shape=(2, 0, 3))</span>
+<span class="sd">    array([], shape=(2, 0, 3))</span>
+
+<span class="sd">    When the `array` flag is `True`, Gluon layers would create parameters and outputs of type `mx.np.ndarray`.</span>
+
+<span class="sd">    &gt;&gt;&gt; dense = nn.Dense(2)</span>
+<span class="sd">    &gt;&gt;&gt; dense.initialize()</span>
+<span class="sd">    &gt;&gt;&gt; dense(np.ones(shape=(3, 2)))</span>
+<span class="sd">    array([[0.01983214, 0.07832371],</span>
+<span class="sd">           [0.01983214, 0.07832371],</span>
+<span class="sd">           [0.01983214, 0.07832371]])</span>
+
+<span class="sd">    &gt;&gt;&gt; [p.data() for p in dense.collect_params().values()]</span>
+<span class="sd">    [array([[0.0068339 , 0.01299825],</span>
+<span class="sd">           [0.0301265 , 0.04819721]]), array([0., 0.])]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">shape</span> <span class="ow">and</span> <span class="n">array</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;NumPy Shape semantics is required in using NumPy array semantics.&#39;</span><span class="p">)</span>

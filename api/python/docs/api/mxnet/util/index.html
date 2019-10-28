@@ -925,16 +925,81 @@ arugments or the value is not an allowed value even when the key is a legal one.
 <dt id="mxnet.util.set_np">
 <code class="sig-prename descclassname">mxnet.util.</code><code class="sig-name descname">set_np</code><span class="sig-paren">(</span><em class="sig-param">shape=True</em>, <em class="sig-param">array=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/util.html#set_np"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.util.set_np" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setting NumPy shape and array semantics at the same time.
-It is required to keep NumPy shape semantics active when activating NumPy array semantics.
-Deactivating NumPy shape semantics while NumPy array semantics is still active is not allowed.</p>
+It is required to keep NumPy shape semantics active while activating NumPy array semantics.
+Deactivating NumPy shape semantics while NumPy array semantics is still active is not allowed.
+It is highly recommended to set these two flags to <cite>True</cite> at the same time to fully enable
+NumPy-like behaviors. Please refer to the Examples section for a better understanding.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>bool</em>) – A boolean value indicating whether the NumPy-shape semantics should be turned on or off.</p></li>
-<li><p><strong>array</strong> (<em>bool</em>) – A boolean value indicating whether the NumPy-array semantics should be turned on or off.</p></li>
+<li><p><strong>shape</strong> (<em>bool</em>) – A boolean value indicating whether the NumPy-shape semantics should be turned on or off.
+When this flag is set to <cite>True</cite>, zero-size and zero-dim shapes are all valid shapes in
+shape inference process, instead of treated as unknown shapes in legacy mode.</p></li>
+<li><p><strong>array</strong> (<em>bool</em>) – A boolean value indicating whether the NumPy-array semantics should be turned on or off.
+When this flag is set to <cite>True</cite>, it enables Gluon code flow to use or generate <cite>mxnet.numpy.ndarray`s
+instead of `mxnet.ndarray.NDArray</cite>. For example, a <cite>Block</cite> would create parameters of type
+<cite>mxnet.numpy.ndarray</cite>.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
+</pre></div>
+</div>
+<p>Creating zero-dim ndarray in legacy mode would fail at shape inference.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+<span class="go">mxnet.base.MXNetError: Operator _ones inferring shapes failed.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">mxnet.base.MXNetError: Operator _ones inferring shapes failed.</span>
+</pre></div>
+</div>
+<p>In legacy mode, Gluon layers would create parameters and outputs of type <cite>mx.nd.NDArray</cite>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="k">import</span> <span class="n">nn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">[[0.01983214 0.07832371]</span>
+<span class="go"> [0.01983214 0.07832371]</span>
+<span class="go"> [0.01983214 0.07832371]]</span>
+<span class="go">&lt;NDArray 3x2 @cpu(0)&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dense</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+<span class="go">[</span>
+<span class="go">[[0.0068339  0.01299825]</span>
+<span class="go"> [0.0301265  0.04819721]]</span>
+<span class="go">&lt;NDArray 2x2 @cpu(0)&gt;,</span>
+<span class="go">[0. 0.]</span>
+<span class="go">&lt;NDArray 2 @cpu(0)&gt;]</span>
+</pre></div>
+</div>
+<p>When the <cite>shape</cite> flag is <cite>True</cite>, both shape inferences are successful.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>  <span class="c1"># this is required to activate NumPy-like behaviors</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+<span class="go">array(1.)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">array([], shape=(2, 0, 3))</span>
+</pre></div>
+</div>
+<p>When the <cite>array</cite> flag is <cite>True</cite>, Gluon layers would create parameters and outputs of type <cite>mx.np.ndarray</cite>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dense</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">array([[0.01983214, 0.07832371],</span>
+<span class="go">       [0.01983214, 0.07832371],</span>
+<span class="go">       [0.01983214, 0.07832371]])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dense</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+<span class="go">[array([[0.0068339 , 0.01299825],</span>
+<span class="go">       [0.0301265 , 0.04819721]]), array([0., 0.])]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
