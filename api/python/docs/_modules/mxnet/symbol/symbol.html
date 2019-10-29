@@ -671,7 +671,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">MXNetError</span><span class="p">,</span> <span class="n">NotImplementedForSymbol</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">current_context</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">_DTYPE_NP_TO_MX</span><span class="p">,</span> <span class="n">_DTYPE_MX_TO_NP</span><span class="p">,</span> <span class="n">_GRAD_REQ_MAP</span>
-<span class="kn">from</span> <span class="nn">..ndarray.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">,</span> <span class="n">_int64_enabled</span>
+<span class="kn">from</span> <span class="nn">..ndarray.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">,</span> <span class="n">_int64_enabled</span><span class="p">,</span> <span class="n">_SIGNED_INT32_UPPER_LIMIT</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">_ndarray_cls</span>
 <span class="kn">from</span> <span class="nn">..executor</span> <span class="k">import</span> <span class="n">Executor</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_internal</span>
@@ -1869,6 +1869,11 @@
                 <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">aux_shape_data</span><span class="p">),</span>
                 <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">complete</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sdata</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="n">_SIGNED_INT32_UPPER_LIMIT</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;[_infer_shape_impl] Size of tensor you are trying to &quot;</span> <span class="o">+</span>
+                                    <span class="s2">&quot;allocate is larger than 2^31 elements. Please build &quot;</span> <span class="o">+</span>
+                                    <span class="s2">&quot;with flag USE_INT64_TENSOR_SIZE=1&quot;</span><span class="p">)</span>
             <span class="n">arg_shape_data</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">mx_int</span><span class="p">))()</span>
             <span class="n">out_shape_data</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">mx_int</span><span class="p">))()</span>
             <span class="n">aux_shape_data</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">mx_int</span><span class="p">))()</span>
