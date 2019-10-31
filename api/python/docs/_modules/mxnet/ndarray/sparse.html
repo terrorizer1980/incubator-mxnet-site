@@ -1185,8 +1185,8 @@
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
         <span class="n">indptr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indptr</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">spsp</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;scipy is not available. </span><span class="se">\</span>
-<span class="s2">                               Please check if the scipy python bindings are installed.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;scipy could not be imported. &quot;</span>
+                              <span class="s2">&quot;Please make sure that the scipy is installed.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">spsp</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">indptr</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div></div>
 
 <span class="c1"># pylint: disable=abstract-method</span>
@@ -1572,6 +1572,9 @@
                     <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
                     <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">spsp</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;scipy could not be imported. &quot;</span>
+                                      <span class="s2">&quot;Please make sure that the scipy is installed.&quot;</span><span class="p">)</span>
                 <span class="n">coo</span> <span class="o">=</span> <span class="n">spsp</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
                 <span class="n">_check_shape</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
                 <span class="n">csr</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
