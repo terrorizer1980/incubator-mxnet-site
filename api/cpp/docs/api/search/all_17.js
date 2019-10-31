@@ -7,7 +7,6 @@ var searchData=
   ['var',['var',['../structmxnet_1_1Resource.html#a5a8048bdda73fefa3af322aaaba50eb8',1,'mxnet::Resource::var()'],['../classmxnet_1_1NDArray.html#a35c9b5da0852b480e0114f0865338cbc',1,'mxnet::NDArray::var()']]],
   ['varhandle',['VarHandle',['../classmxnet_1_1Engine.html#aac31510c793a12944c33f9cac6150491',1,'mxnet::Engine::VarHandle()'],['../namespacemxnet_1_1engine.html#a9d36c4f33eae8531586dc2edf83ae7cf',1,'mxnet::engine::VarHandle()']]],
   ['variable',['Variable',['../classmxnet_1_1cpp_1_1Symbol.html#ae848e0f5dfe16b8a150824fd93baca5c',1,'mxnet::cpp::Symbol']]],
-  ['variance_5fdesc',['variance_desc',['../structmkldnn__batch__normalization__desc__t.html#a0b77081ca4865c1dcd40e349b78f4d95',1,'mkldnn_batch_normalization_desc_t']]],
   ['variances',['variances',['../structnnvm_1_1top_1_1MultiBoxTransformLocParam.html#a99361a7145f5bad259ff067c07231741',1,'nnvm::top::MultiBoxTransformLocParam']]],
   ['vectordot',['VectorDot',['../namespacemshadow.html#ad4c4674a33dfb486802427058375a055',1,'mshadow']]],
   ['vectorizedsort',['VectorizedSort',['../namespacemshadow.html#ab3f080439f035e05501cc7f202e58c0e',1,'mshadow']]],

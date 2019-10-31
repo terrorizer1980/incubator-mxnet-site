@@ -4,7 +4,7 @@ var searchData=
   ['major',['major',['../structmkldnn__version__t.html#acb5a29c46d1a0c1075f45dcadf6ef826',1,'mkldnn_version_t']]],
   ['manager_5fctx',['manager_ctx',['../structDLManagedTensor.html#af9bfa572555bd0b7855c5ae74ff96929',1,'DLManagedTensor']]],
   ['max_5foutput_5fsize',['max_output_size',['../structnnvm_1_1top_1_1NonMaximumSuppressionParam.html#a6a06f8c12d1ba619dfb26bdc6d67ac14',1,'nnvm::top::NonMaximumSuppressionParam']]],
-  ['mean_5fdesc',['mean_desc',['../structmkldnn__batch__normalization__desc__t.html#aa56c0bf1307a56b442a1c8381a572d8b',1,'mkldnn_batch_normalization_desc_t']]],
+  ['memory',['memory',['../structmkldnn__exec__arg__t.html#a435bc6c683e834196b7cb3065fec0722',1,'mkldnn_exec_arg_t']]],
   ['method',['method',['../structnnvm_1_1top_1_1UpSamplingParam.html#aecdb0b1ebe078a99fd2e591b5b713dd7',1,'nnvm::top::UpSamplingParam']]],
   ['minor',['minor',['../structmkldnn__version__t.html#a605011a39fe943cae9289cf33dd37dfc',1,'mkldnn_version_t']]],
   ['momentum',['momentum',['../structnnvm_1_1top_1_1BatchNormParam.html#afefd394fb1429a6e91c4c7e5e78dcce2',1,'nnvm::top::BatchNormParam']]],

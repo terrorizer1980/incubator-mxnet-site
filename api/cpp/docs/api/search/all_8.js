@@ -116,6 +116,6 @@ var searchData=
   ['graphhandle',['GraphHandle',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#a42cfaee0f6c134e30b14acf1e5276823',1,'c_api.h']]],
   ['group',['Group',['../classmxnet_1_1cpp_1_1Symbol.html#afc8a595aa2b3c2c03c825f5b27061f45',1,'mxnet::cpp::Symbol']]],
   ['group_5fname',['group_name',['../classnnvm_1_1OpGroup.html#a9d49a03bc2cce737a4a0758563295b60',1,'nnvm::OpGroup']]],
-  ['group_5fsize',['group_size',['../structmkldnn__shuffle__desc__t.html#ab9ea74d5467ea015ec8019be53c804ed',1,'mkldnn_shuffle_desc_t']]],
+  ['group_5fsize',['group_size',['../structmkldnn__shuffle__desc__t.html#a6c1208757af38aad430216269951ecc7',1,'mkldnn_shuffle_desc_t']]],
   ['groups',['groups',['../structnnvm_1_1top_1_1Conv2DParam.html#afc91986987da20e3896875d7b8e4dfaf',1,'nnvm::top::Conv2DParam::groups()'],['../structnnvm_1_1top_1_1WinogradConv2DParam.html#a6090f52b2bc6b5b25c65015e9e91b2a1',1,'nnvm::top::WinogradConv2DParam::groups()'],['../structnnvm_1_1top_1_1Conv2DTransposeParam.html#a583b85125987cfd9f4062fc06f01f0e7',1,'nnvm::top::Conv2DTransposeParam::groups()']]]
 ];

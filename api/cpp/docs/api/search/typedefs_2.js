@@ -4,6 +4,7 @@ var searchData=
   ['cachedopmonitorcallback',['CachedOpMonitorCallback',['../include_2mxnet_2c__api_8h.html#a2daecd314602cbf2d04aae649ad2a3e6',1,'c_api.h']]],
   ['callbackoncomplete',['CallbackOnComplete',['../classmxnet_1_1Engine.html#a16b757432556f835d27f1b5e1dbe1b06',1,'mxnet::Engine']]],
   ['configentry',['ConfigEntry',['../classdmlc_1_1Config.html#afc2e054db64f1ece11f3bac84d775d12',1,'dmlc::Config']]],
+  ['const_5fmkldnn_5fmemory_5ft',['const_mkldnn_memory_t',['../group__c__api__types__memory.html#gac10931d394b31cbf5d2c3b5d814f86e2',1,'mkldnn_types.h']]],
   ['const_5fmkldnn_5fop_5fdesc_5ft',['const_mkldnn_op_desc_t',['../group__c__api__types__op__descs.html#gac7e49603b052255540a6f6dc072a627c',1,'mkldnn_types.h']]],
   ['const_5fmkldnn_5fpost_5fops_5ft',['const_mkldnn_post_ops_t',['../group__c__api__primitive__attr.html#ga9b9ffe469ad6e2c68a490c61af3bf882',1,'mkldnn_types.h']]],
   ['const_5fmkldnn_5fprimitive_5fattr_5ft',['const_mkldnn_primitive_attr_t',['../group__c__api__primitive__attr.html#ga3f3780c1e4efc952e6639a2f083a8b85',1,'mkldnn_types.h']]],

@@ -7,6 +7,7 @@ var searchData=
   ['repeat_5f',['repeat_',['../structmshadow_1_1expr_1_1RangeExp.html#afcfe50d103760227529718406c60e580',1,'mshadow::expr::RangeExp']]],
   ['req',['req',['../structmxnet_1_1Resource.html#ae841e25cf5ee4aed895ace7fa080edc4',1,'mxnet::Resource']]],
   ['requested',['requested',['../structmxnet_1_1OpContext.html#a833e95f95cf5e3af9c193b74b500fc5b',1,'mxnet::OpContext']]],
+  ['reserved',['reserved',['../structmkldnn__rnn__packed__desc__t.html#af9b0154ccac74ccb555d5e691ef10f03',1,'mkldnn_rnn_packed_desc_t::reserved()'],['../structmkldnn__memory__extra__desc__t.html#afc19066973364367c9be1fec1758b822',1,'mkldnn_memory_extra_desc_t::reserved()']]],
   ['resource',['resource',['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments']]],
   ['return_5findices',['return_indices',['../structnnvm_1_1top_1_1NonMaximumSuppressionParam.html#a52be102b5adb0008f09e0ff8375cb901',1,'nnvm::top::NonMaximumSuppressionParam']]],
   ['return_5ftype',['return_type',['../classdmlc_1_1FunctionRegEntryBase.html#a8187718b95987b655716c2de9bbe7b06',1,'dmlc::FunctionRegEntryBase']]],

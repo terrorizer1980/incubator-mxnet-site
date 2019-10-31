@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['mkldnn_5fapi',['MKLDNN_API',['../mkldnn_8h.html#a14804afce5364c7a515f82d21c6b64f0',1,'mkldnn.h']]],
-  ['mkldnn_5fdeprecated',['MKLDNN_DEPRECATED',['../mkldnn_8h.html#a1072aba87992636bf4df6d4c32a510f2',1,'mkldnn.h']]],
-  ['mkldnn_5fhelper_5fdll_5fexport',['MKLDNN_HELPER_DLL_EXPORT',['../mkldnn_8h.html#aefdd0dc1dffa6297e38f870340f4a6ea',1,'mkldnn.h']]],
-  ['mkldnn_5fhelper_5fdll_5fimport',['MKLDNN_HELPER_DLL_IMPORT',['../mkldnn_8h.html#afce0e300481dc63d28140565bc54a683',1,'mkldnn.h']]],
   ['mshadow_5faligned',['MSHADOW_ALIGNED',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a9a2941102b46ebdb39e04d66da40d238',1,'base.h']]],
   ['mshadow_5falloc_5fpad',['MSHADOW_ALLOC_PAD',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a72d4e933c0003ccdc01b5d5f054dcf39',1,'base.h']]],
   ['mshadow_5fcatch_5ferror',['MSHADOW_CATCH_ERROR',['../3rdparty_2mshadow_2mshadow_2base_8h.html#a144171091678fc9f3cbc8a9612db899d',1,'base.h']]],
