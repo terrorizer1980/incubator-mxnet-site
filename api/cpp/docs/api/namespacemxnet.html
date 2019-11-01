@@ -235,6 +235,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ac7ea5e68a319e4f7d7c0b4ee91c2d20f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemxnet.html#ac7ea5e68a319e4f7d7c0b4ee91c2d20f">FCreateOpState</a> = std::function&lt; <a class="el" href="classmxnet_1_1OpStatePtr.html">OpStatePtr</a>(const <a class="el" href="structnnvm_1_1NodeAttrs.html">NodeAttrs</a> &amp;attrs, <a class="el" href="structmxnet_1_1Context.html">Context</a> ctx, const <a class="el" href="namespacemxnet.html#a87e1c30aafac389774c6f4d905c0e5ea">mxnet::ShapeVector</a> &amp;in_shape, const std::vector&lt; int &gt; &amp;in_type)&gt;</td></tr>
 <tr class="memdesc:ac7ea5e68a319e4f7d7c0b4ee91c2d20f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Layer style, forward/backward operator. This is easy to write code that contains state. <a class="el" href="classmxnet_1_1OpStatePtr.html" title="Operator state. This is a pointer type, its content is mutable even if OpStatePtr is const...">OpStatePtr</a> is a pointer type, it's content is mutable even if <a class="el" href="classmxnet_1_1OpStatePtr.html" title="Operator state. This is a pointer type, its content is mutable even if OpStatePtr is const...">OpStatePtr</a> is constant.  <a href="#ac7ea5e68a319e4f7d7c0b4ee91c2d20f">More...</a><br /></td></tr>
 <tr class="separator:ac7ea5e68a319e4f7d7c0b4ee91c2d20f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab11a4e6d5c8c47c99cfc3306db6538c8"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemxnet.html#ab11a4e6d5c8c47c99cfc3306db6538c8">THasDeterministicOutput</a> = bool</td></tr>
+<tr class="memdesc:ab11a4e6d5c8c47c99cfc3306db6538c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the operator always produces the same output given the same input. This enables certain optimizations like common expression elimination.  <a href="#ab11a4e6d5c8c47c99cfc3306db6538c8">More...</a><br /></td></tr>
+<tr class="separator:ab11a4e6d5c8c47c99cfc3306db6538c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a666f1055e5401ecec0278e8ba5790732"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemxnet.html#a666f1055e5401ecec0278e8ba5790732">FExecType</a> = std::function&lt; <a class="el" href="namespacemxnet.html#ad7801fb2dd68294d4c7a9e289bc071ad">ExecType</a>(const <a class="el" href="structnnvm_1_1NodeAttrs.html">NodeAttrs</a> &amp;attrs)&gt;</td></tr>
 <tr class="memdesc:a666f1055e5401ecec0278e8ba5790732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execution mode of this operator.  <a href="#a666f1055e5401ecec0278e8ba5790732">More...</a><br /></td></tr>
 <tr class="separator:a666f1055e5401ecec0278e8ba5790732"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -911,6 +914,21 @@ Variables</h2></td></tr>
 <p>The result holder of storage type of each NodeEntry in the graph. </p>
 <dl class="section note"><dt>Note</dt><dd>Stored under graph.attrs["storage_type"], provided by Pass "InferStorageType"</dd></dl>
 <div class="fragment"><div class="line">Graph g = <a class="code" href="namespacennvm.html#af9e352fbb58722c23de790c9cfafdfd7">ApplyPass</a>(src_graph, <span class="stringliteral">&quot;InferStorageType&quot;</span>);</div><div class="line"><span class="keyword">const</span> <a class="code" href="namespacennvm.html#ad3ab8a09faa366b06b78d31c65f620af">StorageVector</a>&amp; stypes = g.GetAttr&lt;<a class="code" href="namespacemxnet.html#a6606bef15f41cccade14c9400e8447cf">StorageTypeVector</a>&gt;(<span class="stringliteral">&quot;storage_type&quot;</span>);</div><div class="line"><span class="comment">// get storage type by entry id</span></div><div class="line"><span class="keywordtype">int</span> entry_type = stypes[g.indexed_graph().entry_id(my_entry)];</div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacemxnet.html#a0a1395f21139ba975a6268539df6a15d" title="Register a storage and dispatch mode inference function based on storage types of the inputs and outp...">FInferStorageType</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab11a4e6d5c8c47c99cfc3306db6538c8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacemxnet.html#ab11a4e6d5c8c47c99cfc3306db6538c8">mxnet::THasDeterministicOutput</a> = typedef bool</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the operator always produces the same output given the same input. This enables certain optimizations like common expression elimination. </p>
+<dl class="section note"><dt>Note</dt><dd>Register under "THasDeterministicOutput" </dd></dl>
 
 </div>
 </div>
@@ -2346,7 +2364,7 @@ template&lt;typename SrcIter &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 1 2019 12:23:35 for mxnet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 1 2019 18:24:04 for mxnet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

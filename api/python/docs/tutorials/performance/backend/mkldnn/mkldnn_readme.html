@@ -678,10 +678,21 @@ Show Source
 </div>
 <div class="section" id="Build-MXNet-with-MKL-DNN">
 <h2>Build MXNet with MKL-DNN<a class="headerlink" href="#Build-MXNet-with-MKL-DNN" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>make -j $(nproc) USE_OPENCV=1 USE_MKLDNN=1 USE_BLAS=mkl USE_INTEL_PATH=/opt/intel
+<p>To achieve better performance, the Intel OpenMP and llvm OpenMP are recommended as below instruction. Otherwise, default GNU OpenMP will be used and you may get the sub-optimal performance. If you don’t have the full <a class="reference external" href="https://software.intel.com/en-us/intel-mkl">MKL</a> library installation, you might use OpenBLAS as the blas library, by setting USE_BLAS=openblas.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># build with llvm OpenMP and Intel MKL/openblas
+mkdir build &amp;&amp; cd build
+cmake -DUSE_CUDA=OFF -DUSE_MKL_IF_AVAILABLE=ON -DUSE_MKLDNN=ON -DUSE_OPENMP=ON -DUSE_OPENCV=ON ..
+make -j $(nproc)
 </pre></div>
 </div>
-<p>If you don’t have the full <a class="reference external" href="https://software.intel.com/en-us/intel-mkl">MKL</a> library installation, you might use OpenBLAS as the blas library, by setting USE_BLAS=openblas.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># build with Intel MKL and Intel OpenMP
+make -j $(nproc) USE_OPENCV=1 USE_MKLDNN=1 USE_BLAS=mkl USE_INTEL_PATH=/opt/intel
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># build with openblas and GNU OpenMP(sub-optimal performance)
+make -j $(nproc) USE_OPENCV=1 USE_MKLDNN=1 USE_BLAS=openblas
+</pre></div>
+</div>
 <h2 id="2"><p>MacOS</p>
 </h2></div>
 <div class="section" id="Prerequisites">

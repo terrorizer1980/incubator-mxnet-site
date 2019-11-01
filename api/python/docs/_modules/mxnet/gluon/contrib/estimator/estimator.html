@@ -656,15 +656,14 @@
 
 <span class="kn">from</span> <span class="nn">.event_handler</span> <span class="k">import</span> <span class="n">MetricHandler</span><span class="p">,</span> <span class="n">ValidationHandler</span><span class="p">,</span> <span class="n">LoggingHandler</span><span class="p">,</span> <span class="n">StoppingHandler</span>
 <span class="kn">from</span> <span class="nn">.event_handler</span> <span class="k">import</span> <span class="n">TrainBegin</span><span class="p">,</span> <span class="n">EpochBegin</span><span class="p">,</span> <span class="n">BatchBegin</span><span class="p">,</span> <span class="n">BatchEnd</span><span class="p">,</span> <span class="n">EpochEnd</span><span class="p">,</span> <span class="n">TrainEnd</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_check_metrics</span>
+<span class="kn">from</span> <span class="nn">.event_handler</span> <span class="k">import</span> <span class="n">_check_event_handlers</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_check_metrics</span><span class="p">,</span> <span class="n">_suggest_metric_for_loss</span><span class="p">,</span> <span class="n">_check_handler_metric_ref</span>
 <span class="kn">from</span> <span class="nn">...data</span> <span class="k">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">...loss</span> <span class="k">import</span> <span class="n">SoftmaxCrossEntropyLoss</span>
 <span class="kn">from</span> <span class="nn">...loss</span> <span class="k">import</span> <span class="n">Loss</span> <span class="k">as</span> <span class="n">gluon_loss</span>
 <span class="kn">from</span> <span class="nn">...trainer</span> <span class="k">import</span> <span class="n">Trainer</span>
 <span class="kn">from</span> <span class="nn">...utils</span> <span class="k">import</span> <span class="n">split_and_load</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="k">import</span> <span class="n">autograd</span>
 <span class="kn">from</span> <span class="nn">....context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">cpu</span><span class="p">,</span> <span class="n">gpu</span><span class="p">,</span> <span class="n">num_gpus</span>
-<span class="kn">from</span> <span class="nn">....metric</span> <span class="k">import</span> <span class="n">Accuracy</span>
 <span class="kn">from</span> <span class="nn">....metric</span> <span class="k">import</span> <span class="n">Loss</span> <span class="k">as</span> <span class="n">metric_loss</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Estimator&#39;</span><span class="p">]</span>
@@ -680,8 +679,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    net : gluon.Block</span>
 <span class="sd">        The model used for training.</span>
-<span class="sd">    loss : gluon.loss.Loss or list of gluon.loss.Loss</span>
-<span class="sd">        Loss(objective functions) to calculate during training.</span>
+<span class="sd">    loss : gluon.loss.Loss</span>
+<span class="sd">        Loss (objective) function to calculate during training.</span>
 <span class="sd">    metrics : EvalMetric or list of EvalMetric</span>
 <span class="sd">        Metrics for evaluating models.</span>
 <span class="sd">    initializer : Initializer</span>
@@ -701,19 +700,17 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">net</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_default_training_metrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_validation_metrics</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="n">initializer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_trainer</span><span class="p">(</span><span class="n">trainer</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">gluon_loss</span><span class="p">):</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="n">loss</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">gluon_loss</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loss</span><span class="p">]):</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;loss must be a Loss or a list of Loss, &quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">gluon_loss</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;loss must be a Loss, &quot;</span>
                              <span class="s2">&quot;refer to gluon.loss.Loss:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">loss</span>
 
@@ -798,31 +795,30 @@
         <span class="n">label</span> <span class="o">=</span> <span class="n">split_and_load</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">ctx_list</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="n">batch_axis</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span>
 
-<div class="viewcode-block" id="Estimator.prepare_loss_and_metrics"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.estimator.Estimator.prepare_loss_and_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_loss_and_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Based on loss functions and training metrics in estimator</span>
-<span class="sd">        Create metric wrappers to record loss values,</span>
-<span class="sd">        Create copies of train loss/metric objects to record validation values</span>
+    <span class="k">def</span> <span class="nf">_add_default_training_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span><span class="p">:</span>
+            <span class="n">suggested_metric</span> <span class="o">=</span> <span class="n">_suggest_metric_for_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">suggested_metric</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">suggested_metric</span><span class="p">]</span>
+            <span class="n">loss_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;1234567890&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_loss</span><span class="p">(</span><span class="n">loss_name</span><span class="p">))</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        train_metrics, val_metrics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span> <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span>
-               <span class="p">[</span><span class="s1">&#39;train_metrics&#39;</span><span class="p">,</span> <span class="s1">&#39;val_metrics&#39;</span><span class="p">]):</span>
-            <span class="c1"># Use default mx.metric.Accuracy() for SoftmaxCrossEntropyLoss()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">SoftmaxCrossEntropyLoss</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">]):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">Accuracy</span><span class="p">()]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">:</span>
-                <span class="c1"># remove trailing numbers from loss name to avoid confusion</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_loss</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;1234567890&#39;</span><span class="p">)))</span>
-            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">:</span>
-                <span class="n">val_metric</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
-                <span class="n">metric</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;train &quot;</span> <span class="o">+</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span>
-                <span class="n">val_metric</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;validation &quot;</span> <span class="o">+</span> <span class="n">val_metric</span><span class="o">.</span><span class="n">name</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val_metric</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span></div>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span><span class="p">:</span>
+            <span class="n">metric</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;training &quot;</span> <span class="o">+</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">_add_validation_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_val_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val_metrics</span><span class="p">:</span>
+            <span class="n">metric</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;validation &quot;</span> <span class="o">+</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">train_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">val_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val_metrics</span>
 
 <div class="viewcode-block" id="Estimator.evaluate_batch"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.estimator.Estimator.evaluate_batch">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">val_batch</span><span class="p">,</span>
@@ -841,7 +837,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_and_label</span><span class="p">(</span><span class="n">val_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">)</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
         <span class="c1"># update metrics</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">val_metrics</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">metric_loss</span><span class="p">):</span>
@@ -907,7 +903,7 @@
 
         <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
 
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loss</span><span class="p">:</span>
             <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
@@ -1009,63 +1005,47 @@
             <span class="n">handler</span><span class="o">.</span><span class="n">train_end</span><span class="p">(</span><span class="n">estimator_ref</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_prepare_default_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_data</span><span class="p">,</span> <span class="n">event_handlers</span><span class="p">):</span>
-        <span class="n">event_handlers</span> <span class="o">=</span> <span class="n">event_handlers</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="n">default_handlers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_loss_and_metrics</span><span class="p">()</span>
+        <span class="n">event_handlers</span> <span class="o">=</span> <span class="n">_check_event_handlers</span><span class="p">(</span><span class="n">event_handlers</span><span class="p">)</span>
+        <span class="n">added_default_handlers</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># no need to add to default handler check as StoppingHandler does not use metrics</span>
-        <span class="n">event_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">StoppingHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_batch</span><span class="p">))</span>
-        <span class="n">default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;StoppingHandler&quot;</span><span class="p">)</span>
+        <span class="n">added_default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">StoppingHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_batch</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">MetricHandler</span><span class="p">)</span> <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">event_handlers</span><span class="p">):</span>
-            <span class="n">event_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MetricHandler</span><span class="p">(</span><span class="n">train_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">))</span>
-            <span class="n">default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;MetricHandler&quot;</span><span class="p">)</span>
+            <span class="n">added_default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MetricHandler</span><span class="p">(</span><span class="n">train_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">ValidationHandler</span><span class="p">)</span> <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">event_handlers</span><span class="p">):</span>
             <span class="c1"># no validation handler</span>
             <span class="k">if</span> <span class="n">val_data</span><span class="p">:</span>
-                <span class="c1"># add default validation handler if validation data found</span>
-                <span class="n">event_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ValidationHandler</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="n">val_data</span><span class="p">,</span> <span class="n">eval_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span>
-                                                        <span class="n">val_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">))</span>
-                <span class="n">default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ValidationHandler&quot;</span><span class="p">)</span>
                 <span class="n">val_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span>
+                <span class="c1"># add default validation handler if validation data found</span>
+                <span class="n">added_default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ValidationHandler</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="n">val_data</span><span class="p">,</span>
+                                                                <span class="n">eval_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span>
+                                                                <span class="n">val_metrics</span><span class="o">=</span><span class="n">val_metrics</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># set validation metrics to None if no validation data and no validation handler</span>
                 <span class="n">val_metrics</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">LoggingHandler</span><span class="p">)</span> <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">event_handlers</span><span class="p">):</span>
-            <span class="n">event_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LoggingHandler</span><span class="p">(</span><span class="n">train_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">,</span>
-                                                 <span class="n">val_metrics</span><span class="o">=</span><span class="n">val_metrics</span><span class="p">))</span>
-            <span class="n">default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;LoggingHandler&quot;</span><span class="p">)</span>
+            <span class="n">added_default_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LoggingHandler</span><span class="p">(</span><span class="n">train_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">,</span>
+                                                         <span class="n">val_metrics</span><span class="o">=</span><span class="n">val_metrics</span><span class="p">))</span>
 
         <span class="c1"># if there is a mix of user defined event handlers and default event handlers</span>
-        <span class="c1"># they should have the same set of loss and metrics</span>
-        <span class="k">if</span> <span class="n">default_handlers</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">event_handlers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">default_handlers</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You are training with the following default event handlers: </span><span class="si">%s</span><span class="s2">. &quot;</span> \
-                  <span class="s2">&quot;They use loss and metrics from estimator.prepare_loss_and_metrics(). &quot;</span> \
-                  <span class="s2">&quot;Please use the same set of metrics for all your other handlers.&quot;</span> <span class="o">%</span> \
-                  <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">default_handlers</span><span class="p">)</span>
+        <span class="c1"># they should have the same set of metrics</span>
+        <span class="n">mixing_handlers</span> <span class="o">=</span> <span class="n">event_handlers</span> <span class="ow">and</span> <span class="n">added_default_handlers</span>
+
+        <span class="n">event_handlers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">added_default_handlers</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mixing_handlers</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The following default event handlers are added: </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">added_default_handlers</span><span class="p">]))</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="c1"># check if all handlers has the same set of references to loss and metrics</span>
-            <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+            <span class="c1"># check if all handlers have the same set of references to metrics</span>
+            <span class="n">known_metrics</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">event_handlers</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">handler</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">keyword</span> <span class="ow">in</span> <span class="n">attribute</span> <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;metric&#39;</span> <span class="ow">or</span> <span class="s1">&#39;monitor&#39;</span><span class="p">]):</span>
-                        <span class="n">reference</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                            <span class="n">references</span> <span class="o">+=</span> <span class="n">reference</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
-            <span class="c1"># remove None metric references</span>
-            <span class="n">references</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ref</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">references</span> <span class="k">if</span> <span class="n">ref</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">references</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;We have added following default handlers for you: </span><span class="si">%s</span><span class="s2"> and used &quot;</span> \
-                          <span class="s2">&quot;estimator.prepare_loss_and_metrics() to pass metrics to &quot;</span> \
-                          <span class="s2">&quot;those handlers. Please use the same set of metrics &quot;</span> \
-                          <span class="s2">&quot;for all your handlers.&quot;</span> <span class="o">%</span> \
-                          <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">default_handlers</span><span class="p">)</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">_check_handler_metric_ref</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">known_metrics</span><span class="p">)</span>
 
         <span class="n">event_handlers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">handler</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s1">&#39;priority&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">event_handlers</span>
