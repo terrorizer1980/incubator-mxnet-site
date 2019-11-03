@@ -156,6 +156,7 @@ var searchData=
   ['mkldnn_5fvanilla_5frnn_5fforward_5fdesc_5finit',['mkldnn_vanilla_rnn_forward_desc_init',['../group__c__api__rnn.html#ga33a1440422a7cb5dc714a4b1884782be',1,'mkldnn.h']]],
   ['mkldnn_5fversion',['mkldnn_version',['../group__c__api__service.html#gac15d131cbfde7ff627fe0bffef2acef1',1,'mkldnn.h']]],
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html#a1e08421a5f777de6005ff5f2876a49a0',1,'mxnet::cpp::Monitor']]],
+  ['more_5fprecise_5ftype',['more_precise_type',['../namespacemxnet_1_1common.html#a8d027350cd4d688b27979680992dca7a',1,'mxnet::common']]],
   ['movecopyattr',['MoveCopyAttr',['../classnnvm_1_1Graph.html#aef2d59ea8a92838e09fb852ec79be083',1,'nnvm::Graph']]],
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html#a482b0a676aa338cc5d38d7378ad6ff24',1,'mxnet::cpp::MSE']]],
   ['mshadow_5faligned',['MSHADOW_ALIGNED',['../namespacemshadow_1_1half.html#a638b83523dd205b616acfe9dd8a8d4bf',1,'mshadow::half::MSHADOW_ALIGNED(2) half_t'],['../namespacemshadow_1_1half.html#a6c31f8c0485e0c6fca6874c550fcfb41',1,'mshadow::half::MSHADOW_ALIGNED(4) half2_t']]],

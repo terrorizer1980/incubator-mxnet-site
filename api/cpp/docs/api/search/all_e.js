@@ -751,6 +751,7 @@ var searchData=
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html',1,'mxnet::cpp']]],
   ['monitor_2eh',['monitor.h',['../monitor_8h.html',1,'']]],
   ['monitorcallback',['MonitorCallback',['../classmxnet_1_1Executor.html#a5684c74daafc9b80681cde6a9b7b4587',1,'mxnet::Executor']]],
+  ['more_5fprecise_5ftype',['more_precise_type',['../namespacemxnet_1_1common.html#a8d027350cd4d688b27979680992dca7a',1,'mxnet::common']]],
   ['movecopyattr',['MoveCopyAttr',['../classnnvm_1_1Graph.html#aef2d59ea8a92838e09fb852ec79be083',1,'nnvm::Graph']]],
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html#a482b0a676aa338cc5d38d7378ad6ff24',1,'mxnet::cpp::MSE']]],
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html',1,'mxnet::cpp']]],
