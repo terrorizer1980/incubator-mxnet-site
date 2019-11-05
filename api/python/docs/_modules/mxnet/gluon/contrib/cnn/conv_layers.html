@@ -651,7 +651,7 @@
 <span class="c1"># pylint: disable= arguments-differ</span>
 <span class="sd">&quot;&quot;&quot;Custom convolutional neural network layers in model_zoo.&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DeformableConvolution&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DeformableConvolution&#39;</span><span class="p">,</span> <span class="s1">&#39;ModulatedDeformableConvolution&#39;</span><span class="p">]</span>
 
 <span class="kn">from</span> <span class="nn">....</span> <span class="k">import</span> <span class="n">symbol</span>
 <span class="kn">from</span> <span class="nn">...block</span> <span class="k">import</span> <span class="n">HybridBlock</span>
@@ -851,6 +851,184 @@
         <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                         <span class="n">mapping</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> -&gt; </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_deformable_conv</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModulatedDeformableConvolution"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.cnn.ModulatedDeformableConvolution">[docs]</a><span class="k">class</span> <span class="nc">ModulatedDeformableConvolution</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;2-D Deformable Convolution v2 (Dai, 2018).</span>
+
+<span class="sd">    The modulated deformable convolution operation is described in https://arxiv.org/abs/1811.11168</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    channels : int,</span>
+<span class="sd">        The dimensionality of the output space</span>
+<span class="sd">        i.e. the number of output channels in the convolution.</span>
+<span class="sd">    kernel_size : int or tuple/list of 2 ints, (Default value = (1,1))</span>
+<span class="sd">        Specifies the dimensions of the convolution window.</span>
+<span class="sd">    strides : int or tuple/list of 2 ints, (Default value = (1,1))</span>
+<span class="sd">        Specifies the strides of the convolution.</span>
+<span class="sd">    padding : int or tuple/list of 2 ints, (Default value = (0,0))</span>
+<span class="sd">        If padding is non-zero, then the input is implicitly zero-padded</span>
+<span class="sd">        on both sides for padding number of points.</span>
+<span class="sd">    dilation : int or tuple/list of 2 ints, (Default value = (1,1))</span>
+<span class="sd">        Specifies the dilation rate to use for dilated convolution.</span>
+<span class="sd">    groups : int, (Default value = 1)</span>
+<span class="sd">        Controls the connections between inputs and outputs.</span>
+<span class="sd">        At groups=1, all inputs are convolved to all outputs.</span>
+<span class="sd">        At groups=2, the operation becomes equivalent to having two convolution</span>
+<span class="sd">        layers side by side, each seeing half the input channels, and producing</span>
+<span class="sd">        half the output channels, and both subsequently concatenated.</span>
+<span class="sd">    num_deformable_group : int, (Default value = 1)</span>
+<span class="sd">        Number of deformable group partitions.</span>
+<span class="sd">    layout : str, (Default value = NCHW)</span>
+<span class="sd">        Dimension ordering of data and weight. Can be &#39;NCW&#39;, &#39;NWC&#39;, &#39;NCHW&#39;,</span>
+<span class="sd">        &#39;NHWC&#39;, &#39;NCDHW&#39;, &#39;NDHWC&#39;, etc. &#39;N&#39;, &#39;C&#39;, &#39;H&#39;, &#39;W&#39;, &#39;D&#39; stands for</span>
+<span class="sd">        batch, channel, height, width and depth dimensions respectively.</span>
+<span class="sd">        Convolution is performed over &#39;D&#39;, &#39;H&#39;, and &#39;W&#39; dimensions.</span>
+<span class="sd">    use_bias : bool, (Default value = True)</span>
+<span class="sd">        Whether the layer for generating the output features uses a bias vector.</span>
+<span class="sd">    in_channels : int, (Default value = 0)</span>
+<span class="sd">        The number of input channels to this layer. If not specified,</span>
+<span class="sd">        initialization will be deferred to the first time `forward` is called</span>
+<span class="sd">        and input channels will be inferred from the shape of input data.</span>
+<span class="sd">    activation : str, (Default value = None)</span>
+<span class="sd">        Activation function to use. See :func:`~mxnet.ndarray.Activation`.</span>
+<span class="sd">        If you don&#39;t specify anything, no activation is applied</span>
+<span class="sd">        (ie. &quot;linear&quot; activation: `a(x) = x`).</span>
+<span class="sd">    weight_initializer : str or `Initializer`, (Default value = None)</span>
+<span class="sd">        Initializer for the `weight` weights matrix for the convolution layer</span>
+<span class="sd">        for generating the output features.</span>
+<span class="sd">    bias_initializer : str or `Initializer`, (Default value = zeros)</span>
+<span class="sd">        Initializer for the bias vector for the convolution layer</span>
+<span class="sd">        for generating the output features.</span>
+<span class="sd">    offset_weight_initializer : str or `Initializer`, (Default value = zeros)</span>
+<span class="sd">        Initializer for the `weight` weights matrix for the convolution layer</span>
+<span class="sd">        for generating the offset.</span>
+<span class="sd">    offset_bias_initializer : str or `Initializer`, (Default value = zeros),</span>
+<span class="sd">        Initializer for the bias vector for the convolution layer</span>
+<span class="sd">        for generating the offset.</span>
+<span class="sd">    offset_use_bias: bool, (Default value = True)</span>
+<span class="sd">        Whether the layer for generating the offset uses a bias vector.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: 4D input tensor with shape</span>
+<span class="sd">          `(batch_size, in_channels, height, width)` when `layout` is `NCHW`.</span>
+<span class="sd">          For other layouts shape is permuted accordingly.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: 4D output tensor with shape</span>
+<span class="sd">          `(batch_size, channels, out_height, out_width)` when `layout` is `NCHW`.</span>
+<span class="sd">          out_height and out_width are calculated as::</span>
+
+<span class="sd">              out_height = floor((height+2*padding[0]-dilation[0]*(kernel_size[0]-1)-1)/stride[0])+1</span>
+<span class="sd">              out_width = floor((width+2*padding[1]-dilation[1]*(kernel_size[1]-1)-1)/stride[1])+1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dilation</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">num_deformable_group</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">in_channels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
+                 <span class="n">offset_weight_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">offset_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">offset_use_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">op_name</span><span class="o">=</span><span class="s1">&#39;ModulatedDeformableConvolution&#39;</span><span class="p">,</span> <span class="n">adj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ModulatedDeformableConvolution</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span> <span class="o">=</span> <span class="n">channels</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
+
+            <span class="k">assert</span> <span class="n">layout</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="s1">&#39;NHWC&#39;</span><span class="p">),</span> <span class="s2">&quot;Only supports &#39;NCHW&#39; and &#39;NHWC&#39; layout for now&quot;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">kernel_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">kernel_size</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strides</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">strides</span> <span class="o">=</span> <span class="p">(</span><span class="n">strides</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">padding</span> <span class="o">=</span> <span class="p">(</span><span class="n">padding</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dilation</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+                <span class="n">dilation</span> <span class="o">=</span> <span class="p">(</span><span class="n">dilation</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_op_name</span> <span class="o">=</span> <span class="n">op_name</span>
+
+            <span class="n">offset_channels</span> <span class="o">=</span> <span class="mi">27</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_offset</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;kernel&#39;</span><span class="p">:</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="s1">&#39;stride&#39;</span><span class="p">:</span> <span class="n">strides</span><span class="p">,</span> <span class="s1">&#39;dilate&#39;</span><span class="p">:</span> <span class="n">dilation</span><span class="p">,</span>
+                <span class="s1">&#39;pad&#39;</span><span class="p">:</span> <span class="n">padding</span><span class="p">,</span> <span class="s1">&#39;num_filter&#39;</span><span class="p">:</span> <span class="n">offset_channels</span><span class="p">,</span> <span class="s1">&#39;num_group&#39;</span><span class="p">:</span> <span class="n">groups</span><span class="p">,</span>
+                <span class="s1">&#39;no_bias&#39;</span><span class="p">:</span> <span class="ow">not</span> <span class="n">offset_use_bias</span><span class="p">,</span> <span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">layout</span><span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_deformable_conv</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;kernel&#39;</span><span class="p">:</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="s1">&#39;stride&#39;</span><span class="p">:</span> <span class="n">strides</span><span class="p">,</span> <span class="s1">&#39;dilate&#39;</span><span class="p">:</span> <span class="n">dilation</span><span class="p">,</span>
+                <span class="s1">&#39;pad&#39;</span><span class="p">:</span> <span class="n">padding</span><span class="p">,</span> <span class="s1">&#39;num_filter&#39;</span><span class="p">:</span> <span class="n">channels</span><span class="p">,</span> <span class="s1">&#39;num_group&#39;</span><span class="p">:</span> <span class="n">groups</span><span class="p">,</span>
+                <span class="s1">&#39;num_deformable_group&#39;</span><span class="p">:</span> <span class="n">num_deformable_group</span><span class="p">,</span>
+                <span class="s1">&#39;no_bias&#39;</span><span class="p">:</span> <span class="ow">not</span> <span class="n">use_bias</span><span class="p">,</span> <span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">layout</span><span class="p">}</span>
+
+            <span class="k">if</span> <span class="n">adj</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_offset</span><span class="p">[</span><span class="s1">&#39;adj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adj</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_deformable_conv</span><span class="p">[</span><span class="s1">&#39;adj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adj</span>
+
+            <span class="n">deformable_conv_weight_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">deformable_conv_weight_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels</span>
+            <span class="n">deformable_conv_weight_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">deformable_conv_weight_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">kernel_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">deformable_conv_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;deformable_conv_weight&#39;</span><span class="p">,</span>
+                                                          <span class="n">shape</span><span class="o">=</span><span class="n">deformable_conv_weight_shape</span><span class="p">,</span>
+                                                          <span class="n">init</span><span class="o">=</span><span class="n">weight_initializer</span><span class="p">,</span>
+                                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">use_bias</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deformable_conv_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;deformable_conv_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">channels</span><span class="p">,),</span>
+                                                            <span class="n">init</span><span class="o">=</span><span class="n">bias_initializer</span><span class="p">,</span>
+                                                            <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deformable_conv_bias</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">dshape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">dshape</span><span class="p">[</span><span class="n">layout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">dshape</span><span class="p">[</span><span class="n">layout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">in_channels</span>
+
+            <span class="n">op</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="s1">&#39;Convolution&#39;</span><span class="p">)</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">dshape</span><span class="p">),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_offset</span><span class="p">)</span>
+
+            <span class="n">offsetshapes</span> <span class="o">=</span> <span class="n">offset</span><span class="o">.</span><span class="n">infer_shape_partial</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">offset_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">offsetshapes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                 <span class="n">init</span><span class="o">=</span><span class="n">offset_weight_initializer</span><span class="p">,</span>
+                                                 <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">offset_use_bias</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">offset_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">offsetshapes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                                   <span class="n">init</span><span class="o">=</span><span class="n">offset_bias_initializer</span><span class="p">,</span>
+                                                   <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">offset_bias</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">activation</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">Activation</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">activation</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ModulatedDeformableConvolution.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.cnn.ModulatedDeformableConvolution.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">offset_weight</span><span class="p">,</span> <span class="n">deformable_conv_weight</span><span class="p">,</span> <span class="n">offset_bias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deformable_conv_bias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offset_bias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">Convolution</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">offset_weight</span><span class="p">,</span> <span class="n">cudnn_off</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_offset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">Convolution</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">offset_weight</span><span class="p">,</span> <span class="n">offset_bias</span><span class="p">,</span> <span class="n">cudnn_off</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_offset</span><span class="p">)</span>
+
+        <span class="n">offset_t</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">slice_axis</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">begin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">slice_axis</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">begin</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">deformable_conv_bias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">ModulatedDeformableConvolution</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset_t</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span>
+                                                           <span class="n">weight</span><span class="o">=</span><span class="n">deformable_conv_weight</span><span class="p">,</span>
+                                                           <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fwd&#39;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_deformable_conv</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">ModulatedDeformableConvolution</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset_t</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span>
+                                                           <span class="n">weight</span><span class="o">=</span><span class="n">deformable_conv_weight</span><span class="p">,</span>
+                                                           <span class="n">bias</span><span class="o">=</span><span class="n">deformable_conv_bias</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fwd&#39;</span><span class="p">,</span>
+                                                           <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_deformable_conv</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">act</span></div>
+
+    <span class="k">def</span> <span class="nf">_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;modulated_deformable_conv&#39;</span></div>
 </pre></div>
 
         </div>
