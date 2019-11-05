@@ -17,6 +17,7 @@ var searchData=
   ['get_5findex',['get_index',['../classdmlc_1_1Row.html#a33d99d09e91940f24df98a7d4171337a',1,'dmlc::Row']]],
   ['get_5flabel',['get_label',['../classdmlc_1_1Row.html#a49f2bd09daf9d064310c5991fd39c839',1,'dmlc::Row']]],
   ['get_5fload_5ftype',['get_load_type',['../namespacemxnet_1_1common_1_1cuda.html#aa7e0a8f7264c65d8000560d84d7fc54d',1,'mxnet::common::cuda']]],
+  ['get_5fmore_5fprecise_5ftype',['get_more_precise_type',['../namespacemxnet_1_1common.html#a2ddc5f355bddea98d3b3e0a700c44a71',1,'mxnet::common']]],
   ['get_5fnum_5fdead_5fnode',['get_num_dead_node',['../classmxnet_1_1KVStore.html#af5c48df3aade761a547a1dc6f7b8702d',1,'mxnet::KVStore']]],
   ['get_5fparallel_5frandom',['get_parallel_random',['../structmxnet_1_1Resource.html#af181352be1fbf440eb43540c7d9d61fb',1,'mxnet::Resource']]],
   ['get_5fqid',['get_qid',['../classdmlc_1_1Row.html#ab8aa2c00ea27232de57148c919d9f752',1,'dmlc::Row']]],
