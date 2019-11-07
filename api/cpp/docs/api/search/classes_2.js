@@ -21,5 +21,11 @@ var searchData=
   ['cpu',['cpu',['../structmshadow_1_1cpu.html',1,'mshadow']]],
   ['croppingexp',['CroppingExp',['../structmshadow_1_1expr_1_1CroppingExp.html',1,'mshadow::expr']]],
   ['csr_5fidx_5fcheck',['csr_idx_check',['../structmxnet_1_1common_1_1csr__idx__check.html',1,'mxnet::common']]],
-  ['csr_5findptr_5fcheck',['csr_indptr_check',['../structmxnet_1_1common_1_1csr__indptr__check.html',1,'mxnet::common']]]
+  ['csr_5findptr_5fcheck',['csr_indptr_check',['../structmxnet_1_1common_1_1csr__indptr__check.html',1,'mxnet::common']]],
+  ['cublastype',['CublasType',['../structmxnet_1_1common_1_1cuda_1_1CublasType.html',1,'mxnet::common::cuda']]],
+  ['cublastype_3c_20double_20_3e',['CublasType&lt; double &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01double_01_4.html',1,'mxnet::common::cuda']]],
+  ['cublastype_3c_20float_20_3e',['CublasType&lt; float &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01float_01_4.html',1,'mxnet::common::cuda']]],
+  ['cublastype_3c_20int32_5ft_20_3e',['CublasType&lt; int32_t &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01int32__t_01_4.html',1,'mxnet::common::cuda']]],
+  ['cublastype_3c_20mshadow_3a_3ahalf_3a_3ahalf_5ft_20_3e',['CublasType&lt; mshadow::half::half_t &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01mshadow_1_1half_1_1half__t_01_4.html',1,'mxnet::common::cuda']]],
+  ['cublastype_3c_20uint8_5ft_20_3e',['CublasType&lt; uint8_t &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01uint8__t_01_4.html',1,'mxnet::common::cuda']]]
 ];
