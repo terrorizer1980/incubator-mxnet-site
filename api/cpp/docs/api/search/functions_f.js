@@ -25,6 +25,7 @@ var searchData=
   ['posinfvalue',['PosInfValue',['../namespacemshadow_1_1red_1_1limits.html#a64ef2d1a92579d312b18fb04aaed0d4e',1,'mshadow::red::limits']]],
   ['posinfvalue_3c_20double_20_3e',['PosInfValue&lt; double &gt;',['../namespacemshadow_1_1red_1_1limits.html#a194ad52f15262c4acde6f4720f039858',1,'mshadow::red::limits']]],
   ['posinfvalue_3c_20float_20_3e',['PosInfValue&lt; float &gt;',['../namespacemshadow_1_1red_1_1limits.html#a77b7882d6cafca4b12908e2fff2302ed',1,'mshadow::red::limits']]],
+  ['posinfvalue_3c_20half_3a_3ahalf_5ft_20_3e',['PosInfValue&lt; half::half_t &gt;',['../namespacemshadow_1_1red_1_1limits.html#a3ff7cabb9493716594e29aff48bcc60b',1,'mshadow::red::limits']]],
   ['postauxstreamusesync',['PostAuxStreamUseSync',['../classmxnet_1_1GPUAuxStream.html#a3f103abfadfb2f6d637430b2d92cce7b',1,'mxnet::GPUAuxStream']]],
   ['postorderdfsvisit',['PostOrderDFSVisit',['../namespacennvm.html#a24f3e607ea360d951389b4b9b83eb7fe',1,'nnvm']]],
   ['preauxstreamusesync',['PreAuxStreamUseSync',['../classmxnet_1_1GPUAuxStream.html#a2add80e8e23386df1646434630f405f4',1,'mxnet::GPUAuxStream']]],
