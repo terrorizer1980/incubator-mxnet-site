@@ -1238,7 +1238,7 @@ The pooling kernel and stride sizes are automatically chosen for desired output 
 
 <dl class="function">
 <dt id="mxnet.ndarray.contrib.BilinearResize2D">
-<code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">BilinearResize2D</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">like=None</em>, <em class="sig-param">height=_Null</em>, <em class="sig-param">width=_Null</em>, <em class="sig-param">scale_height=_Null</em>, <em class="sig-param">scale_width=_Null</em>, <em class="sig-param">mode=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.BilinearResize2D" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">BilinearResize2D</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">like=None</em>, <em class="sig-param">height=_Null</em>, <em class="sig-param">width=_Null</em>, <em class="sig-param">scale_height=_Null</em>, <em class="sig-param">scale_width=_Null</em>, <em class="sig-param">mode=_Null</em>, <em class="sig-param">align_corners=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.BilinearResize2D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform 2D resizing (upsampling or downsampling) for 4D input using bilinear interpolation.</p>
 <p>Expected input is a 4 dimensional NDArray (NCHW) and the output
 with the shape of (N x C x height x width).
@@ -1246,7 +1246,7 @@ The key idea of bilinear interpolation is to perform linear interpolation
 first in one direction, and then again in the other direction. See the wikipedia of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Bilinear_interpolation">Bilinear interpolation</a>
 for more details.</p>
-<p>Defined in src/operator/contrib/bilinear_resize.cc:L215</p>
+<p>Defined in src/operator/contrib/bilinear_resize.cc:L220</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1257,6 +1257,7 @@ for more details.</p>
 <li><p><strong>scale_height</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the height (optional, used in modes “scale” and “odd_scale”)</p></li>
 <li><p><strong>scale_width</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – sampling scale of the width (optional, used in modes “scale” and “odd_scale”)</p></li>
 <li><p><strong>mode</strong> (<em>{'like'</em><em>, </em><em>'odd_scale'</em><em>, </em><em>'size'</em><em>, </em><em>'to_even_down'</em><em>, </em><em>'to_even_up'</em><em>, </em><em>'to_odd_down'</em><em>, </em><em>'to_odd_up'}</em><em>,</em><em>optional</em><em>, </em><em>default='size'</em>) – resizing mode. “simple” - output height equals parameter “height” if “scale_height” parameter is not defined or input height multiplied by “scale_height” otherwise. Same for width;”odd_scale” - if original height or width is odd, then result height is calculated like result_h = (original_h - 1) * scale + 1; for scale &gt; 1 the result shape would be like if we did deconvolution with kernel = (1, 1) and stride = (height_scale, width_scale); and for scale &lt; 1 shape would be like we did convolution with kernel = (1, 1) and stride = (int(1 / height_scale), int( 1/ width_scale);”like” - resize first input to the height and width of second input; “to_even_down” - resize input to nearest lower even height and width (if original height is odd then result height = original height - 1);”to_even_up” - resize input to nearest bigger even height and width (if original height is odd then result height = original height + 1);”to_odd_down” - resize input to nearest odd height and width (if original height is odd then result height = original height - 1);”to_odd_up” - resize input to nearest odd height and width (if original height is odd then result height = original height + 1);</p></li>
+<li><p><strong>align_corners</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – With align_corners = True, the interpolating doesn’t proportionally align theoutput and input pixels, and thus the output values can depend on the input size.</p></li>
 <li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
 </ul>
 </dd>
