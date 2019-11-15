@@ -877,7 +877,7 @@
         <span class="n">shape_info</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">])</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> @</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()),</span>
                                       <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                      <span class="n">shape_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+                                      <span class="n">shape_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">NDArray</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
@@ -1361,14 +1361,14 @@
 <span class="sd">        `squeeze_axes`: a sequence of axes to squeeze in the value array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>  <span class="c1"># pylint: disable=unidiomatic-typecheck</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
                 <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">value_nd</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="n">value_nd</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> does not support assignment with non-array-like &#39;</span>
                                 <span class="s1">&#39;object </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
@@ -1852,7 +1852,7 @@
 
         <span class="n">shape_nd_permut</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs_nd_permut</span><span class="p">)</span>
         <span class="n">converted_idcs_short</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idcs_permut_short</span><span class="p">,</span> <span class="n">shape_nd_permut</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">bcast_idcs_permut_short</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_broadcast_advanced_indices</span><span class="p">(</span>
@@ -1861,7 +1861,7 @@
 
         <span class="c1"># Get the ndim of advanced indexing subspace</span>
         <span class="n">converted_advanced_idcs</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_advanced_index_to_array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ax_len</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">adv_idcs_nd</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">adv_axs_nd</span><span class="p">])</span>
         <span class="p">]</span>
         <span class="n">bcast_advanced_shape</span> <span class="o">=</span> <span class="n">_broadcast_shapes</span><span class="p">(</span><span class="n">converted_advanced_idcs</span><span class="p">)</span>
@@ -3066,6 +3066,23 @@
         <span class="k">return</span> <span class="n">Context</span><span class="p">(</span><span class="n">Context</span><span class="o">.</span><span class="n">devtype2str</span><span class="p">[</span><span class="n">dev_typeid</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="n">dev_id</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Device context of the array. Has the same meaning as context.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; x = mx.nd.array([1, 2, 3, 4])</span>
+<span class="sd">        &gt;&gt;&gt; x.ctx</span>
+<span class="sd">        cpu(0)</span>
+<span class="sd">        &gt;&gt;&gt; type(x.ctx)</span>
+<span class="sd">        &lt;class &#39;mxnet.context.Context&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; y = mx.nd.zeros((2,3), mx.gpu(0))</span>
+<span class="sd">        &gt;&gt;&gt; y.ctx</span>
+<span class="sd">        gpu(0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Data-type of the array&#39;s elements.</span>
 
@@ -3212,7 +3229,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">copy</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
@@ -3278,7 +3295,7 @@
 <span class="sd">        array([[ 1.,  1.,  1.],</span>
 <span class="sd">               [ 1.,  1.,  1.]], dtype=float32)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="NDArray.slice_assign_scalar"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.NDArray.slice_assign_scalar">[docs]</a>    <span class="k">def</span> <span class="nf">slice_assign_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3536,7 +3553,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is added as an NDArray class method in order to support polymorphism in NDArray and numpy.ndarray indexing</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_internal</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_scatter_set_nd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_nd</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -5174,7 +5191,7 @@
         <span class="k">assert</span> <span class="n">shape_rest2</span> <span class="o">==</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">assert</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span>
     <span class="n">ret_shape</span> <span class="o">=</span> <span class="n">shape_rest1</span> <span class="o">+</span> <span class="p">(</span><span class="n">shape_axis</span><span class="p">,)</span> <span class="o">+</span> <span class="n">shape_rest2</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">ret_shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">ret_shape</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">begin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ret_shape</span><span class="p">]</span>
