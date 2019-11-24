@@ -2403,7 +2403,7 @@ only the row slices whose indices appear in grad.indices are updated (<span clas
 
 
 
-Defined in src/operator/optimizer_op.cc:L686</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L688</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -5137,7 +5137,7 @@ available at http:<span class="cmt">//proceedings.mlr.press/v70/zheng17a/zheng17
 
 
 
-Defined in src/operator/optimizer_op.cc:L638</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L640</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -5180,7 +5180,7 @@ only the row slices whose indices appear in grad.indices are updated (<span clas
 
 
 
-Defined in src/operator/optimizer_op.cc:L874</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L876</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -5378,6 +5378,99 @@ Example::
 
 
 Defined in src/operator/contrib/krprod.cc:L108</pre></div><dl class="paramcmts block"><dt class="param">args</dt><dd class="cmt"><p>Positional input matrices</p></dd><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.javaapi.NDArrayBase#lamb_update_phase1" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="lamb_update_phase1(po:org.apache.mxnet.javaapi.lamb_update_phase1Param):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+      <a id="lamb_update_phase1(lamb_update_phase1Param):Array[NDArray]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lamb_update_phase1</span><span class="params">(<span name="po">po: <a href="lamb_update_phase1Param.html" class="extype" name="org.apache.mxnet.javaapi.lamb_update_phase1Param">lamb_update_phase1Param</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@lamb_update_phase1(po:org.apache.mxnet.javaapi.lamb_update_phase1Param):Array[org.apache.mxnet.javaapi.NDArray]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Phase I of lamb update it performs the following operations and returns g:.
+
+Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+.. math::
+    \begin{gather*}
+    grad = grad * rescale_grad
+    <span class="kw">if</span> (grad &lt; -clip_gradient)
+    then
+         grad = -clip_gradient
+    <span class="kw">if</span> (grad &gt; clip_gradient)
+    then
+         grad = clip_gradient
+
+    mean = beta1 * mean + (<span class="num">1</span> - beta1) * grad;
+    variance = beta2 * variance + (<span class="num">1.</span> - beta2) * grad ^ <span class="num">2</span>;
+
+    <span class="kw">if</span> (bias_correction)
+    then
+         mean_hat = mean / (<span class="num">1.</span> - beta1^t);
+         var_hat = <span class="kw">var</span> / (<span class="num">1</span> - beta2^t);
+         g = mean_hat / (var_hat^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight;
+    <span class="kw">else</span>
+         g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight_data[i];
+    \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L953</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.javaapi.NDArrayBase#lamb_update_phase2" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="lamb_update_phase2(po:org.apache.mxnet.javaapi.lamb_update_phase2Param):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+      <a id="lamb_update_phase2(lamb_update_phase2Param):Array[NDArray]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lamb_update_phase2</span><span class="params">(<span name="po">po: <a href="lamb_update_phase2Param.html" class="extype" name="org.apache.mxnet.javaapi.lamb_update_phase2Param">lamb_update_phase2Param</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@lamb_update_phase2(po:org.apache.mxnet.javaapi.lamb_update_phase2Param):Array[org.apache.mxnet.javaapi.NDArray]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Phase II of lamb update it performs the following operations and updates grad.
+
+Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+.. math::
+    \begin{gather*}
+    <span class="kw">if</span> (lower_bound &gt;= <span class="num">0</span>)
+    then
+         r1 = max(r1, lower_bound)
+    <span class="kw">if</span> (upper_bound &gt;= <span class="num">0</span>)
+    then
+         r1 = max(r1, upper_bound)
+
+    <span class="kw">if</span> (r1 == <span class="num">0</span> or r2 == <span class="num">0</span>)
+    then
+         lr = lr
+    <span class="kw">else</span>
+         lr = lr * (r1/r2)
+    weight = weight - lr * g
+    \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L992</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6673,7 +6766,7 @@ Defined in src/operator/nn/moments.cc:L54</pre></div><dl class="paramcmts block"
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Update function <span class="kw">for</span> multi-precision Nesterov Accelerated Gradient( NAG) optimizer.
 
 
-Defined in src/operator/optimizer_op.cc:L743</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L745</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6804,7 +6897,7 @@ Where the parameter ``momentum`` is the decay rate of momentum estimates at each
 
 
 
-Defined in src/operator/optimizer_op.cc:L470</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L472</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6833,7 +6926,7 @@ It updates the weights using::
 
 
 
-Defined in src/operator/optimizer_op.cc:L415</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L417</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6874,7 +6967,7 @@ Where the parameter ``momentum`` is the decay rate of momentum estimates at each
 
 
 
-Defined in src/operator/optimizer_op.cc:L372</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L374</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6903,7 +6996,7 @@ It updates the weights using::
 
 
 
-Defined in src/operator/optimizer_op.cc:L327</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L329</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -6963,7 +7056,7 @@ Where
 
 
 
-Defined in src/operator/optimizer_op.cc:L724</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L726</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -8626,7 +8719,7 @@ Hinton suggests the momentum term :math:`\gamma` to be <span class="num">0.9</sp
 
 
 
-Defined in src/operator/optimizer_op.cc:L795</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L797</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -8671,7 +8764,7 @@ Graves suggests the momentum term :math:`\gamma_1` to be <span class="num">0.95<
 to be <span class="num">0.9</span> and the learning rate :math:`\eta` to be <span class="num">0.0001</span>.
 
 
-Defined in src/operator/optimizer_op.cc:L834</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L836</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -9239,7 +9332,7 @@ only the row slices whose indices appear in grad.indices are updated (<span clas
 
 
 
-Defined in src/operator/optimizer_op.cc:L563</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L565</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -9274,7 +9367,7 @@ only the row slices whose indices appear in grad.indices are updated::
 
 
 
-Defined in src/operator/optimizer_op.cc:L522</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L524</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -9430,7 +9523,7 @@ It updates the weights using::
    - sparse ndarray not supported <span class="kw">for</span> <span class="kw">this</span> optimizer yet.
 
 
-Defined in src/operator/optimizer_op.cc:L61</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L63</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
@@ -9469,7 +9562,7 @@ Where the parameter ``momentum`` is the decay rate of momentum estimates at each
    - sparse ndarray not supported <span class="kw">for</span> <span class="kw">this</span> optimizer yet.
 
 
-Defined in src/operator/optimizer_op.cc:L90</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+Defined in src/operator/optimizer_op.cc:L92</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               

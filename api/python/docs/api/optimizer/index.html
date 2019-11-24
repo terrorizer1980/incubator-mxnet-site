@@ -697,13 +697,16 @@ Show Source
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.Signum" title="mxnet.optimizer.Signum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Signum</span></code></a>([learning_rate, momentum, wd_lh])</p></td>
 <td><p>The Signum optimizer that takes the sign of gradient or momentum.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.Test" title="mxnet.optimizer.Test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Test</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.LAMB" title="mxnet.optimizer.LAMB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LAMB</span></code></a>([learning_rate, beta1, beta2, epsilon, …])</p></td>
+<td><p>LAMB Optimizer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.Test" title="mxnet.optimizer.Test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Test</span></code></a>(**kwargs)</p></td>
 <td><p>The Test optimizer</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.Updater" title="mxnet.optimizer.Updater"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Updater</span></code></a>(optimizer)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.Updater" title="mxnet.optimizer.Updater"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Updater</span></code></a>(optimizer)</p></td>
 <td><p>Updater for kvstore.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.ccSGD" title="mxnet.optimizer.ccSGD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ccSGD</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.ccSGD" title="mxnet.optimizer.ccSGD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ccSGD</span></code></a>(*args, **kwargs)</p></td>
 <td><p>[DEPRECATED] Same as <cite>SGD</cite>. Left here for backward compatibility.</p></td>
 </tr>
 </tbody>
@@ -2516,6 +2519,70 @@ called only once for each weight.</p>
 <dl class="method">
 <dt id="mxnet.optimizer.Signum.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">weight</em>, <em class="sig-param">grad</em>, <em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/optimizer.html#Signum.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.Signum.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the given parameter using the corresponding gradient and state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>int</em>) – The unique index of the parameter into the individual learning
+rates and weight decays. Learning rates and weight decay
+may be set via <cite>set_lr_mult()</cite> and <cite>set_wd_mult()</cite>, respectively.</p></li>
+<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The parameter to be updated.</p></li>
+<li><p><strong>grad</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The gradient of the objective with respect to this parameter.</p></li>
+<li><p><strong>state</strong> (<em>any obj</em>) – The state returned by <cite>create_state()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mxnet.optimizer.LAMB">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.optimizer.</code><code class="sig-name descname">LAMB</code><span class="sig-paren">(</span><em class="sig-param">learning_rate=0.001</em>, <em class="sig-param">beta1=0.9</em>, <em class="sig-param">beta2=0.999</em>, <em class="sig-param">epsilon=1e-06</em>, <em class="sig-param">lower_bound=None</em>, <em class="sig-param">upper_bound=None</em>, <em class="sig-param">bias_correction=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/optimizer.html#LAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LAMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.optimizer.optimizer.Optimizer</span></code></p>
+<p>LAMB Optimizer.</p>
+<p><strong>Methods</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.LAMB.create_state" title="mxnet.optimizer.LAMB.create_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_state</span></code></a>(index, weight)</p></td>
+<td><p>Creates auxiliary state for a given weight.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.LAMB.update" title="mxnet.optimizer.LAMB.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(index, weight, grad, state)</p></td>
+<td><p>Updates the given parameter using the corresponding gradient and state.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.optimizer.LAMB.create_state">
+<code class="sig-name descname">create_state</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">weight</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/optimizer.html#LAMB.create_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LAMB.create_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates auxiliary state for a given weight.</p>
+<p>Some optimizers require additional states, e.g. as momentum, in addition
+to gradients in order to update weights. This function creates state
+for a given weight which will be used in <cite>update</cite>. This function is
+called only once for each weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>int</em>) – An unique index to identify the weight.</p></li>
+<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>state</strong> – The state associated with the weight.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>any obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.optimizer.LAMB.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">weight</em>, <em class="sig-param">grad</em>, <em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/optimizer.html#LAMB.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LAMB.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the given parameter using the corresponding gradient and state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

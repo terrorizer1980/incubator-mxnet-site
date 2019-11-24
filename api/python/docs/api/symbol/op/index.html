@@ -1038,6 +1038,12 @@ Show Source
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.symbol.op.khatri_rao" title="mxnet.symbol.op.khatri_rao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">khatri_rao</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Computes the Khatri-Rao product of the input matrices.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.symbol.op.lamb_update_phase1" title="mxnet.symbol.op.lamb_update_phase1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lamb_update_phase1</span></code></a>([weight, grad, mean, …])</p></td>
+<td><p>Phase I of lamb update it performs the following operations and returns g:.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.symbol.op.lamb_update_phase2" title="mxnet.symbol.op.lamb_update_phase2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lamb_update_phase2</span></code></a>([weight, g, r1, r2, lr, …])</p></td>
+<td><p>Phase II of lamb update it performs the following operations and updates grad.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.symbol.op.linalg_det" title="mxnet.symbol.op.linalg_det"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linalg_det</span></code></a>([A, name, attr, out])</p></td>
 <td><p>Compute the determinant of a matrix.</p></td>
 </tr>
@@ -4278,7 +4284,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, m a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L686</p>
+<p>Defined in src/operator/optimizer_op.cc:L688</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -6842,7 +6848,7 @@ d_t = \frac{ 1 - \beta_1^t }{ \eta_t } (\sqrt{ \frac{ v_t }{ 1 - \beta_2^t } } +
 \sigma_t = d_t - \beta_1 d_{t-1}
 z_t = \beta_1 z_{ t-1 } + (1 - \beta_1^t) g_t - \sigma_t W_{t-1}
 W_t = - \frac{ z_t }{ d_t }\end{split}\]</div>
-<p>Defined in src/operator/optimizer_op.cc:L638</p>
+<p>Defined in src/operator/optimizer_op.cc:L640</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -6893,7 +6899,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, z a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sign</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">*</span> <span class="n">lamda1</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">/</span> <span class="p">((</span><span class="n">beta</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="n">row</span><span class="p">]))</span> <span class="o">/</span> <span class="n">learning_rate</span> <span class="o">+</span> <span class="n">wd</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">lamda1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L874</p>
+<p>Defined in src/operator/optimizer_op.cc:L876</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -7084,6 +7090,98 @@ This function support variable length of positional input.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em>[</em><em>]</em>) – Positional input matrices</p></li>
+<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result symbol.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.symbol.op.lamb_update_phase1">
+<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">lamb_update_phase1</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">mean=None</em>, <em class="sig-param">var=None</em>, <em class="sig-param">beta1=_Null</em>, <em class="sig-param">beta2=_Null</em>, <em class="sig-param">epsilon=_Null</em>, <em class="sig-param">t=_Null</em>, <em class="sig-param">bias_correction=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.lamb_update_phase1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase I of lamb update it performs the following operations and returns g:.</p>
+<p>Link to paper: <a class="reference external" href="https://arxiv.org/pdf/1904.00962.pdf">https://arxiv.org/pdf/1904.00962.pdf</a></p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{gather*}
+grad = grad * rescale_grad
+if (grad &lt; -clip_gradient)
+then
+     grad = -clip_gradient
+if (grad &gt; clip_gradient)
+then
+     grad = clip_gradient\\mean = beta1 * mean + (1 - beta1) * grad;
+variance = beta2 * variance + (1. - beta2) * grad ^ 2;\\if (bias_correction)
+then
+     mean_hat = mean / (1. - beta1^t);
+     var_hat = var / (1 - beta2^t);
+     g = mean_hat / (var_hat^(1/2) + epsilon) + wd * weight;
+else
+     g = mean / (var_data^(1/2) + epsilon) + wd * weight_data[i];
+\end{gather*}\end{aligned}\end{align} \]</div>
+<p>Defined in src/operator/optimizer_op.cc:L953</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>weight</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Weight</p></li>
+<li><p><strong>grad</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Gradient</p></li>
+<li><p><strong>mean</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Moving mean</p></li>
+<li><p><strong>var</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Moving variance</p></li>
+<li><p><strong>beta1</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.899999976</em>) – The decay rate for the 1st moment estimates.</p></li>
+<li><p><strong>beta2</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.999000013</em>) – The decay rate for the 2nd moment estimates.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=9.99999997e-07</em>) – A small constant for numerical stability.</p></li>
+<li><p><strong>t</strong> (<em>float</em><em>, </em><em>required</em>) – Index update count.</p></li>
+<li><p><strong>bias_correction</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Whether to use bias correction.</p></li>
+<li><p><strong>wd</strong> (<em>float</em><em>, </em><em>required</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</p></li>
+<li><p><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</p></li>
+<li><p><strong>clip_gradient</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient &lt;= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</p></li>
+<li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result symbol.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol">Symbol</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.symbol.op.lamb_update_phase2">
+<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">lamb_update_phase2</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">g=None</em>, <em class="sig-param">r1=None</em>, <em class="sig-param">r2=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">lower_bound=_Null</em>, <em class="sig-param">upper_bound=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.lamb_update_phase2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase II of lamb update it performs the following operations and updates grad.</p>
+<p>Link to paper: <a class="reference external" href="https://arxiv.org/pdf/1904.00962.pdf">https://arxiv.org/pdf/1904.00962.pdf</a></p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{gather*}
+if (lower_bound &gt;= 0)
+then
+     r1 = max(r1, lower_bound)
+if (upper_bound &gt;= 0)
+then
+     r1 = max(r1, upper_bound)\\if (r1 == 0 or r2 == 0)
+then
+     lr = lr
+else
+     lr = lr * (r1/r2)
+weight = weight - lr * g
+\end{gather*}\end{aligned}\end{align} \]</div>
+<p>Defined in src/operator/optimizer_op.cc:L992</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>weight</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Weight</p></li>
+<li><p><strong>g</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Output of lamb_update_phase 1</p></li>
+<li><p><strong>r1</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – r1</p></li>
+<li><p><strong>r2</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – r2</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Lower limit of norm of weight. If lower_bound &lt;= 0, Lower limit is not set</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=-1</em>) – Upper limit of norm of weight. If upper_bound &lt;= 0, Upper limit is not set</p></li>
 <li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</p></li>
 </ul>
 </dd>
@@ -8400,7 +8498,7 @@ var = [2.9166667]</p>
 <dt id="mxnet.symbol.op.mp_nag_mom_update">
 <code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">mp_nag_mom_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">mom=None</em>, <em class="sig-param">weight32=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">momentum=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.mp_nag_mom_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update function for multi-precision Nesterov Accelerated Gradient( NAG) optimizer.</p>
-<p>Defined in src/operator/optimizer_op.cc:L743</p>
+<p>Defined in src/operator/optimizer_op.cc:L745</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8547,7 +8645,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 </pre></div>
 </div>
 <p>Where the parameter <code class="docutils literal notranslate"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
-<p>Defined in src/operator/optimizer_op.cc:L470</p>
+<p>Defined in src/operator/optimizer_op.cc:L472</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8578,7 +8676,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L415</p>
+<p>Defined in src/operator/optimizer_op.cc:L417</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8616,7 +8714,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 </pre></div>
 </div>
 <p>Where the parameter <code class="docutils literal notranslate"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
-<p>Defined in src/operator/optimizer_op.cc:L372</p>
+<p>Defined in src/operator/optimizer_op.cc:L374</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8647,7 +8745,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L327</p>
+<p>Defined in src/operator/optimizer_op.cc:L329</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8704,7 +8802,7 @@ W_t = W_{t-1} - v_t\end{split}\]</div>
 <span class="math notranslate nohighlight">\(\gamma\)</span> is the decay rate of the momentum estimate
 <span class="math notranslate nohighlight">\(\v_t\)</span> is the update vector at time step <cite>t</cite>
 <span class="math notranslate nohighlight">\(\W_t\)</span> is the weight vector at time step <cite>t</cite></p>
-<p>Defined in src/operator/optimizer_op.cc:L724</p>
+<p>Defined in src/operator/optimizer_op.cc:L726</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10371,7 +10469,7 @@ gradient and <span class="math notranslate nohighlight">\(E[g^2]_t\)</span> is t
 Tieleman &amp; Hinton, 2012.</p>
 <p>Hinton suggests the momentum term <span class="math notranslate nohighlight">\(\gamma\)</span> to be 0.9 and the learning rate
 <span class="math notranslate nohighlight">\(\eta\)</span> to be 0.001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L795</p>
+<p>Defined in src/operator/optimizer_op.cc:L797</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10415,7 +10513,7 @@ E[g]_t = \gamma_1 * E[g]_{t-1} + (1 - \gamma_1) * g_t\\
 <a class="reference external" href="http://arxiv.org/pdf/1308.0850v5.pdf">http://arxiv.org/pdf/1308.0850v5.pdf</a> Eq(38) - Eq(45) by Alex Graves, 2013.</p>
 <p>Graves suggests the momentum term <span class="math notranslate nohighlight">\(\gamma_1\)</span> to be 0.95, <span class="math notranslate nohighlight">\(\gamma_2\)</span>
 to be 0.9 and the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> to be 0.0001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L834</p>
+<p>Defined in src/operator/optimizer_op.cc:L836</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10957,7 +11055,7 @@ only the row slices whose indices appear in grad.indices are updated (for both w
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L563</p>
+<p>Defined in src/operator/optimizer_op.cc:L565</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10996,7 +11094,7 @@ only the row slices whose indices appear in grad.indices are updated:</p>
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L522</p>
+<p>Defined in src/operator/optimizer_op.cc:L524</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -11142,7 +11240,7 @@ W_t = W_{t-1} - \eta_t \text{sign}(g_t)\end{split}\]</div>
 <li><p>sparse ndarray not supported for this optimizer yet.</p></li>
 </ul>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L61</p>
+<p>Defined in src/operator/optimizer_op.cc:L63</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -11184,7 +11282,7 @@ weight = weight - learning_rate * sign(state)</p>
 <li><p>sparse ndarray not supported for this optimizer yet.</p></li>
 </ul>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L90</p>
+<p>Defined in src/operator/optimizer_op.cc:L92</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
