@@ -1,8 +1,8 @@
 var searchData=
 [
   ['compiler',['compiler',['../namespacennvm_1_1compiler.html',1,'nnvm']]],
-  ['n',['n',['../structmkldnn__rnn__packed__desc__t.html#a8b2944bc5d3701332ad68c4e654e1e0d',1,'mkldnn_rnn_packed_desc_t']]],
-  ['n_5fparts',['n_parts',['../structmkldnn__rnn__packed__desc__t.html#a3455db9fa85140ba598877f0f501d56c',1,'mkldnn_rnn_packed_desc_t']]],
+  ['n',['n',['../structdnnl__rnn__packed__desc__t.html#aaaacc0e32dd606e63f4c927239fbad62',1,'dnnl_rnn_packed_desc_t']]],
+  ['n_5fparts',['n_parts',['../structdnnl__rnn__packed__desc__t.html#ad47ed01dc381f613dda819d83c6d64cc',1,'dnnl_rnn_packed_desc_t']]],
   ['name',['name',['../structdmlc_1_1io_1_1URI.html#a94b175008085c6dbdc1b76befe2afdef',1,'dmlc::io::URI::name()'],['../classdmlc_1_1FunctionRegEntryBase.html#af2acc06f141492afe85d4fff777d7f31',1,'dmlc::FunctionRegEntryBase::name()'],['../structLibFeature.html#ac8698edfb04ff270b1f3bc46a10aab4e',1,'LibFeature::name()'],['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#a02c180f08b215e9553d3c93fa783f9a4',1,'mxnet::op::SimpleOpRegEntry::name()'],['../structnnvm_1_1NodeAttrs.html#a111a35e13d9fb30297d4e035aa0b4f8a',1,'nnvm::NodeAttrs::name()'],['../classnnvm_1_1Op.html#af67a5d6998765023aeed6761df292b6c',1,'nnvm::Op::name()'],['../classmxnet_1_1cpp_1_1EvalMetric.html#aa6c5fffe252895a404f0d1016897805a',1,'mxnet::cpp::EvalMetric::name()'],['../classdmlc_1_1ThreadGroup_1_1Thread.html#ae4febad4564786929d3f440e7285c7a9',1,'dmlc::ThreadGroup::Thread::name()'],['../classnnvm_1_1Layout.html#ace4341f7c69902d39d77791ddd7ce9ea',1,'nnvm::Layout::name()']]],
   ['names',['names',['../structmxnet_1_1features_1_1EnumNames.html#a30adf925dfeb4e3eef24434f5e1996c4',1,'mxnet::features::EnumNames']]],
   ['nanchecker',['NaNChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303a99cb159d08f27ceb0738438da1dde770',1,'mxnet']]],
@@ -26,7 +26,7 @@ var searchData=
   ['ndim',['ndim',['../structDLTensor.html#a8b28a3876c4d157ccea80956f3ec18f5',1,'DLTensor::ndim()'],['../classmxnet_1_1TBlob.html#a3be3b640e59a480b8ac5369d73b117de',1,'mxnet::TBlob::ndim()'],['../classmxnet_1_1Tuple.html#a0b256fbd00206384efb20873d39d5994',1,'mxnet::Tuple::ndim()'],['../classnnvm_1_1Layout.html#a8b2895d2ae0f82f35837bb45596ca763',1,'nnvm::Layout::ndim()'],['../classnnvm_1_1Tuple.html#ab0525b3d997b77dfd5c6b35299b250f6',1,'nnvm::Tuple::ndim()'],['../structmxnet_1_1cpp_1_1Shape.html#a02447c38a8958aa6b9cdc20bd5caa58d',1,'mxnet::cpp::Shape::ndim()']]],
   ['ndim_5f',['ndim_',['../classmxnet_1_1Tuple.html#a424233ed3bd43df18ae411f18b27a400',1,'mxnet::Tuple::ndim_()'],['../classnnvm_1_1Tuple.html#a65b30701dcaaf1c0253a16f5bcd89dce',1,'nnvm::Tuple::ndim_()']]],
   ['ndim_5fis_5fknown',['ndim_is_known',['../namespacemxnet.html#a429718781f8f77397f9437016511be6e',1,'mxnet::ndim_is_known(const int ndim)'],['../namespacemxnet.html#afb878a67c0368b32a9baf1ef654eb855',1,'mxnet::ndim_is_known(const TShape &amp;x)']]],
-  ['ndims',['ndims',['../structmkldnn__memory__desc__t.html#a8fc71fc8a04e665573f86442bda4dc4c',1,'mkldnn_memory_desc_t']]],
+  ['ndims',['ndims',['../structdnnl__memory__desc__t.html#a72ed50c98f23f513550255ca8917b473',1,'dnnl_memory_desc_t']]],
   ['ndlisthandle',['NDListHandle',['../c__predict__api_8h.html#a3058aee7831edae29e9ac39556e5fe5c',1,'c_predict_api.h']]],
   ['need_5fgrad',['need_grad',['../structmxnet_1_1OpContext.html#adffa555a95b50893b5fe7a2930a71d62',1,'mxnet::OpContext']]],
   ['negativechecker',['NegativeChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303a38bfc686acfe31c2670216c1e0ef65ef',1,'mxnet']]],

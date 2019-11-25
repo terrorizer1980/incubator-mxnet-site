@@ -13,7 +13,7 @@ var searchData=
   ['has_5fsaveload',['has_saveload',['../structdmlc_1_1has__saveload.html',1,'dmlc']]],
   ['has_5fvalue',['has_value',['../classdmlc_1_1optional.html#a11f41d427ead64b2de3e06f381cf1102',1,'dmlc::optional']]],
   ['hasattr',['HasAttr',['../classnnvm_1_1Graph.html#a5ee51dcdd4b302f82bdd205c94a45039',1,'nnvm::Graph']]],
-  ['hash',['hash',['../structmkldnn__version__t.html#a9bfdfc422467a2537d7f69e792dedd6c',1,'mkldnn_version_t']]],
+  ['hash',['hash',['../structdnnl__version__t.html#a1c2a7e8b3f26ed376b537dd511feccad',1,'dnnl_version_t']]],
   ['hash_3c_20dmlc_3a_3aoptional_3c_20t_20_3e_20_3e',['hash&lt; dmlc::optional&lt; T &gt; &gt;',['../structstd_1_1hash_3_01dmlc_1_1optional_3_01T_01_4_01_4.html',1,'std']]],
   ['hash_3c_20mxnet_3a_3atshape_20_3e',['hash&lt; mxnet::TShape &gt;',['../structstd_1_1hash_3_01mxnet_1_1TShape_01_4.html',1,'std']]],
   ['hash_3c_20mxnet_3a_3atuple_3c_20t_20_3e_20_3e',['hash&lt; mxnet::Tuple&lt; T &gt; &gt;',['../structstd_1_1hash_3_01mxnet_1_1Tuple_3_01T_01_4_01_4.html',1,'std']]],

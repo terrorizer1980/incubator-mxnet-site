@@ -143,6 +143,6 @@ var searchData=
   ['extension_5ftype_5finfo_3c_20nnvm_3a_3acompiler_3a_3aattrdict_20_3e',['extension_type_info&lt; nnvm::compiler::AttrDict &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1compiler_1_1AttrDict_01_4.html',1,'tvm::runtime']]],
   ['extension_5ftype_5finfo_3c_20nnvm_3a_3agraph_20_3e',['extension_type_info&lt; nnvm::Graph &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1Graph_01_4.html',1,'tvm::runtime']]],
   ['extension_5ftype_5finfo_3c_20nnvm_3a_3asymbol_20_3e',['extension_type_info&lt; nnvm::Symbol &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1Symbol_01_4.html',1,'tvm::runtime']]],
-  ['extra',['extra',['../structmkldnn__memory__desc__t.html#aca773206a808b23fee49211829ef5fc9',1,'mkldnn_memory_desc_t']]],
+  ['extra',['extra',['../structdnnl__memory__desc__t.html#ac60269949e318245e74713a7a0dae135',1,'dnnl_memory_desc_t']]],
   ['extra_5fdata',['extra_data',['../structmxnet_1_1DataInst.html#a311b93ed629984fdcb29cb346d3062ee',1,'mxnet::DataInst::extra_data()'],['../structmxnet_1_1DataBatch.html#a2e9faeff00dd061f04a88c3ea5758aa2',1,'mxnet::DataBatch::extra_data()']]]
 ];

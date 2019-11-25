@@ -1,6 +1,15 @@
 var searchData=
 [
   ['check_5fcuda_5ferror',['CHECK_CUDA_ERROR',['../cuda__utils_8h.html#afc69a418242c5b851993bc2307b1c897',1,'cuda_utils.h']]],
+  ['const_5fmkldnn_5fengine_5ft',['const_mkldnn_engine_t',['../mkldnn__dnnl__mangling_8h.html#aad5a1e10b866732fa6e83f9ea308cfa7',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fmemory_5ft',['const_mkldnn_memory_t',['../mkldnn__dnnl__mangling_8h.html#a250ffe5adb7175b45a81a27589bd4b49',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fop_5fdesc_5ft',['const_mkldnn_op_desc_t',['../mkldnn__dnnl__mangling_8h.html#a1eb33adfeafa3d5abedc4f73afc194d4',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fpost_5fops_5ft',['const_mkldnn_post_ops_t',['../mkldnn__dnnl__mangling_8h.html#a9f2526c40c2b7227377cc43402b646c3',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fprimitive_5fattr_5ft',['const_mkldnn_primitive_attr_t',['../mkldnn__dnnl__mangling_8h.html#a017f240ed8119578779be37445f15d4f',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fprimitive_5fdesc_5fiterator_5ft',['const_mkldnn_primitive_desc_iterator_t',['../mkldnn__dnnl__mangling_8h.html#aae4d5a9a6cb9fece5f42412e36580d7f',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fprimitive_5fdesc_5ft',['const_mkldnn_primitive_desc_t',['../mkldnn__dnnl__mangling_8h.html#a0949d2c78716796081f09273783c31fc',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fprimitive_5ft',['const_mkldnn_primitive_t',['../mkldnn__dnnl__mangling_8h.html#a4493f2fb81b757174f9898ec23ebd15a',1,'mkldnn_dnnl_mangling.h']]],
+  ['const_5fmkldnn_5fstream_5ft',['const_mkldnn_stream_t',['../mkldnn__dnnl__mangling_8h.html#a4ad6231369764bd81c36e81255876f8b',1,'mkldnn_dnnl_mangling.h']]],
   ['cublas_5fcall',['CUBLAS_CALL',['../cuda__utils_8h.html#a685d7ca3c9370ff471665abcacdeb381',1,'cuda_utils.h']]],
   ['cuda_5fcall',['CUDA_CALL',['../cuda__utils_8h.html#a06cc7d24ca66505e69f5ad40009f5e8d',1,'cuda_utils.h']]],
   ['cuda_5fdriver_5fcall',['CUDA_DRIVER_CALL',['../cuda__utils_8h.html#a0d9b08b9ef45122c54bf5a121aeab5c3',1,'cuda_utils.h']]],

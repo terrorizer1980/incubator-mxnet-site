@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['oc',['oc',['../structmkldnn__wino__desc__t.html#a4d1e331529273a5fe8fa5f40624f9f8a',1,'mkldnn_wino_desc_t']]],
-  ['oc2_5fblock',['oc2_block',['../structmkldnn__wino__desc__t.html#a5e62e2882a9163b7eff96d36b50b9c97',1,'mkldnn_wino_desc_t']]],
-  ['oc_5fblock',['oc_block',['../structmkldnn__wino__desc__t.html#a47b3d2a7106931317f6d78102afd1215',1,'mkldnn_wino_desc_t']]],
+  ['oc',['oc',['../structdnnl__wino__desc__t.html#a04f0e0fac9ca350056dea292fb92ca49',1,'dnnl_wino_desc_t']]],
+  ['oc2_5fblock',['oc2_block',['../structdnnl__wino__desc__t.html#a324bb0cdb4c4d8d40cc3423317bf05d4',1,'dnnl_wino_desc_t']]],
+  ['oc_5fblock',['oc_block',['../structdnnl__wino__desc__t.html#a2c3e28d84fe63d763042457137e3e865',1,'dnnl_wino_desc_t']]],
   ['offset',['offset',['../structdmlc_1_1RowBlock.html#ae3c81282e6a2531aaaa9f9ec94a8ab80',1,'dmlc::RowBlock']]],
-  ['offset0',['offset0',['../structmkldnn__memory__desc__t.html#afd563403ebe33b60eda1aaae08e77be8',1,'mkldnn_memory_desc_t']]],
-  ['offset_5fcompensation',['offset_compensation',['../structmkldnn__rnn__packed__desc__t.html#a0653d6ce8928edd52e8326c444d8b8db',1,'mkldnn_rnn_packed_desc_t']]],
+  ['offset0',['offset0',['../structdnnl__memory__desc__t.html#a20a5edce338892ffdba47f8f11ddfe91',1,'dnnl_memory_desc_t']]],
+  ['offset_5fcompensation',['offset_compensation',['../structdnnl__rnn__packed__desc__t.html#a3d5d49b02b710cd972fc9a84218e04d8',1,'dnnl_rnn_packed_desc_t']]],
   ['offsets',['offsets',['../structnnvm_1_1top_1_1MultiBoxPriorParam.html#a493804ddf0e486b0f6cc9a4090ef15be',1,'nnvm::top::MultiBoxPriorParam']]],
   ['one',['one',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01float_01_4.html#a437fb574fefbe87d2add1289074b194a',1,'mxnet::common::cuda::CublasType&lt; float &gt;::one()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01double_01_4.html#a17c4026782d6a86b7d11aae44b684969',1,'mxnet::common::cuda::CublasType&lt; double &gt;::one()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01mshadow_1_1half_1_1half__t_01_4.html#acf8d06465837aa6ee31e125e6eeda87c',1,'mxnet::common::cuda::CublasType&lt; mshadow::half::half_t &gt;::one()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01uint8__t_01_4.html#a3fde539928c0e7b776dce38ffbf50e94',1,'mxnet::common::cuda::CublasType&lt; uint8_t &gt;::one()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01int32__t_01_4.html#aaed4ff3ebff77d570c87a02ef40c90c0',1,'mxnet::common::cuda::CublasType&lt; int32_t &gt;::one()']]],
   ['op',['op',['../structnnvm_1_1NodeAttrs.html#a3ac836e9058e02f4f365a7b95bf995a6',1,'nnvm::NodeAttrs']]],

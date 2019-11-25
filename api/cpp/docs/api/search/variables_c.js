@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['n',['n',['../structmkldnn__rnn__packed__desc__t.html#a8b2944bc5d3701332ad68c4e654e1e0d',1,'mkldnn_rnn_packed_desc_t']]],
-  ['n_5fparts',['n_parts',['../structmkldnn__rnn__packed__desc__t.html#a3455db9fa85140ba598877f0f501d56c',1,'mkldnn_rnn_packed_desc_t']]],
+  ['n',['n',['../structdnnl__rnn__packed__desc__t.html#aaaacc0e32dd606e63f4c927239fbad62',1,'dnnl_rnn_packed_desc_t']]],
+  ['n_5fparts',['n_parts',['../structdnnl__rnn__packed__desc__t.html#ad47ed01dc381f613dda819d83c6d64cc',1,'dnnl_rnn_packed_desc_t']]],
   ['name',['name',['../structdmlc_1_1io_1_1URI.html#a94b175008085c6dbdc1b76befe2afdef',1,'dmlc::io::URI::name()'],['../classdmlc_1_1FunctionRegEntryBase.html#af2acc06f141492afe85d4fff777d7f31',1,'dmlc::FunctionRegEntryBase::name()'],['../structLibFeature.html#ac8698edfb04ff270b1f3bc46a10aab4e',1,'LibFeature::name()'],['../classmxnet_1_1op_1_1SimpleOpRegEntry.html#a02c180f08b215e9553d3c93fa783f9a4',1,'mxnet::op::SimpleOpRegEntry::name()'],['../structnnvm_1_1NodeAttrs.html#a111a35e13d9fb30297d4e035aa0b4f8a',1,'nnvm::NodeAttrs::name()'],['../classnnvm_1_1Op.html#af67a5d6998765023aeed6761df292b6c',1,'nnvm::Op::name()'],['../classmxnet_1_1cpp_1_1EvalMetric.html#aa6c5fffe252895a404f0d1016897805a',1,'mxnet::cpp::EvalMetric::name()']]],
   ['names',['names',['../structmxnet_1_1features_1_1EnumNames.html#a30adf925dfeb4e3eef24434f5e1996c4',1,'mxnet::features::EnumNames']]],
   ['ndim',['ndim',['../structDLTensor.html#a8b28a3876c4d157ccea80956f3ec18f5',1,'DLTensor']]],
   ['ndim_5f',['ndim_',['../classmxnet_1_1Tuple.html#a424233ed3bd43df18ae411f18b27a400',1,'mxnet::Tuple::ndim_()'],['../classnnvm_1_1Tuple.html#a65b30701dcaaf1c0253a16f5bcd89dce',1,'nnvm::Tuple::ndim_()']]],
-  ['ndims',['ndims',['../structmkldnn__memory__desc__t.html#a8fc71fc8a04e665573f86442bda4dc4c',1,'mkldnn_memory_desc_t']]],
+  ['ndims',['ndims',['../structdnnl__memory__desc__t.html#a72ed50c98f23f513550255ca8917b473',1,'dnnl_memory_desc_t']]],
   ['need_5fgrad',['need_grad',['../structmxnet_1_1OpContext.html#adffa555a95b50893b5fe7a2930a71d62',1,'mxnet::OpContext']]],
   ['node',['node',['../structnnvm_1_1NodeEntry.html#a0c8e8060654079288b4287082d0191bb',1,'nnvm::NodeEntry']]],
   ['node_5fid',['node_id',['../structnnvm_1_1IndexedGraph_1_1NodeEntry.html#ae73ae8527f6416a91d8d9c5457019688',1,'nnvm::IndexedGraph::NodeEntry']]],

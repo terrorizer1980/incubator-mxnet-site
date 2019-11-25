@@ -10,6 +10,6 @@ var searchData=
   ['exclude',['exclude',['../structnnvm_1_1top_1_1IndicatorParam.html#a51d0dc09f11baff8bbdf7fa3267b9b3c',1,'nnvm::top::IndicatorParam::exclude()'],['../structnnvm_1_1top_1_1ReduceParam.html#ae3f5bd7d88eba1c8b8ca0fab6a35a2e4',1,'nnvm::top::ReduceParam::exclude()']]],
   ['exes',['exes',['../classmxnet_1_1cpp_1_1Monitor.html#a036886927625e741a7360ab72a2832e1',1,'mxnet::cpp::Monitor']]],
   ['exp',['exp',['../structmshadow_1_1expr_1_1TypecastExp.html#ab06a667c92d1e065532653024e603719',1,'mshadow::expr::TypecastExp::exp()'],['../structmshadow_1_1expr_1_1TransposeExp.html#a4dc0f3df318d1d4b21fb6630dae7edb9',1,'mshadow::expr::TransposeExp::exp()']]],
-  ['extra',['extra',['../structmkldnn__memory__desc__t.html#aca773206a808b23fee49211829ef5fc9',1,'mkldnn_memory_desc_t']]],
+  ['extra',['extra',['../structdnnl__memory__desc__t.html#ac60269949e318245e74713a7a0dae135',1,'dnnl_memory_desc_t']]],
   ['extra_5fdata',['extra_data',['../structmxnet_1_1DataInst.html#a311b93ed629984fdcb29cb346d3062ee',1,'mxnet::DataInst::extra_data()'],['../structmxnet_1_1DataBatch.html#a2e9faeff00dd061f04a88c3ea5758aa2',1,'mxnet::DataBatch::extra_data()']]]
 ];
