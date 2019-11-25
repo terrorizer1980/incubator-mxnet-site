@@ -691,6 +691,9 @@
 <span class="sd">        Trainer to apply optimizer on network parameters.</span>
 <span class="sd">    context : Context or list of Context</span>
 <span class="sd">        Device(s) to run the training on.</span>
+<span class="sd">    evaluation_loss: gluon.loss.loss</span>
+<span class="sd">        Loss (objective) function to calculate during evaluation. If set evaluation_loss</span>
+<span class="sd">        None, it will use the same loss function as self.loss</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -717,12 +720,16 @@
                  <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">trainer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">evaluation_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">net</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_default_training_metrics</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_validation_metrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span>
+        <span class="k">if</span> <span class="n">evaluation_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">evaluation_loss</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Estimator&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span>
@@ -860,7 +867,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_and_label</span><span class="p">(</span><span class="n">val_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">batch_axis</span><span class="p">)</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span>
         <span class="c1"># update metrics</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">val_metrics</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">metric_loss</span><span class="p">):</span>
