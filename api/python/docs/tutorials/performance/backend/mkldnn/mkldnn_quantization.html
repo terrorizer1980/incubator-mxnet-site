@@ -671,7 +671,7 @@ calculation.</p>
 <div class="section" id="Initialize-Model">
 <h3>Initialize Model<a class="headerlink" href="#Initialize-Model" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
+<span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
 <span class="kn">from</span> <span class="nn">mxnet.gluon.model_zoo</span> <span class="kn">import</span> <span class="n">vision</span>
 <span class="kn">from</span> <span class="nn">mxnet.contrib.quantization</span> <span class="kn">import</span> <span class="o">*</span>
 
@@ -680,7 +680,7 @@ calculation.</p>
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
 <span class="n">batch_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)</span>
-<span class="n">resnet18</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v1</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">resnet18</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v1</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">resnet18</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
 <span class="n">resnet18</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span>
 <span class="n">resnet18</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;resnet18_v1&#39;</span><span class="p">)</span>
@@ -711,7 +711,7 @@ calculation.</p>
 <span class="c1"># set calib mode.</span>
 <span class="n">calib_mode</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
 <span class="c1"># set calib_layer</span>
-<span class="n">calib_layer</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">calib_layer</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="c1"># set quantized_dtype</span>
 <span class="n">quantized_dtype</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Quantizing FP32 model Resnet18-V1&#39;</span><span class="p">)</span>
@@ -769,7 +769,7 @@ ized_dtype</p></td>
 <h3>Evaluate &amp; Tune<a class="headerlink" href="#Evaluate-&-Tune" title="Permalink to this headline">¶</a></h3>
 <p>Now, you get a pair of quantized symbol and params file for inference. For Gluon inference, only difference is to load model and params by a SymbolBlock as below example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">quantized_net</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span><span class="s1">&#39;quantized-resnet18_v1-symbol.json&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;quantized-resnet18_v1-0000.params&#39;</span><span class="p">)</span>
-<span class="n">quantized_net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">static_shape</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">static_alloc</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">quantized_net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">static_shape</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">static_alloc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">))</span>
 <span class="n">quantized_net</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -786,7 +786,7 @@ ized_dtype</p></td>
 <span class="c1"># set calib mode.</span>
 <span class="n">calib_mode</span> <span class="o">=</span> <span class="s1">&#39;naive&#39;</span>
 <span class="c1"># set calib_layer</span>
-<span class="n">calib_layer</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">calib_layer</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="c1"># set quantized_dtype</span>
 <span class="n">quantized_dtype</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Quantizing FP32 model resnet18-V1&#39;</span><span class="p">)</span>
@@ -802,10 +802,10 @@ ized_dtype</p></td>
 <span class="c1"># set batch size</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span>
 <span class="c1"># create DataIter</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ImageRecordIter</span><span class="p">(</span><span class="n">path_imgrec</span><span class="o">=</span><span class="s1">&#39;dataset.rec&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_shape</span><span class="o">=</span><span class="n">batch_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">rand_crop</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">rand_mirror</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">mean_std</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ImageRecordIter</span><span class="p">(</span><span class="n">path_imgrec</span><span class="o">=</span><span class="s1">&#39;dataset.rec&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_shape</span><span class="o">=</span><span class="n">batch_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">rand_crop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rand_mirror</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">mean_std</span><span class="p">)</span>
 <span class="c1"># create module</span>
-<span class="n">mod</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">sym</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
-<span class="n">mod</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">for_training</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">provide_data</span><span class="p">,</span> <span class="n">label_shapes</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">sym</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">for_training</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">provide_data</span><span class="p">,</span> <span class="n">label_shapes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="n">mod</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
 
 <span class="c1"># calibration configs</span>
@@ -813,16 +813,16 @@ ized_dtype</p></td>
 <span class="n">num_calib_batches</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">max_num_examples</span> <span class="o">=</span> <span class="n">num_calib_batches</span> <span class="o">*</span> <span class="n">batch_size</span>
 <span class="c1"># monitor FP32 Inference</span>
-<span class="n">mod</span><span class="o">.</span><span class="n">_exec_group</span><span class="o">.</span><span class="n">execs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_monitor_callback</span><span class="p">(</span><span class="n">collector</span><span class="o">.</span><span class="n">collect</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">mod</span><span class="o">.</span><span class="n">_exec_group</span><span class="o">.</span><span class="n">execs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_monitor_callback</span><span class="p">(</span><span class="n">collector</span><span class="o">.</span><span class="n">collect</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">num_batches</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">num_examples</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-    <span class="n">mod</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">data_batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">data_batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">num_batches</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">num_examples</span> <span class="o">+=</span> <span class="n">batch_size</span>
     <span class="k">if</span> <span class="n">num_examples</span> <span class="o">&gt;=</span> <span class="n">max_num_examples</span><span class="p">:</span>
         <span class="k">break</span>
-<span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Collected statistics from </span><span class="si">%d</span><span class="s2"> batches with batch_size=</span><span class="si">%d</span><span class="s2">&quot;</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
 </pre></div>

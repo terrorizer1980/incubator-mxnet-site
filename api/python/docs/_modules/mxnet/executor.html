@@ -650,22 +650,22 @@
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable=invalid-name, protected-access, too-many-locals, too-many-arguments</span>
 <span class="sd">&quot;&quot;&quot;Symbolic Executor component of MXNet.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">array</span> <span class="k">import</span> <span class="n">array</span> <span class="k">as</span> <span class="n">py_array</span>
+<span class="kn">from</span> <span class="nn">array</span> <span class="kn">import</span> <span class="n">array</span> <span class="k">as</span> <span class="n">py_array</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">_LIB</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">ExecutorHandle</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">mx_int</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_str_array</span>
-<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">_ndarray_cls</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">_LIB</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">ExecutorHandle</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">mx_int</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_str_array</span>
+<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">_ndarray_cls</span>
 
 <span class="c1"># those functions are not used here, we just import them to keep backward compatibility</span>
 <span class="c1"># in case the end user calls them, as they originally lives here</span>
 <span class="c1"># pylint: disable=unused-import</span>
-<span class="kn">from</span> <span class="nn">.executor_manager</span> <span class="k">import</span> <span class="n">_split_input_slice</span><span class="p">,</span> <span class="n">_check_arguments</span><span class="p">,</span> <span class="n">_load_data</span><span class="p">,</span> <span class="n">_load_label</span>
+<span class="kn">from</span> <span class="nn">.executor_manager</span> <span class="kn">import</span> <span class="n">_split_input_slice</span><span class="p">,</span> <span class="n">_check_arguments</span><span class="p">,</span> <span class="n">_load_data</span><span class="p">,</span> <span class="n">_load_label</span>
 
 <span class="k">def</span> <span class="nf">_monitor_callback_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A wrapper for the user-defined handle.&quot;&quot;&quot;</span>
@@ -685,7 +685,7 @@
 <span class="sd">    &gt;&gt;&gt; c = 2 * a + b</span>
 <span class="sd">    &gt;&gt;&gt; texec = c.bind(mx.cpu(), {&#39;a&#39;: mx.nd.array([1,2]), &#39;b&#39;:mx.nd.array([2,3])})</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">grad_req</span><span class="p">,</span> <span class="n">group2ctx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">grad_req</span><span class="p">,</span> <span class="n">group2ctx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor, used Symbol.bind and Symbol.simple_bind instead.</span>
 
 <span class="sd">        Parameters</span>
@@ -715,7 +715,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_grad_req</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">grad_req</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group2ctx</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">group2ctx</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXExecutorFree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
@@ -1152,7 +1152,7 @@
 <span class="sd">        symbol : Symbol</span>
 <span class="sd">            Optimized symbol from the executor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
+        <span class="kn">from</span> <span class="nn">.symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
         <span class="n">sym_handle</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXExecutorGetOptimizedSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">sym_handle</span><span class="p">)))</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">sym_handle</span><span class="p">)</span>

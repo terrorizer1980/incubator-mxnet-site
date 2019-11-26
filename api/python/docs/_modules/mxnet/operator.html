@@ -650,28 +650,28 @@
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable=invalid-name, protected-access, too-many-arguments, no-self-use, too-many-locals, broad-except, too-many-lines, unnecessary-pass</span>
 <span class="sd">&quot;&quot;&quot;numpy interface for operators.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
-<span class="kn">from</span> <span class="nn">array</span> <span class="k">import</span> <span class="n">array</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">array</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">CFUNCTYPE</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">pointer</span>
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">c_void_p</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,</span> <span class="n">c_char</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">c_bool</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">CFUNCTYPE</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">pointer</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">c_void_p</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,</span> <span class="n">c_char</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">c_bool</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">MXCallbackList</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">mx_int</span><span class="p">,</span> <span class="n">OpHandle</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">mx_float</span><span class="p">,</span> <span class="n">ctypes2numpy_shared</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">py_str</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">context</span>
-<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">_DTYPE_NP_TO_MX</span><span class="p">,</span> <span class="n">_DTYPE_MX_TO_NP</span>
-<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_ID_TO_STR</span>
-<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_UNDEFINED</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_DEFAULT</span>
-<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="k">import</span> <span class="n">_STORAGE_TYPE_CSR</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_ROW_SPARSE</span>
-<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="k">import</span> <span class="n">_ndarray_cls</span>
-<span class="kn">from</span> <span class="nn">.numpy.multiarray</span> <span class="k">import</span> <span class="n">_np_ndarray_cls</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">is_np_array</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">MXCallbackList</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">mx_int</span><span class="p">,</span> <span class="n">OpHandle</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">mx_float</span><span class="p">,</span> <span class="n">ctypes2numpy_shared</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">py_str</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">context</span>
+<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">_DTYPE_NP_TO_MX</span><span class="p">,</span> <span class="n">_DTYPE_MX_TO_NP</span>
+<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="kn">import</span> <span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_ID_TO_STR</span>
+<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="kn">import</span> <span class="n">_STORAGE_TYPE_UNDEFINED</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_DEFAULT</span>
+<span class="kn">from</span> <span class="nn">.ndarray.ndarray</span> <span class="kn">import</span> <span class="n">_STORAGE_TYPE_CSR</span><span class="p">,</span> <span class="n">_STORAGE_TYPE_ROW_SPARSE</span>
+<span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">_ndarray_cls</span>
+<span class="kn">from</span> <span class="nn">.numpy.multiarray</span> <span class="kn">import</span> <span class="n">_np_ndarray_cls</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
 
 <span class="n">c_int_p</span> <span class="o">=</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int</span><span class="p">)</span>
 
@@ -686,12 +686,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_ref_holder</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_top_grad_</span> <span class="o">=</span> <span class="n">need_top_grad</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;PythonOp has been deprecated. Please use CustomOp&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_symbol</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PythonOp.get_symbol"><a class="viewcode-back" href="../../api/mxnet/operator/index.html#mxnet.operator.PythonOp.get_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">get_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -794,7 +794,7 @@
 <span class="sd">    Note that if your operator contains internal states (like arrays),</span>
 <span class="sd">    it cannot be used for multi-gpu training.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NumpyOp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">need_top_grad</span><span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;NumpyOp has been deprecated. Please use CustomOp&#39;</span><span class="p">)</span>
 
@@ -899,7 +899,7 @@
 <span class="sd">    Note that if your operator contains internal states (like arrays),</span>
 <span class="sd">    it cannot be used for multi-gpu training.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayOp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">need_top_grad</span><span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;NDArrayOp has been deprecated. Please use CustomOp&#39;</span><span class="p">)</span>
 
@@ -1066,7 +1066,7 @@
 
 <div class="viewcode-block" id="CustomOp"><a class="viewcode-back" href="../../api/mxnet/operator/index.html#mxnet.operator.CustomOp">[docs]</a><span class="k">class</span> <span class="nc">CustomOp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for operators implemented in python&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="CustomOp.forward"><a class="viewcode-back" href="../../api/mxnet/operator/index.html#mxnet.operator.CustomOp.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_train</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">in_data</span><span class="p">,</span> <span class="n">out_data</span><span class="p">,</span> <span class="n">aux</span><span class="p">):</span>
@@ -1126,7 +1126,7 @@
 <span class="sd">        The default declare_backward_dependency function. Use this value</span>
 <span class="sd">        to determine whether this operator needs gradient input.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_top_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_top_grad_</span> <span class="o">=</span> <span class="n">need_top_grad</span>
 
 <div class="viewcode-block" id="CustomOpProp.infer_shape"><a class="viewcode-back" href="../../api/mxnet/operator/index.html#mxnet.operator.CustomOpProp.infer_shape">[docs]</a>    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">):</span>
@@ -1322,7 +1322,7 @@
 
 <span class="k">class</span> <span class="nc">_Registry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;CustomOp registry.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ref_holder</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result_deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>

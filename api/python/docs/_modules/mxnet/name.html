@@ -649,10 +649,10 @@
 
 <span class="c1"># coding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;Automatic naming support for symbolic API.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">classproperty</span><span class="p">,</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">_MXClassPropertyMetaClass</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">classproperty</span><span class="p">,</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">_MXClassPropertyMetaClass</span>
 
 <div class="viewcode-block" id="NameManager"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.NameManager">[docs]</a><span class="k">class</span> <span class="nc">NameManager</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">_MXClassPropertyMetaClass</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;NameManager to do automatic naming.</span>
@@ -661,7 +661,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_current</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -696,14 +696,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="p">[</span><span class="n">hint</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">name</span></div>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
             <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">NameManager</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
         <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span>
         <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span>
 
@@ -734,7 +734,7 @@
 <span class="sd">    &gt;&gt;&gt; net.list_arguments()</span>
 <span class="sd">    [&#39;data&#39;, &#39;mynet_fc1_weight&#39;, &#39;mynet_fc1_bias&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Prefix</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
 

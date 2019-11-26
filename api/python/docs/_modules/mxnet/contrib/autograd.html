@@ -649,16 +649,16 @@
 
 <span class="c1"># coding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;Autograd for NDArray.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">array</span> <span class="k">import</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">array</span> <span class="kn">import</span> <span class="n">array</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_handle_array</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_handle_array</span>
 <span class="c1"># pylint: disable= unused-import</span>
-<span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">zeros_like</span><span class="p">,</span> <span class="n">_GRAD_REQ_MAP</span>
+<span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">zeros_like</span><span class="p">,</span> <span class="n">_GRAD_REQ_MAP</span>
 
 
 <div class="viewcode-block" id="set_is_training"><a class="viewcode-back" href="../../../api/contrib/autograd/index.html#mxnet.contrib.autograd.set_is_training">[docs]</a><span class="k">def</span> <span class="nf">set_is_training</span><span class="p">(</span><span class="n">is_train</span><span class="p">):</span>
@@ -691,14 +691,14 @@
 <span class="sd">            y = model(x)</span>
 <span class="sd">            compute_gradient([y])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enter_state</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enter_state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span> <span class="o">=</span> <span class="n">enter_state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="n">set_is_training</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">:</span>
             <span class="n">set_is_training</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prev</span><span class="p">)</span></div>
 

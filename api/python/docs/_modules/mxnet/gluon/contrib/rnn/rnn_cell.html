@@ -651,10 +651,10 @@
 <span class="sd">&quot;&quot;&quot;Definition of various recurrent neural network cells.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VariationalDropoutCell&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTMPCell&#39;</span><span class="p">]</span>
 
-<span class="kn">from</span> <span class="nn">...rnn</span> <span class="k">import</span> <span class="n">BidirectionalCell</span><span class="p">,</span> <span class="n">SequentialRNNCell</span><span class="p">,</span> <span class="n">ModifierCell</span><span class="p">,</span> <span class="n">HybridRecurrentCell</span>
-<span class="kn">from</span> <span class="nn">...rnn.rnn_cell</span> <span class="k">import</span> <span class="n">_format_sequence</span><span class="p">,</span> <span class="n">_get_begin_state</span><span class="p">,</span> <span class="n">_mask_sequence_variable_length</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="k">import</span> <span class="n">tensor_types</span>
-<span class="kn">from</span> <span class="nn">....base</span> <span class="k">import</span> <span class="n">_as_list</span>
+<span class="kn">from</span> <span class="nn">...rnn</span> <span class="kn">import</span> <span class="n">BidirectionalCell</span><span class="p">,</span> <span class="n">SequentialRNNCell</span><span class="p">,</span> <span class="n">ModifierCell</span><span class="p">,</span> <span class="n">HybridRecurrentCell</span>
+<span class="kn">from</span> <span class="nn">...rnn.rnn_cell</span> <span class="kn">import</span> <span class="n">_format_sequence</span><span class="p">,</span> <span class="n">_get_begin_state</span><span class="p">,</span> <span class="n">_mask_sequence_variable_length</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">tensor_types</span>
+<span class="kn">from</span> <span class="nn">....base</span> <span class="kn">import</span> <span class="n">_as_list</span>
 
 <div class="viewcode-block" id="VariationalDropoutCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.VariationalDropoutCell">[docs]</a><span class="k">class</span> <span class="nc">VariationalDropoutCell</span><span class="p">(</span><span class="n">ModifierCell</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -680,7 +680,7 @@
 <span class="sd">    drop_outputs : float, default 0.</span>
 <span class="sd">        The dropout rate for outputs. Won&#39;t apply dropout if it equals 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_cell</span><span class="p">,</span> <span class="n">drop_inputs</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">drop_states</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">drop_outputs</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_cell</span><span class="p">,</span> <span class="n">drop_inputs</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">drop_states</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">drop_outputs</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">drop_states</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_cell</span><span class="p">,</span> <span class="n">BidirectionalCell</span><span class="p">),</span> \
             <span class="s2">&quot;BidirectionalCell doesn&#39;t support variational state dropout. &quot;</span> \
             <span class="s2">&quot;Please add VariationalDropoutCell to the cells underneath instead.&quot;</span>
@@ -740,7 +740,7 @@
 
         <span class="k">return</span> <span class="n">next_output</span><span class="p">,</span> <span class="n">next_states</span></div>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">(p_out = </span><span class="si">{drop_outputs}</span><span class="s1">, p_state = </span><span class="si">{drop_states}</span><span class="s1">)&#39;</span>
         <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
@@ -886,7 +886,7 @@
 <span class="sd">        - **next_states**: a list of two output recurrent state tensors. Each has</span>
 <span class="sd">          the same shape as `states`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">projection_size</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">projection_size</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">h2r_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
@@ -919,7 +919,7 @@
     <span class="k">def</span> <span class="nf">_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;lstmp&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">(</span><span class="si">{mapping}</span><span class="s1">)&#39;</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">proj_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h2r_weight</span><span class="o">.</span><span class="n">shape</span>

@@ -650,32 +650,32 @@
 <span class="c1"># pylint: disable=fixme, invalid-name, too-many-arguments, too-many-locals, too-many-lines</span>
 <span class="c1"># pylint: disable=too-many-branches, too-many-statements</span>
 <span class="sd">&quot;&quot;&quot;MXNet model module&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">io</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">nd</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">symbol</span> <span class="k">as</span> <span class="n">sym</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">optimizer</span> <span class="k">as</span> <span class="n">opt</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">metric</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kvstore</span> <span class="k">as</span> <span class="n">kvs</span>
-<span class="kn">from</span> <span class="nn">.context</span> <span class="k">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">cpu</span>
-<span class="kn">from</span> <span class="nn">.initializer</span> <span class="k">import</span> <span class="n">Uniform</span>
-<span class="kn">from</span> <span class="nn">.optimizer</span> <span class="k">import</span> <span class="n">get_updater</span>
-<span class="kn">from</span> <span class="nn">.executor_manager</span> <span class="k">import</span> <span class="n">DataParallelExecutorManager</span><span class="p">,</span> <span class="n">_check_arguments</span><span class="p">,</span> <span class="n">_load_data</span>
-<span class="kn">from</span> <span class="nn">.io</span> <span class="k">import</span> <span class="n">DataDesc</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">mx_real_t</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">nd</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">symbol</span> <span class="k">as</span> <span class="n">sym</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">optimizer</span> <span class="k">as</span> <span class="n">opt</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">metric</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kvstore</span> <span class="k">as</span> <span class="n">kvs</span>
+<span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">cpu</span>
+<span class="kn">from</span> <span class="nn">.initializer</span> <span class="kn">import</span> <span class="n">Uniform</span>
+<span class="kn">from</span> <span class="nn">.optimizer</span> <span class="kn">import</span> <span class="n">get_updater</span>
+<span class="kn">from</span> <span class="nn">.executor_manager</span> <span class="kn">import</span> <span class="n">DataParallelExecutorManager</span><span class="p">,</span> <span class="n">_check_arguments</span><span class="p">,</span> <span class="n">_load_data</span>
+<span class="kn">from</span> <span class="nn">.io</span> <span class="kn">import</span> <span class="n">DataDesc</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">mx_real_t</span>
 
 <span class="n">BASE_ESTIMATOR</span> <span class="o">=</span> <span class="nb">object</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span>
+    <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
     <span class="n">BASE_ESTIMATOR</span> <span class="o">=</span> <span class="n">BaseEstimator</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">SKLEARN_INSTALLED</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1099,7 +1099,7 @@
     <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">load_params</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span></div>
 
-<span class="kn">from</span> <span class="nn">.callback</span> <span class="k">import</span> <span class="n">LogValidationMetricsCallback</span> <span class="c1"># pylint: disable=wrong-import-position</span>
+<span class="kn">from</span> <span class="nn">.callback</span> <span class="kn">import</span> <span class="n">LogValidationMetricsCallback</span> <span class="c1"># pylint: disable=wrong-import-position</span>
 
 <div class="viewcode-block" id="FeedForward"><a class="viewcode-back" href="../../api/mxnet/model/index.html#mxnet.model.FeedForward">[docs]</a><span class="k">class</span> <span class="nc">FeedForward</span><span class="p">(</span><span class="n">BASE_ESTIMATOR</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Model class of MXNet for training and predicting feedforward nets.</span>
@@ -1138,7 +1138,7 @@
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        The additional keyword arguments passed to optimizer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">num_epoch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">epoch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;sgd&#39;</span><span class="p">,</span>
                  <span class="n">initializer</span><span class="o">=</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
                  <span class="n">numpy_batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>

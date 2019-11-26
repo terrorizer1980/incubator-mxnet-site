@@ -650,11 +650,11 @@ MobileNets are based on a streamlined architecture that uses depth-wise separabl
 for solving your business problem.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
 <span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">nd</span>
 <span class="kn">from</span> <span class="nn">mxnet.gluon.model_zoo</span> <span class="kn">import</span> <span class="n">vision</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
@@ -669,22 +669,22 @@ go. * If you want to use a GPU, make sure you have pip installed the right versi
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We can load three the three models</span>
-<span class="n">densenet121</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">densenet121</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">mobileNet</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">mobilenet0_5</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">resnet18</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v1</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">densenet121</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">densenet121</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">mobileNet</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">mobilenet0_5</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">resnet18</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">resnet18_v1</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can look at the description of the MobileNet network for example, which has a relatively simple yet deep architecture</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Let’s have a closer look at the first convolution layer:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first layer applies <strong>``16``</strong> different convolutional masks, of size <strong>``InputChannels x 3 x 3``</strong>. For the first convolution, there are <strong>``3``</strong> input channels, the <code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">G</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code> channels of the input image. That gives us the weight matrix of shape <strong>``16 x 3 x 3 x 3``</strong>. There is no bias applied in this convolution.</p>
 <p>Let’s have a look at the output layer now:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mobileNet</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Did you notice the shape of layer? The weight matrix is <strong>1000 x 512</strong>. This layer contains 1,000 neurons: each of them will store an activation representative of the probability of the image belonging to a specific category. Each neuron is also fully connected to all 512 neurons in the previous layer.</p>
@@ -695,7 +695,7 @@ go. * If you want to use a GPU, make sure you have pip installed the right versi
 <p>All three models have been pre-trained on the ImageNet data set which includes over 1.2 million pictures of objects and animals sorted in 1,000 categories. We get the imageNet list of labels. That way we have the mapping so when the model predicts for example category index <code class="docutils literal notranslate"><span class="pre">4</span></code>, we know it is predicting <code class="docutils literal notranslate"><span class="pre">hammerhead,</span> <span class="pre">hammerhead</span> <span class="pre">shark</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/onnx/image_net_labels.json&#39;</span><span class="p">)</span>
 <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;image_net_labels.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)))</span>
-<span class="k">print</span><span class="p">(</span><span class="n">categories</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">categories</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Get a test image</p>
@@ -730,7 +730,7 @@ image: this will return a NDArray shaped as (image height, image width, 3), with
 <h2>Testing the different networks<a class="headerlink" href="#Testing-the-different-networks" title="Permalink to this headline">¶</a></h2>
 <p>We run the image through each pre-trained network. The models output a <em>NDArray</em> holding 1,000 activation values, which we convert to probabilities using the <code class="docutils literal notranslate"><span class="pre">softmax()</span></code> function, corresponding to the 1,000 categories it has been trained on. The output prediction NDArray has only one row since batch size is equal to 1</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">(</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">))</span><span class="o">.</span><span class="n">softmax</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We then take the top <code class="docutils literal notranslate"><span class="pre">k</span></code> predictions for our image, here the top <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p>
@@ -741,7 +741,7 @@ image: this will return a NDArray shaped as (image height, image width, 3), with
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">top_pred</span><span class="p">:</span>
     <span class="n">probability</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
     <span class="n">category</span> <span class="o">=</span> <span class="n">categories</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}: {:.2f}%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{:.2f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Let’s turn this into a function. Our parameters are an image, a model, a list of categories and the number of top categories we’d like to print.</p>
@@ -751,8 +751,8 @@ image: this will return a NDArray shaped as (image height, image width, 3), with
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">top_pred</span><span class="p">:</span>
         <span class="n">probability</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
         <span class="n">category</span> <span class="o">=</span> <span class="n">categories</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}: {:.2f}%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{:.2f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="DenseNet121">
@@ -786,7 +786,7 @@ image: this will return a NDArray shaped as (image height, image width, 3), with
     <span class="n">resnet18</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">NUM_CLASSES</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">resnet18</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">resnet18</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now you can train your model on your new data using the pre-trained weights as initialization. This is called transfer learning and it has proved to be very useful especially in the cases where you only have access to a small dataset. Your network will have already learned how to perform general pattern detection and feature extraction on the larger dataset. You can learn more about transfer learning and fine-tuning with MXNet in these tutorials: - <a class="reference external" href="http://gluon.mxnet.io/chapter08_computer-vision/fine-tuning.html">Transferring knowledge through
