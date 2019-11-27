@@ -3016,6 +3016,84 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cuda arch compute capability: sm_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cc</span><span class="p">)))</span>
             <span class="k">return</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="mi">53</span>
     <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="check_gluon_hybridize_consistency"><a class="viewcode-back" href="../../api/mxnet/test_utils/index.html#mxnet.test_utils.check_gluon_hybridize_consistency">[docs]</a><span class="nd">@use_np</span>
+<span class="k">def</span> <span class="nf">check_gluon_hybridize_consistency</span><span class="p">(</span><span class="n">net_builder</span><span class="p">,</span> <span class="n">data_l</span><span class="p">,</span> <span class="n">numpy_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">rtol</span><span class="o">=</span><span class="mf">1E-4</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1E-4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether a HybridBlock has consistent output between the hybridized</span>
+<span class="sd">     v.s. non-hybridized versions</span>
+
+<span class="sd">    The network should not contain any random number generators.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    net_builder : function</span>
+<span class="sd">        The builder of the HybridBlock that we are going to check the consistency.</span>
+<span class="sd">        Inside the implementation, we will call net_builder() to construct the hybrid block.</span>
+<span class="sd">        Also, the net_builder will need to support specifying the params</span>
+<span class="sd">    data_l : list of mx.np.ndarray</span>
+<span class="sd">        List of input ndarrays.</span>
+<span class="sd">    numpy_func : function, optional</span>
+<span class="sd">        The ground truth numpy function that has the same functionality as net_builder().</span>
+<span class="sd">        Default None.</span>
+<span class="sd">    test_grad : bool, optional</span>
+<span class="sd">        Whether to test the consistency of the gradient. Default True.</span>
+<span class="sd">    rtol : float, optional</span>
+<span class="sd">        The relative error tolerance, default 1E-4. Default 1E-4.</span>
+<span class="sd">    atol : float, optional</span>
+<span class="sd">        The absolute error tolerance, default 1E-4. Default 1E-4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">_NumpyParamDictInit</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Initializer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes parameters with the cached numpy ndarrays dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">np_params</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">_NumpyParamDictInit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_np_params</span> <span class="o">=</span> <span class="n">np_params</span>
+
+        <span class="k">def</span> <span class="nf">_init_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+            <span class="n">arr</span><span class="p">[()]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">saved_out_np</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">saved_grad_np_l</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">params_init</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">use_autograd_flags</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span> <span class="k">if</span> <span class="n">test_grad</span> <span class="k">else</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">hybridize</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">use_autograd</span> <span class="ow">in</span> <span class="n">use_autograd_flags</span><span class="p">:</span>
+            <span class="n">net</span> <span class="o">=</span> <span class="n">net_builder</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;net_&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">params_init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">params_init</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hybridize</span><span class="p">:</span>
+                <span class="n">net</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
+            <span class="n">in_data_l</span> <span class="o">=</span> <span class="p">[</span><span class="n">ele</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">data_l</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">use_autograd</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">in_data_l</span><span class="p">:</span>
+                    <span class="n">ele</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">mx</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="o">*</span><span class="n">in_data_l</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="o">*</span><span class="n">in_data_l</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">params_init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">np_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">params_init</span> <span class="o">=</span> <span class="n">_NumpyParamDictInit</span><span class="p">(</span><span class="n">np_params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">saved_out_np</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">saved_out_np</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Check for correctness</span>
+                <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">saved_out_np</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_autograd</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">saved_grad_np_l</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">saved_grad_np_l</span> <span class="o">=</span> <span class="p">[</span><span class="n">ele</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">in_data_l</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Check for correctness</span>
+                    <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">saved_grad_np</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">in_data_l</span><span class="p">,</span> <span class="n">saved_grad_np_l</span><span class="p">):</span>
+                        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">saved_grad_np</span><span class="p">,</span>
+                                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">numpy_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">numpy_out</span> <span class="o">=</span> <span class="n">numpy_func</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">ele</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">data_l</span><span class="p">])</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">saved_out_np</span><span class="p">,</span> <span class="n">numpy_out</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span></div>
 </pre></div>
 
         </div>
