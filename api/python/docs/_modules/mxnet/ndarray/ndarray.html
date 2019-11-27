@@ -1479,26 +1479,32 @@
         <span class="sd">&quot;&quot;&quot;Whether indexing with the given key results in a contiguous array.</span>
 
 <span class="sd">        The rule is: From right to left, if in an axis, a slice produces a</span>
-<span class="sd">        proper subset, no later axis can produce a proper subset or use</span>
-<span class="sd">        a step different from 1.</span>
+<span class="sd">        proper subset, the later slice must have &lt;=1 elements.</span>
 
 <span class="sd">        The ``slc_key`` sequence must have the same length as ``shape`` and</span>
 <span class="sd">        only contain `slice` objects.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">subset</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">is_subset</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">total_sliced_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">_get_slice_len</span><span class="p">(</span><span class="n">slc</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+                                         <span class="k">for</span> <span class="n">slc</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="n">total_sliced_elements</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">slc_key</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">shape</span><span class="p">)):</span>
-            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="n">num</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">subset</span> <span class="ow">or</span> <span class="n">step</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">num_elements</span> <span class="o">=</span> <span class="n">_get_slice_len</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_elements</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">num_elements</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">step</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="c1"># We do not support the case of reverse slicing of multiple elements and</span>
+                <span class="c1"># forward slicing of #elements &gt; 1 and step &gt; 1</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="n">num</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
-                <span class="n">subset</span> <span class="o">=</span> <span class="kc">True</span>
-
+            <span class="k">elif</span> <span class="n">is_subset</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num_elements</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num_elements</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+                    <span class="n">is_subset</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="c1"># pylint: enable=invalid-name</span>
 
@@ -1507,14 +1513,9 @@
         <span class="sd">&quot;&quot;&quot;Return the shape after slicing with the given key.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">sliced_shape</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">step</span><span class="p">))</span>
-            <span class="n">sliced_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
-
+        <span class="k">for</span> <span class="n">slc</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+            <span class="n">num_elements</span> <span class="o">=</span> <span class="n">_get_slice_len</span><span class="p">(</span><span class="n">slc</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">sliced_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_elements</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sliced_shape</span><span class="p">)</span>
 
     <span class="c1"># pylint: disable=invalid-name</span>
@@ -1522,15 +1523,17 @@
     <span class="k">def</span> <span class="nf">_basic_indexing_contiguous_flat_begin_end</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the flat indices of begin and end for contiguous slicing.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">slc_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">=</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">slc</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slc_key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
             <span class="n">flat_begin</span> <span class="o">*=</span> <span class="n">n</span>
             <span class="n">flat_end</span> <span class="o">*=</span> <span class="n">n</span>
-            <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">flat_begin</span> <span class="o">+=</span> <span class="n">begin</span>
-            <span class="n">flat_end</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="mi">1</span>
-
+            <span class="n">begin</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">slc</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">num_elements</span> <span class="o">=</span> <span class="n">_get_slice_len</span><span class="p">(</span><span class="n">slc</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_elements</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flat_begin</span> <span class="o">+=</span> <span class="n">begin</span>
+                <span class="n">flat_end</span> <span class="o">+=</span> <span class="n">begin</span> <span class="o">+</span> <span class="n">num_elements</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="c1"># pylint: enable=invalid-name</span>
 
@@ -1694,7 +1697,7 @@
         <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">new_axes</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name</span>
             <span class="n">final_shape</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">final_shape</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Override for single element indexing</span>
             <span class="n">final_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">sliced</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">final_shape</span><span class="p">)</span>
@@ -3755,6 +3758,26 @@
         <span class="k">assert</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="n">start</span>
         <span class="n">dim_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span> <span class="o">-</span> <span class="n">stop</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="o">-</span><span class="n">step</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">dim_size</span>
+
+
+<span class="k">def</span> <span class="nf">_get_slice_len</span><span class="p">(</span><span class="n">slc</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a python slice object and the length of the sequence, calculate the number of elements</span>
+<span class="sd">     in the slice.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    slc : py_slice</span>
+<span class="sd">        The slice object</span>
+<span class="sd">    seq_length : int</span>
+<span class="sd">        The length of the object you are going to apply the slice on</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ret : int</span>
+<span class="sd">        Total number of elements in the slice</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">slc</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">seq_length</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="n">step</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span> <span class="o">//</span> <span class="n">step</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_broadcast_shape</span><span class="p">(</span><span class="n">shape1</span><span class="p">,</span> <span class="n">shape2</span><span class="p">):</span>
