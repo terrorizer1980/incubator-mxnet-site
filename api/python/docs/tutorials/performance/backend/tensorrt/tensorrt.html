@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>Optimized GPU Inference &#8212; Apache MXNet  documentation</title>
+    <title>Optimizing Deep Learning Computation Graphs with TensorRT &#8212; Apache MXNet  documentation</title>
 
     <link rel="stylesheet" href="../../../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -65,7 +65,7 @@
             <a class="mdl-navigation__link" href="../../index.html">Performance</a><i class="material-icons">navigate_next</i>
             <a class="mdl-navigation__link" href="../index.html">Accelerated Backend Tools</a><i class="material-icons">navigate_next</i>
             <a class="mdl-navigation__link" href="index.html">TensorRT</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active">Optimized GPU Inference</a>
+            <a class="mdl-navigation__link is-active">Optimizing Deep Learning Computation Graphs with TensorRT</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -223,7 +223,7 @@ Show Source
 </ul>
 </li>
 <li class="toctree-l4 current"><a class="reference internal" href="index.html">TensorRT</a><ul class="current">
-<li class="toctree-l5 current"><a class="current reference internal" href="#">Optimized GPU Inference</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../tvm.html">Use TVM</a></li>
@@ -493,7 +493,7 @@ Show Source
 </ul>
 </li>
 <li class="toctree-l4 current"><a class="reference internal" href="index.html">TensorRT</a><ul class="current">
-<li class="toctree-l5 current"><a class="current reference internal" href="#">Optimized GPU Inference</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../tvm.html">Use TVM</a></li>
@@ -642,31 +642,20 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="Optimized-GPU-Inference">
-<h1>Optimized GPU Inference<a class="headerlink" href="#Optimized-GPU-Inference" title="Permalink to this headline">¶</a></h1>
-<p>NVIDIA’s TensorRT is a deep learning library that has been shown to provide large speedups when used for network inference. MXNet 1.3.0 is shipping with experimental integrated support for TensorRT. This means MXNet users can noew make use of this acceleration library to efficiently run their networks. In this blog post we’ll see how to install, enable and run TensorRT with MXNet. We’ll also give some insight into what is happening behind the scenes in MXNet to enable TensorRT graph execution.</p>
+  <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="Optimizing-Deep-Learning-Computation-Graphs-with-TensorRT">
+<h1>Optimizing Deep Learning Computation Graphs with TensorRT<a class="headerlink" href="#Optimizing-Deep-Learning-Computation-Graphs-with-TensorRT" title="Permalink to this headline">¶</a></h1>
+<p>NVIDIA’s TensorRT is a deep learning library that has been shown to provide large speedups when used for network inference. MXNet 1.5.0 and later versions ship with experimental integrated support for TensorRT. This means MXNet users can now make use of this acceleration library to efficiently run their networks. In this tutorial we’ll see how to install, enable and run TensorRT with MXNet. We’ll also give some insight into what is happening behind the scenes in MXNet to enable TensorRT graph
+execution.</p>
 <div class="section" id="Installation-and-Prerequisites">
 <h2>Installation and Prerequisites<a class="headerlink" href="#Installation-and-Prerequisites" title="Permalink to this headline">¶</a></h2>
-<p>Installing MXNet with TensorRT integration is an easy process. First ensure that you are running Ubuntu 16.04, that you have updated your video drivers, and you have installed CUDA 9.0 or 9.2. You’ll need a Pascal or newer generation NVIDIA gpu. You’ll also have to download and install TensorRT libraries <a class="reference external" href="https://docs.nvidia.com/deeplearning/sdk/tensorrt-install-guide/index.html">instructions here</a>. Once your these prerequisites installed and up-to-date you can install a special build of
-MXNet with TensorRT support enabled via PyPi and pip. Install the appropriate version by running:</p>
-<p>To install with CUDA 9.0:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">tensorrt</span><span class="o">-</span><span class="n">cu90</span>
-</pre></div>
-</div>
-<p>To install with CUDA 9.2:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">mxnet</span><span class="o">-</span><span class="n">tensorrt</span><span class="o">-</span><span class="n">cu92</span>
-</pre></div>
-</div>
-<p>If you are running an operating system other than Ubuntu 16.04, or just prefer to use a docker image with all prerequisites installed you can instead run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nvidia</span><span class="o">-</span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">ti</span> <span class="n">mxnet</span><span class="o">/</span><span class="n">tensorrt</span> <span class="n">python</span>
-</pre></div>
-</div>
+<p>To use MXNet with TensorRT integration you’ll have to follow the MXNet build from source instructions, and have a few extra packages installed on your machine. First ensure that you are running Ubuntu 18.04, and that you have updated your video drivers, and you have installed CUDA 10.1 or newer. You’ll need a Pascal or newer generation NVIDIA GPU. You’ll also have to download and install TensorRT libraries <a class="reference external" href="https://docs.nvidia.com/deeplearning/sdk/tensorrt-install-guide/index.html">instructions
+here</a>. Once you have these prerequisites installed you can follow the <a class="reference external" href="https://mxnet.apache.org/get_started/build_from_source#recommended-for-Systems-with-NVIDIA-GPUs-and-Intel-CPUs">recommended instructions for building MXNet for NVIDIA GPUs</a> but include the additional CMake flag -DUSE_TENSORRT=1.</p>
 </div>
 <div class="section" id="Sample-Models">
 <h2>Sample Models<a class="headerlink" href="#Sample-Models" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Resnet-18">
 <h3>Resnet 18<a class="headerlink" href="#Resnet-18" title="Permalink to this headline">¶</a></h3>
-<p>TensorRT is an inference only library, so for the purposes of this blog post we will be using a pre-trained network, in this case a Resnet 18. Resnets are a computationally intensive model architecture that are often used as a backbone for various computer vision tasks. Resnets are also commonly used as a reference for benchmarking deep learning library performance. In this section we’ll use a pretrained Resnet 18 from the <a class="reference external" href="/api/python/docs/api/gluon/model_zoo/index.html">Gluon Model Zoo</a> and
+<p>TensorRT is an inference only library, so for the purposes of this tutorial we will be using a pre-trained network, in this case a Resnet 18. Resnets are a computationally intensive model architecture that are often used as a backbone for various computer vision tasks. Resnets are also commonly used as a reference for benchmarking deep learning library performance. In this section we’ll use a pretrained Resnet 18 from the <a class="reference external" href="/api/python/docs/api/gluon/model_zoo/index.html">Gluon Model Zoo</a> and
 compare its inference speed with TensorRT using MXNet with TensorRT integration turned off as a baseline.</p>
 </div>
 </div>
@@ -694,7 +683,6 @@ inference. This may be addressed in future releases of MXNet, but in general if 
 <span class="nb">input</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span>
 
 <span class="c1"># Execute with MXNet</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MXNET_USE_TENSORRT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
 <span class="n">executor</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">simple_bind</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">batch_shape</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">force_rebind</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">executor</span><span class="o">.</span><span class="n">copy_params_from</span><span class="p">(</span><span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
 
@@ -714,24 +702,23 @@ inference. This may be addressed in future releases of MXNet, but in general if 
 <span class="nb">print</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For this experiment we are strictly interested in inference performance, so to simplify the benchmark we’ll pass a tensor filled with zeros as an input. We then bind a symbol as usual, returning a normal MXNet executor, and we run forward on this executor in a loop. To help improve the accuracy of our benchmarks we run a small number of predictions as a warmup before running our timed loop. This will ensure various lazy operations, which do not represent real-world usage, have completed before
-we measure relative performance improvement. On a modern PC with a Titan V GPU the time taken for our MXNet baseline is <strong>33.73s</strong>. Next we’ll run the same model with TensorRT enabled, and see how the performance compares.</p>
-<p>While TensorRT integration remains experimental, we require users to set an environment variable to enable graph compilation. You can see that at the start of this test we explicitly disabled TensorRT graph compilation support. Next, we will run the same predictions using TensorRT. This will require us to explicitly enable the MXNET_USE_TENSORRT environment variable, and we’ll also use a slightly different API to bind our symbol.</p>
+<p>We are interested in inference performance, so to simplify the benchmark we’ll pass a tensor filled with zeros as an input. We bind a symbol as usual, returning an MXNet executor, and we run forward on this executor in a loop. To help improve the accuracy of our benchmarks we run a small number of predictions as a warmup before running our timed loop. On a modern PC with an RTX 2070 GPU the time taken for our MXNet baseline is <strong>17.20s</strong>. Next we’ll run the same model with TensorRT enabled, and
+see how the performance compares.</p>
 </div>
 <div class="section" id="MXNet-with-TensorRT-Integration-Performance">
 <h2>MXNet with TensorRT Integration Performance<a class="headerlink" href="#MXNet-with-TensorRT-Integration-Performance" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Execute with TensorRT</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Building TensorRT engine&#39;</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MXNET_USE_TENSORRT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
-<span class="n">arg_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aux_params</span><span class="p">)</span>
-<span class="n">all_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
-<span class="n">executor</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">tensorrt</span><span class="o">.</span><span class="n">tensorrt_bind</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">all_params</span><span class="o">=</span><span class="n">all_params</span><span class="p">,</span>
-                                             <span class="n">data</span><span class="o">=</span><span class="n">batch_shape</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">force_rebind</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">trt_sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_backend_symbol</span><span class="p">(</span><span class="s1">&#39;TensorRT&#39;</span><span class="p">)</span>
+<span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">tensorrt</span><span class="o">.</span><span class="n">init_tensorrt_params</span><span class="p">(</span><span class="n">trt_sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
+<span class="n">mx</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">tensorrt</span><span class="o">.</span><span class="n">set_use_fp16</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">executor</span> <span class="o">=</span> <span class="n">trt_sym</span><span class="o">.</span><span class="n">simple_bind</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(),</span> <span class="n">data</span><span class="o">=</span><span class="n">batch_shape</span><span class="p">,</span>
+                               <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">force_rebind</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">executor</span><span class="o">.</span><span class="n">copy_params_from</span><span class="p">(</span><span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Instead of calling simple_bind directly on our symbol to return an executor, we call an experimental API from the contrib module of MXNet. This call is meant to emulate the simple_bind call, and has many of the same arguments. One difference to note is that this call takes params in the form of a single merged dictionary to assist with a tensor cleanup pass that we’ll describe below.</p>
-<p>As TensorRT integration improves our goal is to gradually deprecate this tensorrt_bind call, and allow users to use TensorRT transparently (see the <a class="reference external" href="https://cwiki.apache.org/confluence/display/MXNET/MXNet+Graph+Optimization+and+Quantization+based+on+subgraph+and+MKL-DNN">Subgraph API</a> for more information). When this happens, the similarity between tensorrt_bind and simple_bind should make it easy to migrate your code.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Warmup</span>
+<p>We use a few TensorRT specific API calls from the contrib package here to setup our parameters and indicate we’d like to run inference in fp16 mode. We then call simple_bind as normal and copy our parameter dictionaries to our executor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Warmup</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warming up TensorRT&#39;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
     <span class="n">y_gen</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">is_train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span>
@@ -747,7 +734,7 @@ we measure relative performance improvement. On a modern PC with a Titan V GPU t
 <span class="nb">print</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We run timing with a warmup once more, and on the same machine, run in <strong>18.99s</strong>. A 1.8x speed improvement! Speed improvements when using libraries like TensorRT can come from a variety of optimizations, but in this case our speedups are coming from a technique known as <a class="reference external" href="http://dmlc.ml/2016/11/21/fusion-and-runtime-compilation-for-nnvm-and-tinyflow.html">operator fusion</a>.</p>
+<p>We run timing with a warmup once more, and on the same machine, run in <strong>9.83s</strong>. A 1.75x speed improvement! Speed improvements when using libraries like TensorRT can come from a variety of optimizations, but in this case our speedups are coming from a technique known as <a class="reference external" href="http://ziheng.org/2016/11/21/fusion-and-runtime-compilation-for-nnvm-and-tinyflow/">operator fusion</a>.</p>
 </div>
 <div class="section" id="Operators-and-Subgraph-Fusion">
 <h2>Operators and Subgraph Fusion<a class="headerlink" href="#Operators-and-Subgraph-Fusion" title="Permalink to this headline">¶</a></h2>
@@ -767,13 +754,13 @@ TensorRT node. If your browser is unable to render svg files you can view the gr
 <h2>After<a class="headerlink" href="#After" title="Permalink to this headline">¶</a></h2>
 <p><img alt="after" src="tutorials/performance/backend/tensorrt/wavenet_optimized.svg" /></p>
 </div>
-<div class="section" id="Future-Work">
-<h2>Future Work<a class="headerlink" href="#Future-Work" title="Permalink to this headline">¶</a></h2>
-<p>As mentioned above, MXNet developers are excited about the possibilities of <a class="reference external" href="https://cwiki.apache.org/confluence/display/MXNET/MXNet+Graph+Optimization+and+Quantization+based+on+subgraph+and+MKL-DNN">creating APIs</a> that deal specifically with subgraphs. As this work matures it will bring many improvements for TensorRT users. We hope this will also be an opportunity for other acceleration libraries to integrate with MXNet.</p>
+<div class="section" id="Subgraph-API">
+<h2>Subgraph API<a class="headerlink" href="#Subgraph-API" title="Permalink to this headline">¶</a></h2>
+<p>As of MXNet 1.5, MXNet developers have integrated TensorRT with MXNet via a Subgraph API. Read more about the design of the API <a class="reference external" href="https://cwiki.apache.org/confluence/display/MXNET/MXNet+Graph+Optimization+and+Quantization+based+on+subgraph+and+MKL-DNN">here</a>.</p>
 </div>
 <div class="section" id="Thanks">
 <h2>Thanks<a class="headerlink" href="#Thanks" title="Permalink to this headline">¶</a></h2>
-<p>Thank you to NVIDIA for contributing this feature, and specifically thanks to Marek Kolodziej and Clement Fuji-Tsang. Thanks to Junyuan Xie and Jun Wu for the code reviews and design feedback, and to Aaron Markham for the copy review.</p>
+<p>Thanks to NVIDIA for contributing this feature, and specifically thanks to Marek Kolodziej and Clement Fuji-Tsang. Thanks to Junyuan Xie and Jun Wu for the code reviews and design feedback, and to Aaron Markham for the copy review.</p>
 </div>
 </div>
 
@@ -786,7 +773,7 @@ TensorRT node. If your browser is unable to render svg files you can view the gr
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">Optimized GPU Inference</a><ul>
+<li><a class="reference internal" href="#">Optimizing Deep Learning Computation Graphs with TensorRT</a><ul>
 <li><a class="reference internal" href="#Installation-and-Prerequisites">Installation and Prerequisites</a></li>
 <li><a class="reference internal" href="#Sample-Models">Sample Models</a><ul>
 <li><a class="reference internal" href="#Resnet-18">Resnet 18</a></li>
@@ -798,7 +785,7 @@ TensorRT node. If your browser is unable to render svg files you can view the gr
 <li><a class="reference internal" href="#Operators-and-Subgraph-Fusion">Operators and Subgraph Fusion</a></li>
 <li><a class="reference internal" href="#Before">Before</a></li>
 <li><a class="reference internal" href="#After">After</a></li>
-<li><a class="reference internal" href="#Future-Work">Future Work</a></li>
+<li><a class="reference internal" href="#Subgraph-API">Subgraph API</a></li>
 <li><a class="reference internal" href="#Thanks">Thanks</a></li>
 </ul>
 </li>
