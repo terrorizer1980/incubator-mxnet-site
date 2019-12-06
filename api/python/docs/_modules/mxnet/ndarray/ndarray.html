@@ -1539,6 +1539,17 @@
         <span class="k">return</span> <span class="n">flat_begin</span><span class="p">,</span> <span class="n">flat_end</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="c1"># pylint: enable=invalid-name</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_drop_int_axes</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">,</span> <span class="n">int_axes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;drop the axis of indexed_shape corresponding to int axes&quot;&quot;&quot;</span>
+        <span class="n">bcast_shape</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">int_axes</span><span class="p">:</span>
+                <span class="n">bcast_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bcast_shape</span><span class="p">:</span>
+            <span class="n">bcast_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_set_nd_basic_indexing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function indexes ``self`` with a tuple of ``slice`` objects only.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
@@ -1580,14 +1591,10 @@
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>  <span class="c1"># pylint: disable=unidiomatic-typecheck</span>
                 <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">:</span>
                     <span class="c1"># Need to do this before `broadcast_to`.</span>
-                    <span class="n">tmp_shape</span> <span class="o">=</span> <span class="n">_shape_for_bcast</span><span class="p">(</span>
-                        <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">target_ndim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">new_axes</span><span class="o">=</span><span class="n">int_axes</span>
-                    <span class="p">)</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="n">bcast_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_int_axes</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">,</span> <span class="n">int_axes</span><span class="p">)</span>
+                    <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="o">=</span><span class="n">new_axes</span><span class="p">)</span>
+                    <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">)</span>
+                    <span class="n">value_nd</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_full</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -1603,9 +1610,10 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Other array-like</span>
-                <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span>
-                    <span class="n">value</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
-                <span class="p">)</span>
+                <span class="c1"># drop the axis of indexed_shape corresponding to int axes</span>
+                <span class="n">bcast_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_int_axes</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">,</span> <span class="n">int_axes</span><span class="p">)</span>
+                <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="o">=</span><span class="n">new_axes</span><span class="p">)</span>
+                <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">)</span>
                 <span class="n">value_nd</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
@@ -1613,16 +1621,8 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># drop the axis of indexed_shape corresponding to int axes</span>
-            <span class="n">bcast_shape</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">int_axes</span><span class="p">:</span>
-                    <span class="n">bcast_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">bcast_shape</span> <span class="o">==</span> <span class="p">[]:</span>
-                <span class="n">bcast_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">bcast_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bcast_shape</span><span class="p">)</span>
-            <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span>
-                <span class="n">value</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="o">=</span><span class="n">new_axes</span>
-            <span class="p">)</span>
+            <span class="n">bcast_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_int_axes</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">,</span> <span class="n">int_axes</span><span class="p">)</span>
+            <span class="n">value_nd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_value_nd</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bcast_shape</span><span class="o">=</span><span class="n">bcast_shape</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="o">=</span><span class="n">new_axes</span><span class="p">)</span>
             <span class="n">value_nd</span> <span class="o">=</span> <span class="n">value_nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">indexed_shape</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">slice_assign</span><span class="p">(</span><span class="n">value_nd</span><span class="p">,</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
 
