@@ -1,10 +1,22 @@
 var searchData=
 [
   ['op',['Op',['../namespacemxnet.html#ac2fb286fd7ddfbc7af1456f6c7a7ee52',1,'mxnet']]],
+  ['opcallbkwd_5ft',['opCallBkwd_t',['../lib__api_8h.html#a100228f1b7370a71cb2002ec87105113',1,'lib_api.h']]],
+  ['opcallcreateopstate_5ft',['opCallCreateOpState_t',['../lib__api_8h.html#addf09881ffb24664e80046ae121757c5',1,'lib_api.h']]],
+  ['opcallfcomp_5ft',['opCallFComp_t',['../lib__api_8h.html#ae537b9c6181818fce65d21c243774f15',1,'lib_api.h']]],
+  ['opcallfree_5ft',['opCallFree_t',['../lib__api_8h.html#ab12649f87cac93dc0c56a60ba7da2ec1',1,'lib_api.h']]],
+  ['opcallfstatefulcomp_5ft',['opCallFStatefulComp_t',['../lib__api_8h.html#a8f0c9afb048aecb779a4822394aebcb6',1,'lib_api.h']]],
+  ['opcallinfershape_5ft',['opCallInferShape_t',['../lib__api_8h.html#adbd20800b78b05d30cc16136cb625961',1,'lib_api.h']]],
+  ['opcallinfertype_5ft',['opCallInferType_t',['../lib__api_8h.html#a7eeac3f14dd8296d91e0a1ccbd03ba9e',1,'lib_api.h']]],
+  ['opcallmutateinputs_5ft',['opCallMutateInputs_t',['../lib__api_8h.html#a6868d747aaa43efcc1c147c604fc2a82',1,'lib_api.h']]],
+  ['opcallparseattrs_5ft',['opCallParseAttrs_t',['../lib__api_8h.html#af91dccf1906c208e364d2d1606ad7661',1,'lib_api.h']]],
   ['openmp_5findex_5ft',['openmp_index_t',['../namespacemshadow.html#aa94c153a2f8bcd10be82a4f5598ae5b9',1,'mshadow']]],
   ['operatorpropertyfactory',['OperatorPropertyFactory',['../namespacemxnet.html#a6f5428fbf261a94eaac079ec24413815',1,'mxnet']]],
   ['ophandle',['OpHandle',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#acf157e26d64edaf2b857b04a69deb52b',1,'c_api.h']]],
+  ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#ad5242e2431e3b6b127bb7a1180289231',1,'lib_api.h']]],
+  ['opregsize_5ft',['opRegSize_t',['../lib__api_8h.html#a62bc19b0f724d20fff152c4a67bcdbd4',1,'lib_api.h']]],
   ['oprhandle',['OprHandle',['../classmxnet_1_1Engine.html#a832436e413a075291aa1a631942c3f01',1,'mxnet::Engine::OprHandle()'],['../namespacemxnet_1_1engine.html#a2d9b14b658e3f3c4e03ca49cd38ace94',1,'mxnet::engine::OprHandle()']]],
   ['optimizercreator',['OptimizerCreator',['../namespacemxnet_1_1cpp.html#a16a22578671e5ebcf8addb2275c317bc',1,'mxnet::cpp']]],
-  ['optype',['OPType',['../structmshadow_1_1sv_1_1saveto.html#ac78ceb69e8291f8fa767c2eda2a732a5',1,'mshadow::sv::saveto::OPType()'],['../structmshadow_1_1sv_1_1plusto.html#a0b3849b290f3207a59b8975e2b29b065',1,'mshadow::sv::plusto::OPType()'],['../structmshadow_1_1sv_1_1minusto.html#ac9baef2b9d3a92b962c9ad7f7ee1122d',1,'mshadow::sv::minusto::OPType()'],['../structmshadow_1_1sv_1_1multo.html#acc47e9c85d6e583e5785ba0f62fa4431',1,'mshadow::sv::multo::OPType()'],['../structmshadow_1_1sv_1_1divto.html#ab8864c99eea0286fce8f5a8f791f0f33',1,'mshadow::sv::divto::OPType()']]]
+  ['optype',['OPType',['../structmshadow_1_1sv_1_1saveto.html#ac78ceb69e8291f8fa767c2eda2a732a5',1,'mshadow::sv::saveto::OPType()'],['../structmshadow_1_1sv_1_1plusto.html#a0b3849b290f3207a59b8975e2b29b065',1,'mshadow::sv::plusto::OPType()'],['../structmshadow_1_1sv_1_1minusto.html#ac9baef2b9d3a92b962c9ad7f7ee1122d',1,'mshadow::sv::minusto::OPType()'],['../structmshadow_1_1sv_1_1multo.html#acc47e9c85d6e583e5785ba0f62fa4431',1,'mshadow::sv::multo::OPType()'],['../structmshadow_1_1sv_1_1divto.html#ab8864c99eea0286fce8f5a8f791f0f33',1,'mshadow::sv::divto::OPType()']]],
+  ['opversion_5ft',['opVersion_t',['../lib__api_8h.html#aa39b29654462c2bbe7837bd368a67fba',1,'lib_api.h']]]
 ];

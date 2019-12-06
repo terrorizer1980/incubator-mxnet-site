@@ -16,6 +16,7 @@ var searchData=
   ['reduceparam',['ReduceParam',['../structnnvm_1_1top_1_1ReduceParam.html',1,'nnvm::top']]],
   ['reduceto1dexp',['ReduceTo1DExp',['../structmshadow_1_1expr_1_1ReduceTo1DExp.html',1,'mshadow::expr']]],
   ['reducewithaxisexp',['ReduceWithAxisExp',['../structmshadow_1_1expr_1_1ReduceWithAxisExp.html',1,'mshadow::expr']]],
+  ['registry',['Registry',['../classRegistry.html',1,'']]],
   ['registry',['Registry',['../classdmlc_1_1Registry.html',1,'dmlc']]],
   ['reshapeexp',['ReshapeExp',['../structmshadow_1_1expr_1_1ReshapeExp.html',1,'mshadow::expr']]],
   ['reshapeparam',['ReshapeParam',['../structnnvm_1_1top_1_1ReshapeParam.html',1,'nnvm::top']]],

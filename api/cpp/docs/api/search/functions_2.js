@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['backward',['Backward',['../classmxnet_1_1Executor.html#aa2fd32510a718aff38323e63be0d65e3',1,'mxnet::Executor::Backward()'],['../classmxnet_1_1Imperative.html#afa4950a3cf57431f1d0d639c3f7afa7d',1,'mxnet::Imperative::Backward()'],['../classmxnet_1_1Operator.html#ad32d74b9bf56caf920b5e6379d2bb259',1,'mxnet::Operator::Backward()'],['../classmxnet_1_1cpp_1_1Executor.html#abd98fc4f87cd8adea049a31a840898e4',1,'mxnet::cpp::Executor::Backward()']]],
+  ['backward',['Backward',['../classmxnet_1_1Executor.html#aa2fd32510a718aff38323e63be0d65e3',1,'mxnet::Executor::Backward()'],['../classmxnet_1_1Imperative.html#afa4950a3cf57431f1d0d639c3f7afa7d',1,'mxnet::Imperative::Backward()'],['../classCustomStatefulOp.html#aca9d6e2d88c590b1f18946e4cd3b01d3',1,'CustomStatefulOp::Backward()'],['../classmxnet_1_1Operator.html#ad32d74b9bf56caf920b5e6379d2bb259',1,'mxnet::Operator::Backward()'],['../classmxnet_1_1cpp_1_1Executor.html#abd98fc4f87cd8adea049a31a840898e4',1,'mxnet::cpp::Executor::Backward()']]],
   ['backwardinplaceoption',['BackwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#a67231a5a1525ec7480de98a79dce0194',1,'mxnet::OperatorProperty']]],
   ['backwardinputs',['BackwardInputs',['../classmxnet_1_1OperatorProperty.html#a9f488509e132094ce7e79125ce853042',1,'mxnet::OperatorProperty']]],
   ['backwardresource',['BackwardResource',['../classmxnet_1_1OperatorProperty.html#acbd90961fd1e72a20ba5329d7a4c8ad1',1,'mxnet::OperatorProperty']]],

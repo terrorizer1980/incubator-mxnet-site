@@ -92,5 +92,7 @@ var searchData=
   ['cudamin',['CudaMin',['../namespacemxnet_1_1common_1_1cuda.html#a03888f252f813f6d052ae84bf8801498',1,'mxnet::common::cuda']]],
   ['curandgeterrorstring',['CurandGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#a97c06b2f4d26445a7386b0f54fae1feb',1,'mxnet::common::cuda']]],
   ['current_5fprocess_5fid',['current_process_id',['../namespacemxnet_1_1common.html#a17af88f97948c889f2f4ce88190122c1',1,'mxnet::common']]],
-  ['cusolvergeterrorstring',['CusolverGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#abf9bcb4cb696e9ae61b818510dac39c8',1,'mxnet::common::cuda']]]
+  ['cusolvergeterrorstring',['CusolverGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#abf9bcb4cb696e9ae61b818510dac39c8',1,'mxnet::common::cuda']]],
+  ['customop',['CustomOp',['../classCustomOp.html#a456355884d68399e5b7625aa148dd5de',1,'CustomOp']]],
+  ['customstatefulopwrapper',['CustomStatefulOpWrapper',['../classCustomStatefulOpWrapper.html#a4b071747b29c9f4cfd37a86df4123d78',1,'CustomStatefulOpWrapper']]]
 ];

@@ -17,7 +17,7 @@ var searchData=
   ['flip',['flip',['../namespacemshadow_1_1expr.html#a56b33c0b1d19921f72bf9abeee4898f2',1,'mshadow::expr']]],
   ['flipexp',['FlipExp',['../structmshadow_1_1expr_1_1FlipExp.html#ada1284755fcb51023cee49bb3225ae17',1,'mshadow::expr::FlipExp']]],
   ['foreach',['ForEach',['../classmxnet_1_1common_1_1LazyAllocArray.html#a43a89c8e7b4e1a09f346694073a2d998',1,'mxnet::common::LazyAllocArray']]],
-  ['forward',['Forward',['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()']]],
+  ['forward',['Forward',['../classmxnet_1_1Executor.html#ab3716be8e6c265b091e618f46eeb6f9b',1,'mxnet::Executor::Forward()'],['../classCustomStatefulOp.html#a40b7739a4927e27e03978012c0f3c01f',1,'CustomStatefulOp::Forward()'],['../classmxnet_1_1Operator.html#a3dbe23d985df86da51eeb868439872dd',1,'mxnet::Operator::Forward()'],['../classmxnet_1_1cpp_1_1Executor.html#a1fef41367238aaf8315fe5715a9f8f47',1,'mxnet::cpp::Executor::Forward()']]],
   ['forwardinplaceoption',['ForwardInplaceOption',['../classmxnet_1_1OperatorProperty.html#aad7a3e87866515a2b7100e849a2fe966',1,'mxnet::OperatorProperty']]],
   ['forwardresource',['ForwardResource',['../classmxnet_1_1OperatorProperty.html#a4623326f2919d6ae87a6d783bb9751c7',1,'mxnet::OperatorProperty']]],
   ['free',['Free',['../classmxnet_1_1Storage.html#a5bdbd7b3ab712cd9e087ab007bdc64dd',1,'mxnet::Storage']]],

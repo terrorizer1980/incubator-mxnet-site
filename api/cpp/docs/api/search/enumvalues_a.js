@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['max_5ffeatures',['MAX_FEATURES',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87dab8b93530b5d8eaaf22119d94cd2dc899',1,'mxnet::features']]],
-  ['mkldnn',['MKLDNN',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87dae86d8c90b5bf35807da227052d68856d',1,'mxnet::features']]]
+  ['lapack',['LAPACK',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87dace62935ed54d809f62bb28fe7c28aa8d',1,'mxnet::features']]],
+  ['list',['LIST',['../lib__api_8h.html#a749cb5137f6266520a9329b48a63decca25688e799536738ea469158ef15fd1c0',1,'lib_api.h']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['gaussian',['gaussian',['../classmxnet_1_1cpp_1_1Xavier.html#ad9d26ff245899b6053fa417511f39207aec51f8a6742be202ebc3c509262f6bc2',1,'mxnet::cpp::Xavier']]],
-  ['globalon',['GlobalOn',['../namespacemxnet.html#a2a487cb76fa5483d32c5d87ca448e94ea6de602d5b5a661f930ace1cddfbcd5b9',1,'mxnet']]]
+  ['f16c',['F16C',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da1063c4f15083047aa963337cdc75cb6a',1,'mxnet::features']]],
+  ['finitechecker',['FiniteChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303ac2ee25776e6f679b2cabd000aa9b9fe8',1,'mxnet']]]
 ];

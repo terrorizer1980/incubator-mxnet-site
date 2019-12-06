@@ -2,8 +2,8 @@ var searchData=
 [
   ['devicetype',['DeviceType',['../structmxnet_1_1Context.html#a611c227b5e04a2777c3e4507bb76f60e',1,'mxnet::Context::DeviceType()'],['../namespacemxnet_1_1cpp.html#a65c3def958cbb9d09c7f56082a5257d6',1,'mxnet::cpp::DeviceType()']]],
   ['dispatchmode',['DispatchMode',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2b',1,'mxnet']]],
-  ['dldatatypecode',['DLDataTypeCode',['../dlpack_8h.html#a2a5dbaa5fb67f4845a973c09a7f2ec50',1,'dlpack.h']]],
-  ['dldevicetype',['DLDeviceType',['../dlpack_8h.html#a49db572e18d84c47738fc746568fb573',1,'dlpack.h']]],
+  ['dldatatypecode',['DLDataTypeCode',['../dlpack_8h.html#a2a5dbaa5fb67f4845a973c09a7f2ec50',1,'DLDataTypeCode():&#160;dlpack.h'],['../lib__api_8h.html#a2a5dbaa5fb67f4845a973c09a7f2ec50',1,'DLDataTypeCode():&#160;lib_api.h']]],
+  ['dldevicetype',['DLDeviceType',['../dlpack_8h.html#a49db572e18d84c47738fc746568fb573',1,'DLDeviceType():&#160;dlpack.h'],['../lib__api_8h.html#a49db572e18d84c47738fc746568fb573',1,'DLDeviceType():&#160;lib_api.h']]],
   ['dnnl_5falg_5fkind_5ft',['dnnl_alg_kind_t',['../group__c__api__types__generic.html#ga96946c805f6c4922c38c37049ab95d23',1,'dnnl_types.h']]],
   ['dnnl_5fdata_5ftype_5ft',['dnnl_data_type_t',['../group__c__api__types__generic.html#ga012ba1c84ff24bdd068f9d2f9b26a130',1,'dnnl_types.h']]],
   ['dnnl_5fengine_5fkind_5ft',['dnnl_engine_kind_t',['../group__c__api__engine__types.html#ga04b3dd9eba628ea02218a52c4c4363a2',1,'dnnl_types.h']]],

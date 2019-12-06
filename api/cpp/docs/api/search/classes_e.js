@@ -14,6 +14,7 @@ var searchData=
   ['opgroup',['OpGroup',['../classnnvm_1_1OpGroup.html',1,'nnvm']]],
   ['opmap',['OpMap',['../classmxnet_1_1cpp_1_1OpMap.html',1,'mxnet::cpp']]],
   ['opmap',['OpMap',['../classnnvm_1_1OpMap.html',1,'nnvm']]],
+  ['opresource',['OpResource',['../classOpResource.html',1,'']]],
   ['opstateptr',['OpStatePtr',['../classmxnet_1_1OpStatePtr.html',1,'mxnet']]],
   ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html',1,'mxnet::cpp']]],
   ['optimizerregistry',['OptimizerRegistry',['../classmxnet_1_1cpp_1_1OptimizerRegistry.html',1,'mxnet::cpp']]],

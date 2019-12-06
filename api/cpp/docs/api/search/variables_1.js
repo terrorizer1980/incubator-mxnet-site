@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['backward',['backward',['../structNativeOpInfo.html#a2faec6cfc4510b455de950a4b104ea9f',1,'NativeOpInfo::backward()'],['../structNDArrayOpInfo.html#ac8a4bb0b4a71f372e5abb8ded36dd61c',1,'NDArrayOpInfo::backward()']]],
+  ['backward',['backward',['../structNativeOpInfo.html#a2faec6cfc4510b455de950a4b104ea9f',1,'NativeOpInfo::backward()'],['../structNDArrayOpInfo.html#ac8a4bb0b4a71f372e5abb8ded36dd61c',1,'NDArrayOpInfo::backward()'],['../classCustomOp.html#a3ba3817c870ad1a8a3f4b577d3bfedf7',1,'CustomOp::backward()']]],
   ['barrier_5fbefore_5fexit_5f',['barrier_before_exit_',['../classmxnet_1_1KVStore.html#aa8ba7abf8334326cab19eb568cb31cfa',1,'mxnet::KVStore']]],
   ['base_5flr_5f',['base_lr_',['../classmxnet_1_1cpp_1_1LRScheduler.html#a20c6a5521f4216124c1574e093736ac9',1,'mxnet::cpp::LRScheduler']]],
   ['batch_5fnorm_5fepsilon',['batch_norm_epsilon',['../structdnnl__batch__normalization__desc__t.html#ab2508100481c6a19566f122198294e55',1,'dnnl_batch_normalization_desc_t']]],

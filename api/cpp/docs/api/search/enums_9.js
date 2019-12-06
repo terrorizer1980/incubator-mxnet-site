@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['ndarrayformaterr',['NDArrayFormatErr',['../namespacemxnet.html#ace60510752753f459193f95cab0e9e1a',1,'mxnet']]],
-  ['ndarrayfunctiontypemask',['NDArrayFunctionTypeMask',['../namespacemxnet.html#a89a5f0f5cfd9e1e94604a7b42dda818a',1,'mxnet']]],
-  ['ndarraystoragetype',['NDArrayStorageType',['../namespacemxnet.html#a536b732faa980e1de446c552460ff76a',1,'mxnet']]],
-  ['numpyshape',['NumpyShape',['../namespacemxnet.html#a2a487cb76fa5483d32c5d87ca448e94e',1,'mxnet']]]
+  ['layoutflag',['LayoutFlag',['../namespacemshadow.html#abbe2dc827052234b64ab2d40a5b2fdb4',1,'mshadow']]],
+  ['listattroption',['ListAttrOption',['../classnnvm_1_1Symbol.html#a5c3e1cd05b0c8ded96089dd5a5084b65',1,'nnvm::Symbol']]],
+  ['listinputoption',['ListInputOption',['../classnnvm_1_1Symbol.html#aa67db17bfcc319dc42fbe3735a12340e',1,'nnvm::Symbol']]]
 ];

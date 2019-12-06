@@ -8,6 +8,6 @@ var searchData=
   ['format',['format',['../structdnnl__rnn__packed__desc__t.html#a9c864a86aed452bb689c7ff625998122',1,'dnnl_rnn_packed_desc_t']]],
   ['format_5fdesc',['format_desc',['../structdnnl__memory__desc__t.html#af4d55e681d75413385a316c2719485ab',1,'dnnl_memory_desc_t']]],
   ['format_5fkind',['format_kind',['../structdnnl__memory__desc__t.html#ae6f8322c5cff0068a97e7fba2f123e2c',1,'dnnl_memory_desc_t']]],
-  ['forward',['forward',['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()']]],
+  ['forward',['forward',['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()'],['../classCustomOp.html#a7b299e90772ac945a7062d83eb2bce3d',1,'CustomOp::forward()']]],
   ['fresh_5fout_5fgrad',['fresh_out_grad',['../classmxnet_1_1Imperative_1_1AGInfo.html#aa98f7d65123fb64697769cfb952de310',1,'mxnet::Imperative::AGInfo']]]
 ];

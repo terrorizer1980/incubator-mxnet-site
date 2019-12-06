@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['static_5fassert_5fcuda_5fversion_5fge',['STATIC_ASSERT_CUDA_VERSION_GE',['../cuda__utils_8h.html#ac2d16cdf196c75879d4acda60406e0ef',1,'cuda_utils.h']]]
+  ['register_5fop',['REGISTER_OP',['../lib__api_8h.html#abb165f6d1b3c2f0d4edfb5667a8b3638',1,'lib_api.h']]]
 ];

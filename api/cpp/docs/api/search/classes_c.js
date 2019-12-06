@@ -39,13 +39,14 @@ var searchData=
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html',1,'mxnet::cpp']]],
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html',1,'mxnet::cpp']]],
   ['msraprelu',['MSRAPrelu',['../classmxnet_1_1cpp_1_1MSRAPrelu.html',1,'mxnet::cpp']]],
-  ['mul',['mul',['../structmshadow_1_1op_1_1mul.html',1,'mshadow::op']]],
   ['mul',['mul',['../structmshadow_1_1op_1_1complex_1_1mul.html',1,'mshadow::op::complex']]],
+  ['mul',['mul',['../structmshadow_1_1op_1_1mul.html',1,'mshadow::op']]],
   ['multiboxpriorparam',['MultiBoxPriorParam',['../structnnvm_1_1top_1_1MultiBoxPriorParam.html',1,'nnvm::top']]],
   ['multiboxtransformlocparam',['MultiBoxTransformLocParam',['../structnnvm_1_1top_1_1MultiBoxTransformLocParam.html',1,'nnvm::top']]],
   ['multo',['multo',['../structmshadow_1_1sv_1_1multo.html',1,'mshadow::sv']]],
   ['mxcallbacklist',['MXCallbackList',['../structMXCallbackList.html',1,'']]],
   ['mxdataiter',['MXDataIter',['../classmxnet_1_1cpp_1_1MXDataIter.html',1,'mxnet::cpp']]],
   ['mxdataiterblob',['MXDataIterBlob',['../structmxnet_1_1cpp_1_1MXDataIterBlob.html',1,'mxnet::cpp']]],
-  ['mxdataitermap',['MXDataIterMap',['../classmxnet_1_1cpp_1_1MXDataIterMap.html',1,'mxnet::cpp']]]
+  ['mxdataitermap',['MXDataIterMap',['../classmxnet_1_1cpp_1_1MXDataIterMap.html',1,'mxnet::cpp']]],
+  ['mxtensor',['MXTensor',['../structMXTensor.html',1,'']]]
 ];

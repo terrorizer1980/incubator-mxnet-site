@@ -39,7 +39,7 @@ var searchData=
   ['libinfo',['LibInfo',['../structmxnet_1_1features_1_1LibInfo.html',1,'mxnet::features']]],
   ['libinfo_2eh',['libinfo.h',['../libinfo_8h.html',1,'']]],
   ['line_5finfo',['line_info',['../classdmlc_1_1JSONReader.html#af10972598d7d2cf198c28f56cd4b74d5',1,'dmlc::JSONReader']]],
-  ['list',['List',['../classdmlc_1_1Registry.html#a7332aad0c884773f70eb9fdd30344e6a',1,'dmlc::Registry']]],
+  ['list',['List',['../classdmlc_1_1Registry.html#a7332aad0c884773f70eb9fdd30344e6a',1,'dmlc::Registry::List()'],['../structJsonVal.html#ac23337fcf1ff81492e8cd57cbb70e3a3',1,'JsonVal::list()'],['../lib__api_8h.html#a749cb5137f6266520a9329b48a63decca25688e799536738ea469158ef15fd1c0',1,'LIST():&#160;lib_api.h']]],
   ['list_5farguments',['list_arguments',['../structNativeOpInfo.html#af25c58d65a2350cab76403f1ce21922e',1,'NativeOpInfo::list_arguments()'],['../structNDArrayOpInfo.html#abc701d8c032a1c5b9358de8ab060d9c2',1,'NDArrayOpInfo::list_arguments()']]],
   ['list_5foutputs',['list_outputs',['../structNativeOpInfo.html#a6a324c4b74a64b295c404ff235fac1e1',1,'NativeOpInfo::list_outputs()'],['../structNDArrayOpInfo.html#ab99abece52b77824dde5df98837f4f7b',1,'NDArrayOpInfo::list_outputs()']]],
   ['listallnames',['ListAllNames',['../classdmlc_1_1Registry.html#a32cd6bfc4ed75261eef555da8310ec30',1,'dmlc::Registry']]],

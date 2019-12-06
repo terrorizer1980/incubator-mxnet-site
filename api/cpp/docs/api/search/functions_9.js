@@ -22,7 +22,7 @@ var searchData=
   ['initbilinear',['InitBilinear',['../classmxnet_1_1cpp_1_1Initializer.html#a258396185c26a56d18ae558324007a33',1,'mxnet::cpp::Initializer']]],
   ['initdefault',['InitDefault',['../classmxnet_1_1cpp_1_1Initializer.html#a5ad1f020e184cef117e9fc334f3a7152',1,'mxnet::cpp::Initializer']]],
   ['initgamma',['InitGamma',['../classmxnet_1_1cpp_1_1Initializer.html#a5ebebb65975a87d2d323ce2e55f14485',1,'mxnet::cpp::Initializer']]],
-  ['initialize',['initialize',['../lib__api_8h.html#a4fb97a64ba101e754b009ab8e1e1057e',1,'lib_api.h']]],
+  ['initialize',['initialize',['../lib__api_8h.html#a804b39a26b4659cf236fc98ac08537f5',1,'lib_api.h']]],
   ['initone',['InitOne',['../classmxnet_1_1cpp_1_1Initializer.html#af3838d4a6bd93b61439eab72002a396c',1,'mxnet::cpp::Initializer']]],
   ['initpsenv',['InitPSEnv',['../classmxnet_1_1KVStore.html#a5d919a7a4c9495e9a569c8d733d6325f',1,'mxnet::KVStore']]],
   ['initquantizedbias',['InitQuantizedBias',['../classmxnet_1_1cpp_1_1Initializer.html#a638e7beccf306b125f8c1c2d367dd31c',1,'mxnet::cpp::Initializer']]],

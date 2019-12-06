@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['oppatternkind',['OpPatternKind',['../namespacennvm_1_1compiler.html#aafc152b15e768d3ff58a2ae792c5c65d',1,'nnvm::compiler']]],
-  ['opreqtype',['OpReqType',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398',1,'mxnet::OpReqType()'],['../namespacemxnet_1_1cpp.html#ae1e49a337d45c7071defefda2ec91845',1,'mxnet::cpp::OpReqType()']]],
-  ['option',['Option',['../classdmlc_1_1LuaState.html#a00653ef79293ad2e4797326295028ce7',1,'dmlc::LuaState']]]
+  ['mxdtype',['MXDType',['../lib__api_8h.html#a8fd7b6a8c28e599287f76955305a8107',1,'lib_api.h']]],
+  ['mxreturnvalue',['MXReturnValue',['../lib__api_8h.html#a21ac519c3c38b4fe206f4dc6dd26e8b7',1,'lib_api.h']]]
 ];

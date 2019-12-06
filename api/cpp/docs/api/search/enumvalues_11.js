@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zerochecker',['ZeroChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303af7c958b058dd779d6fb9cf825e7ee6bf',1,'mxnet']]]
+  ['uniform',['uniform',['../classmxnet_1_1cpp_1_1Xavier.html#ad9d26ff245899b6053fa417511f39207a2c856ca509c3bdba95789f5856b7f6f0',1,'mxnet::cpp::Xavier']]]
 ];

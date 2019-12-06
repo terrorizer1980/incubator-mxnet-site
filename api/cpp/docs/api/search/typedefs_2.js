@@ -16,6 +16,7 @@ var searchData=
   ['contexthandle',['ContextHandle',['../include_2mxnet_2c__api_8h.html#a202dafc02d455ec60a7442598d76dc6c',1,'c_api.h']]],
   ['controller',['Controller',['../classmxnet_1_1KVStore.html#a50db5cb1a140fb84c8e31def54270ae3',1,'mxnet::KVStore']]],
   ['cpu',['cpu',['../namespacemxnet.html#a850af9d76d9d4beaeb5234c1434973e3',1,'mxnet']]],
+  ['createopstate_5ft',['createOpState_t',['../lib__api_8h.html#ae4c6b01ef603b5b9efc32f667c890ceb',1,'lib_api.h']]],
   ['cudakernelhandle',['CudaKernelHandle',['../include_2mxnet_2c__api_8h.html#a879a534941e7727cf9deea865c3144b0',1,'c_api.h']]],
   ['cudamodulehandle',['CudaModuleHandle',['../include_2mxnet_2c__api_8h.html#aeef73e8188f1cf7f79a13517f5828693',1,'c_api.h']]],
   ['customfunctionbwdfunc',['CustomFunctionBwdFunc',['../include_2mxnet_2c__api_8h.html#a82af386480b9ded6c407a6b582386c22',1,'c_api.h']]],

@@ -32,6 +32,7 @@ var searchData=
   ['eps',['eps',['../structnnvm_1_1top_1_1L2NormalizeParam.html#acc58011a45b05a8aa7b191bbeecb3aac',1,'nnvm::top::L2NormalizeParam']]],
   ['epsilon',['epsilon',['../structnnvm_1_1top_1_1BatchNormParam.html#a50cad488a0638577c463b470a65571b7',1,'nnvm::top::BatchNormParam']]],
   ['equal_5fsplit',['equal_split',['../structnnvm_1_1top_1_1SplitParam.html#a14242f9aa438f268b85a6f76042bea85',1,'nnvm::top::SplitParam']]],
+  ['err',['ERR',['../lib__api_8h.html#a749cb5137f6266520a9329b48a63decca0f886785b600b91048fcdc434c6b4a8e',1,'lib_api.h']]],
   ['error_5fall_5ftensor_5fin_5fexp_5fmust_5fhave_5fsame_5ftype',['Error_All_Tensor_in_Exp_Must_Have_Same_Type',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01true_01_4.html#ac1c5ec0bdeaf6743b172535f2401914b',1,'mshadow::expr::TypeCheckPass&lt; true &gt;']]],
   ['error_5fexpression_5fdoes_5fnot_5fmeet_5fdimension_5freq',['Error_Expression_Does_Not_Meet_Dimension_Req',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01true_01_4.html#a124e0623f60c53e33750cddffdaf0816',1,'mshadow::expr::TypeCheckPass&lt; true &gt;']]],
   ['error_5ftypecheck_5fnot_5fpass_5ffor_5freduce_5fexp',['Error_TypeCheck_Not_Pass_For_Reduce_Exp',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01true_01_4.html#afccd6da1d20539fd342bbab7b0cb3763',1,'mshadow::expr::TypeCheckPass&lt; true &gt;']]],

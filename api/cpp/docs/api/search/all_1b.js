@@ -2,6 +2,7 @@ var searchData=
 [
   ['_7eblockingqueuethread',['~BlockingQueueThread',['../classdmlc_1_1BlockingQueueThread.html#ad6a1139602a954047e4c07f6e44a5e47',1,'dmlc::BlockingQueueThread']]],
   ['_7econcurrentblockingqueue',['~ConcurrentBlockingQueue',['../classdmlc_1_1ConcurrentBlockingQueue.html#a2c7e415e3bc1fc3c43536f8f08041dea',1,'dmlc::ConcurrentBlockingQueue']]],
+  ['_7ecustomop',['~CustomOp',['../classCustomOp.html#a93efae7d0cf9571d3147a67a004fc2bd',1,'CustomOp']]],
   ['_7edataiter',['~DataIter',['../classdmlc_1_1DataIter.html#aef4acbc5a49dd71edb360149a2b19ee2',1,'dmlc::DataIter::~DataIter()'],['../classmxnet_1_1cpp_1_1DataIter.html#a5906f5aa2be3e2d67ab7b9b784793d9d',1,'mxnet::cpp::DataIter::~DataIter()']]],
   ['_7edevicestore',['~DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html#a701d38ae493688ee2136995fe8611aa0',1,'mxnet::common::cuda::DeviceStore']]],
   ['_7eengine',['~Engine',['../classmxnet_1_1Engine.html#aff025321827e15096c02342225f2395b',1,'mxnet::Engine']]],
@@ -12,7 +13,7 @@ var searchData=
   ['_7eimpl',['~Impl',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#aa43b91933dcf2f8967aaeae00ed39625',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::~Impl()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#a49ba134a5969315afb8edc9d3c1f34a3',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::~Impl()']]],
   ['_7einputsplit',['~InputSplit',['../classdmlc_1_1InputSplit.html#a00a1f234a44de0950d1011495f41b265',1,'dmlc::InputSplit']]],
   ['_7einputsplitshuffle',['~InputSplitShuffle',['../classdmlc_1_1InputSplitShuffle.html#afbce8f23fe731fb5ae087020f6274ab4',1,'dmlc::InputSplitShuffle']]],
-  ['_7eistream',['~istream',['../classdmlc_1_1istream.html#abfb8b1af4df69cfb24836d837bd3e316',1,'dmlc::istream::~istream()'],['../classmshadow_1_1utils_1_1IStream.html#a3fd2a7483255a8ba3348a4a88117e2c3',1,'mshadow::utils::IStream::~IStream()']]],
+  ['_7eistream',['~IStream',['../classmshadow_1_1utils_1_1IStream.html#a3fd2a7483255a8ba3348a4a88117e2c3',1,'mshadow::utils::IStream::~IStream()'],['../classdmlc_1_1istream.html#abfb8b1af4df69cfb24836d837bd3e316',1,'dmlc::istream::~istream()']]],
   ['_7ekvstore',['~KVStore',['../classmxnet_1_1KVStore.html#a02e23071eb46464b58f2e2bf5654d6d6',1,'mxnet::KVStore']]],
   ['_7elrscheduler',['~LRScheduler',['../classmxnet_1_1cpp_1_1LRScheduler.html#a6f269c0118f9d2c34ecd32a29f8e542f',1,'mxnet::cpp::LRScheduler']]],
   ['_7eluaref',['~LuaRef',['../classdmlc_1_1LuaRef.html#ab97c83cda0db04b89cb587ee54d5b3ec',1,'dmlc::LuaRef']]],

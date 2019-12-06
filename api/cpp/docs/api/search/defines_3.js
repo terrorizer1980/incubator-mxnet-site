@@ -2,9 +2,9 @@ var searchData=
 [
   ['default',['DEFAULT',['../include_2mxnet_2c__api_8h.html#a2380be5ab258c3657553d0cef62936fe',1,'c_api.h']]],
   ['disallow_5fcopy_5fand_5fassign',['DISALLOW_COPY_AND_ASSIGN',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a26529ca54834a4418b46b4a8430f678b',1,'base.h']]],
-  ['dlpack_5fdll',['DLPACK_DLL',['../dlpack_8h.html#ad57157a7cb94036d48d0444fd14ab6cf',1,'dlpack.h']]],
-  ['dlpack_5fextern_5fc',['DLPACK_EXTERN_C',['../dlpack_8h.html#a673d5372271f4182a2fb5315c2e335b4',1,'dlpack.h']]],
-  ['dlpack_5fversion',['DLPACK_VERSION',['../dlpack_8h.html#a493a8fe63f179b98d4e7a1728659a808',1,'dlpack.h']]],
+  ['dlpack_5fdll',['DLPACK_DLL',['../dlpack_8h.html#ad57157a7cb94036d48d0444fd14ab6cf',1,'DLPACK_DLL():&#160;dlpack.h'],['../lib__api_8h.html#ad57157a7cb94036d48d0444fd14ab6cf',1,'DLPACK_DLL():&#160;lib_api.h']]],
+  ['dlpack_5fextern_5fc',['DLPACK_EXTERN_C',['../dlpack_8h.html#a673d5372271f4182a2fb5315c2e335b4',1,'DLPACK_EXTERN_C():&#160;dlpack.h'],['../lib__api_8h.html#a673d5372271f4182a2fb5315c2e335b4',1,'DLPACK_EXTERN_C():&#160;lib_api.h']]],
+  ['dlpack_5fversion',['DLPACK_VERSION',['../dlpack_8h.html#a493a8fe63f179b98d4e7a1728659a808',1,'DLPACK_VERSION():&#160;dlpack.h'],['../lib__api_8h.html#a493a8fe63f179b98d4e7a1728659a808',1,'DLPACK_VERSION():&#160;lib_api.h']]],
   ['dmlc_5fattribute_5funused',['DMLC_ATTRIBUTE_UNUSED',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a9425a87a06019a8392509217b2a1da5a',1,'base.h']]],
   ['dmlc_5fcxx11_5fthread_5flocal',['DMLC_CXX11_THREAD_LOCAL',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#ae59509e58780d10c524aa2c94986d6f7',1,'base.h']]],
   ['dmlc_5fdeclare_5fdtype_5ffield',['DMLC_DECLARE_DTYPE_FIELD',['../tvm_2nnvm_2include_2nnvm_2top_2tensor_8h.html#ab0cbb21a1c21e4cb1efa2d1b4738f1ec',1,'tensor.h']]],
