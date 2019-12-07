@@ -69,6 +69,7 @@ var searchData=
   ['atomicsymbolcreator',['AtomicSymbolCreator',['../include_2mxnet_2c__api_8h.html#aa2e96133f49cfdc1095da6cd08afbce0',1,'c_api.h']]],
   ['atomicsymbolhandle',['AtomicSymbolHandle',['../include_2mxnet_2c__api_8h.html#aaccda72ea7a5439c715ff5007b9595b5',1,'c_api.h']]],
   ['attr_5fparser',['attr_parser',['../classnnvm_1_1Op.html#a7781df54dc846bee7d847638e675b959',1,'nnvm::Op']]],
+  ['attr_5fvalue_5fstring',['attr_value_string',['../namespacemxnet_1_1common.html#af830f5320dc0995fec0e885d650057dd',1,'mxnet::common']]],
   ['attrdict',['AttrDict',['../namespacennvm_1_1compiler.html#ada56070560c42f5b6dfd650c3b316bc8',1,'nnvm::compiler']]],
   ['attrs',['attrs',['../classnnvm_1_1Graph.html#a6590464798f3a02e9edfe760bd7ece22',1,'nnvm::Graph::attrs()'],['../classnnvm_1_1Node.html#a9c029a44eadefe48b2e5630e77eb7de1',1,'nnvm::Node::attrs()']]],
   ['atwithrecord',['AtWithRecord',['../classmxnet_1_1NDArray.html#aa2a801dd5c47b5bdd01a385d2c4327b8',1,'mxnet::NDArray']]],
