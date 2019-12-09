@@ -670,7 +670,7 @@
 <span class="kn">from</span> <span class="nn">..ndarray.sparse</span> <span class="kn">import</span> <span class="n">CSRNDArray</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">_ndarray_cls</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">array</span>
-<span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">concat</span>
+<span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">concat</span><span class="p">,</span> <span class="n">tile</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_init_data</span><span class="p">,</span> <span class="n">_has_instance</span><span class="p">,</span> <span class="n">_getdata_by_idx</span>
 
@@ -1343,23 +1343,27 @@
 
     <span class="k">def</span> <span class="nf">_concat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_data</span><span class="p">,</span> <span class="n">second_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function to concat two NDArrays.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">first_data</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">second_data</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">first_data</span> <span class="k">if</span> <span class="n">first_data</span> <span class="k">else</span> <span class="n">second_data</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">second_data</span><span class="p">),</span> <span class="s1">&#39;data source should contain the same size&#39;</span>
-        <span class="k">if</span> <span class="n">first_data</span> <span class="ow">and</span> <span class="n">second_data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="n">concat</span><span class="p">(</span>
-                    <span class="n">first_data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
-                    <span class="n">second_data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
-                    <span class="n">dim</span><span class="o">=</span><span class="mi">0</span>
-                <span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">first_data</span><span class="p">))</span>
-            <span class="p">]</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">first_data</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">second_data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">concat</span><span class="p">(</span>
+                <span class="n">first_data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">second_data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">dim</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">first_data</span><span class="p">))</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">repeats</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="n">first_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">first_data</span> <span class="k">else</span> <span class="n">second_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">first_data</span><span class="p">))</span>
-            <span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">datum</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">reps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">datum</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">reps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">repeats</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tile</span><span class="p">(</span><span class="n">datum</span><span class="p">,</span> <span class="n">reps</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">res</span>
 
     <span class="k">def</span> <span class="nf">_batchify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_source</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load data from underlying arrays, internal use only.&quot;&quot;&quot;</span>
@@ -1383,12 +1387,10 @@
             <span class="n">pad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span>
             <span class="n">first_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">pad</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span><span class="p">:</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">pad</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span><span class="p">:</span>
-                        <span class="k">break</span>
-                    <span class="n">second_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_data</span><span class="p">)</span>
-                    <span class="n">pad</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span>
-                <span class="n">second_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concat</span><span class="p">(</span><span class="n">second_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">pad</span><span class="p">))</span>
+                <span class="n">repeats</span> <span class="o">=</span> <span class="n">pad</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span>
+                <span class="n">second_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_data</span><span class="p">),</span> <span class="n">repeats</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pad</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">second_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concat</span><span class="p">(</span><span class="n">second_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">pad</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_data</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">second_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdata</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concat</span><span class="p">(</span><span class="n">first_data</span><span class="p">,</span> <span class="n">second_data</span><span class="p">)</span>
