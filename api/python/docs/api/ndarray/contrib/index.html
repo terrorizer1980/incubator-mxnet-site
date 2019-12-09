@@ -145,6 +145,7 @@ Show Source
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/packages/gluon/image/index.html">Image Tutorials</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/image-augmentation.html">Image Augmentation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/info_gan.html">Image similarity search with InfoGAN</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/mnist.html">Handwritten Digit Recognition</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/pretrained_models.html">Using pre-trained models in MXNet</a></li>
 </ul>
@@ -416,6 +417,7 @@ Show Source
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/packages/gluon/image/index.html">Image Tutorials</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/image-augmentation.html">Image Augmentation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/info_gan.html">Image similarity search with InfoGAN</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/mnist.html">Handwritten Digit Recognition</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/packages/gluon/image/pretrained_models.html">Using pre-trained models in MXNet</a></li>
 </ul>
@@ -873,7 +875,10 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_elemwise_add" title="mxnet.ndarray.contrib.quantized_elemwise_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_elemwise_add</span></code></a>([lhs, rhs, lhs_min, …])</p></td>
 <td><p>elemwise_add operator for input dataA and input dataB data type of int8,</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_flatten" title="mxnet.ndarray.contrib.quantized_flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_flatten</span></code></a>([data, min_data, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_embedding" title="mxnet.ndarray.contrib.quantized_embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_embedding</span></code></a>([data, weight, …])</p></td>
+<td><p>Maps integer indices to int8 vector representations (embeddings).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_flatten" title="mxnet.ndarray.contrib.quantized_flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_flatten</span></code></a>([data, min_data, …])</p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param data</dt>
 <dd class="field-odd"><p>A ndarray/symbol of type <cite>float32</cite></p>
@@ -881,19 +886,19 @@ Show Source
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_fully_connected" title="mxnet.ndarray.contrib.quantized_fully_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_fully_connected</span></code></a>([data, weight, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_fully_connected" title="mxnet.ndarray.contrib.quantized_fully_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_fully_connected</span></code></a>([data, weight, …])</p></td>
 <td><p>Fully Connected operator for input, weight and bias data type of int8, and accumulates in type int32 for the output.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_pooling" title="mxnet.ndarray.contrib.quantized_pooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_pooling</span></code></a>([data, min_data, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.quantized_pooling" title="mxnet.ndarray.contrib.quantized_pooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantized_pooling</span></code></a>([data, min_data, …])</p></td>
 <td><p>Pooling operator for input and output data type of int8.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.requantize" title="mxnet.ndarray.contrib.requantize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">requantize</span></code></a>([data, min_range, max_range, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.requantize" title="mxnet.ndarray.contrib.requantize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">requantize</span></code></a>([data, min_range, max_range, …])</p></td>
 <td><p>Given data that is quantized in int32 and the corresponding thresholds, requantize the data into int8 using min and max thresholds either calculated at runtime or from calibration.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.round_ste" title="mxnet.ndarray.contrib.round_ste"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_ste</span></code></a>([data, out, name])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.round_ste" title="mxnet.ndarray.contrib.round_ste"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_ste</span></code></a>([data, out, name])</p></td>
 <td><p>Straight-through-estimator of <cite>round()</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.sign_ste" title="mxnet.ndarray.contrib.sign_ste"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sign_ste</span></code></a>([data, out, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.sign_ste" title="mxnet.ndarray.contrib.sign_ste"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sign_ste</span></code></a>([data, out, name])</p></td>
 <td><p>Straight-through-estimator of <cite>sign()</cite>.</p></td>
 </tr>
 </tbody>
@@ -3654,6 +3659,34 @@ and max thresholds representing the threholds for quantizing the float32 output 
 <li><p><strong>lhs_max</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – 4th input</p></li>
 <li><p><strong>rhs_min</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – 5th input</p></li>
 <li><p><strong>rhs_max</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – 6th input</p></li>
+<li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>out</strong> – The output of this function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.ndarray.contrib.quantized_embedding">
+<code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">quantized_embedding</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">weight=None</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">max_weight=None</em>, <em class="sig-param">input_dim=_Null</em>, <em class="sig-param">output_dim=_Null</em>, <em class="sig-param">dtype=_Null</em>, <em class="sig-param">sparse_grad=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.quantized_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps integer indices to int8 vector representations (embeddings).</p>
+<p>Defined in src/operator/quantization/quantized_indexing_op.cc:L134</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array to the embedding operator.</p></li>
+<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The embedding weight matrix.</p></li>
+<li><p><strong>min_weight</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Minimum value of data.</p></li>
+<li><p><strong>max_weight</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Maximum value of data.</p></li>
+<li><p><strong>input_dim</strong> (<em>int</em><em>, </em><em>required</em>) – Vocabulary size of the input indices.</p></li>
+<li><p><strong>output_dim</strong> (<em>int</em><em>, </em><em>required</em>) – Dimension of the embedding vectors.</p></li>
+<li><p><strong>dtype</strong> (<em>{'float16'</em><em>, </em><em>'float32'</em><em>, </em><em>'float64'</em><em>, </em><em>'int32'</em><em>, </em><em>'int64'</em><em>, </em><em>'int8'</em><em>, </em><em>'uint8'}</em><em>,</em><em>optional</em><em>, </em><em>default='float32'</em>) – Data type of weight.</p></li>
+<li><p><strong>sparse_grad</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Compute row sparse gradient in the backward calculation. If set to True, the grad’s storage type is row_sparse.</p></li>
 <li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
 </ul>
 </dd>
