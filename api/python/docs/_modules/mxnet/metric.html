@@ -1224,8 +1224,9 @@
 
 
 <span class="k">class</span> <span class="nc">_BinaryClassificationMetrics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Private container class for classification metric statistics. True/false positive and</span>
-<span class="sd">     true/false negative counts are sufficient statistics for various classification metrics.</span>
+    <span class="sd">&quot;&quot;&quot;Private container class for classification metric statistics.</span>
+
+<span class="sd">    True/false positive and true/false negative counts are sufficient statistics for various classification metrics.</span>
 <span class="sd">    This class provides the machinery to track those statistics across mini-batches of</span>
 <span class="sd">    (label, prediction) pairs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2064,6 +2065,10 @@
 <span class="sd">    label_names : list of str, or None</span>
 <span class="sd">        Name of labels that should be used when updating with update_dict.</span>
 <span class="sd">        By default include all labels.</span>
+<span class="sd">    average : str, default &#39;macro&#39;</span>
+<span class="sd">        Strategy to be used for aggregating across mini-batches.</span>
+<span class="sd">            &quot;macro&quot;: average the pearsonr scores for each batch.</span>
+<span class="sd">            &quot;micro&quot;: compute a single pearsonr score across all batches.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2072,13 +2077,46 @@
 <span class="sd">    &gt;&gt;&gt; pr = mx.metric.PearsonCorrelation()</span>
 <span class="sd">    &gt;&gt;&gt; pr.update(labels, predicts)</span>
 <span class="sd">    &gt;&gt;&gt; print pr.get()</span>
-<span class="sd">    (&#39;pearson-correlation&#39;, 0.42163704544016178)</span>
+<span class="sd">    (&#39;pearsonr&#39;, 0.42163704544016178)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;pearsonr&#39;</span><span class="p">,</span>
-                 <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">output_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PearsonCorrelation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">output_names</span><span class="o">=</span><span class="n">output_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
             <span class="n">has_global_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">==</span> <span class="s1">&#39;micro&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset_micro</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset_micro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sse_p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sse_l</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_l</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pred_nums</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label_nums</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conv</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="PearsonCorrelation.reset"><a class="viewcode-back" href="../../api/metric/index.html#mxnet.metric.PearsonCorrelation.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">==</span> <span class="s1">&#39;micro&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset_micro</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">update_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_values</span><span class="p">,</span> <span class="o">*</span><span class="n">aggregate</span><span class="p">):</span>
+        <span class="c1">#Welford&#39;s online algorithm for variance update</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">m_2</span> <span class="o">=</span> <span class="n">aggregate</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_values</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">new_values</span> <span class="o">-</span> <span class="n">mean</span>
+        <span class="n">mean</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">delta_2</span> <span class="o">=</span> <span class="n">new_values</span> <span class="o">-</span> <span class="n">mean</span>
+        <span class="n">m_2</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">delta_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">count</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">m_2</span>
+
+    <span class="k">def</span> <span class="nf">update_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">label</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_l</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_p</span><span class="p">))</span>
 
 <div class="viewcode-block" id="PearsonCorrelation.update"><a class="viewcode-back" href="../../api/metric/index.html#mxnet.metric.PearsonCorrelation.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates the internal evaluation result.</span>
@@ -2091,17 +2129,34 @@
 <span class="sd">            Predicted values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">labels</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
         <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">):</span>
             <span class="n">check_label_shapes</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
-            <span class="n">pearson_corr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">label</span><span class="o">.</span><span class="n">ravel</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">==</span> <span class="s1">&#39;macro&#39;</span><span class="p">:</span>
+                <span class="n">pearson_corr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_metric</span> <span class="o">+=</span> <span class="n">pearson_corr</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">global_num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_label_nums</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_l</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sse_l</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_variance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_nums</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_l</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sse_l</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_cov</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pred_nums</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sse_p</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_variance</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pred_nums</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sse_p</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="PearsonCorrelation.get"><a class="viewcode-back" href="../../api/metric/index.html#mxnet.metric.PearsonCorrelation.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">==</span> <span class="s1">&#39;macro&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_metric</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_inst</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_nums</span>
+            <span class="n">pearsonr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv</span> <span class="o">/</span> <span class="p">((</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sse_p</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sse_l</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pearsonr</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="PCC"><a class="viewcode-back" href="../../api/metric/index.html#mxnet.metric.PCC">[docs]</a><span class="nd">@register</span>
 <span class="k">class</span> <span class="nc">PCC</span><span class="p">(</span><span class="n">EvalMetric</span><span class="p">):</span>
