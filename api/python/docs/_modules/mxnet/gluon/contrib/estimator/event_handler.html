@@ -764,28 +764,28 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    train_metrics : List of EvalMetrics</span>
-<span class="sd">        Training metrics to be updated at batch end.</span>
+<span class="sd">    metrics : List of EvalMetrics</span>
+<span class="sd">        Metrics to be updated at batch end.</span>
 <span class="sd">    priority : scalar</span>
 <span class="sd">        Priority level of the MetricHandler. Priority level is sorted in ascending</span>
 <span class="sd">        order. The lower the number is, the higher priority level the handler is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_metrics</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
         <span class="c1"># order to be called among all callbacks</span>
         <span class="c1"># metrics need to be calculated before other callbacks can access them</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
 
     <span class="k">def</span> <span class="nf">epoch_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
             <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pred&#39;</span><span class="p">]</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">metric_loss</span><span class="p">):</span>
                 <span class="c1"># metric wrapper for loss values</span>
                 <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
@@ -807,8 +807,6 @@
 <span class="sd">    eval_fn : function</span>
 <span class="sd">        A function defines how to run evaluation and</span>
 <span class="sd">        calculate loss and metrics.</span>
-<span class="sd">    val_metrics : List of EvalMetrics</span>
-<span class="sd">        Validation metrics to be updated.</span>
 <span class="sd">    epoch_period : int, default 1</span>
 <span class="sd">        How often to run validation at epoch end, by default</span>
 <span class="sd">        :py:class:`ValidationHandler` validate every epoch.</span>
@@ -824,7 +822,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">val_data</span><span class="p">,</span>
                  <span class="n">eval_fn</span><span class="p">,</span>
-                 <span class="n">val_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">epoch_period</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">batch_period</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
@@ -832,7 +829,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span> <span class="o">=</span> <span class="n">eval_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="o">=</span> <span class="n">epoch_period</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_period</span> <span class="o">=</span> <span class="n">batch_period</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">val_metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># order to be called among all callbacks</span>
@@ -847,20 +843,12 @@
     <span class="k">def</span> <span class="nf">batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_period</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">,</span>
-                         <span class="n">val_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">)</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[Epoch </span><span class="si">%d</span><span class="s1">] ValidationHandler: </span><span class="si">%d</span><span class="s1"> batches reached, &#39;</span> \
-                  <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">monitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.4f</span><span class="s1">, &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-            <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">,</span>
-                         <span class="n">val_metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LoggingHandler"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.estimator.LoggingHandler">[docs]</a><span class="k">class</span> <span class="nc">LoggingHandler</span><span class="p">(</span><span class="n">TrainBegin</span><span class="p">,</span> <span class="n">TrainEnd</span><span class="p">,</span> <span class="n">EpochBegin</span><span class="p">,</span> <span class="n">EpochEnd</span><span class="p">,</span> <span class="n">BatchBegin</span><span class="p">,</span> <span class="n">BatchEnd</span><span class="p">):</span>
@@ -875,10 +863,8 @@
 <span class="sd">        Logging interval during training.</span>
 <span class="sd">        log_interval=&#39;epoch&#39;: display metrics every epoch</span>
 <span class="sd">        log_interval=integer k: display metrics every interval of k batches</span>
-<span class="sd">    train_metrics : list of EvalMetrics</span>
-<span class="sd">        Training metrics to be logged, logged at batch end, epoch end, train end.</span>
-<span class="sd">    val_metrics : list of EvalMetrics</span>
-<span class="sd">        Validation metrics to be logged, logged at epoch end, train end.</span>
+<span class="sd">    metrics : list of EvalMetrics</span>
+<span class="sd">        Metrics to be logged, logged at batch end, epoch end, train end.</span>
 <span class="sd">    priority : scalar, default np.Inf</span>
 <span class="sd">        Priority level of the LoggingHandler. Priority level is sorted in</span>
 <span class="sd">        ascending order. The lower the number is, the higher priority level the</span>
@@ -886,14 +872,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_interval</span><span class="o">=</span><span class="s1">&#39;epoch&#39;</span><span class="p">,</span>
-                 <span class="n">train_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">val_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">priority</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LoggingHandler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_interval</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">log_interval</span> <span class="o">!=</span> <span class="s1">&#39;epoch&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;log_interval must be either an integer or string &#39;epoch&#39;&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">val_metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processed_samples</span> <span class="o">=</span> <span class="mi">0</span>
@@ -901,6 +885,7 @@
         <span class="c1"># it will also shut down logging at train end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">=</span> <span class="n">log_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_interval_time</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -924,7 +909,7 @@
         <span class="n">train_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_start</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Train finished using total </span><span class="si">%d</span><span class="s1">s with </span><span class="si">%d</span><span class="s1"> epochs. &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">train_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">)</span>
         <span class="c1"># log every result in train stats including train/validation loss &amp; metrics</span>
-        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.4f</span><span class="s1">, &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">))</span>
@@ -943,7 +928,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;time/interval: </span><span class="si">%.3f</span><span class="s1">s &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_interval_time</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log_interval_time</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
                     <span class="c1"># only log current training loss &amp; metric after each interval</span>
                     <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
                     <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.4f</span><span class="s1">, &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -952,15 +937,23 @@
 
     <span class="k">def</span> <span class="nf">epoch_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">==</span> <span class="s1">&#39;epoch&#39;</span><span class="p">:</span>
+            <span class="n">is_training</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># use the name hack defined in __init__() of estimator class</span>
+            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;training&#39;</span> <span class="ow">in</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">is_training</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">epoch_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[Epoch </span><span class="si">%d</span><span class="s2">] Begin, current learning rate: </span><span class="si">%.4f</span><span class="s2">&quot;</span><span class="p">,</span>
-                                  <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span> <span class="n">estimator</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_training</span><span class="p">:</span>
+                <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[Epoch </span><span class="si">%d</span><span class="s2">] Begin, current learning rate: </span><span class="si">%.4f</span><span class="s2">&quot;</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span> <span class="n">estimator</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Validation Begin&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">==</span> <span class="s1">&#39;epoch&#39;</span><span class="p">:</span>
             <span class="n">epoch_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_start</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;[Epoch </span><span class="si">%d</span><span class="s1">] Finished in </span><span class="si">%.3f</span><span class="s1">s, &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span> <span class="n">epoch_time</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">monitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_metrics</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">monitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%.4f</span><span class="s1">, &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">))</span>
