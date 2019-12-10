@@ -5840,7 +5840,7 @@ Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
          var_hat = <span class="kw">var</span> / (<span class="num">1</span> - beta2^t);
          g = mean_hat / (var_hat^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight;
     <span class="kw">else</span>
-         g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight_data[i];
+         g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight;
     \end{gather*}
 
 
@@ -7177,6 +7177,102 @@ Example:
 
 
 Defined in src/operator/nn/moments.cc:L54</pre></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>Input ndarray</p></dd><dt class="param">axes</dt><dd class="cmt"><p>Array of ints. Axes along which to compute mean and variance.</p></dd><dt class="param">keepdims</dt><dd class="cmt"><p>produce moments with the same dimensionality as the input.</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="NDArrayAPIBase.html" class="extype" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@<a href="annotation/Experimental.html" class="extype" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.NDArrayAPIBase#mp_lamb_update_phase1" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="mp_lamb_update_phase1(weight:org.apache.mxnet.NDArray,grad:org.apache.mxnet.NDArray,mean:org.apache.mxnet.NDArray,vari:org.apache.mxnet.NDArray,weight32:org.apache.mxnet.NDArray,beta1:Option[Float],beta2:Option[Float],epsilon:Option[Float],t:Int,bias_correction:Option[Boolean],wd:Float,rescale_grad:Option[Float],clip_gradient:Option[Float],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn"></a>
+      <a id="mp_lamb_update_phase1(NDArray,NDArray,NDArray,NDArray,NDArray,Option[Float],Option[Float],Option[Float],Int,Option[Boolean],Float,Option[Float],Option[Float],Option[NDArray]):NDArrayFuncReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mp_lamb_update_phase1</span><span class="params">(<span name="weight">weight: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="grad">grad: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="mean">mean: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="vari">vari: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="weight32">weight32: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="beta1">beta1: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="beta2">beta2: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="epsilon">epsilon: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="t">t: <span class="extype" name="scala.Int">Int</span></span>, <span name="bias_correction">bias_correction: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="wd">wd: <span class="extype" name="scala.Float">Float</span></span>, <span name="rescale_grad">rescale_grad: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="clip_gradient">clip_gradient: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="out">out: <span class="extype" name="scala.Option">Option</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.apache.mxnet.NDArrayAPI$@mp_lamb_update_phase1(weight:org.apache.mxnet.NDArray,grad:org.apache.mxnet.NDArray,mean:org.apache.mxnet.NDArray,vari:org.apache.mxnet.NDArray,weight32:org.apache.mxnet.NDArray,beta1:Option[Float],beta2:Option[Float],epsilon:Option[Float],t:Int,bias_correction:Option[Boolean],wd:Float,rescale_grad:Option[Float],clip_gradient:Option[Float],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Mixed Precision version of Phase I of lamb update
+it performs the following operations and returns g:.
+
+          Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+          .. math::
+              \begin{gather*}
+              grad32 = grad(float16) * rescale_grad
+              <span class="kw">if</span> (grad &lt; -clip_gradient)
+              then
+                   grad = -clip_gradient
+              <span class="kw">if</span> (grad &gt; clip_gradient)
+              then
+                   grad = clip_gradient
+
+              mean = beta1 * mean + (<span class="num">1</span> - beta1) * grad;
+              variance = beta2 * variance + (<span class="num">1.</span> - beta2) * grad ^ <span class="num">2</span>;
+
+              <span class="kw">if</span> (bias_correction)
+              then
+                   mean_hat = mean / (<span class="num">1.</span> - beta1^t);
+                   var_hat = <span class="kw">var</span> / (<span class="num">1</span> - beta2^t);
+                   g = mean_hat / (var_hat^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight32;
+              <span class="kw">else</span>
+                   g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight32;
+              \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L1033</pre></div><dl class="paramcmts block"><dt class="param">weight</dt><dd class="cmt"><p>Weight</p></dd><dt class="param">grad</dt><dd class="cmt"><p>Gradient</p></dd><dt class="param">mean</dt><dd class="cmt"><p>Moving mean</p></dd><dt class="param">vari</dt><dd class="cmt"><p>Moving variance</p></dd><dt class="param">weight32</dt><dd class="cmt"><p>Weight32</p></dd><dt class="param">beta1</dt><dd class="cmt"><p>The decay rate for the 1st moment estimates.</p></dd><dt class="param">beta2</dt><dd class="cmt"><p>The decay rate for the 2nd moment estimates.</p></dd><dt class="param">epsilon</dt><dd class="cmt"><p>A small constant for numerical stability.</p></dd><dt class="param">t</dt><dd class="cmt"><p>Index update count.</p></dd><dt class="param">bias_correction</dt><dd class="cmt"><p>Whether to use bias correction.</p></dd><dt class="param">wd</dt><dd class="cmt"><p>Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</p></dd><dt class="param">rescale_grad</dt><dd class="cmt"><p>Rescale gradient to grad = rescale_grad*grad.</p></dd><dt class="param">clip_gradient</dt><dd class="cmt"><p>Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient &lt;= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient).</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="NDArrayAPIBase.html" class="extype" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@<a href="annotation/Experimental.html" class="extype" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.NDArrayAPIBase#mp_lamb_update_phase2" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="mp_lamb_update_phase2(weight:org.apache.mxnet.NDArray,g:org.apache.mxnet.NDArray,r1:org.apache.mxnet.NDArray,r2:org.apache.mxnet.NDArray,weight32:org.apache.mxnet.NDArray,lr:Float,lower_bound:Option[Float],upper_bound:Option[Float],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn"></a>
+      <a id="mp_lamb_update_phase2(NDArray,NDArray,NDArray,NDArray,NDArray,Float,Option[Float],Option[Float],Option[NDArray]):NDArrayFuncReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mp_lamb_update_phase2</span><span class="params">(<span name="weight">weight: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="g">g: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="r1">r1: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="r2">r2: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="weight32">weight32: <a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a></span>, <span name="lr">lr: <span class="extype" name="scala.Float">Float</span></span>, <span name="lower_bound">lower_bound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="upper_bound">upper_bound: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Float">Float</span>] = <span class="symbol">None</span></span>, <span name="out">out: <span class="extype" name="scala.Option">Option</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.NDArray">NDArray</a>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="org.apache.mxnet.NDArrayFuncReturn">NDArrayFuncReturn</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.apache.mxnet.NDArrayAPI$@mp_lamb_update_phase2(weight:org.apache.mxnet.NDArray,g:org.apache.mxnet.NDArray,r1:org.apache.mxnet.NDArray,r2:org.apache.mxnet.NDArray,weight32:org.apache.mxnet.NDArray,lr:Float,lower_bound:Option[Float],upper_bound:Option[Float],out:Option[org.apache.mxnet.NDArray]):org.apache.mxnet.NDArrayFuncReturn" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Mixed Precision version Phase II of lamb update
+it performs the following operations and updates grad.
+
+          Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+          .. math::
+              \begin{gather*}
+              <span class="kw">if</span> (lower_bound &gt;= <span class="num">0</span>)
+              then
+                   r1 = max(r1, lower_bound)
+              <span class="kw">if</span> (upper_bound &gt;= <span class="num">0</span>)
+              then
+                   r1 = max(r1, upper_bound)
+
+              <span class="kw">if</span> (r1 == <span class="num">0</span> or r2 == <span class="num">0</span>)
+              then
+                   lr = lr
+              <span class="kw">else</span>
+                   lr = lr * (r1/r2)
+              weight32 = weight32 - lr * g
+              weight(float16) = weight32
+              \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L1075</pre></div><dl class="paramcmts block"><dt class="param">weight</dt><dd class="cmt"><p>Weight</p></dd><dt class="param">g</dt><dd class="cmt"><p>Output of mp_lamb_update_phase 1</p></dd><dt class="param">r1</dt><dd class="cmt"><p>r1</p></dd><dt class="param">r2</dt><dd class="cmt"><p>r2</p></dd><dt class="param">weight32</dt><dd class="cmt"><p>Weight32</p></dd><dt class="param">lr</dt><dd class="cmt"><p>Learning rate</p></dd><dt class="param">lower_bound</dt><dd class="cmt"><p>Lower limit of norm of weight. If lower_bound &lt;= 0, Lower limit is not set</p></dd><dt class="param">upper_bound</dt><dd class="cmt"><p>Upper limit of norm of weight. If upper_bound &lt;= 0, Upper limit is not set</p></dd><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.NDArrayFuncReturn
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="NDArrayAPIBase.html" class="extype" name="org.apache.mxnet.NDArrayAPIBase">NDArrayAPIBase</a></dd><dt>Annotations</dt><dd>
                 <span class="name">@<a href="annotation/Experimental.html" class="extype" name="org.apache.mxnet.annotation.Experimental">Experimental</a></span><span class="args">()</span>
               

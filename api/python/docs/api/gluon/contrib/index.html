@@ -2023,7 +2023,7 @@ handler will try to use min or max based on the monitored metric name.</p></li>
 
 <dl class="class">
 <dt id="mxnet.gluon.contrib.estimator.Estimator">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param">net</em>, <em class="sig-param">loss</em>, <em class="sig-param">metrics=None</em>, <em class="sig-param">initializer=None</em>, <em class="sig-param">trainer=None</em>, <em class="sig-param">context=None</em>, <em class="sig-param">evaluation_loss=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param">net</em>, <em class="sig-param">loss</em>, <em class="sig-param">metrics=None</em>, <em class="sig-param">initializer=None</em>, <em class="sig-param">trainer=None</em>, <em class="sig-param">context=None</em>, <em class="sig-param">evaluation_loss=None</em>, <em class="sig-param">eval_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Estimator Class for easy model training</p>
 <p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Estimator</span></code></a> can be used to facilitate the training &amp; validation process</p>
@@ -2036,8 +2036,27 @@ handler will try to use min or max based on the monitored metric name.</p></li>
 <li><p><strong>initializer</strong> (<a class="reference internal" href="../../initializer/index.html#mxnet.initializer.Initializer" title="mxnet.initializer.Initializer"><em>Initializer</em></a>) – Initializer to initialize the network.</p></li>
 <li><p><strong>trainer</strong> (<a class="reference internal" href="../trainer.html#mxnet.gluon.Trainer" title="mxnet.gluon.Trainer"><em>Trainer</em></a>) – Trainer to apply optimizer on network parameters.</p></li>
 <li><p><strong>context</strong> (<a class="reference internal" href="../../mxnet/context/index.html#mxnet.context.Context" title="mxnet.context.Context"><em>Context</em></a><em> or </em><em>list of Context</em>) – Device(s) to run the training on.</p></li>
-<li><p><strong>evaluation_loss</strong> (<em>gluon.loss.loss</em>) – Loss (objective) function to calculate during evaluation. If set evaluation_loss
+<li><p><strong>evaluation_loss</strong> (<em>gluon.loss.loss</em>) – Loss (objective) function to calculate during validation. If set evaluation_loss
 None, it will use the same loss function as self.loss</p></li>
+<li><p><strong>eval_net</strong> (<a class="reference internal" href="../block.html#mxnet.gluon.Block" title="mxnet.gluon.Block"><em>gluon.Block</em></a>) – <p>The model used for validation. The validation model does not necessarily belong to
+the same model class as the training model. But the two models typically share the
+same architecture. Therefore the validation model can reuse parameters of the
+training model.</p>
+<p>The code example of consruction of eval_net sharing the same network parameters as
+the training net is given below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">_get_train_network</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eval_net</span> <span class="o">=</span> <span class="n">_get_test_network</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">est</span> <span class="o">=</span> <span class="n">Estimator</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">eval_net</span><span class="o">=</span><span class="n">eval_net</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Proper namespace match is required for weight sharing between two networks. Most networks
+inheriting <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code> can share their parameters correctly. An exception is
+Sequential networks that Block scope must be specified for correct weight sharing. For
+the  naming in mxnet Gluon API, please refer to the site
+(<a class="reference external" href="https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/blocks/naming.html">https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/blocks/naming.html</a>)
+for future information.</p>
+</p></li>
 </ul>
 </dd>
 </dl>

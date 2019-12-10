@@ -5421,7 +5421,7 @@ Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
          var_hat = <span class="kw">var</span> / (<span class="num">1</span> - beta2^t);
          g = mean_hat / (var_hat^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight;
     <span class="kw">else</span>
-         g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight_data[i];
+         g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight;
     \end{gather*}
 
 
@@ -6743,6 +6743,102 @@ Example:
 
 
 Defined in src/operator/nn/moments.cc:L54</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.javaapi.NDArrayBase#mp_lamb_update_phase1" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="mp_lamb_update_phase1(po:org.apache.mxnet.javaapi.mp_lamb_update_phase1Param):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+      <a id="mp_lamb_update_phase1(mp_lamb_update_phase1Param):Array[NDArray]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mp_lamb_update_phase1</span><span class="params">(<span name="po">po: <a href="mp_lamb_update_phase1Param.html" class="extype" name="org.apache.mxnet.javaapi.mp_lamb_update_phase1Param">mp_lamb_update_phase1Param</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@mp_lamb_update_phase1(po:org.apache.mxnet.javaapi.mp_lamb_update_phase1Param):Array[org.apache.mxnet.javaapi.NDArray]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Mixed Precision version of Phase I of lamb update
+it performs the following operations and returns g:.
+
+          Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+          .. math::
+              \begin{gather*}
+              grad32 = grad(float16) * rescale_grad
+              <span class="kw">if</span> (grad &lt; -clip_gradient)
+              then
+                   grad = -clip_gradient
+              <span class="kw">if</span> (grad &gt; clip_gradient)
+              then
+                   grad = clip_gradient
+
+              mean = beta1 * mean + (<span class="num">1</span> - beta1) * grad;
+              variance = beta2 * variance + (<span class="num">1.</span> - beta2) * grad ^ <span class="num">2</span>;
+
+              <span class="kw">if</span> (bias_correction)
+              then
+                   mean_hat = mean / (<span class="num">1.</span> - beta1^t);
+                   var_hat = <span class="kw">var</span> / (<span class="num">1</span> - beta2^t);
+                   g = mean_hat / (var_hat^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight32;
+              <span class="kw">else</span>
+                   g = mean / (var_data^(<span class="num">1</span>/<span class="num">2</span>) + epsilon) + wd * weight32;
+              \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L1033</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
+</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="org.apache.mxnet.javaapi.NDArrayBase#mp_lamb_update_phase2" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="mp_lamb_update_phase2(po:org.apache.mxnet.javaapi.mp_lamb_update_phase2Param):Array[org.apache.mxnet.javaapi.NDArray]"></a>
+      <a id="mp_lamb_update_phase2(mp_lamb_update_phase2Param):Array[NDArray]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mp_lamb_update_phase2</span><span class="params">(<span name="po">po: <a href="mp_lamb_update_phase2Param.html" class="extype" name="org.apache.mxnet.javaapi.mp_lamb_update_phase2Param">mp_lamb_update_phase2Param</a></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<a href="NDArray.html" class="extype" name="org.apache.mxnet.javaapi.NDArray">NDArray</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.apache.mxnet.javaapi.NDArrayBase@mp_lamb_update_phase2(po:org.apache.mxnet.javaapi.mp_lamb_update_phase2Param):Array[org.apache.mxnet.javaapi.NDArray]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Mixed Precision version Phase II of lamb update
+it performs the following operations and updates grad.
+
+          Link to paper: https:<span class="cmt">//arxiv.org/pdf/1904.00962.pdf</span>
+
+          .. math::
+              \begin{gather*}
+              <span class="kw">if</span> (lower_bound &gt;= <span class="num">0</span>)
+              then
+                   r1 = max(r1, lower_bound)
+              <span class="kw">if</span> (upper_bound &gt;= <span class="num">0</span>)
+              then
+                   r1 = max(r1, upper_bound)
+
+              <span class="kw">if</span> (r1 == <span class="num">0</span> or r2 == <span class="num">0</span>)
+              then
+                   lr = lr
+              <span class="kw">else</span>
+                   lr = lr * (r1/r2)
+              weight32 = weight32 - lr * g
+              weight(float16) = weight32
+              \end{gather*}
+
+
+
+Defined in src/operator/optimizer_op.cc:L1075</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Array[org.apache.mxnet.javaapi.NDArray]
 </p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
