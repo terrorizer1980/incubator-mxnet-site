@@ -667,7 +667,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TrainBegin&#39;</span><span class="p">,</span> <span class="s1">&#39;TrainEnd&#39;</span><span class="p">,</span> <span class="s1">&#39;EpochBegin&#39;</span><span class="p">,</span> <span class="s1">&#39;EpochEnd&#39;</span><span class="p">,</span> <span class="s1">&#39;BatchBegin&#39;</span><span class="p">,</span> <span class="s1">&#39;BatchEnd&#39;</span><span class="p">,</span>
            <span class="s1">&#39;StoppingHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;MetricHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;ValidationHandler&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;LoggingHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;CheckpointHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;EarlyStoppingHandler&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;LoggingHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;CheckpointHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;EarlyStoppingHandler&#39;</span><span class="p">,</span> <span class="s1">&#39;GradientUpdateHandler&#39;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">EventHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -766,13 +766,16 @@
 <span class="sd">    ----------</span>
 <span class="sd">    train_metrics : List of EvalMetrics</span>
 <span class="sd">        Training metrics to be updated at batch end.</span>
+<span class="sd">    priority : scalar</span>
+<span class="sd">        Priority level of the MetricHandler. Priority level is sorted in ascending</span>
+<span class="sd">        order. The lower the number is, the higher priority level the handler is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_metrics</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_metrics</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">)</span>
         <span class="c1"># order to be called among all callbacks</span>
         <span class="c1"># metrics need to be calculated before other callbacks can access them</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
 
     <span class="k">def</span> <span class="nf">epoch_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_metrics</span><span class="p">:</span>
@@ -812,6 +815,10 @@
 <span class="sd">    batch_period : int, default None</span>
 <span class="sd">        How often to run validation at batch end, by default</span>
 <span class="sd">        :py:class:`ValidationHandler` does not validate at batch end.</span>
+<span class="sd">    priority: scalar, default -1000</span>
+<span class="sd">        Priority level of the ValidationHandler. Priority level is sorted in</span>
+<span class="sd">        ascending order. The lower the number is, the higher priority level the</span>
+<span class="sd">        handler is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -819,7 +826,8 @@
                  <span class="n">eval_fn</span><span class="p">,</span>
                  <span class="n">val_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">epoch_period</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">batch_period</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">batch_period</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val_data</span> <span class="o">=</span> <span class="n">val_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span> <span class="o">=</span> <span class="n">eval_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="o">=</span> <span class="n">epoch_period</span>
@@ -829,7 +837,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># order to be called among all callbacks</span>
         <span class="c1"># validation metrics need to be calculated before other callbacks can access them</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
 
     <span class="k">def</span> <span class="nf">train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># reset epoch and batch counter</span>
@@ -871,11 +879,16 @@
 <span class="sd">        Training metrics to be logged, logged at batch end, epoch end, train end.</span>
 <span class="sd">    val_metrics : list of EvalMetrics</span>
 <span class="sd">        Validation metrics to be logged, logged at epoch end, train end.</span>
+<span class="sd">    priority : scalar, default np.Inf</span>
+<span class="sd">        Priority level of the LoggingHandler. Priority level is sorted in</span>
+<span class="sd">        ascending order. The lower the number is, the higher priority level the</span>
+<span class="sd">        handler is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_interval</span><span class="o">=</span><span class="s1">&#39;epoch&#39;</span><span class="p">,</span>
                  <span class="n">train_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">val_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">val_metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">priority</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LoggingHandler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_interval</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">log_interval</span> <span class="o">!=</span> <span class="s1">&#39;epoch&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;log_interval must be either an integer or string &#39;epoch&#39;&quot;</span><span class="p">)</span>
@@ -886,7 +899,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">processed_samples</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># logging handler need to be called at last to make sure all states are updated</span>
         <span class="c1"># it will also shut down logging at train end</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">=</span> <span class="n">log_interval</span>
 
     <span class="k">def</span> <span class="nf">train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1340,6 +1353,33 @@
             <span class="n">estimator</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;[Epoch </span><span class="si">%d</span><span class="s1">] EarlyStoppingHanlder: &#39;</span>
                                   <span class="s1">&#39;early stopping due to </span><span class="si">%s</span><span class="s1"> not improving&#39;</span><span class="p">,</span>
                                   <span class="bp">self</span><span class="o">.</span><span class="n">stopped_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="GradientUpdateHandler"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.estimator.GradientUpdateHandler">[docs]</a><span class="k">class</span> <span class="nc">GradientUpdateHandler</span><span class="p">(</span><span class="n">BatchEnd</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient Update Handler that apply gradients on network weights</span>
+
+<span class="sd">    :py:class:`GradientUpdateHandler` takes the priority level. It updates weight parameters</span>
+<span class="sd">    at the end of each batch</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    priority : scalar, default -2000</span>
+<span class="sd">        priority level of the gradient update handler. Priority level is sorted in ascending</span>
+<span class="sd">        order. The lower the number is, the higher priority level the handler is.</span>
+<span class="sd">    ----------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="mi">2000</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
+
+    <span class="k">def</span> <span class="nf">batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="p">[</span><span class="n">loss</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loss</span><span class="p">:</span>
+                <span class="n">batch_size</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">estimator</span><span class="o">.</span><span class="n">batch_axis</span><span class="p">]</span>
+
+        <span class="n">estimator</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span></div>
 </pre></div>
 
         </div>
