@@ -1966,6 +1966,60 @@ If None, a default vocabulary is created.</p></li>
 
 <span class="target" id="module-mxnet.gluon.contrib.estimator"></span><p>Gluon Estimator Module</p>
 <dl class="class">
+<dt id="mxnet.gluon.contrib.estimator.BatchProcessor">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">BatchProcessor</code><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/batch_processor.html#BatchProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.BatchProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BatchProcessor Class for plug and play fit_batch &amp; evaluate_batch</p>
+<p>During training or validation, data are divided into minibatches for processing. This
+class aims at providing hooks of training or validating on a minibatch of data. Users
+may provide customized fit_batch() and evaluate_batch() methods by inheriting from
+this class and overriding class methods.</p>
+<p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.BatchProcessor" title="mxnet.gluon.contrib.estimator.BatchProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BatchProcessor</span></code></a> can be used to replace fit_batch() and evaluate_batch()
+in the base estimator class</p>
+<dl class="method">
+<dt id="mxnet.gluon.contrib.estimator.BatchProcessor.evaluate_batch">
+<code class="sig-name descname">evaluate_batch</code><span class="sig-paren">(</span><em class="sig-param">estimator</em>, <em class="sig-param">val_batch</em>, <em class="sig-param">batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/batch_processor.html#BatchProcessor.evaluate_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.BatchProcessor.evaluate_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the estimator model on a batch of validation data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>estimator</strong> (<a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><em>Estimator</em></a>) – Reference to the estimator</p></li>
+<li><p><strong>val_batch</strong> (<em>tuple</em>) – Data and label of a batch from the validation data loader.</p></li>
+<li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the validation data into devices.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.gluon.contrib.estimator.BatchProcessor.fit_batch">
+<code class="sig-name descname">fit_batch</code><span class="sig-paren">(</span><em class="sig-param">estimator</em>, <em class="sig-param">train_batch</em>, <em class="sig-param">batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/batch_processor.html#BatchProcessor.fit_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.BatchProcessor.fit_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the estimator model on a batch of training data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>estimator</strong> (<a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><em>Estimator</em></a>) – Reference to the estimator</p></li>
+<li><p><strong>train_batch</strong> (<em>tuple</em>) – Data and label of a batch from the training data loader.</p></li>
+<li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the training data into devices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>data</strong> (<em>List of NDArray</em>) – Sharded data from the batch. Data is sharded with
+<cite>gluon.split_and_load</cite>.</p></li>
+<li><p><strong>label</strong> (<em>List of NDArray</em>) – Sharded label from the batch. Labels are sharded with
+<cite>gluon.split_and_load</cite>.</p></li>
+<li><p><strong>pred</strong> (<em>List of NDArray</em>) – Prediction on each of the sharded inputs.</p></li>
+<li><p><strong>loss</strong> (<em>List of NDArray</em>) – Loss on each of the sharded inputs.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="mxnet.gluon.contrib.estimator.CheckpointHandler">
 <em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">CheckpointHandler</code><span class="sig-paren">(</span><em class="sig-param">model_dir</em>, <em class="sig-param">model_prefix='model'</em>, <em class="sig-param">monitor=None</em>, <em class="sig-param">verbose=0</em>, <em class="sig-param">save_best=False</em>, <em class="sig-param">mode='auto'</em>, <em class="sig-param">epoch_period=1</em>, <em class="sig-param">batch_period=None</em>, <em class="sig-param">max_checkpoints=5</em>, <em class="sig-param">resume_from_checkpoint=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/event_handler.html#CheckpointHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.CheckpointHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.contrib.estimator.event_handler.TrainBegin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.contrib.estimator.event_handler.BatchEnd</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.contrib.estimator.event_handler.EpochEnd</span></code></p>
@@ -2023,7 +2077,7 @@ handler will try to use min or max based on the monitored metric name.</p></li>
 
 <dl class="class">
 <dt id="mxnet.gluon.contrib.estimator.Estimator">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param">net</em>, <em class="sig-param">loss</em>, <em class="sig-param">train_metrics=None</em>, <em class="sig-param">val_metrics=None</em>, <em class="sig-param">initializer=None</em>, <em class="sig-param">trainer=None</em>, <em class="sig-param">context=None</em>, <em class="sig-param">evaluation_loss=None</em>, <em class="sig-param">eval_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.contrib.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param">net</em>, <em class="sig-param">loss</em>, <em class="sig-param">train_metrics=None</em>, <em class="sig-param">val_metrics=None</em>, <em class="sig-param">initializer=None</em>, <em class="sig-param">trainer=None</em>, <em class="sig-param">context=None</em>, <em class="sig-param">evaluation_loss=None</em>, <em class="sig-param">eval_net=None</em>, <em class="sig-param">batch_processor=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Estimator Class for easy model training</p>
 <p><a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator" title="mxnet.gluon.contrib.estimator.Estimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Estimator</span></code></a> can be used to facilitate the training &amp; validation process</p>
@@ -2058,6 +2112,7 @@ the  naming in mxnet Gluon API, please refer to the site
 (<a class="reference external" href="https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/blocks/naming.html">https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/blocks/naming.html</a>)
 for future information.</p>
 </p></li>
+<li><p><strong>batch_processor</strong> (<a class="reference internal" href="#mxnet.gluon.contrib.estimator.BatchProcessor" title="mxnet.gluon.contrib.estimator.BatchProcessor"><em>BatchProcessor</em></a>) – BatchProcessor provides customized fit_batch() and evaluate_batch() methods</p></li>
 </ul>
 </dd>
 </dl>
@@ -2065,9 +2120,9 @@ for future information.</p>
 <dt id="mxnet.gluon.contrib.estimator.Estimator.evaluate">
 <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">val_data</em>, <em class="sig-param">batch_axis=0</em>, <em class="sig-param">event_handlers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate model on validation data.</p>
-<p>This function calls <a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator.evaluate_batch" title="mxnet.gluon.contrib.estimator.Estimator.evaluate_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_batch()</span></code></a> on each of the batches from the
+<p>This function calls <code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_batch()</span></code> on each of the batches from the
 validation data loader. Thus, for custom use cases, it’s possible to inherit the
-estimator class and override <a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator.evaluate_batch" title="mxnet.gluon.contrib.estimator.Estimator.evaluate_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_batch()</span></code></a>.</p>
+estimator class and override <code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_batch()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2082,28 +2137,14 @@ will be added if not specified explicitly.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="mxnet.gluon.contrib.estimator.Estimator.evaluate_batch">
-<code class="sig-name descname">evaluate_batch</code><span class="sig-paren">(</span><em class="sig-param">val_batch</em>, <em class="sig-param">batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.evaluate_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.evaluate_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate model on a batch of validation data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>val_batch</strong> (<em>tuple</em>) – Data and label of a batch from the validation data loader.</p></li>
-<li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the validation data into devices.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="mxnet.gluon.contrib.estimator.Estimator.fit">
 <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">train_data</em>, <em class="sig-param">val_data=None</em>, <em class="sig-param">epochs=None</em>, <em class="sig-param">event_handlers=None</em>, <em class="sig-param">batches=None</em>, <em class="sig-param">batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model with a given <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code> for a specified
 number of epochs or batches. The batch size is inferred from the
 data loader’s batch_size.</p>
-<p>This function calls <a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator.fit_batch" title="mxnet.gluon.contrib.estimator.Estimator.fit_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit_batch()</span></code></a> on each of the batches from the
+<p>This function calls <code class="xref py py-func docutils literal notranslate"><span class="pre">fit_batch()</span></code> on each of the batches from the
 training data loader. Thus, for custom use cases, it’s possible to inherit the
-estimator class and override <a class="reference internal" href="#mxnet.gluon.contrib.estimator.Estimator.fit_batch" title="mxnet.gluon.contrib.estimator.Estimator.fit_batch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit_batch()</span></code></a>.</p>
+estimator class and override <code class="xref py py-func docutils literal notranslate"><span class="pre">fit_batch()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2120,31 +2161,6 @@ ValidationHandler is also added if not already specified.</p></li>
 You can only specify one and only one type of iteration(epochs or batches).</p></li>
 <li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the training data into devices.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="mxnet.gluon.contrib.estimator.Estimator.fit_batch">
-<code class="sig-name descname">fit_batch</code><span class="sig-paren">(</span><em class="sig-param">train_batch</em>, <em class="sig-param">batch_axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/contrib/estimator/estimator.html#Estimator.fit_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.contrib.estimator.Estimator.fit_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trains the model on a batch of training data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>train_batch</strong> (<em>tuple</em>) – Data and label of a batch from the training data loader.</p></li>
-<li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – Batch axis to split the training data into devices.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>data</strong> (<em>List of NDArray</em>) – Sharded data from the batch. Data is sharded with
-<cite>gluon.split_and_load</cite>.</p></li>
-<li><p><strong>label</strong> (<em>List of NDArray</em>) – Sharded label from the batch. Labels are sharded with
-<cite>gluon.split_and_load</cite>.</p></li>
-<li><p><strong>pred</strong> (<em>List of NDArray</em>) – Prediction on each of the sharded inputs.</p></li>
-<li><p><strong>loss</strong> (<em>List of NDArray</em>) – Loss on each of the sharded inputs.</p></li>
-</ul>
-</p>
 </dd>
 </dl>
 </dd></dl>
