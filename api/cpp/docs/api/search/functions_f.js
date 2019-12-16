@@ -7,6 +7,7 @@ var searchData=
   ['pad',['pad',['../namespacemshadow_1_1expr.html#a97c45c821ac8275dd75fa585f47b9e00',1,'mshadow::expr::pad(const Exp&lt; SrcExp, DType, etype &gt; &amp;src, index_t pad)'],['../namespacemshadow_1_1expr.html#ad5fa806dde004de5c97f0f2130515447',1,'mshadow::expr::pad(const Exp&lt; SrcExp, DType, etype &gt; &amp;src, index_t pad_y, index_t pad_x)']]],
   ['paddingexp',['PaddingExp',['../structmshadow_1_1expr_1_1PaddingExp.html#ac71beb89eeec4ab9fd1b2c93d21f1271',1,'mshadow::expr::PaddingExp']]],
   ['parallelaccumulate',['ParallelAccumulate',['../namespacemxnet_1_1common.html#a1e646ace37016aa994a26d96e739a561',1,'mxnet::common']]],
+  ['paralleladd',['ParallelAdd',['../namespacemxnet_1_1common.html#a4809d73b8689e4898d3608b15c877035',1,'mxnet::common']]],
   ['parallelcopy',['ParallelCopy',['../namespacemxnet_1_1common.html#abc4dccb2b37c896faf7409e002bf4eb2',1,'mxnet::common']]],
   ['parallelsort',['ParallelSort',['../namespacemxnet_1_1common.html#a1f273651755067ca9b1e6b8063c283b0',1,'mxnet::common::ParallelSort(RandomIt first, RandomIt last, size_t num_threads, Compare comp)'],['../namespacemxnet_1_1common.html#af2c7fe2df1babee66696d2b449e2123c',1,'mxnet::common::ParallelSort(RandomIt first, RandomIt last, size_t num_threads)']]],
   ['parallelsorthelper',['ParallelSortHelper',['../namespacemxnet_1_1common.html#a7343dc26405918db27b8224ce41f05f6',1,'mxnet::common']]],
