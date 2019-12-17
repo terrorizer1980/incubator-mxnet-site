@@ -756,6 +756,10 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStore</span><span class="p">):</span>
         <span class="n">kv</span> <span class="o">=</span> <span class="n">kvstore</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kvstore</span> <span class="ow">in</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="o">.</span><span class="n">kv_registry</span><span class="p">:</span>
+            <span class="c1"># we do not assume all custom kvstore supports</span>
+            <span class="c1"># updates on kvstore with optimizers</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">kvs</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">kvstore</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
         <span class="c1"># create kvstore using the string type</span>
         <span class="k">if</span> <span class="n">num_device</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s1">&#39;dist&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="c1"># no need to use kv for single device and single machine</span>
@@ -768,6 +772,10 @@
                                <span class="n">arg_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
                 <span class="k">if</span> <span class="n">max_size</span> <span class="o">&gt;</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">16</span><span class="p">:</span>
                     <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="p">):</span>
+        <span class="c1"># we do not assume all custom kvstore supports</span>
+        <span class="c1"># updates on kvstore with optimizers</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;kvstore must be KVStore, str or None&#39;</span><span class="p">)</span>
 
@@ -780,10 +788,10 @@
     <span class="sd">&quot;&quot;&quot;Initialize kvstore&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">param_on_devs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_arrays</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">param_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="n">kvstore</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="n">update_on_kvstore</span><span class="p">:</span>
-            <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">param_on_devs</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">update_on_kvstore</span> <span class="ow">or</span> <span class="n">arg_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">stype</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+            <span class="n">kvstore</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kvstore</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="n">param_on_devs</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_update_params_on_kvstore_nccl</span><span class="p">(</span><span class="n">param_arrays</span><span class="p">,</span> <span class="n">grad_arrays</span><span class="p">,</span> <span class="n">kvstore</span><span class="p">,</span> <span class="n">param_names</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Perform update of param_arrays from grad_arrays on NCCL kvstore.&quot;&quot;&quot;</span>
@@ -800,9 +808,9 @@
     <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">:</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">batch</span> <span class="k">if</span> <span class="n">start</span> <span class="o">+</span> <span class="n">batch</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="k">else</span> <span class="n">size</span>
         <span class="c1"># push gradient, priority is negative index</span>
-        <span class="n">kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">valid_param_names</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">valid_grad_arrays</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">priority</span><span class="o">=-</span><span class="n">start</span><span class="p">)</span>
         <span class="c1"># pull back the weights</span>
-        <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">valid_param_names</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">valid_param_arrays</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">priority</span><span class="o">=-</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">kvstore</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="n">valid_param_names</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">valid_grad_arrays</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span>
+                         <span class="n">out</span><span class="o">=</span><span class="n">valid_param_arrays</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">priority</span><span class="o">=-</span><span class="n">start</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">end</span>
 
 <span class="k">def</span> <span class="nf">_update_params_on_kvstore</span><span class="p">(</span><span class="n">param_arrays</span><span class="p">,</span> <span class="n">grad_arrays</span><span class="p">,</span> <span class="n">kvstore</span><span class="p">,</span> <span class="n">param_names</span><span class="p">):</span>
@@ -813,9 +821,12 @@
             <span class="k">continue</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">param_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="c1"># push gradient, priority is negative index</span>
-        <span class="n">kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
         <span class="c1"># pull back the weights</span>
-        <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">grad_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">and</span> <span class="n">arg_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+            <span class="n">kvstore</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">arg_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">arg_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_update_params</span><span class="p">(</span><span class="n">param_arrays</span><span class="p">,</span> <span class="n">grad_arrays</span><span class="p">,</span> <span class="n">updater</span><span class="p">,</span> <span class="n">num_device</span><span class="p">,</span>
                    <span class="n">kvstore</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">param_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -829,9 +840,11 @@
         <span class="k">if</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">param_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
             <span class="c1"># push gradient, priority is negative index</span>
-            <span class="n">kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
-            <span class="c1"># pull back the sum gradients, to the same locations.</span>
-            <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grad_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">and</span> <span class="n">arg_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+                <span class="n">kvstore</span><span class="o">.</span><span class="n">pushpull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kvstore</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">kvstore</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">grad_list</span><span class="p">,</span> <span class="n">priority</span><span class="o">=-</span><span class="n">index</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">arg_list</span><span class="p">,</span> <span class="n">grad_list</span><span class="p">)):</span>
             <span class="c1"># faked an index here, to make optimizer create diff</span>
             <span class="c1"># state for the same index but on diff devs, TODO(mli)</span>
