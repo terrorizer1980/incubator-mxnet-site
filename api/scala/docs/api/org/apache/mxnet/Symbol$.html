@@ -4331,6 +4331,39 @@ parameter values:
 
 Defined in src/operator/tensor/matrix_op.cc:L677</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SymbolBase.html" class="extype" name="org.apache.mxnet.SymbolBase">SymbolBase</a></dd></dl></div>
+    </li><li name="org.apache.mxnet.SymbolBase#col2im" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="col2im(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
+      <a id="col2im(String,Map[String,String])(Symbol*)(Map[String,Any]):Symbol"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">col2im</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="params">(<span name="args">args: <a href="Symbol.html" class="extype" name="org.apache.mxnet.Symbol">Symbol</a>*</span>)</span><span class="params">(<span name="kwargs">kwargs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a href="Symbol.html" class="extype" name="org.apache.mxnet.Symbol">Symbol</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.apache.mxnet.Symbol$@col2im(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Combining the output column matrix of im2col back to image array.
+
+Like :<span class="kw">class</span>:`~mxnet.ndarray.im2col`, <span class="kw">this</span> operator is also used in the vanilla convolution
+implementation. Despite the name, col2im is not the reverse operation of im2col. Since there
+may be overlaps between neighbouring sliding blocks, the column elements cannot be directly
+put back into image. Instead, they are accumulated (i.e., summed) in the input image
+just like the gradient computation, so col2im is the gradient of im2col and vice versa.
+
+Using the notation in im2col, given an input column array of shape
+:math:`(N, C \times  \prod(\text{kernel}), W)`, <span class="kw">this</span> operator accumulates the column elements
+into output array of shape :math:`(N, C, \text{output_size}[<span class="num">0</span>], \text{output_size}[<span class="num">1</span>], \dots)`.
+Only <span class="num">1</span>-D, <span class="num">2</span>-D and <span class="num">3</span>-D of spatial dimension is supported in <span class="kw">this</span> operator.
+
+
+
+Defined in src/operator/nn/im2col.cc:L182</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SymbolBase.html" class="extype" name="org.apache.mxnet.SymbolBase">SymbolBase</a></dd></dl></div>
     </li><li name="org.apache.mxnet.SymbolBase#concat" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="concat(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
       <a id="concat(String,Map[String,String])(Symbol*)(Map[String,Any]):Symbol"></a>
@@ -5384,6 +5417,41 @@ Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L161</pre></div><dl cl
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Returns a copy of the input.
 
 From:src/operator/tensor/elemwise_unary_op_basic.cc:<span class="num">244</span></pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SymbolBase.html" class="extype" name="org.apache.mxnet.SymbolBase">SymbolBase</a></dd></dl></div>
+    </li><li name="org.apache.mxnet.SymbolBase#im2col" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="im2col(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
+      <a id="im2col(String,Map[String,String])(Symbol*)(Map[String,Any]):Symbol"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">im2col</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="attr">attr: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">null</span></span>)</span><span class="params">(<span name="args">args: <a href="Symbol.html" class="extype" name="org.apache.mxnet.Symbol">Symbol</a>*</span>)</span><span class="params">(<span name="kwargs">kwargs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>] = <span class="symbol">null</span></span>)</span><span class="result">: <a href="Symbol.html" class="extype" name="org.apache.mxnet.Symbol">Symbol</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.apache.mxnet.Symbol$@im2col(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"><p></p><pre>Extract sliding blocks from input array.
+
+This operator is used in vanilla convolution implementation to transform the sliding
+blocks on image to column matrix, then the convolution operation can be computed
+by matrix multiplication between column and convolution weight. Due to the close
+relation between im2col and convolution, the concept of **kernel**, **stride**,
+**dilate** and **pad** in <span class="kw">this</span> operator are inherited from convolution operation.
+
+Given the input data of shape :math:`(N, C, *)`, where :math:`N` is the batch size,
+:math:`C` is the channel size, and :math:`*` is the arbitrary spatial dimension,
+the output column array is always <span class="kw">with</span> shape :math:`(N, C \times \prod(\text{kernel}), W)`,
+where :math:`C \times \prod(\text{kernel})` is the block size, and :math:`W` is the
+block number which is the spatial size of the convolution output <span class="kw">with</span> same input parameters.
+Only <span class="num">1</span>-D, <span class="num">2</span>-D and <span class="num">3</span>-D of spatial dimension is supported in <span class="kw">this</span> operator.
+
+
+
+Defined in src/operator/nn/im2col.cc:L100</pre></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>org.apache.mxnet.Symbol
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SymbolBase.html" class="extype" name="org.apache.mxnet.SymbolBase">SymbolBase</a></dd></dl></div>
     </li><li name="org.apache.mxnet.SymbolBase#khatri_rao" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="khatri_rao(name:String,attr:Map[String,String])(args:org.apache.mxnet.Symbol*)(kwargs:Map[String,Any]):org.apache.mxnet.Symbol"></a>
