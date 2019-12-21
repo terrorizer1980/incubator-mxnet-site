@@ -719,22 +719,19 @@
 <span class="sd">        Trainer to apply optimizer on network parameters.</span>
 <span class="sd">    context : Context or list of Context</span>
 <span class="sd">        Device(s) to run the training on.</span>
-<span class="sd">    evaluation_loss : gluon.loss.loss</span>
-<span class="sd">        Loss (objective) function to calculate during validation. If set evaluation_loss</span>
-<span class="sd">        None, it will use the same loss function as self.loss</span>
-<span class="sd">    eval_net : gluon.Block</span>
+<span class="sd">    val_net : gluon.Block</span>
 <span class="sd">        The model used for validation. The validation model does not necessarily belong to</span>
 <span class="sd">        the same model class as the training model. But the two models typically share the</span>
 <span class="sd">        same architecture. Therefore the validation model can reuse parameters of the</span>
 <span class="sd">        training model.</span>
 
-<span class="sd">        The code example of consruction of eval_net sharing the same network parameters as</span>
+<span class="sd">        The code example of consruction of val_net sharing the same network parameters as</span>
 <span class="sd">        the training net is given below:</span>
 
 <span class="sd">        &gt;&gt;&gt; net = _get_train_network()</span>
-<span class="sd">        &gt;&gt;&gt; eval_net = _get_test_network(params=net.collect_params())</span>
+<span class="sd">        &gt;&gt;&gt; val_net = _get_test_network(params=net.collect_params())</span>
 <span class="sd">        &gt;&gt;&gt; net.initialize(ctx=ctx)</span>
-<span class="sd">        &gt;&gt;&gt; est = Estimator(net, loss, eval_net=eval_net)</span>
+<span class="sd">        &gt;&gt;&gt; est = Estimator(net, loss, val_net=val_net)</span>
 
 <span class="sd">        Proper namespace match is required for weight sharing between two networks. Most networks</span>
 <span class="sd">        inheriting :py:class:`Block` can share their parameters correctly. An exception is</span>
@@ -742,6 +739,9 @@
 <span class="sd">        the  naming in mxnet Gluon API, please refer to the site</span>
 <span class="sd">        (https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/blocks/naming.html)</span>
 <span class="sd">        for future information.</span>
+<span class="sd">    val_loss : gluon.loss.loss</span>
+<span class="sd">        Loss (objective) function to calculate during validation. If set val_loss</span>
+<span class="sd">        None, it will use the same loss function as self.loss</span>
 <span class="sd">    batch_processor: BatchProcessor</span>
 <span class="sd">        BatchProcessor provides customized fit_batch() and evaluate_batch() methods</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -771,8 +771,8 @@
                  <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">trainer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">evaluation_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">eval_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">val_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">val_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">batch_processor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">net</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
@@ -780,12 +780,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_val_metrics</span> <span class="o">=</span> <span class="n">_check_metrics</span><span class="p">(</span><span class="n">val_metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_default_training_metrics</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_validation_metrics</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span>
-        <span class="k">if</span> <span class="n">evaluation_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">evaluation_loss</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eval_net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span>
-        <span class="k">if</span> <span class="n">eval_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eval_net</span> <span class="o">=</span> <span class="n">eval_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span>
+        <span class="k">if</span> <span class="n">val_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_loss</span><span class="p">(</span><span class="n">val_loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span>
+        <span class="k">if</span> <span class="n">val_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_net</span> <span class="o">=</span> <span class="n">val_net</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Estimator&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span>
