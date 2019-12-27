@@ -694,6 +694,9 @@ Show Source
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.quantization.quantize_net" title="mxnet.contrib.quantization.quantize_net"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantize_net</span></code></a>(network[, quantized_dtype, …])</p></td>
 <td><p>User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.quantization.quantize_net_v2" title="mxnet.contrib.quantization.quantize_net_v2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantize_net_v2</span></code></a>(network[, quantized_dtype, …])</p></td>
+<td><p>User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="function">
@@ -748,7 +751,7 @@ Default value is ‘int8’.</p></li>
 
 <dl class="function">
 <dt id="mxnet.contrib.quantization.quantize_graph">
-<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">quantize_graph</code><span class="sig-paren">(</span><em class="sig-param">sym</em>, <em class="sig-param">arg_params</em>, <em class="sig-param">aux_params</em>, <em class="sig-param">ctx=cpu(0)</em>, <em class="sig-param">excluded_sym_names=None</em>, <em class="sig-param">excluded_op_names=None</em>, <em class="sig-param">calib_mode='entropy'</em>, <em class="sig-param">quantized_dtype='int8'</em>, <em class="sig-param">quantize_mode='full'</em>, <em class="sig-param">logger=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#quantize_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.quantize_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">quantize_graph</code><span class="sig-paren">(</span><em class="sig-param">sym</em>, <em class="sig-param">arg_params</em>, <em class="sig-param">aux_params</em>, <em class="sig-param">ctx=cpu(0)</em>, <em class="sig-param">excluded_sym_names=None</em>, <em class="sig-param">excluded_op_names=None</em>, <em class="sig-param">calib_mode='entropy'</em>, <em class="sig-param">quantized_dtype='int8'</em>, <em class="sig-param">quantize_mode='full'</em>, <em class="sig-param">LayerOutputCollector=None</em>, <em class="sig-param">logger=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#quantize_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.quantize_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>User-level API for generating a quantized model from a FP32 model w/o calibration
 and a collector for naive or entropy calibration.
 The backend quantized operators are only enabled for Linux systems. Please do not run
@@ -782,6 +785,7 @@ Default value is ‘int8’.</p></li>
 <li><p><strong>quantize_mode</strong> (<em>str</em>) – The mode that quantization pass to apply. Support ‘full’ and ‘smart’.
 ‘full’ means quantize all operator if possible.
 ‘smart’ means quantization pass will smartly choice which operator should be quantized.</p></li>
+<li><p><strong>LayerOutputCollector</strong> (<em>class</em>) – For customize calibration method usage.</p></li>
 <li><p><strong>logger</strong> (<em>Object</em>) – A logging object for printing information during the process of quantization.</p></li>
 </ul>
 </dd>
@@ -878,6 +882,13 @@ inference using the quantized models on Windows for now.</p>
 <dt id="mxnet.contrib.quantization.quantize_net">
 <code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">quantize_net</code><span class="sig-paren">(</span><em class="sig-param">network</em>, <em class="sig-param">quantized_dtype='auto'</em>, <em class="sig-param">quantize_mode='full'</em>, <em class="sig-param">exclude_layers=None</em>, <em class="sig-param">exclude_layers_match=None</em>, <em class="sig-param">exclude_operators=None</em>, <em class="sig-param">calib_data=None</em>, <em class="sig-param">data_shapes=None</em>, <em class="sig-param">calib_mode='none'</em>, <em class="sig-param">num_calib_examples=None</em>, <em class="sig-param">ctx=cpu(0)</em>, <em class="sig-param">logger=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#quantize_net"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.quantize_net" title="Permalink to this definition">¶</a></dt>
 <dd><p>User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.
+Will be deprecated after MXNet 2.0, please use quantize_net_v2.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.contrib.quantization.quantize_net_v2">
+<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">quantize_net_v2</code><span class="sig-paren">(</span><em class="sig-param">network</em>, <em class="sig-param">quantized_dtype='auto'</em>, <em class="sig-param">quantize_mode='full'</em>, <em class="sig-param">exclude_layers=None</em>, <em class="sig-param">exclude_layers_match=None</em>, <em class="sig-param">exclude_operators=None</em>, <em class="sig-param">calib_data=None</em>, <em class="sig-param">data_shapes=None</em>, <em class="sig-param">calib_mode='none'</em>, <em class="sig-param">num_calib_examples=None</em>, <em class="sig-param">ctx=cpu(0)</em>, <em class="sig-param">LayerOutputCollector=None</em>, <em class="sig-param">logger=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#quantize_net_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.quantize_net_v2" title="Permalink to this definition">¶</a></dt>
+<dd><p>User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.
 The backend quantized operators are only enabled for Linux systems. Please do not run
 inference using the quantized models on Windows for now.</p>
 <dl class="field-list simple">
@@ -909,6 +920,7 @@ quantized layer outputs is minimized based upon the calibration dataset.</p></li
 the whole calibration dataset will be used.</p></li>
 <li><p><strong>ctx</strong> (<a class="reference internal" href="../../mxnet/context/index.html#mxnet.context.Context" title="mxnet.context.Context"><em>Context</em></a>) – Defines the device that users want to run forward propagation on the calibration
 dataset for collecting layer output statistics. Currently, only supports single context.</p></li>
+<li><p><strong>LayerOutputCollector</strong> (<em>class</em>) – For customize calibration method usage.</p></li>
 <li><p><strong>logger</strong> (<em>Object</em>) – A logging object for printing information during the process of quantization.</p></li>
 </ul>
 </dd>

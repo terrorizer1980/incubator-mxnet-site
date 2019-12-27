@@ -685,6 +685,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">py_str</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">c_array</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">c_str_array</span>
@@ -1077,6 +1078,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">data_example</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_example</span><span class="p">]</span>
         <span class="c1"># suppose there must be one label in data_example</span>
+        <span class="c1"># TODO(xinyu-intel): little tricky here, need to refactor.</span>
         <span class="n">num_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_example</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">num_data</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="c1"># here reshape is to handle the 5D/6D input data</span>
@@ -1084,6 +1086,10 @@
             <span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">provide_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataDesc</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">provide_data</span> <span class="o">+=</span> <span class="p">[</span><span class="n">DataDesc</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;data</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_example</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+        <span class="c1"># data0, data1, ..., label</span>
+        <span class="k">if</span> <span class="n">num_data</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">provide_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataDesc</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;data</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">:])]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">data_example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -1265,7 +1271,9 @@
 <span class="sd">        A tuple of quantized symbol, quantized arg_params, and aux_params.</span>
 <span class="sd">    -------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">ctx</span> <span class="o">!=</span> <span class="n">cpu</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">Context</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;currently only supports single ctx, while received </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">device_type</span> <span class="o">!=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s1">&#39;quantize_model_mkldnn only support Intel cpu platform with MKL-DNN Backend&#39;</span><span class="p">)</span>
 
@@ -1285,8 +1293,9 @@
     <span class="k">return</span> <span class="n">qsym</span><span class="p">,</span> <span class="n">qarg_params</span><span class="p">,</span> <span class="n">aux_params</span></div>
 
 <div class="viewcode-block" id="quantize_graph"><a class="viewcode-back" href="../../../api/contrib/quantization/index.html#mxnet.contrib.quantization.quantize_graph">[docs]</a><span class="k">def</span> <span class="nf">quantize_graph</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">cpu</span><span class="p">(),</span>
-                   <span class="n">excluded_sym_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">excluded_op_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calib_mode</span><span class="o">=</span><span class="s1">&#39;entropy&#39;</span><span class="p">,</span>
-                   <span class="n">quantized_dtype</span><span class="o">=</span><span class="s1">&#39;int8&#39;</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                   <span class="n">excluded_sym_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">excluded_op_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">calib_mode</span><span class="o">=</span><span class="s1">&#39;entropy&#39;</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="s1">&#39;int8&#39;</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span>
+                   <span class="n">LayerOutputCollector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;User-level API for generating a quantized model from a FP32 model w/o calibration</span>
 <span class="sd">    and a collector for naive or entropy calibration.</span>
 <span class="sd">    The backend quantized operators are only enabled for Linux systems. Please do not run</span>
@@ -1325,6 +1334,8 @@
 <span class="sd">        The mode that quantization pass to apply. Support &#39;full&#39; and &#39;smart&#39;.</span>
 <span class="sd">        &#39;full&#39; means quantize all operator if possible.</span>
 <span class="sd">        &#39;smart&#39; means quantization pass will smartly choice which operator should be quantized.</span>
+<span class="sd">    LayerOutputCollector : class</span>
+<span class="sd">        For customize calibration method usage.</span>
 <span class="sd">    logger : Object</span>
 <span class="sd">        A logging object for printing information during the process of quantization.</span>
 <span class="sd">    Returns</span>
@@ -1369,9 +1380,14 @@
             <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="s1">&#39;Create a layer output minmax collector for naive calibration&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">calib_mode</span> <span class="o">==</span> <span class="s1">&#39;customize&#39;</span> <span class="ow">and</span> <span class="n">LayerOutputCollector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">collector</span> <span class="o">=</span> <span class="n">LayerOutputCollector</span>
+            <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s1">&#39;Create a customize layer output minmax collector for calibration&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unknown calibration mode </span><span class="si">%s</span><span class="s1"> received,&#39;</span>
-                             <span class="s1">&#39; expected `none`, `naive`, or `entropy`&#39;</span> <span class="o">%</span> <span class="n">calib_mode</span><span class="p">)</span>
+                             <span class="s1">&#39; expected `none`, `naive`, `entropy` or `customize`&#39;</span> <span class="o">%</span> <span class="n">calib_mode</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Collector created, please use set_monitor_callback&#39;</span>
                         <span class="s1">&#39; to collect calibration information.&#39;</span><span class="p">)</span>
@@ -1428,9 +1444,11 @@
                 <span class="n">collector</span><span class="o">.</span><span class="n">hist_dict</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">calib_mode</span> <span class="o">==</span> <span class="s1">&#39;naive&#39;</span><span class="p">:</span>
             <span class="n">th_dict</span> <span class="o">=</span> <span class="n">collector</span><span class="o">.</span><span class="n">min_max_dict</span>
+        <span class="k">elif</span> <span class="n">calib_mode</span> <span class="o">==</span> <span class="s1">&#39;customize&#39;</span><span class="p">:</span>
+            <span class="n">th_dict</span> <span class="o">=</span> <span class="n">collector</span><span class="o">.</span><span class="n">min_max_dict</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unknown calibration mode </span><span class="si">%s</span><span class="s1"> received,&#39;</span>
-                             <span class="s1">&#39; expected `none`, `naive`, or `entropy`&#39;</span> <span class="o">%</span> <span class="n">calib_mode</span><span class="p">)</span>
+                             <span class="s1">&#39; expected `none`, `naive`, `entropy` or `customize`&#39;</span> <span class="o">%</span> <span class="n">calib_mode</span><span class="p">)</span>
         <span class="n">qsym</span> <span class="o">=</span> <span class="n">_calibrate_quantized_sym</span><span class="p">(</span><span class="n">qsym</span><span class="p">,</span> <span class="n">th_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;please set calibration mode to naive or entropy.&#39;</span><span class="p">)</span>
@@ -1441,10 +1459,10 @@
 
     <span class="k">return</span> <span class="n">qsym</span><span class="p">,</span> <span class="n">qarg_params</span><span class="p">,</span> <span class="n">aux_params</span></div>
 
-<div class="viewcode-block" id="quantize_net"><a class="viewcode-back" href="../../../api/contrib/quantization/index.html#mxnet.contrib.quantization.quantize_net">[docs]</a><span class="k">def</span> <span class="nf">quantize_net</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span>
-                 <span class="n">exclude_layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_layers_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_operators</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">calib_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calib_mode</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
-                 <span class="n">num_calib_examples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="quantize_net_v2"><a class="viewcode-back" href="../../../api/contrib/quantization/index.html#mxnet.contrib.quantization.quantize_net_v2">[docs]</a><span class="k">def</span> <span class="nf">quantize_net_v2</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span>
+                    <span class="n">exclude_layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_layers_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_operators</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">calib_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calib_mode</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                    <span class="n">num_calib_examples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">LayerOutputCollector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.</span>
 <span class="sd">    The backend quantized operators are only enabled for Linux systems. Please do not run</span>
 <span class="sd">    inference using the quantized models on Windows for now.</span>
@@ -1488,6 +1506,8 @@
 <span class="sd">    ctx : Context</span>
 <span class="sd">        Defines the device that users want to run forward propagation on the calibration</span>
 <span class="sd">        dataset for collecting layer output statistics. Currently, only supports single context.</span>
+<span class="sd">    LayerOutputCollector : class</span>
+<span class="sd">        For customize calibration method usage.</span>
 <span class="sd">    logger : Object</span>
 <span class="sd">        A logging object for printing information during the process of quantization.</span>
 
@@ -1564,7 +1584,8 @@
     <span class="n">qsym</span><span class="p">,</span> <span class="n">qarg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">,</span> <span class="n">collector</span> <span class="o">=</span> <span class="n">quantize_graph</span><span class="p">(</span>
         <span class="n">sym</span><span class="o">=</span><span class="n">symnet</span><span class="p">,</span> <span class="n">arg_params</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">aux_params</span><span class="o">=</span><span class="n">auxs</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span>
         <span class="n">excluded_sym_names</span><span class="o">=</span><span class="n">exclude_layers</span><span class="p">,</span> <span class="n">excluded_op_names</span><span class="o">=</span><span class="n">exclude_operators</span><span class="p">,</span>
-        <span class="n">calib_mode</span><span class="o">=</span><span class="n">calib_mode</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="n">quantized_dtype</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="n">quantize_mode</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">calib_mode</span><span class="o">=</span><span class="n">calib_mode</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="n">quantized_dtype</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="n">quantize_mode</span><span class="p">,</span>
+        <span class="n">LayerOutputCollector</span><span class="o">=</span><span class="n">LayerOutputCollector</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">calib_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">calib_mode</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">Context</span><span class="p">):</span>
@@ -1573,7 +1594,7 @@
         <span class="k">if</span> <span class="n">calib_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;calib_data must be provided when calib_mode=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">calib_mode</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">calib_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;naive&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">calib_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;naive&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;customize&#39;</span><span class="p">]:</span>
             <span class="n">data_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">calib_data</span><span class="o">.</span><span class="n">provide_data</span><span class="p">]</span>
             <span class="n">mod</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">symnet</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span>
                          <span class="n">data_names</span><span class="o">=</span><span class="n">data_names</span><span class="p">,</span> <span class="n">label_names</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1614,6 +1635,22 @@
         <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">&#39;saved&#39;</span><span class="p">)</span>
         <span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">reset_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">net</span></div>
+
+<div class="viewcode-block" id="quantize_net"><a class="viewcode-back" href="../../../api/contrib/quantization/index.html#mxnet.contrib.quantization.quantize_net">[docs]</a><span class="k">def</span> <span class="nf">quantize_net</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">quantize_mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span>
+                 <span class="n">exclude_layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_layers_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_operators</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">calib_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calib_mode</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                 <span class="n">num_calib_examples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;User-level API for Gluon users to generate a quantized SymbolBlock from a FP32 HybridBlock w/ or w/o calibration.</span>
+<span class="sd">       Will be deprecated after MXNet 2.0, please use quantize_net_v2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;WARNING: This will be deprecated after MXNet 2.0, please use quantize_net_v2.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">quantize_net_v2</span><span class="p">(</span><span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">,</span> <span class="n">quantized_dtype</span><span class="o">=</span><span class="n">quantized_dtype</span><span class="p">,</span>
+                           <span class="n">quantize_mode</span><span class="o">=</span><span class="n">quantize_mode</span><span class="p">,</span> <span class="n">exclude_layers</span><span class="o">=</span><span class="n">exclude_layers</span><span class="p">,</span>
+                           <span class="n">exclude_layers_match</span><span class="o">=</span><span class="n">exclude_layers_match</span><span class="p">,</span>
+                           <span class="n">exclude_operators</span><span class="o">=</span><span class="n">exclude_operators</span><span class="p">,</span>
+                           <span class="n">calib_data</span><span class="o">=</span><span class="n">calib_data</span><span class="p">,</span> <span class="n">data_shapes</span><span class="o">=</span><span class="n">data_shapes</span><span class="p">,</span>
+                           <span class="n">calib_mode</span><span class="o">=</span><span class="n">calib_mode</span><span class="p">,</span> <span class="n">num_calib_examples</span><span class="o">=</span><span class="n">num_calib_examples</span><span class="p">,</span>
+                           <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">LayerOutputCollector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span></div>
 </pre></div>
 
         </div>
