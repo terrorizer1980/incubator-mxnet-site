@@ -28,7 +28,7 @@ var searchData=
   ['_5fopcallinfertype',['_opCallInferType',['../lib__api_8h.html#a63df21a425ddea65eae89207962b996e',1,'lib_api.h']]],
   ['_5fopcallmutateinputs',['_opCallMutateInputs',['../lib__api_8h.html#afd7f9862fe88648ac29283fb815c7d4f',1,'lib_api.h']]],
   ['_5fopcallparseattrs',['_opCallParseAttrs',['../lib__api_8h.html#a77c0a618db622ec9b085bf6c3ce83de2',1,'lib_api.h']]],
-  ['_5fopregget',['_opRegGet',['../lib__api_8h.html#a5e766aaf2181d71fe5da335bb2f71b2e',1,'lib_api.h']]],
+  ['_5fopregget',['_opRegGet',['../lib__api_8h.html#a50f93d97eda5284e946abfe9e8a60ca5',1,'lib_api.h']]],
   ['_5fopregsize',['_opRegSize',['../lib__api_8h.html#a1d33297dd92d8a9ad547d783293e06c7',1,'lib_api.h']]],
   ['_5fopversion',['_opVersion',['../lib__api_8h.html#ac246836972a88cd6b060f2a0c6afac55',1,'lib_api.h']]],
   ['_5fplus',['_Plus',['../namespacemxnet_1_1cpp.html#adf6edcf76da5f7bd268eb4dcbdc8538a',1,'mxnet::cpp']]],

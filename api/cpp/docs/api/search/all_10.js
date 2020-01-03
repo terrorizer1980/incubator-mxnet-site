@@ -87,7 +87,7 @@ var searchData=
   ['opmap',['OpMap',['../classnnvm_1_1OpMap.html',1,'nnvm']]],
   ['opmap',['OpMap',['../classmxnet_1_1cpp_1_1OpMap.html',1,'mxnet::cpp']]],
   ['oppatternkind',['OpPatternKind',['../namespacennvm_1_1compiler.html#aafc152b15e768d3ff58a2ae792c5c65d',1,'nnvm::compiler']]],
-  ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#ad5242e2431e3b6b127bb7a1180289231',1,'lib_api.h']]],
+  ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#ab504e5111cdb9135671715247bb5c61b',1,'lib_api.h']]],
   ['opregsize_5ft',['opRegSize_t',['../lib__api_8h.html#a62bc19b0f724d20fff152c4a67bcdbd4',1,'lib_api.h']]],
   ['opreqtype',['OpReqType',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398',1,'mxnet::OpReqType()'],['../namespacemxnet_1_1cpp.html#ae1e49a337d45c7071defefda2ec91845',1,'mxnet::cpp::OpReqType()']]],
   ['opresource',['OpResource',['../classOpResource.html',1,'OpResource'],['../classOpResource.html#a26b7b561549ee9c0608b45ab1606d1c5',1,'OpResource::OpResource()']]],

@@ -13,7 +13,7 @@ var searchData=
   ['openmp_5findex_5ft',['openmp_index_t',['../namespacemshadow.html#aa94c153a2f8bcd10be82a4f5598ae5b9',1,'mshadow']]],
   ['operatorpropertyfactory',['OperatorPropertyFactory',['../namespacemxnet.html#a6f5428fbf261a94eaac079ec24413815',1,'mxnet']]],
   ['ophandle',['OpHandle',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#acf157e26d64edaf2b857b04a69deb52b',1,'c_api.h']]],
-  ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#ad5242e2431e3b6b127bb7a1180289231',1,'lib_api.h']]],
+  ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#ab504e5111cdb9135671715247bb5c61b',1,'lib_api.h']]],
   ['opregsize_5ft',['opRegSize_t',['../lib__api_8h.html#a62bc19b0f724d20fff152c4a67bcdbd4',1,'lib_api.h']]],
   ['oprhandle',['OprHandle',['../classmxnet_1_1Engine.html#a832436e413a075291aa1a631942c3f01',1,'mxnet::Engine::OprHandle()'],['../namespacemxnet_1_1engine.html#a2d9b14b658e3f3c4e03ca49cd38ace94',1,'mxnet::engine::OprHandle()']]],
   ['optimizercreator',['OptimizerCreator',['../namespacemxnet_1_1cpp.html#a16a22578671e5ebcf8addb2275c317bc',1,'mxnet::cpp']]],

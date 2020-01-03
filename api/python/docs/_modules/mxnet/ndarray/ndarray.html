@@ -768,6 +768,8 @@
 <span class="n">_NDARRAY_UNSUPPORTED_INDEXING</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">_NDARRAY_BASIC_INDEXING</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">_NDARRAY_ADVANCED_INDEXING</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">_NDARRAY_EMPTY_TUPLE_INDEXING</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">_NDARRAY_BOOLEAN_INDEXING</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="c1"># Caching whether MXNet was built with INT64 support or not</span>
 <span class="n">_INT64_TENSOR_SIZE_ENABLED</span> <span class="o">=</span> <span class="kc">None</span>
@@ -3609,7 +3611,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,)</span>
-
     <span class="c1"># We need to loop explicitly since tuple functions like `index()` or</span>
     <span class="c1"># `count()` use `==` internally, which doesn&#39;t play well with fancy</span>
     <span class="c1"># indexing.</span>
@@ -3626,7 +3627,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">num_none</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
+                <span class="c1"># This handles ndarray of zero dim. e.g array(1)</span>
+                <span class="c1"># while advoid converting zero dim boolean array</span>
+                <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="n">nonell_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nonell_key</span><span class="p">)</span>
 
@@ -3698,23 +3704,32 @@
 <div class="viewcode-block" id="get_indexing_dispatch_code"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.get_indexing_dispatch_code">[docs]</a><span class="k">def</span> <span class="nf">get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a dispatch code for calling basic or advanced indexing functions.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+    <span class="n">num_bools</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_NDARRAY_EMPTY_TUPLE_INDEXING</span>
             <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;ndarray indexing does not support boolean ndarray&#39;</span>
-                                <span class="s1">&#39; in a tuple of indices. Only single boolean ndarray&#39;</span>
-                                <span class="s1">&#39; as an index is supported.&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
+                <span class="n">num_bools</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
+            <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">py_slice</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">))</span> <span class="ow">or</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;NDArray does not support slicing with key </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1">.&#39;</span>
                 <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
             <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span></div>
+    <span class="k">if</span> <span class="n">basic_indexing</span> <span class="ow">and</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">basic_indexing</span> <span class="ow">and</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
+    <span class="k">elif</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_NDARRAY_BOOLEAN_INDEXING</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;ndarray indexing does not more than one boolean ndarray&#39;</span>
+                        <span class="s1">&#39; in a tuple of complex indices.&#39;</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_get_index_range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>

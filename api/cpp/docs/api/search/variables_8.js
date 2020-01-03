@@ -28,6 +28,7 @@ var searchData=
   ['is_5fbulk',['is_bulk',['../structmxnet_1_1RunContext.html#a6c1bcba3d060cd16330f447792956928',1,'mxnet::RunContext']]],
   ['is_5ftrain',['is_train',['../structmxnet_1_1OpContext.html#a2d550bd138ed08333bebed8dd876644f',1,'mxnet::OpContext']]],
   ['ishapex_5f',['ishapex_',['../structmshadow_1_1expr_1_1ReshapeExp.html#a5baedf65a93e073525f7ecfba579b70c',1,'mshadow::expr::ReshapeExp']]],
+  ['issgop',['isSGop',['../classCustomOp.html#a15e8cbd8b3727f58b8979dd7dc7ec9cd',1,'CustomOp']]],
   ['item1_5f',['item1_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#a2c0e60dca07dc380daaf466bf3865d50',1,'mshadow::expr::TernaryMapExp']]],
   ['item2_5f',['item2_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#a357cad3472616e53a72e8fdd789ae2be',1,'mshadow::expr::TernaryMapExp']]],
   ['item3_5f',['item3_',['../structmshadow_1_1expr_1_1TernaryMapExp.html#af59015a8e257dc844f30cd57b864490f',1,'mshadow::expr::TernaryMapExp']]]
