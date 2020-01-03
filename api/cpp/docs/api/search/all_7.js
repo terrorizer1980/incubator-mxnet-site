@@ -7,7 +7,7 @@ var searchData=
   ['factorscheduler',['FactorScheduler',['../classmxnet_1_1cpp_1_1FactorScheduler.html#abaabb6c44a38ac9ee5025c312eead44e',1,'mxnet::cpp::FactorScheduler']]],
   ['factortype',['FactorType',['../classmxnet_1_1cpp_1_1Xavier.html#a0147850e8857cdd1befe74522da54f7e',1,'mxnet::cpp::Xavier']]],
   ['factory',['Factory',['../classdmlc_1_1Parser.html#aacf539079f2aab0d75c6dad286d7653e',1,'dmlc::Parser']]],
-  ['favoidquantizeinput',['FAvoidQuantizeInput',['../namespacemxnet.html#aa80f4ba59193c91fe9d168fbe4b0ea50',1,'mxnet']]],
+  ['favoidquantizeinput',['FAvoidQuantizeInput',['../namespacemxnet.html#a3cb7e17c82420da9bac723fee0bb044c',1,'mxnet']]],
   ['fcomp_5ft',['fcomp_t',['../lib__api_8h.html#abe41961ecb26debd2ce96db5ba57f6c8',1,'lib_api.h']]],
   ['fcompute',['FCompute',['../namespacemxnet.html#ad77e2048b7e8db91a12e05b477aac13e',1,'mxnet']]],
   ['fcomputeex',['FComputeEx',['../namespacemxnet.html#a294d2660c065f8d229c27e65f0461e10',1,'mxnet']]],

@@ -1121,7 +1121,7 @@ var searchData=
   ['mxprofilepause',['MXProfilePause',['../include_2mxnet_2c__api_8h.html#a319802a4e02b4d9d082a337bb25d01b5',1,'c_api.h']]],
   ['mxprofilesetcounter',['MXProfileSetCounter',['../include_2mxnet_2c__api_8h.html#a8f577ea610a762865b617529632d5589',1,'c_api.h']]],
   ['mxprofilesetmarker',['MXProfileSetMarker',['../include_2mxnet_2c__api_8h.html#ad579dc41376dac04e0fba7e61afabc1b',1,'c_api.h']]],
-  ['mxquantizesymbol',['MXQuantizeSymbol',['../include_2mxnet_2c__api_8h.html#ab05fd6eea07ce93d190507e34629c88b',1,'c_api.h']]],
+  ['mxquantizesymbol',['MXQuantizeSymbol',['../include_2mxnet_2c__api_8h.html#acd4ab39484b94894aab6efb53c4697d0',1,'c_api.h']]],
   ['mxrandomseed',['MXRandomSeed',['../include_2mxnet_2c__api_8h.html#a05e3ead36464b62cd1a9264187640f5a',1,'c_api.h']]],
   ['mxrandomseedcontext',['MXRandomSeedContext',['../include_2mxnet_2c__api_8h.html#a146217b1db0d73614debf333665e16f1',1,'c_api.h']]],
   ['mxrecordioreadercreate',['MXRecordIOReaderCreate',['../include_2mxnet_2c__api_8h.html#a4464ddbe13b8a4542d3f91bf055d50af',1,'c_api.h']]],
