@@ -133,6 +133,7 @@ var searchData=
   ['kunitaryc2c',['kUnitaryC2C',['../namespacemshadow_1_1op_1_1complex.html#a53d33692e124b4a830ea47372a093a78a090afb12c0c4066882e839264aca58e0',1,'mshadow::op::complex']]],
   ['kunitaryc2r',['kUnitaryC2R',['../namespacemshadow_1_1op_1_1complex.html#a53d33692e124b4a830ea47372a093a78abed2030268295a23c195bd49a2c4b1e7',1,'mshadow::op::complex']]],
   ['kunitaryr2c',['kUnitaryR2C',['../namespacemshadow_1_1op_1_1complex.html#a53d33692e124b4a830ea47372a093a78a7c2ccb715d938a7831636e2e9b8e6c32',1,'mshadow::op::complex']]],
+  ['kunset',['kUNSET',['../lib__api_8h.html#a8fd7b6a8c28e599287f76955305a8107a4726ae509fa64eb63e55ec15cf106571',1,'lib_api.h']]],
   ['kvariable',['kVariable',['../namespacemxnet.html#aad5fec2b4bceabbf4b884460cc2e0a2bafb751f6ee1af15e773242f2accd2dbff',1,'mxnet']]],
   ['kwriteinplace',['kWriteInplace',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398a640322face587ca12684378d0f053d51',1,'mxnet::kWriteInplace()'],['../namespacemxnet_1_1cpp.html#ae1e49a337d45c7071defefda2ec91845aae1754f69deaa9fe7d2d37479126d08d',1,'mxnet::cpp::kWriteInplace()']]],
   ['kwriteto',['kWriteTo',['../namespacemxnet.html#a7cd7094ef222e9ae1f520c3b6a214398a03b4c19f34d3add7deecd7ef6c54b42a',1,'mxnet::kWriteTo()'],['../namespacemxnet_1_1cpp.html#ae1e49a337d45c7071defefda2ec91845aeeb7170b414b47800f504038816d5b68',1,'mxnet::cpp::kWriteTo()']]]

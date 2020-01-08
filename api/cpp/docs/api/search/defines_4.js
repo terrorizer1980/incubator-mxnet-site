@@ -726,7 +726,6 @@ var searchData=
   ['mx_5fstringify',['MX_STRINGIFY',['../lib__api_8h.html#a8a5ee382299049479eaadc1f87d9dffb',1,'lib_api.h']]],
   ['mx_5ftostring',['MX_TOSTRING',['../lib__api_8h.html#ac281c11d1b738cf6f4d44d1d6d2a41f5',1,'lib_api.h']]],
   ['mxlib_5finitialize_5fstr',['MXLIB_INITIALIZE_STR',['../lib__api_8h.html#ad5405711bcd25d56b2fc2a3fd827ea3c',1,'lib_api.h']]],
-  ['mxlib_5fopcallbkwd_5fstr',['MXLIB_OPCALLBKWD_STR',['../lib__api_8h.html#a353abfc1a11c59eab56b4ae35188c5ec',1,'lib_api.h']]],
   ['mxlib_5fopcallcreateopstate_5fstr',['MXLIB_OPCALLCREATEOPSTATE_STR',['../lib__api_8h.html#a950d395e618360e1d9c4c5b1fedb018d',1,'lib_api.h']]],
   ['mxlib_5fopcallfcomp_5fstr',['MXLIB_OPCALLFCOMP_STR',['../lib__api_8h.html#a906b409889769dcb9ed23c68becf93e3',1,'lib_api.h']]],
   ['mxlib_5fopcallfree_5fstr',['MXLIB_OPCALLFREE_STR',['../lib__api_8h.html#aa9581ed05ac3aefc194698100cc54e5a',1,'lib_api.h']]],

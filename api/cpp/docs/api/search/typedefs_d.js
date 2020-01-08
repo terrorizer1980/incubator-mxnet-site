@@ -1,11 +1,10 @@
 var searchData=
 [
   ['op',['Op',['../namespacemxnet.html#ac2fb286fd7ddfbc7af1456f6c7a7ee52',1,'mxnet']]],
-  ['opcallbkwd_5ft',['opCallBkwd_t',['../lib__api_8h.html#a100228f1b7370a71cb2002ec87105113',1,'lib_api.h']]],
   ['opcallcreateopstate_5ft',['opCallCreateOpState_t',['../lib__api_8h.html#addf09881ffb24664e80046ae121757c5',1,'lib_api.h']]],
-  ['opcallfcomp_5ft',['opCallFComp_t',['../lib__api_8h.html#ae537b9c6181818fce65d21c243774f15',1,'lib_api.h']]],
+  ['opcallfcomp_5ft',['opCallFComp_t',['../lib__api_8h.html#ad2988bcbf877add91fae7002544bc979',1,'lib_api.h']]],
   ['opcallfree_5ft',['opCallFree_t',['../lib__api_8h.html#ab12649f87cac93dc0c56a60ba7da2ec1',1,'lib_api.h']]],
-  ['opcallfstatefulcomp_5ft',['opCallFStatefulComp_t',['../lib__api_8h.html#a8f0c9afb048aecb779a4822394aebcb6',1,'lib_api.h']]],
+  ['opcallfstatefulcomp_5ft',['opCallFStatefulComp_t',['../lib__api_8h.html#a87fd9d508864232baff76938b779d934',1,'lib_api.h']]],
   ['opcallinfershape_5ft',['opCallInferShape_t',['../lib__api_8h.html#adbd20800b78b05d30cc16136cb625961',1,'lib_api.h']]],
   ['opcallinfertype_5ft',['opCallInferType_t',['../lib__api_8h.html#a7eeac3f14dd8296d91e0a1ccbd03ba9e',1,'lib_api.h']]],
   ['opcallmutateinputs_5ft',['opCallMutateInputs_t',['../lib__api_8h.html#a6868d747aaa43efcc1c147c604fc2a82',1,'lib_api.h']]],
