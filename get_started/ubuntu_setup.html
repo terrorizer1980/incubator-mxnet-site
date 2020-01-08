@@ -124,23 +124,29 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 
 <!--- under the License. -->
 
-<h1 id="installing-mxnet-on-ubuntu">Installing MXNet on Ubuntu</h1>
+<h1 id="installing-mxnet-from-source-on-ubuntu">Installing MXNet from source on Ubuntu</h1>
 
-<p>The following installation instructions are for installing MXNet on computers running <strong>Ubuntu 16.04</strong>. Support for later versions of Ubuntu is <a href="#contributions">not yet available</a>.
-<hr></p>
+<p>The following installation instructions are for building MXNet from source on
+computers running <strong>Ubuntu 16.04</strong> or higher. For instructions to build MXNet
+from source on other platforms, see the general <a href="build_from_source">Build From Source
+guide</a>.</p>
+
+<p>Instead of building from source, you can install a binary version of MXNet. For
+that, please follow the information at <a href="get_started">Get Started</a>.</p>
+
+<p>Building MXNet from source is a two-step process:</p>
+
+<ol>
+<li>Build the shared library from the MXNet C++ source code.</li>
+<li>(optional) Install the supported language-specific packages for MXNet.</li>
+</ol>
 
 <h2 id="contents">Contents</h2>
 
 <ul>
 <li><a href="#cuda-dependencies">CUDA Dependencies</a></li>
-<li><a href="#quick-installation">Quick Installation</a>
-
-<ul>
-<li><a href="#install-mxnet-for-python">Python</a></li>
-<li><a href="#pip-package-availability">pip Packages</a></li>
-</ul></li>
-<li><a href="#build-mxnet-from-source">Build from Source</a></li>
-<li><a href="#installing-language-packages-for-mxnet">Installing Language Packages</a>
+<li><a href="#build-mxnet-from-source">Build the MXNet shared library from source</a></li>
+<li><a href="#installing-language-packages-for-mxnet">Install Language Packages</a>
 
 <ul>
 <li><a href="#install-the-mxnet-package-for-r">R</a></li>
@@ -172,90 +178,7 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 </code></pre></div>
 <p><hr></p>
 
-<h2 id="quick-installation">Quick Installation</h2>
-
-<h3 id="install-mxnet-for-python">Install MXNet for Python</h3>
-
-<h4 id="dependencies">Dependencies</h4>
-
-<p>The following scripts will install Ubuntu 16.04 dependencies for MXNet Python development.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">wget https://raw.githubusercontent.com/apache/incubator-mxnet/master/ci/docker/install/ubuntu_core.sh
-wget https://raw.githubusercontent.com/apache/incubator-mxnet/master/ci/docker/install/ubuntu_python.sh
-<span class="nb">sudo</span> ./ubuntu_core.sh
-<span class="nb">sudo</span> ./ubuntu_python.sh
-</code></pre></div>
-<p>Using the latest MXNet with CUDA 9.2 package is recommended for the fastest training speeds with MXNet.</p>
-
-<p><strong>Recommended for training:</strong>
-<code>bash
-pip install mxnet-cu92
-</code></p>
-
-<p><strong>Recommended for inference:</strong>
-<code>bash
-pip install mxnet-cu92mkl
-</code></p>
-
-<p>Alternatively, you can use the table below to select the package that suits your purpose.</p>
-
-<table><thead>
-<tr>
-<th>MXNet Version</th>
-<th>Basic</th>
-<th>CUDA</th>
-<th>MKL-DNN</th>
-<th>CUDA/MKL-DNN</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Latest</td>
-<td>mxnet</td>
-<td>mxnet-cu92</td>
-<td>mxnet-mkl</td>
-<td>mxnet-cu92mkl</td>
-</tr>
-</tbody></table>
-
-<h4 id="pip-package-availability">pip Package Availability</h4>
-
-<p>The following table presents the pip packages that are recommended for each version of MXNet.</p>
-
-<p><img src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/install/pip-packages-1.4.0.png" alt="pip package table"></p>
-
-<p>To install an older version of MXNet with one of the packages in the previous table add <code>==</code> with the version you require. For example for version 1.1.0 of MXNet with CUDA 8, you would use <code>pip install mxnet-cu80==1.1.0</code>.</p>
-
-<p><hr></p>
-
-<h2 id="build-mxnet-from-source">Build MXNet from Source</h2>
-
-<p>You can build MXNet from source, and then you have the option of installing language-specific bindings, such as Scala, Java, Julia, R or Perl. This is a two-step process:</p>
-
-<ol>
-<li>Build the shared library from the MXNet C++ source code.</li>
-<li>(optional) Install the supported language-specific packages for MXNet. Be sure to check that section first, as some scripts may be available to handle all of the dependencies, MXNet build, and language bindings for you. Here they are again for quick access:</li>
-</ol>
-
-<ul>
-<li><a href="#install-the-mxnet-package-for-r">R</a></li>
-<li><a href="#install-the-mxnet-package-for-julia">Julia</a></li>
-<li><a href="#install-the-mxnet-package-for-scala">Scala</a></li>
-<li><a href="#install-the-mxnet-package-for-java">Java</a></li>
-<li><a href="#install-the-mxnet-package-for-perl">Perl</a></li>
-</ul>
-
-<p><strong>Note:</strong> To change the compilation options for your build, edit the <code>make/config.mk</code> file prior to building MXNet. More information on this is mentioned in the different language package instructions.</p>
-
-<h3 id="build-the-shared-library">Build the Shared Library</h3>
-
-<h4 id="quick-mxnet-build">Quick MXNet Build</h4>
-
-<p>You can quickly build MXNet from source with the following script found in the <code>/docs/install</code> folder:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>docs/install
-./install_mxnet_ubuntu_python.sh
-</code></pre></div>
-<p>Or you can go through a manual process described next.</p>
-
-<h4 id="manual-mxnet-installation">Manual MXNet Installation</h4>
+<h2 id="build-the-mxnet-shared-library-from-source">Build the MXNet shared library from source</h2>
 
 <p>It is recommended that you review the general <a href="build_from_source">build from source</a> instructions before continuing.</p>
 
@@ -264,52 +187,30 @@ pip install mxnet-cu92mkl
 <p><strong>Step 1:</strong> Install prerequisite packages.
 <code>bash
     sudo apt-get update
-    sudo apt-get install -y build-essential git ninja-build ccache
+    sudo apt-get install -y build-essential git ninja-build ccache python3-pip libopenblas-dev libopencv-dev
+    pip3 install --user --upgrade &quot;cmake&gt;=3.13.2&quot;  # Instead of using pip, you could also manually install cmake from https://cmake.org
 </code></p>
 
-<p><strong>For Ubuntu 18.04 and CUDA builds you need to update CMake</strong></p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
-<span class="nb">set</span> <span class="nt">-exuo</span> pipefail
-<span class="nb">sudo </span>apt remove <span class="nt">--purge</span> <span class="nt">--auto-remove</span> cmake
+<p>Instead of <code>libopenblas-dev</code> you may also choose a different math library.
+Further information is provided in the source guide&#39;s <a href="build_from_source#math-library-selection">Math Library
+Selection</a> section.</p>
 
-<span class="c"># Update CMAKE for correct cuda autotedetection: https://github.com/clab/dynet/issues/1457</span>
-<span class="nv">version</span><span class="o">=</span>3.14
-<span class="nv">build</span><span class="o">=</span>0
-<span class="nb">mkdir</span> <span class="nt">-p</span> ~/tmp
-<span class="nb">cd</span> ~/tmp
-wget https://cmake.org/files/v<span class="nv">$version</span>/cmake-<span class="nv">$version</span>.<span class="nv">$build</span>.tar.gz
-<span class="nb">tar</span> <span class="nt">-xzvf</span> cmake-<span class="nv">$version</span>.<span class="nv">$build</span>.tar.gz
-<span class="nb">cd </span>cmake-<span class="nv">$version</span>.<span class="nv">$build</span>/
-./bootstrap
-make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc</span><span class="si">)</span>
-<span class="nb">sudo </span>make <span class="nb">install</span>
-</code></pre></div>
-<p><strong>Step 2:</strong> Install a Math Library.</p>
+<p><code>libopencv-dev</code> is an optional dependency. You can delete it from above <code>apt-get
+install</code> line and build MXNet without OpenCV support by passing
+<code>-DUSE_OPENCV=OFF</code> to the <code>cmake</code> command below.</p>
 
-<p>Details on the different math libraries are found in the build from source guide&#39;s <a href="build_from_source#math-library-selection">Math Library Selection</a> section.</p>
-
-<p>For OpenBLAS use:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> libopenblas-dev
-</code></pre></div>
-<p>For other libraries, visit the <a href="build_from_source#math-library-selection">Math Library Selection</a> section.</p>
-
-<p><strong>Step 3:</strong> Install OpenCV.</p>
-
-<p><em>MXNet</em> uses <a href="http://opencv.org/">OpenCV</a> for efficient image loading and augmentation operations.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> libopencv-dev
-</code></pre></div>
-<p><strong>Step 4:</strong> Download MXNet sources and build MXNet core shared library.</p>
-
-<p>If building on CPU and using OpenBLAS:</p>
+<p><strong>Step 2:</strong> Download MXNet sources</p>
 
 <p>Clone the repository:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    git clone <span class="nt">--recursive</span> https://github.com/apache/incubator-mxnet.git
-    <span class="nb">cd </span>incubator-mxnet
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">    git clone <span class="nt">--recursive</span> https://github.com/apache/incubator-mxnet.git mxnet
+    <span class="nb">cd </span>mxnet
 </code></pre></div>
-<p>Build with CMake and ninja, without GPU and without MKL.</p>
+<p><strong>Step 3:</strong> Build MXNet core shared library.</p>
+
+<p>For a CPU-only build with OpenBLAS math library run:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">rm</span> <span class="nt">-rf</span> build
     <span class="nb">mkdir</span> <span class="nt">-p</span> build <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build
-    cmake <span class="nt">-GNinja</span> <span class="se">\</span>
+    ~/.local/bin/cmake <span class="nt">-GNinja</span> <span class="se">\</span>
         <span class="nt">-DUSE_CUDA</span><span class="o">=</span>OFF <span class="se">\</span>
         <span class="nt">-DUSE_MKL_IF_AVAILABLE</span><span class="o">=</span>OFF <span class="se">\</span>
         <span class="nt">-DCMAKE_CUDA_COMPILER_LAUNCHER</span><span class="o">=</span>ccache <span class="se">\</span>
@@ -319,10 +220,14 @@ make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc<
     ..
     ninja
 </code></pre></div>
-<p>If building on CPU and using MKL and MKL-DNN (make sure MKL is installed according to <a href="build_from_source#math-library-selection">Math Library Selection</a> and <a href="https://mxnet.apache.org/api/python/docs/tutorials/performance/backend/mkldnn/mkldnn_readme.html">MKL-DNN README</a>):</p>
+<p>For a CPU-only build with MKL math library and MKL-DNN you need to make sure MKL
+is installed according to
+<a href="build_from_source#math-library-selection">Math Library Selection</a> and
+<a href="https://mxnet.apache.org/api/python/docs/tutorials/performance/backend/mkldnn/mkldnn_readme.html">MKL-DNN README</a>
+respectively. Then run:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">rm</span> <span class="nt">-rf</span> build
     <span class="nb">mkdir</span> <span class="nt">-p</span> build <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build
-    cmake <span class="nt">-GNinja</span> <span class="se">\</span>
+    ~/.local/bin/cmake <span class="nt">-GNinja</span> <span class="se">\</span>
         <span class="nt">-DUSE_CUDA</span><span class="o">=</span>OFF <span class="se">\</span>
         <span class="nt">-DUSE_MKL_IF_AVAILABLE</span><span class="o">=</span>ON <span class="se">\</span>
         <span class="nt">-DCMAKE_CUDA_COMPILER_LAUNCHER</span><span class="o">=</span>ccache <span class="se">\</span>
@@ -332,11 +237,11 @@ make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc<
     ..
     ninja
 </code></pre></div>
-<p>If building on GPU (make sure you have installed the <a href="#cuda-dependencies">CUDA dependencies first</a>):
-Cuda 10.1 in Ubuntu 18.04 builds fine but is not currently tested in CI.</p>
+<p>For a GPU-enabled build make sure you have installed the
+<a href="#cuda-dependencies">CUDA dependencies first</a>) and run:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">rm</span> <span class="nt">-rf</span> build
     <span class="nb">mkdir</span> <span class="nt">-p</span> build <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build
-    cmake <span class="nt">-GNinja</span> <span class="se">\</span>
+    ~/.local/bin/cmake <span class="nt">-GNinja</span> <span class="se">\</span>
         <span class="nt">-DUSE_CUDA</span><span class="o">=</span>ON <span class="se">\</span>
         <span class="nt">-DUSE_MKL_IF_AVAILABLE</span><span class="o">=</span>OFF <span class="se">\</span>
         <span class="nt">-DCMAKE_CUDA_COMPILER_LAUNCHER</span><span class="o">=</span>ccache <span class="se">\</span>
@@ -346,15 +251,10 @@ Cuda 10.1 in Ubuntu 18.04 builds fine but is not currently tested in CI.</p>
     ..
     ninja
 </code></pre></div>
-<p><em>Note</em> - You can explore and use more compilation options as they are delcared in the top of <code>CMakeLists.txt</code> and also review common <a href="build_from_source#usage-examples">usage examples</a>.
-Optionally, you can also use a higher level, scripted version of the above with an editable CMake options file by doing the
-following:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cp </span>cmake/cmake_options.yml <span class="nb">.</span>
-<span class="c"># Edit cmake_options.yml in the MXNet root to your taste</span>
-<span class="nv">$EDITOR</span> cmake_options.yml
-<span class="c"># Launch a local CMake build</span>
-./dev_menu.py build
-</code></pre></div>
+<p><em>Note</em> - You can explore and use more compilation options as they are delcared
+in the top of <code>CMakeLists.txt</code> and also review common
+<a href="build_from_source#usage-examples">usage examples</a>.</p>
+
 <p>Building from source creates a library called <code>libmxnet.so</code> in the <code>build</code> folder in your MXNet project root.</p>
 
 <p>After building the MXNet library, you may install language bindings.</p>
@@ -379,15 +279,14 @@ following:</p>
 
 <p>To install the MXNet Python binding navigate to the root of the MXNet folder then run the following:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd </span>python
-<span class="nv">$ </span>pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+<span class="nv">$ </span>pip <span class="nb">install</span> <span class="nt">--user</span> <span class="nt">-e</span> <span class="nb">.</span>
 </code></pre></div>
 <p>Note that the <code>-e</code> flag is optional. It is equivalent to <code>--editable</code> and means that if you edit the source files, these changes will be reflected in the package installed.</p>
 
 <h4 id="optional-python-packages">Optional Python Packages</h4>
 
 <p>You may optionally install <code>graphviz</code> library that is used for visualizing network graphs you build on MXNet. You may also install <a href="http://jupyter.readthedocs.io/">Jupyter Notebook</a> which is used for running MXNet tutorials and examples.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>pip <span class="nb">install </span><span class="nv">graphviz</span><span class="o">==</span>0.8.4 <span class="se">\</span>
-                 jupyter
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">pip <span class="nb">install</span> <span class="nt">--user</span> <span class="nv">graphviz</span><span class="o">==</span>0.8.4 jupyter
 </code></pre></div>
 <p><hr></p>
 
