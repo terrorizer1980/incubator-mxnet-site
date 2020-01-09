@@ -52,6 +52,6 @@ var searchData=
   ['reverse',['reverse',['../classnnvm_1_1Layout.html#aaa11e2d349bcfb1a47efb63f364e15b4',1,'nnvm::Layout']]],
   ['rmse',['RMSE',['../classmxnet_1_1cpp_1_1RMSE.html#a95114dec51bb2fa95e47d8dbd31c39d8',1,'mxnet::cpp::RMSE']]],
   ['rmspropoptimizer',['RMSPropOptimizer',['../classmxnet_1_1cpp_1_1RMSPropOptimizer.html#a6c82649763c12f6f396b90b20877b0c4',1,'mxnet::cpp::RMSPropOptimizer']]],
-  ['run',['run',['../classdmlc_1_1BlockingQueueThread.html#aa936269ba93556a380b32f49df6a1829',1,'dmlc::BlockingQueueThread::run()'],['../classdmlc_1_1TimerThread.html#a3290c611d98f9301c3174a8453714ecb',1,'dmlc::TimerThread::run()'],['../classdmlc_1_1OMPException.html#ae15ecc490f04b8be27890868eb521600',1,'dmlc::OMPException::Run()']]],
+  ['run',['Run',['../classdmlc_1_1OMPException.html#ae15ecc490f04b8be27890868eb521600',1,'dmlc::OMPException::Run()'],['../classdmlc_1_1BlockingQueueThread.html#aa936269ba93556a380b32f49df6a1829',1,'dmlc::BlockingQueueThread::run()'],['../classdmlc_1_1TimerThread.html#a3290c611d98f9301c3174a8453714ecb',1,'dmlc::TimerThread::run()']]],
   ['runserver',['RunServer',['../classmxnet_1_1KVStore.html#ae137ab8b5407060529c18a8084946d0b',1,'mxnet::KVStore::RunServer()'],['../classmxnet_1_1cpp_1_1KVStore.html#a4e81352497b7df2277e491bebf88de9a',1,'mxnet::cpp::KVStore::RunServer()']]]
 ];

@@ -34,6 +34,7 @@ var searchData=
   ['get_5fvar',['get_var',['../classmxnet_1_1OpStatePtr.html#a77a1636269466569c0b6e32941ed7264',1,'mxnet::OpStatePtr']]],
   ['get_5fweight',['get_weight',['../classdmlc_1_1Row.html#a6a20e660aef8c73bf1f1460e2c7bdb51',1,'dmlc::Row']]],
   ['get_5fwith_5fshape',['get_with_shape',['../classmxnet_1_1TBlob.html#abbdbdc8d02c15e854cc7f5fe5dc09f61',1,'mxnet::TBlob']]],
+  ['getacceptsubgraph',['getAcceptSubgraph',['../classCustomPartitioner.html#a7e21267da2780cfb2abd4735566435e5',1,'CustomPartitioner']]],
   ['getattr',['GetAttr',['../classnnvm_1_1Graph.html#ad5b0163c8b4858f26f5f256a64d13d28',1,'nnvm::Graph::GetAttr()'],['../classnnvm_1_1Op.html#a97b65edf5226493f41f4a81e13e6abec',1,'nnvm::Op::GetAttr()'],['../classnnvm_1_1Symbol.html#a78f63137130882160ef05d36fbd7a174',1,'nnvm::Symbol::GetAttr()']]],
   ['getbackendsymbol',['GetBackendSymbol',['../classmxnet_1_1cpp_1_1Symbol.html#a13c2d1f4f725deff29a4c3d522886441',1,'mxnet::cpp::Symbol']]],
   ['getbatchedview',['GetBatchedView',['../namespacemshadow.html#a92e5ec7d9574c70e69b97b881a688e88',1,'mshadow::GetBatchedView(DType **dst, DType *src, int num, int stride, Stream&lt; Device &gt; *stream)'],['../namespacemshadow.html#a9aefcfd5ca44f5e146d2274d64acc239',1,'mshadow::GetBatchedView(DType **dst, DType *src, int num, int stride, Stream&lt; cpu &gt; *stream)']]],

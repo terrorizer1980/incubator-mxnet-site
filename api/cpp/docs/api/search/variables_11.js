@@ -45,6 +45,7 @@ var searchData=
   ['stop_5f',['stop_',['../structmshadow_1_1expr_1_1RangeExp.html#a2f42a5b4dc60c44c27510c50a76fdd5a',1,'mshadow::expr::RangeExp']]],
   ['str',['str',['../structJsonVal.html#ada42540b5f0bbeb854d8518b3ef15a1b',1,'JsonVal']]],
   ['str_5fupdater_5f',['str_updater_',['../classmxnet_1_1KVStore.html#abf0f494ba57dd7b035ece0d96eb5575f',1,'mxnet::KVStore']]],
+  ['strategies',['strategies',['../classCustomPartitioner.html#a3b80250bd70778b189b8464d55658a1f',1,'CustomPartitioner']]],
   ['stream',['stream',['../structmxnet_1_1RunContext.html#a5c4294a44199f4056915e32a7f70fe0e',1,'mxnet::RunContext']]],
   ['stream_5f',['stream_',['../structmshadow_1_1Stream_3_01gpu_01_4.html#a07e51e51721e2561c26dd93bbd03da18',1,'mshadow::Stream&lt; gpu &gt;::stream_()'],['../structmshadow_1_1Tensor.html#a485d1558eaa9eded0b8fd23ed82c6298',1,'mshadow::Tensor::stream_()'],['../structmshadow_1_1Tensor_3_01Device_00_011_00_01DType_01_4.html#a9790363151a34829fcb18aa51b25a95f',1,'mshadow::Tensor&lt; Device, 1, DType &gt;::stream_()']]],
   ['stride',['stride',['../structnnvm_1_1top_1_1StridedSliceParam.html#a7c1b338ca6237a32557b56e4404a6277',1,'nnvm::top::StridedSliceParam']]],
@@ -54,5 +55,6 @@ var searchData=
   ['subgraphs',['subgraphs',['../structnnvm_1_1NodeAttrs.html#a5255bdfab3c2fcc268e6e39e59904648',1,'nnvm::NodeAttrs']]],
   ['sum_5fmetric',['sum_metric',['../classmxnet_1_1cpp_1_1EvalMetric.html#a04b41a66d3c72e1befaf96205eb3a2d0',1,'mxnet::cpp::EvalMetric']]],
   ['support_5flevel',['support_level',['../classnnvm_1_1Op.html#af9ca45839dffc509576b193683dcfc1c',1,'nnvm::Op']]],
+  ['supportedops',['supportedOps',['../classCustomPartitioner.html#af1e35d2b74d137b48e0772673f698416',1,'CustomPartitioner']]],
   ['symbol',['symbol',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#ab3bc45d89c8bbab4d55a8e8f28900e63',1,'mxnet::cpp::FeedForwardConfig']]]
 ];

@@ -148,8 +148,8 @@ var searchData=
   ['count',['count',['../classnnvm_1_1OpMap.html#a01a323fa4e0c3ffbb83a14a955027a29',1,'nnvm::OpMap']]],
   ['count_5f',['count_',['../classmxnet_1_1cpp_1_1Optimizer.html#a9b50b92bbac6f55311e3f68f0edcc656',1,'mxnet::cpp::Optimizer']]],
   ['count_5finclude_5fpad',['count_include_pad',['../structnnvm_1_1top_1_1AvgPool2DParam.html#a776b48589b7ee6ef43e0d51e05827c51',1,'nnvm::top::AvgPool2DParam']]],
-  ['cpu',['cpu',['../structmshadow_1_1cpu.html',1,'mshadow']]],
   ['cpu',['CPU',['../structmxnet_1_1Context.html#a4bb231d70623fde216de51589347e513',1,'mxnet::Context::CPU()'],['../classmxnet_1_1cpp_1_1Context.html#a65ef083b6e4901816b69aa18e5bfe80e',1,'mxnet::cpp::Context::cpu()'],['../namespacemxnet.html#a850af9d76d9d4beaeb5234c1434973e3',1,'mxnet::cpu()']]],
+  ['cpu',['cpu',['../structmshadow_1_1cpu.html',1,'mshadow']]],
   ['cpu_5favx',['CPU_AVX',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da1901961db2daa4aad8e32380853e14b0',1,'mxnet::features']]],
   ['cpu_5favx2',['CPU_AVX2',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da1db3fd849470dc00decb85a5fdde9356',1,'mxnet::features']]],
   ['cpu_5fsse',['CPU_SSE',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87dafca9cb11cb2263e073a2edc3d28f8e9e',1,'mxnet::features']]],
@@ -228,6 +228,7 @@ var searchData=
   ['customoplistfunc',['CustomOpListFunc',['../include_2mxnet_2c__api_8h.html#a5bcf4b1e26b22c9363a016bd9d27085c',1,'c_api.h']]],
   ['customoppropcallbacks',['CustomOpPropCallbacks',['../include_2mxnet_2c__api_8h.html#a62d6b72cc6b3d920797c32ea8732cbba',1,'c_api.h']]],
   ['customoppropcreator',['CustomOpPropCreator',['../include_2mxnet_2c__api_8h.html#a470eba0beb11ed2fd858c50c9b2be33a',1,'c_api.h']]],
+  ['custompartitioner',['CustomPartitioner',['../classCustomPartitioner.html',1,'CustomPartitioner'],['../classCustomPartitioner.html#a635d02ce2ebfdf89f49cd680afd6071b',1,'CustomPartitioner::CustomPartitioner()'],['../classCustomPartitioner.html#a56a939b56b1b80cb03bb5327d6107fbf',1,'CustomPartitioner::CustomPartitioner(const char *backend_name)']]],
   ['customstatefulop',['CustomStatefulOp',['../classCustomStatefulOp.html',1,'']]],
   ['customstatefulopwrapper',['CustomStatefulOpWrapper',['../classCustomStatefulOpWrapper.html',1,'CustomStatefulOpWrapper'],['../classCustomStatefulOpWrapper.html#a4b071747b29c9f4cfd37a86df4123d78',1,'CustomStatefulOpWrapper::CustomStatefulOpWrapper()']]],
   ['cxx14',['CXX14',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da29eec9fa338ee4b08d4b79fc7deb0d5f',1,'mxnet::features']]]

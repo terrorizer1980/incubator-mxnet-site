@@ -94,5 +94,6 @@ var searchData=
   ['current_5fprocess_5fid',['current_process_id',['../namespacemxnet_1_1common.html#a17af88f97948c889f2f4ce88190122c1',1,'mxnet::common']]],
   ['cusolvergeterrorstring',['CusolverGetErrorString',['../namespacemxnet_1_1common_1_1cuda.html#abf9bcb4cb696e9ae61b818510dac39c8',1,'mxnet::common::cuda']]],
   ['customop',['CustomOp',['../classCustomOp.html#a456355884d68399e5b7625aa148dd5de',1,'CustomOp']]],
+  ['custompartitioner',['CustomPartitioner',['../classCustomPartitioner.html#a635d02ce2ebfdf89f49cd680afd6071b',1,'CustomPartitioner::CustomPartitioner()'],['../classCustomPartitioner.html#a56a939b56b1b80cb03bb5327d6107fbf',1,'CustomPartitioner::CustomPartitioner(const char *backend_name)']]],
   ['customstatefulopwrapper',['CustomStatefulOpWrapper',['../classCustomStatefulOpWrapper.html#a4b071747b29c9f4cfd37a86df4123d78',1,'CustomStatefulOpWrapper']]]
 ];
