@@ -1363,6 +1363,8 @@ To reduce the communication cost, we can consider:</p>
 <li>Increasing the batch size to improve the computation to communication ratio.</li>
 </ul>
 
+<p>Finally, MXNet is integrated with other distributed training frameworks, including <a href="https://github.com/apache/incubator-mxnet/tree/master/example/distributed_training-horovod">horovod</a> and <a href="https://github.com/bytedance/byteps#use-byteps-in-your-code">BytePS</a>.</p>
+
 <h2 id="input-data">Input Data</h2>
 
 <p>To make sure you&#39;re handling input data in a reasonable way consider the following:</p>
@@ -1381,29 +1383,28 @@ For example, the safe batch size for CIFAR 10 is approximately 200, while for Im
 
 <h2 id="profiler">Profiler</h2>
 
-<p>As of v0.9.1 (with the NNVM merge), <em>MXNet</em> has a built-in profiler
-that gives detailed information about execution time at the symbol level.
+<p><em>MXNet</em> has a built-in profiler
+that gives detailed information about execution time at the operator level.
 This feature complements general profiling tools like <em>nvprof</em> and <em>gprof</em>
 by summarizing at the operator level, instead of a function, kernel, or instruction level.</p>
 
 <p>The profiler can be turned on with an <a href="/api/faq/env_var#control-the-profiler">environment variable</a>
-for an entire program run, or programmatically for just part of a run.
+for an entire program run, or programmatically for just part of a run. Note that by default the profiler hides the details of each individual operator, and you can reveal the details by setting environment variables <code>MXNET_EXEC_BULK_EXEC_INFERENCE</code>, <code>MXNET_EXEC_BULK_EXEC_MAX_NODE_TRAIN</code> and <code>MXNET_EXEC_BULK_EXEC_TRAIN</code> to 0.
 See <a href="https://github.com/dmlc/mxnet/tree/master/example/profiler">example/profiler</a>
-for complete examples of how to use the profiler in code, but briefly, the Python code looks like:</p>
-<div class="highlight"><pre><code class="language-python" data-lang="python">    <span class="n">mx</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">'profile_output.json'</span><span class="p">)</span>
+for complete examples of how to use the profiler in code, or <a href="https://mxnet.apache.org/api/python/docs/tutorials/performance/backend/profiler.html">this tutorial</a> on how to profile MXNet performance.</p>
+
+<p>Briefly, the Python code looks like:</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python">    <span class="c1"># wait for previous operations to complete
+</span>    <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span> 
+    <span class="n">mx</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">profile_all</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggregate_stats</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">'profile_output.json'</span><span class="p">)</span>
     <span class="n">mx</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s">'run'</span><span class="p">)</span>
 
     <span class="c1"># Code to be profiled goes here...
 </span>
+    <span class="c1"># wait for previous operations to complete
+</span>    <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">waitall</span><span class="p">()</span> 
     <span class="n">mx</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s">'stop'</span><span class="p">)</span>
 </code></pre></div>
-<p>The <code>mode</code> parameter can be set to</p>
-
-<ul>
-<li><code>symbolic</code> to only include symbolic operations</li>
-<li><code>all</code> to include all operations</li>
-</ul>
-
 <p>After the program finishes, navigate to your browser&#39;s tracing (Example - chrome://tracing in a Chrome browser) and load the <code>profile_output.json</code> file output by the profiler to inspect the results.</p>
 
 <p><img src="https://cloud.githubusercontent.com/assets/17693755/18035938/0a43484a-6d93-11e6-80d4-241c6ca552ea.png" alt="MLP Profile"></p>
