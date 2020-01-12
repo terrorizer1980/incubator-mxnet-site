@@ -835,7 +835,7 @@ var searchData=
   ['dst_5flayer_5fdesc',['dst_layer_desc',['../structdnnl__rnn__desc__t.html#ab7ade312afc618dad1da2c0d7284588a',1,'dnnl_rnn_desc_t']]],
   ['dst_5flayout',['dst_layout',['../structnnvm_1_1top_1_1LayoutTransformParam.html#a2e9e860172b956525111c7f7feee9f99',1,'nnvm::top::LayoutTransformParam']]],
   ['dtype',['dtype',['../structDLTensor.html#ae0cf02d1a8b19118838670b3b3d857f5',1,'DLTensor::dtype()'],['../structMXTensor.html#a35faeda0ebe154450019e7359ed3c65f',1,'MXTensor::dtype()'],['../structnnvm_1_1top_1_1CastParam.html#a17d325d3e7e153c60f50ddb3c3206855',1,'nnvm::top::CastParam::dtype()'],['../structnnvm_1_1top_1_1ReduceParam.html#a1422778a78df7f28be85449631956d8c',1,'nnvm::top::ReduceParam::dtype()'],['../structnnvm_1_1top_1_1InitOpWithScalarParam.html#a2360a067104d89b5a3a541a5535e5113',1,'nnvm::top::InitOpWithScalarParam::dtype()'],['../structnnvm_1_1top_1_1InitOpParam.html#a0c46b3b935e2574db13c63ca5465551b',1,'nnvm::top::InitOpParam::dtype()'],['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray::dtype()']]],
-  ['dtype_5fstring',['dtype_string',['../namespacemxnet_1_1common.html#a58118e7f0e2499e12251a342a44d351d',1,'mxnet::common']]],
+  ['dtype_5fstring',['dtype_string',['../namespacemshadow.html#af5aa21f20dbeaa38194b4dadbd37a072',1,'mshadow']]],
   ['dtypevector',['DTypeVector',['../namespacennvm.html#af3047555e6bce725a8abba02b4155de9',1,'nnvm']]],
   ['dump_5fto_5ffile',['dump_to_file',['../classmxnet_1_1TensorInspector.html#a817a0addf872741c69b8209e4503617f',1,'mxnet::TensorInspector']]],
   ['dump_5fto_5ffile_5ftag_5fcounter_5f',['dump_to_file_tag_counter_',['../structmxnet_1_1InspectorManager.html#a3917680ad2039f864be66f286678194a',1,'mxnet::InspectorManager']]],

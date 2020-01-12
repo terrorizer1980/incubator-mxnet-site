@@ -151,6 +151,6 @@ var searchData=
   ['dotexp',['DotExp',['../structmshadow_1_1expr_1_1DotExp.html#abb9d8d8927cd0dae640564406b0c7c53',1,'mshadow::expr::DotExp']]],
   ['dptr',['dptr',['../classmxnet_1_1TBlob.html#a3449ca0a9130e87c343130b041b68c53',1,'mxnet::TBlob']]],
   ['dtype',['dtype',['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray']]],
-  ['dtype_5fstring',['dtype_string',['../namespacemxnet_1_1common.html#a58118e7f0e2499e12251a342a44d351d',1,'mxnet::common']]],
+  ['dtype_5fstring',['dtype_string',['../namespacemshadow.html#af5aa21f20dbeaa38194b4dadbd37a072',1,'mshadow']]],
   ['dump_5fto_5ffile',['dump_to_file',['../classmxnet_1_1TensorInspector.html#a817a0addf872741c69b8209e4503617f',1,'mxnet::TensorInspector']]]
 ];
