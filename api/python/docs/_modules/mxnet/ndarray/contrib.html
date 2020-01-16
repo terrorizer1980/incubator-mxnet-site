@@ -1263,6 +1263,82 @@
                                                     <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
                                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">multi_lamb_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
+                      <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
+<span class="sd">    following LAMB Optimizer implementation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
+
+<span class="sd">    grads : List of NDArrays containing input gradients</span>
+
+<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
+
+<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
+
+<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
+
+<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
+
+<span class="sd">    wds : List of weight decays (one for each tensor)</span>
+
+<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
+
+<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
+        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_lamb_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
+                                                <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+                                                <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
+                                                <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
+                                                <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
+                                                <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
+                                                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">multi_mp_lamb_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
+                         <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
+<span class="sd">    following LAMB Optimizer implementation, and using Mixed-Precision.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
+
+<span class="sd">    grads : List of NDArrays containing input gradients</span>
+
+<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
+
+<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
+
+<span class="sd">    weights32 : Master copy of weights in FP32</span>
+
+<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
+
+<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
+
+<span class="sd">    wds : List of weight decays (one for each tensor)</span>
+
+<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
+
+<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
+        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_mp_lamb_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
+                                                   <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+                                                   <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
+                                                   <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
+                                                   <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
+                                                   <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
+                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
         </div>
