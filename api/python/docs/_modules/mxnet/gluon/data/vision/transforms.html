@@ -677,6 +677,7 @@
 <span class="c1"># pylint: disable= arguments-differ</span>
 <span class="s2">&quot;Image transforms.&quot;</span>
 
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">...block</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">HybridBlock</span>
 <span class="kn">from</span> <span class="nn">...nn</span> <span class="kn">import</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">HybridSequential</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">image</span>
@@ -1239,6 +1240,36 @@
         <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
             <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_lighting</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RandomApply"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomApply">[docs]</a><span class="k">class</span> <span class="nc">RandomApply</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Apply a list of transformations randomly given probability</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transforms</span>
+<span class="sd">        List of transformations.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        Probability of applying the transformations.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: transformed image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RandomApply</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+
+<div class="viewcode-block" id="RandomApply.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomApply.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 
         </div>
