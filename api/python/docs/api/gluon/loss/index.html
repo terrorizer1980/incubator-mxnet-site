@@ -726,6 +726,9 @@ module.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.loss.CosineEmbeddingLoss" title="mxnet.gluon.loss.CosineEmbeddingLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CosineEmbeddingLoss</span></code></a>([weight, batch_axis, margin])</p></td>
 <td><p>For a target label 1 or -1, vectors input1 and input2, the function computes the cosine distance between the vectors.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.loss.SDMLLoss" title="mxnet.gluon.loss.SDMLLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDMLLoss</span></code></a>([smoothing_parameter, weight, …])</p></td>
+<td><p>Calculates Batchwise Smoothed Deep Metric Learning (SDML) Loss given two input tensors and a smoothing weight SDM Loss learns similarity between paired samples by using unpaired samples in the minibatch as potential negative examples.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="class">
@@ -1684,6 +1687,71 @@ sample_weight should have shape (64, 1).</p></li>
 <dl class="method">
 <dt id="mxnet.gluon.loss.CosineEmbeddingLoss.hybrid_forward">
 <code class="sig-name descname">hybrid_forward</code><span class="sig-paren">(</span><em class="sig-param">F</em>, <em class="sig-param">input1</em>, <em class="sig-param">input2</em>, <em class="sig-param">label</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#CosineEmbeddingLoss.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.CosineEmbeddingLoss.hybrid_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides to construct symbolic graph for this <cite>Block</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference internal" href="../../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em> or </em><a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The first input tensor.</p></li>
+<li><p><strong>*args</strong> (<em>list of Symbol</em><em> or </em><em>list of NDArray</em>) – Additional input tensors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mxnet.gluon.loss.SDMLLoss">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.loss.</code><code class="sig-name descname">SDMLLoss</code><span class="sig-paren">(</span><em class="sig-param">smoothing_parameter=0.3</em>, <em class="sig-param">weight=1.0</em>, <em class="sig-param">batch_axis=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#SDMLLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.SDMLLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mxnet.gluon.loss.Loss" title="mxnet.gluon.loss.Loss"><code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.loss.Loss</span></code></a></p>
+<p>Calculates Batchwise Smoothed Deep Metric Learning (SDML) Loss given two input tensors and a smoothing weight
+SDM Loss learns similarity between paired samples by using unpaired samples in the minibatch
+as potential negative examples.</p>
+<p>The loss is described in greater detail in
+“Large Scale Question Paraphrase Retrieval with Smoothed Deep Metric Learning.”
+- by Bonadiman, Daniele, Anjishnu Kumar, and Arpit Mittal.  arXiv preprint arXiv:1905.12786 (2019).
+URL: https://arxiv.org/pdf/1905.12786.pdf</p>
+<p>According to the authors, this loss formulation achieves comparable or higher accuracy to
+Triplet Loss but converges much faster.
+The loss assumes that the items in both tensors in each minibatch
+are aligned such that x1[0] corresponds to x2[0] and all other datapoints in the minibatch are unrelated.
+<cite>x1</cite> and  <cite>x2</cite> are minibatches of vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smoothing_parameter</strong> (<em>float</em>) – Probability mass to be distributed over the minibatch. Must be &lt; 1.0.</p></li>
+<li><p><strong>weight</strong> (<em>float</em><em> or </em><em>None</em>) – Global scalar weight for loss.</p></li>
+<li><p><strong>batch_axis</strong> (<em>int</em><em>, </em><em>default 0</em>) – The axis that represents mini-batch.</p></li>
+<li><p><strong>Inputs</strong> – <ul>
+<li><p><strong>x1</strong>: Minibatch of data points with shape (batch_size, vector_dim)</p></li>
+<li><p><strong>x2</strong>: Minibatch of data points with shape (batch_size, vector_dim)
+Each item in x2 is a positive sample for the same index in x1.
+That is, x1[0] and x2[0] form a positive pair, x1[1] and x2[1] form a positive pair - and so on.
+All data points in different rows should be decorrelated</p></li>
+</ul>
+</p></li>
+<li><p><strong>Outputs</strong> – <ul>
+<li><p><strong>loss</strong>: loss tensor with shape (batch_size,).</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Methods</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.loss.SDMLLoss.hybrid_forward" title="mxnet.gluon.loss.SDMLLoss.hybrid_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hybrid_forward</span></code></a>(F, x1, x2)</p></td>
+<td><p>Overrides to construct symbolic graph for this <cite>Block</cite>.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.gluon.loss.SDMLLoss.hybrid_forward">
+<code class="sig-name descname">hybrid_forward</code><span class="sig-paren">(</span><em class="sig-param">F</em>, <em class="sig-param">x1</em>, <em class="sig-param">x2</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/loss.html#SDMLLoss.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.loss.SDMLLoss.hybrid_forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides to construct symbolic graph for this <cite>Block</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
