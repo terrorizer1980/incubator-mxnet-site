@@ -679,7 +679,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;split_data&#39;</span><span class="p">,</span> <span class="s1">&#39;split_and_load&#39;</span><span class="p">,</span> <span class="s1">&#39;clip_global_norm&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;check_sha1&#39;</span><span class="p">,</span> <span class="s1">&#39;download&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;check_sha1&#39;</span><span class="p">,</span> <span class="s1">&#39;download&#39;</span><span class="p">,</span> <span class="s1">&#39;replace_file&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -693,7 +693,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ndarray</span>
-<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">is_np_shape</span><span class="p">,</span> <span class="n">is_np_array</span>
+<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">is_np_shape</span><span class="p">,</span> <span class="n">is_np_array</span><span class="p">,</span> <span class="n">makedirs</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>  <span class="c1"># pylint: disable=reimported</span>
 
 
@@ -855,8 +855,14 @@
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;win32&#39;</span><span class="p">):</span>
     <span class="c1"># refer to https://github.com/untitaker/python-atomicwrites</span>
-    <span class="k">def</span> <span class="nf">_replace_atomic</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement atomic os.replace with linux and OSX. Internal use only&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">replace_file</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement atomic os.replace with linux and OSX.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        src : source file path</span>
+<span class="sd">        dst : destination file path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
@@ -898,19 +904,25 @@
             <span class="k">finally</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_replace_atomic</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+<div class="viewcode-block" id="replace_file"><a class="viewcode-back" href="../../../api/gluon/utils/index.html#mxnet.gluon.utils.replace_file">[docs]</a>    <span class="k">def</span> <span class="nf">replace_file</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implement atomic os.replace with windows.</span>
+
 <span class="sd">        refer to https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-movefileexw</span>
 <span class="sd">        The function fails when one of the process(copy, flush, delete) fails.</span>
-<span class="sd">        Internal use only&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        src : source file path</span>
+<span class="sd">        dst : destination file path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_handle_errors</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span><span class="o">.</span><span class="n">MoveFileExW</span><span class="p">(</span>
             <span class="n">_str_to_unicode</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">_str_to_unicode</span><span class="p">(</span><span class="n">dst</span><span class="p">),</span>
             <span class="n">_windows_default_flags</span> <span class="o">|</span> <span class="n">_MOVEFILE_REPLACE_EXISTING</span>
-        <span class="p">),</span> <span class="n">src</span><span class="p">)</span>
+        <span class="p">),</span> <span class="n">src</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="download"><a class="viewcode-back" href="../../../api/gluon/utils/index.html#mxnet.gluon.utils.download">[docs]</a><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sha1_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verify_ssl</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Download an given URL</span>
+    <span class="sd">&quot;&quot;&quot;Download a given URL</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -956,7 +968,7 @@
     <span class="k">if</span> <span class="n">overwrite</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sha1_hash</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_sha1</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">sha1_hash</span><span class="p">)):</span>
         <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
+            <span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
         <span class="k">while</span> <span class="n">retries</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Disable pyling too broad Exception</span>
             <span class="c1"># pylint: disable=W0703</span>
@@ -976,7 +988,7 @@
                 <span class="c1"># delete the temporary file</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sha1_hash</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_sha1</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">sha1_hash</span><span class="p">)):</span>
                     <span class="c1"># atmoic operation in the same file system</span>
-                    <span class="n">_replace_atomic</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">random_uuid</span><span class="p">),</span> <span class="n">fname</span><span class="p">)</span>
+                    <span class="n">replace_file</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">random_uuid</span><span class="p">),</span> <span class="n">fname</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">random_uuid</span><span class="p">))</span>
