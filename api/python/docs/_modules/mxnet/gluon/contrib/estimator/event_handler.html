@@ -839,6 +839,10 @@
 <span class="sd">        Priority level of the ValidationHandler. Priority level is sorted in</span>
 <span class="sd">        ascending order. The lower the number is, the higher priority level the</span>
 <span class="sd">        handler is.</span>
+<span class="sd">    event_handlers : EventHandler or list of EventHandlers</span>
+<span class="sd">        List of :py:class:`EventHandler` to apply during validaiton. This argument</span>
+<span class="sd">        is used by self.eval_fn function in order to process customized event</span>
+<span class="sd">        handlers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -846,7 +850,8 @@
                  <span class="n">eval_fn</span><span class="p">,</span>
                  <span class="n">epoch_period</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">batch_period</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">):</span>
+                 <span class="n">priority</span><span class="o">=-</span><span class="mi">1000</span><span class="p">,</span>
+                 <span class="n">event_handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val_data</span> <span class="o">=</span> <span class="n">val_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span> <span class="o">=</span> <span class="n">eval_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="o">=</span> <span class="n">epoch_period</span>
@@ -856,6 +861,7 @@
         <span class="c1"># order to be called among all callbacks</span>
         <span class="c1"># validation metrics need to be calculated before other callbacks can access them</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_handlers</span> <span class="o">=</span> <span class="n">event_handlers</span>
 
     <span class="k">def</span> <span class="nf">train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># reset epoch and batch counter</span>
@@ -865,12 +871,14 @@
     <span class="k">def</span> <span class="nf">batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_period</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_batch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">batch_axis</span><span class="p">,</span>
+                         <span class="n">event_handlers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_handlers</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">batch_axis</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval_fn</span><span class="p">(</span><span class="n">val_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_data</span><span class="p">,</span> <span class="n">batch_axis</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">batch_axis</span><span class="p">,</span>
+                         <span class="n">event_handlers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_handlers</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LoggingHandler"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.estimator.LoggingHandler">[docs]</a><span class="k">class</span> <span class="nc">LoggingHandler</span><span class="p">(</span><span class="n">TrainBegin</span><span class="p">,</span> <span class="n">TrainEnd</span><span class="p">,</span> <span class="n">EpochBegin</span><span class="p">,</span> <span class="n">EpochEnd</span><span class="p">,</span> <span class="n">BatchBegin</span><span class="p">,</span> <span class="n">BatchEnd</span><span class="p">):</span>
