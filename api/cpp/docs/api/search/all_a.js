@@ -58,7 +58,7 @@ var searchData=
   ['initdefault',['InitDefault',['../classmxnet_1_1cpp_1_1Initializer.html#a5ad1f020e184cef117e9fc334f3a7152',1,'mxnet::cpp::Initializer']]],
   ['initgamma',['InitGamma',['../classmxnet_1_1cpp_1_1Initializer.html#a5ebebb65975a87d2d323ce2e55f14485',1,'mxnet::cpp::Initializer']]],
   ['initialize',['initialize',['../lib__api_8h.html#a804b39a26b4659cf236fc98ac08537f5',1,'lib_api.h']]],
-  ['initialize_5ft',['initialize_t',['../lib__api_8h.html#ac522f869f1eb963b6499f710aad4b905',1,'lib_api.h']]],
+  ['initialize_5ft',['initialize_t',['../lib__api_8h.html#a95dbe5fc49e225061d5b5450331a2082',1,'lib_api.h']]],
   ['initializer',['Initializer',['../classmxnet_1_1cpp_1_1Initializer.html',1,'mxnet::cpp']]],
   ['initializer_2eh',['initializer.h',['../initializer_8h.html',1,'']]],
   ['initone',['InitOne',['../classmxnet_1_1cpp_1_1Initializer.html#af3838d4a6bd93b61439eab72002a396c',1,'mxnet::cpp::Initializer']]],

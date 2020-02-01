@@ -35,7 +35,7 @@ var searchData=
   ['operator_5fstring',['operator_string',['../namespacemxnet_1_1common.html#a8873d9dcccfd8e613c1c156934cee98c',1,'mxnet::common']]],
   ['operator_5fstype_5fstring',['operator_stype_string',['../namespacemxnet_1_1common.html#a40770734529b91fe60fa6b3d76043717',1,'mxnet::common']]],
   ['opmap',['OpMap',['../classmxnet_1_1cpp_1_1OpMap.html#acf1933f350883656aa9a0765cb746e79',1,'mxnet::cpp::OpMap']]],
-  ['opresource',['OpResource',['../classOpResource.html#a26b7b561549ee9c0608b45ab1606d1c5',1,'OpResource']]],
+  ['opresource',['OpResource',['../classOpResource.html#a1ae77b7d36499b5d562967dc57c53f8d',1,'OpResource']]],
   ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html#a0f9555beda838a27b235ab5a3e4c13c4',1,'mxnet::cpp::Optimizer']]],
   ['optional',['optional',['../classdmlc_1_1optional.html#a358bf8befa660e58c07856b06c2e2b41',1,'dmlc::optional::optional()'],['../classdmlc_1_1optional.html#ad8d39fd99191c6f232063b60a1b7bb6f',1,'dmlc::optional::optional(const T &amp;value)'],['../classdmlc_1_1optional.html#a0a0f99e2ba48f2583f164c2286dacc58',1,'dmlc::optional::optional(const optional&lt; T &gt; &amp;other)']]],
   ['ordermutation',['OrderMutation',['../namespacennvm_1_1pass.html#a58861df29a62ee368c4bc672f03eff62',1,'nnvm::pass']]],

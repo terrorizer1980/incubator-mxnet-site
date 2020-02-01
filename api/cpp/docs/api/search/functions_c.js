@@ -14,6 +14,7 @@ var searchData=
   ['mapplan',['MapPlan',['../namespacemshadow.html#ad4d36332af8c5202ecc95adf4b00cdf2',1,'mshadow']]],
   ['mapreducekeephighdim',['MapReduceKeepHighDim',['../namespacemshadow.html#a5fce5c2df842439cc7d2d7a90e2cf7d4',1,'mshadow::MapReduceKeepHighDim(TRValue&lt; R, cpu, 1, DType &gt; *dst, const expr::Exp&lt; E, DType, etype &gt; &amp;exp, DType scale=1)'],['../namespacemshadow.html#ab07c495d0d71a96de38ae51576f354ec',1,'mshadow::MapReduceKeepHighDim(TRValue&lt; R, gpu, 1, DType &gt; *dst, const expr::Exp&lt; E, DType, etype &gt; &amp;exp, DType scale=1)']]],
   ['mapreducekeeplowest',['MapReduceKeepLowest',['../namespacemshadow.html#ae1734eb7939fe9627de46d62494fe9dc',1,'mshadow::MapReduceKeepLowest(TRValue&lt; R, cpu, 1, DType &gt; *dst, const expr::Exp&lt; E, DType, etype &gt; &amp;exp, DType scale=1)'],['../namespacemshadow.html#a7076ccb1a5b71c7b508d76bf70088002',1,'mshadow::MapReduceKeepLowest(TRValue&lt; R, gpu, 1, DType &gt; *dst, const expr::Exp&lt; E, DType, etype &gt; &amp;exp, DType scale=1)']]],
+  ['maptovector',['mapToVector',['../classCustomOp.html#a52689e0f7a8d7017a5d5cb23bda395fe',1,'CustomOp']]],
   ['markvariables',['MarkVariables',['../classmxnet_1_1Imperative.html#a06fa7ec786cf0ea3a0eb7c8a174171cb',1,'mxnet::Imperative']]],
   ['mask',['mask',['../namespacemshadow_1_1expr.html#a0b4a783ea715eba66efea27dc443d9dc',1,'mshadow::expr']]],
   ['maskexp',['MaskExp',['../structmshadow_1_1expr_1_1MaskExp.html#ac8379075a4bc7852652adaa1b1ee0b66',1,'mshadow::expr::MaskExp']]],
@@ -320,5 +321,5 @@ var searchData=
   ['mxsymbolsavetofile',['MXSymbolSaveToFile',['../include_2mxnet_2c__api_8h.html#a8b3a7394a8a641f2490f4c5246be1083',1,'c_api.h']]],
   ['mxsymbolsavetojson',['MXSymbolSaveToJSON',['../include_2mxnet_2c__api_8h.html#a5c99eac0fe3cfa0912259d0fa12b6651',1,'c_api.h']]],
   ['mxsymbolsetattr',['MXSymbolSetAttr',['../include_2mxnet_2c__api_8h.html#aebeac35c3110eb391035fbbeb29e9436',1,'c_api.h']]],
-  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#aca1ea693f9c439994c6c029e30c24853',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID)']]]
+  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#a9896fb6f4037505c192bf9df8229e50f',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID, MXContext mx_ctx)']]]
 ];
