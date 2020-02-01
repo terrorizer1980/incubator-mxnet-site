@@ -78,7 +78,7 @@ var searchData=
   ['mxbuildsubgraphbyopnames',['MXBuildSubgraphByOpNames',['../c__api__test_8h.html#a6bc6a3c7b5a7dea6acd93a98d3d293d2',1,'c_api_test.h']]],
   ['mxcachedopregisterophook',['MXCachedOpRegisterOpHook',['../include_2mxnet_2c__api_8h.html#a7d4d65764a5e1b5e1556aa66191d101e',1,'c_api.h']]],
   ['mxcreatecachedop',['MXCreateCachedOp',['../include_2mxnet_2c__api_8h.html#a46d056bad70ea014110923da41524cfc',1,'c_api.h']]],
-  ['mxcreatecachedopex',['MXCreateCachedOpEx',['../include_2mxnet_2c__api_8h.html#a43627f2162552f27a6ced69309a9d269',1,'c_api.h']]],
+  ['mxcreatecachedopex',['MXCreateCachedOpEX',['../include_2mxnet_2c__api_8h.html#a3c66740faa50551765f802f7b786371a',1,'MXCreateCachedOpEX(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out, bool thread_safe DEFAULT(false)):&#160;c_api.h'],['../include_2mxnet_2c__api_8h.html#a43627f2162552f27a6ced69309a9d269',1,'MXCreateCachedOpEx(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out):&#160;c_api.h']]],
   ['mxcustomfunctionrecord',['MXCustomFunctionRecord',['../include_2mxnet_2c__api_8h.html#ae1f7686cd08133d865ed6b9ea23eb31b',1,'c_api.h']]],
   ['mxcustomopregister',['MXCustomOpRegister',['../include_2mxnet_2c__api_8h.html#a92233cd9477ce12458bbd2b3e628dec9',1,'c_api.h']]],
   ['mxdataiter',['MXDataIter',['../classmxnet_1_1cpp_1_1MXDataIter.html#aa4ca276f3f007d16b3a6d8ccb31022fd',1,'mxnet::cpp::MXDataIter::MXDataIter(const std::string &amp;mxdataiter_type)'],['../classmxnet_1_1cpp_1_1MXDataIter.html#afe4be15da6b1dd0e3516b587d58a610c',1,'mxnet::cpp::MXDataIter::MXDataIter(const MXDataIter &amp;other)']]],
