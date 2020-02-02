@@ -90,7 +90,7 @@ var searchData=
   ['reshapeparam',['ReshapeParam',['../structnnvm_1_1top_1_1ReshapeParam.html',1,'nnvm::top']]],
   ['reshapewithrecord',['ReshapeWithRecord',['../classmxnet_1_1NDArray.html#a318e6f3ae6f94026dec90aa98a7e3f10',1,'mxnet::NDArray']]],
   ['resize',['Resize',['../classmshadow_1_1TensorContainer.html#a6afe06f823ca587fe0051fbdc2228af8',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape)'],['../classmshadow_1_1TensorContainer.html#a3a9d3363747f7a567bb6475a29482874',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape, DType initv)']]],
-  ['resource',['resource',['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments::resource()'],['../structmxnet_1_1Resource.html#a76a2cc8f2a94b67b3533a048a80396aa',1,'mxnet::Resource::Resource()']]],
+  ['resource',['Resource',['../structmxnet_1_1Resource.html#a76a2cc8f2a94b67b3533a048a80396aa',1,'mxnet::Resource::Resource()'],['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments::resource()']]],
   ['resource',['Resource',['../structmxnet_1_1Resource.html',1,'mxnet']]],
   ['resource_2eh',['resource.h',['../resource_8h.html',1,'']]],
   ['resourcemanager',['ResourceManager',['../classmxnet_1_1ResourceManager.html',1,'mxnet']]],

@@ -727,7 +727,6 @@
 <span class="sd">    update_on_kvstore : bool. Always True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># always update on kvstore</span>
-    <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStore</span><span class="p">):</span>
         <span class="n">kv</span> <span class="o">=</span> <span class="n">kvstore</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -735,7 +734,11 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot create &#39;</span><span class="si">%s</span><span class="s2">&#39; KVStore with row_sparse parameters. &quot;</span>
                         <span class="s2">&quot;The type must be KVStore or str.&quot;</span> <span class="o">%</span> <span class="n">kvstore</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">kv</span><span class="p">,</span> <span class="n">update_on_kvstore</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">kv</span><span class="o">.</span><span class="n">is_capable</span><span class="p">(</span><span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="o">.</span><span class="n">OPTIMIZER</span><span class="p">),</span> \
+        <span class="s2">&quot;KVStore with sparse weight requires optimizer support. &quot;</span> \
+        <span class="s2">&quot;However, type(kv) does not support optimizer. &quot;</span> \
+        <span class="s2">&quot;Please consider other kvstore backends (e.g. dist_device) instead.&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">kv</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_create_kvstore</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">num_device</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create kvstore</span>
@@ -753,13 +756,9 @@
     <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MXNET_UPDATE_ON_KVSTORE&#39;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">kvstore</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">kv</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStore</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="p">):</span>
         <span class="n">kv</span> <span class="o">=</span> <span class="n">kvstore</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">kvstore</span> <span class="ow">in</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="o">.</span><span class="n">kv_registry</span><span class="p">:</span>
-            <span class="c1"># we do not assume all custom kvstore supports</span>
-            <span class="c1"># updates on kvstore with optimizers</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">kvs</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">kvstore</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
         <span class="c1"># create kvstore using the string type</span>
         <span class="k">if</span> <span class="n">num_device</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s1">&#39;dist&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvstore</span><span class="p">:</span>
             <span class="c1"># no need to use kv for single device and single machine</span>
@@ -767,20 +766,18 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">kv</span> <span class="o">=</span> <span class="n">kvs</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">kvstore</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">kvstore</span> <span class="o">==</span> <span class="s1">&#39;local&#39;</span><span class="p">:</span>
-            <span class="c1"># automatically select a proper local</span>
+                <span class="c1"># automatically select a proper local</span>
                 <span class="n">max_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span>
                                <span class="n">arg_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
                 <span class="k">if</span> <span class="n">max_size</span> <span class="o">&gt;</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">16</span><span class="p">:</span>
                     <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="p">):</span>
-        <span class="c1"># we do not assume all custom kvstore supports</span>
-        <span class="c1"># updates on kvstore with optimizers</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">kvstore</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;kvstore must be KVStore, str or None&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">kv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">update_on_kvstore</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">update_on_kvstore</span> <span class="o">&amp;=</span> <span class="n">kv</span><span class="o">.</span><span class="n">is_capable</span><span class="p">(</span><span class="n">kvs</span><span class="o">.</span><span class="n">KVStoreBase</span><span class="o">.</span><span class="n">OPTIMIZER</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">kv</span><span class="p">,</span> <span class="n">update_on_kvstore</span><span class="p">)</span>
 
