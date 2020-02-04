@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['mxdtype',['MXDType',['../lib__api_8h.html#a8fd7b6a8c28e599287f76955305a8107',1,'lib_api.h']]],
-  ['mxreturnvalue',['MXReturnValue',['../lib__api_8h.html#a21ac519c3c38b4fe206f4dc6dd26e8b7',1,'lib_api.h']]]
+  ['ndarrayformaterr',['NDArrayFormatErr',['../namespacemxnet.html#ace60510752753f459193f95cab0e9e1a',1,'mxnet']]],
+  ['ndarrayfunctiontypemask',['NDArrayFunctionTypeMask',['../namespacemxnet.html#a89a5f0f5cfd9e1e94604a7b42dda818a',1,'mxnet']]],
+  ['ndarraystoragetype',['NDArrayStorageType',['../namespacemxnet.html#a536b732faa980e1de446c552460ff76a',1,'mxnet']]],
+  ['numpyshape',['NumpyShape',['../namespacemxnet.html#a2a487cb76fa5483d32c5d87ca448e94e',1,'mxnet']]]
 ];

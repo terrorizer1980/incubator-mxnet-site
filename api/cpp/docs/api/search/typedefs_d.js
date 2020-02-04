@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['objectptr',['ObjectPtr',['../namespacennvm.html#a573897937ff3b88f0014feabb8e44a92',1,'nnvm']]],
   ['op',['Op',['../namespacemxnet.html#ac2fb286fd7ddfbc7af1456f6c7a7ee52',1,'mxnet']]],
   ['opcallcreateopstate_5ft',['opCallCreateOpState_t',['../lib__api_8h.html#a53bb73e2e474b731c94a2f6257f69118',1,'lib_api.h']]],
   ['opcallfcomp_5ft',['opCallFComp_t',['../lib__api_8h.html#a0f770f857364297cf98aaadd765689f0',1,'lib_api.h']]],

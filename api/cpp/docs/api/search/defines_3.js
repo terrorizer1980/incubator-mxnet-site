@@ -7,7 +7,6 @@ var searchData=
   ['dlpack_5fversion',['DLPACK_VERSION',['../dlpack_8h.html#a493a8fe63f179b98d4e7a1728659a808',1,'DLPACK_VERSION():&#160;dlpack.h'],['../lib__api_8h.html#a493a8fe63f179b98d4e7a1728659a808',1,'DLPACK_VERSION():&#160;lib_api.h']]],
   ['dmlc_5fattribute_5funused',['DMLC_ATTRIBUTE_UNUSED',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a9425a87a06019a8392509217b2a1da5a',1,'base.h']]],
   ['dmlc_5fcxx11_5fthread_5flocal',['DMLC_CXX11_THREAD_LOCAL',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#ae59509e58780d10c524aa2c94986d6f7',1,'base.h']]],
-  ['dmlc_5fdeclare_5fdtype_5ffield',['DMLC_DECLARE_DTYPE_FIELD',['../tvm_2nnvm_2include_2nnvm_2top_2tensor_8h.html#ab0cbb21a1c21e4cb1efa2d1b4738f1ec',1,'tensor.h']]],
   ['dmlc_5fdeclare_5ftraits',['DMLC_DECLARE_TRAITS',['../type__traits_8h.html#ad29838fb4e93a8dd3efbdcd292c98bd5',1,'type_traits.h']]],
   ['dmlc_5fdeclare_5ftype_5fname',['DMLC_DECLARE_TYPE_NAME',['../type__traits_8h.html#ada1b1bad88ec717de715829068ff0d3e',1,'type_traits.h']]],
   ['dmlc_5fenable_5frtti',['DMLC_ENABLE_RTTI',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a916431c94539f685a75bd639cb0d3e3b',1,'base.h']]],

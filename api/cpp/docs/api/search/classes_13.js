@@ -8,6 +8,5 @@ var searchData=
   ['unpackpatchtocolxexp',['UnpackPatchToColXExp',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html',1,'mshadow::expr']]],
   ['unpoolingexp',['UnPoolingExp',['../structmshadow_1_1expr_1_1UnPoolingExp.html',1,'mshadow::expr']]],
   ['upsamplingnearestexp',['UpSamplingNearestExp',['../structmshadow_1_1expr_1_1UpSamplingNearestExp.html',1,'mshadow::expr']]],
-  ['upsamplingparam',['UpSamplingParam',['../structnnvm_1_1top_1_1UpSamplingParam.html',1,'nnvm::top']]],
   ['uri',['URI',['../structdmlc_1_1io_1_1URI.html',1,'dmlc::io']]]
 ];

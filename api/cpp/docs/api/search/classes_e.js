@@ -7,8 +7,8 @@ var searchData=
   ['onehotencodeexp',['OneHotEncodeExp',['../structmshadow_1_1expr_1_1OneHotEncodeExp.html',1,'mshadow::expr']]],
   ['op',['Op',['../classnnvm_1_1Op.html',1,'nnvm']]],
   ['opcontext',['OpContext',['../structmxnet_1_1OpContext.html',1,'mxnet']]],
-  ['operator',['Operator',['../classmxnet_1_1cpp_1_1Operator.html',1,'mxnet::cpp']]],
   ['operator',['Operator',['../classmxnet_1_1Operator.html',1,'mxnet']]],
+  ['operator',['Operator',['../classmxnet_1_1cpp_1_1Operator.html',1,'mxnet::cpp']]],
   ['operatorproperty',['OperatorProperty',['../classmxnet_1_1OperatorProperty.html',1,'mxnet']]],
   ['operatorpropertyreg',['OperatorPropertyReg',['../structmxnet_1_1OperatorPropertyReg.html',1,'mxnet']]],
   ['opgroup',['OpGroup',['../classnnvm_1_1OpGroup.html',1,'nnvm']]],
@@ -19,7 +19,6 @@ var searchData=
   ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html',1,'mxnet::cpp']]],
   ['optimizerregistry',['OptimizerRegistry',['../classmxnet_1_1cpp_1_1OptimizerRegistry.html',1,'mxnet::cpp']]],
   ['optional',['optional',['../classdmlc_1_1optional.html',1,'dmlc']]],
-  ['optional_3c_20int_20_3e',['optional&lt; int &gt;',['../classdmlc_1_1optional.html',1,'dmlc']]],
   ['ostream',['ostream',['../classdmlc_1_1ostream.html',1,'dmlc']]],
   ['outputgrad',['OutputGrad',['../structmxnet_1_1op_1_1OutputGrad.html',1,'mxnet::op']]],
   ['outputvalue',['OutputValue',['../structmxnet_1_1op_1_1OutputValue.html',1,'mxnet::op']]]

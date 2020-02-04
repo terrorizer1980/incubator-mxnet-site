@@ -100,8 +100,6 @@ var searchData=
   ['shape4',['Shape4',['../namespacemshadow.html#a8fc5237744c6eda97f3070ddcb0c715e',1,'mshadow']]],
   ['shape5',['Shape5',['../namespacemshadow.html#a5db935b0945f538add8022fac93c9c0a',1,'mshadow']]],
   ['shape_5fis_5fknown',['shape_is_known',['../namespacemxnet.html#a6c29d398f4166fdc0f95f63ce0ef66ee',1,'mxnet::shape_is_known(const TShape &amp;x)'],['../namespacemxnet.html#aae7f255485143a22ed0274d70598e562',1,'mxnet::shape_is_known(const std::vector&lt; TShape &gt; &amp;shapes)']]],
-  ['shapetoarray',['ShapeToArray',['../namespacennvm_1_1compiler.html#a0e3d6c5c160d4594551b065d96e78989',1,'nnvm::compiler']]],
-  ['shapetointarray',['ShapeToIntArray',['../namespacennvm_1_1compiler.html#aec8d6c083a8366a25fa995d4d768cf1b',1,'nnvm::compiler']]],
   ['shapetypecast',['ShapeTypeCast',['../namespacemxnet.html#af0b1cf5c3dc47bf0e258fa888323a3d9',1,'mxnet::ShapeTypeCast(const SrcIter begin, const SrcIter end, DstIter dst_begin)'],['../namespacemxnet.html#ae0aa7f65ef62500c7c978d4f577ff8bf',1,'mxnet::ShapeTypeCast(const SrcIter begin, const SrcIter end)'],['../namespacennvm.html#aeb3e89603b8701b127dd3671090196fd',1,'nnvm::ShapeTypeCast(const SrcIter begin, const SrcIter end, DstIter dst_begin)'],['../namespacennvm.html#a5f6163e61f55b40ecdc68b431b959f0a',1,'nnvm::ShapeTypeCast(const SrcIter begin, const SrcIter end)']]],
   ['sharedincrementrefcount',['SharedIncrementRefCount',['../classmxnet_1_1Storage.html#a3e3f3e3e3e3d867e77d0c3efd0e958b7',1,'mxnet::Storage']]],
   ['shutdowntensorengine',['ShutdownTensorEngine',['../namespacemshadow.html#a7b4e440ab207c132ec525d65620d39b9',1,'mshadow']]],

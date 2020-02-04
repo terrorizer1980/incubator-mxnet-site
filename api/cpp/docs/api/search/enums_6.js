@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['indicatorruleflag',['IndicatorRuleFlag',['../namespacennvm_1_1top.html#a1fa37df6a97f62ced312de5da3e55842',1,'nnvm::top']]]
+  ['jsontype',['JsonType',['../lib__api_8h.html#a749cb5137f6266520a9329b48a63decc',1,'lib_api.h']]]
 ];

@@ -1,13 +1,12 @@
 var searchData=
 [
-  ['elementwisereduceparam',['ElementWiseReduceParam',['../structnnvm_1_1top_1_1ElementWiseReduceParam.html',1,'nnvm::top']]],
   ['engine',['Engine',['../classmxnet_1_1Engine.html',1,'mxnet']]],
   ['enumnames',['EnumNames',['../structmxnet_1_1features_1_1EnumNames.html',1,'mxnet::features']]],
   ['envarguments',['EnvArguments',['../structmxnet_1_1op_1_1EnvArguments.html',1,'mxnet::op']]],
   ['evalmetric',['EvalMetric',['../classmxnet_1_1cpp_1_1EvalMetric.html',1,'mxnet::cpp']]],
   ['exchange',['exchange',['../structmshadow_1_1op_1_1complex_1_1exchange.html',1,'mshadow::op::complex']]],
-  ['executor',['Executor',['../classmxnet_1_1cpp_1_1Executor.html',1,'mxnet::cpp']]],
   ['executor',['Executor',['../classmxnet_1_1Executor.html',1,'mxnet']]],
+  ['executor',['Executor',['../classmxnet_1_1cpp_1_1Executor.html',1,'mxnet::cpp']]],
   ['exp',['Exp',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
   ['exp_3c_20binarymapexp_3c_20op_2c_20ta_2c_20tb_2c_20dtype_2c_20etype_20_3e_2c_20dtype_2c_20etype_20_3e',['Exp&lt; BinaryMapExp&lt; OP, TA, TB, DType, etype &gt;, DType, etype &gt;',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
   ['exp_3c_20complexbinarymapexp_3c_20calctype_2c_20op_2c_20ta_2c_20tb_2c_20dtype_2c_20etype_20_3e_2c_20dtype_2c_20etype_20_3e',['Exp&lt; ComplexBinaryMapExp&lt; calctype, OP, TA, TB, DType, etype &gt;, DType, etype &gt;',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
@@ -56,7 +55,6 @@ var searchData=
   ['exp_3c_20transposeindicesexp_3c_20srcexp_2c_20dtype_2c_20dimsrc_2c_20etype_20_3e_2c_20dtype_2c_20etype_20_3e',['Exp&lt; TransposeIndicesExp&lt; SrcExp, DType, dimsrc, etype &gt;, DType, etype &gt;',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
   ['exp_3c_20typecastexp_3c_20dstdtype_2c_20srcdtype_2c_20etype_2c_20etype_20_3e_2c_20dstdtype_2c_20etype_20_3e',['Exp&lt; TypecastExp&lt; DstDType, SrcDType, EType, etype &gt;, DstDType, etype &gt;',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
   ['exp_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_2c_20dtype_2c_20etype_20_3e',['Exp&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt;, DType, etype &gt;',['../structmshadow_1_1expr_1_1Exp.html',1,'mshadow::expr']]],
-  ['expanddimsparam',['ExpandDimsParam',['../structnnvm_1_1top_1_1ExpandDimsParam.html',1,'nnvm::top']]],
   ['expcomplexengine',['ExpComplexEngine',['../structmshadow_1_1expr_1_1ExpComplexEngine.html',1,'mshadow::expr']]],
   ['expcomplexengine_3c_20sv_2c_20tensor_3c_20device_2c_201_2c_20dtype_20_3e_2c_20reduceto1dexp_3c_20srcexp_2c_20dtype_2c_20reducer_2c_201_20_3e_2c_20dtype_20_3e',['ExpComplexEngine&lt; SV, Tensor&lt; Device, 1, DType &gt;, ReduceTo1DExp&lt; SrcExp, DType, Reducer, 1 &gt;, DType &gt;',['../structmshadow_1_1expr_1_1ExpComplexEngine_3_01SV_00_01Tensor_3_01Device_00_011_00_01DType_01_4_0d1da5a13d4a06e218cc743330af57ac2.html',1,'mshadow::expr']]],
   ['expcomplexengine_3c_20sv_2c_20tensor_3c_20device_2c_201_2c_20dtype_20_3e_2c_20reduceto1dexp_3c_20srcexp_2c_20dtype_2c_20reducer_2c_20m_5fdimkeep_20_3e_2c_20dtype_20_3e',['ExpComplexEngine&lt; SV, Tensor&lt; Device, 1, DType &gt;, ReduceTo1DExp&lt; SrcExp, DType, Reducer, m_dimkeep &gt;, DType &gt;',['../structmshadow_1_1expr_1_1ExpComplexEngine_3_01SV_00_01Tensor_3_01Device_00_011_00_01DType_01_4_0bfa762842343e12d1d87aec2a147c75f.html',1,'mshadow::expr']]],
@@ -85,8 +83,5 @@ var searchData=
   ['expinfo_3c_20transposeexp_3c_20e_2c_20dtype_20_3e_20_3e',['ExpInfo&lt; TransposeExp&lt; E, DType &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TransposeExp_3_01E_00_01DType_01_4_01_4.html',1,'mshadow::expr']]],
   ['expinfo_3c_20transposeindicesexp_3c_20srcexp_2c_20dtype_2c_20dimsrc_2c_20etype_20_3e_20_3e',['ExpInfo&lt; TransposeIndicesExp&lt; SrcExp, DType, dimsrc, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TransposeIndicesExp_3_01SrcExp_00_01DType_00_01dimsrc_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
   ['expinfo_3c_20typecastexp_3c_20dstdtype_2c_20srcdtype_2c_20etype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; TypecastExp&lt; DstDType, SrcDType, EType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TypecastExp_3_01DstDType_00_01SrcDType_00_01EType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
-  ['expinfo_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01UnaryMapExp_3_01OP_00_01TA_00_01DType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
-  ['extension_5ftype_5finfo_3c_20nnvm_3a_3acompiler_3a_3aattrdict_20_3e',['extension_type_info&lt; nnvm::compiler::AttrDict &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1compiler_1_1AttrDict_01_4.html',1,'tvm::runtime']]],
-  ['extension_5ftype_5finfo_3c_20nnvm_3a_3agraph_20_3e',['extension_type_info&lt; nnvm::Graph &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1Graph_01_4.html',1,'tvm::runtime']]],
-  ['extension_5ftype_5finfo_3c_20nnvm_3a_3asymbol_20_3e',['extension_type_info&lt; nnvm::Symbol &gt;',['../structtvm_1_1runtime_1_1extension__type__info_3_01nnvm_1_1Symbol_01_4.html',1,'tvm::runtime']]]
+  ['expinfo_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01UnaryMapExp_3_01OP_00_01TA_00_01DType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]]
 ];

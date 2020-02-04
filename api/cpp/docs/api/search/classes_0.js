@@ -9,6 +9,5 @@ var searchData=
   ['alignbytes',['AlignBytes',['../structmshadow_1_1packet_1_1AlignBytes.html',1,'mshadow::packet']]],
   ['array_5fview',['array_view',['../classdmlc_1_1array__view.html',1,'dmlc']]],
   ['array_5fview_3c_20nnvm_3a_3aindexedgraph_3a_3anodeentry_20_3e',['array_view&lt; nnvm::IndexedGraph::NodeEntry &gt;',['../classdmlc_1_1array__view.html',1,'dmlc']]],
-  ['array_5fview_3c_20uint32_5ft_20_3e',['array_view&lt; uint32_t &gt;',['../classdmlc_1_1array__view.html',1,'dmlc']]],
-  ['avgpool2dparam',['AvgPool2DParam',['../structnnvm_1_1top_1_1AvgPool2DParam.html',1,'nnvm::top']]]
+  ['array_5fview_3c_20uint32_5ft_20_3e',['array_view&lt; uint32_t &gt;',['../classdmlc_1_1array__view.html',1,'dmlc']]]
 ];

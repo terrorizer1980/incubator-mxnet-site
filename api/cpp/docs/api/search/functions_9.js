@@ -68,7 +68,7 @@ var searchData=
   ['isservernode',['IsServerNode',['../classmxnet_1_1KVStore.html#a101178924ce1d635b0c8c2a5bce0ceaf',1,'mxnet::KVStore']]],
   ['isspace',['isspace',['../namespacedmlc.html#a52dcf01c9ba22be9b08e455194fb2ab3',1,'dmlc']]],
   ['istream',['istream',['../classdmlc_1_1istream.html#a777f9d3bb1c338f92258732517626a19',1,'dmlc::istream']]],
-  ['isvariable',['IsVariable',['../classmxnet_1_1Imperative_1_1AGInfo.html#ad5f1d672e9adc8c0be46cc4002c0aafc',1,'mxnet::Imperative::AGInfo']]],
+  ['isvariable',['IsVariable',['../classmxnet_1_1Imperative_1_1AGInfo.html#a9cbce8aa6881a4cbc9ff736e3a3e7b35',1,'mxnet::Imperative::AGInfo']]],
   ['isview',['IsView',['../classmxnet_1_1NDArray.html#a117e3af0d08abf56ff8852adfb71f413',1,'mxnet::NDArray']]],
   ['isworkernode',['IsWorkerNode',['../classmxnet_1_1KVStore.html#ab216fb292fa77e843e95f474fa671a20',1,'mxnet::KVStore']]]
 ];

@@ -32,7 +32,6 @@ var searchData=
   ['packetplan_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_2c_20dtype_2c_20arch_20_3e',['PacketPlan&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt;, DType, Arch &gt;',['../classmshadow_1_1expr_1_1PacketPlan_3_01UnaryMapExp_3_01OP_00_01TA_00_01DType_00_01etype_01_4_00_01DType_00_01Arch_01_4.html',1,'mshadow::expr']]],
   ['pad_5fimag',['pad_imag',['../structmshadow_1_1op_1_1complex_1_1pad__imag.html',1,'mshadow::op::complex']]],
   ['paddingexp',['PaddingExp',['../structmshadow_1_1expr_1_1PaddingExp.html',1,'mshadow::expr']]],
-  ['padparam',['PadParam',['../structnnvm_1_1top_1_1PadParam.html',1,'nnvm::top']]],
   ['parser',['Parser',['../classdmlc_1_1Parser.html',1,'dmlc']]],
   ['parserfactoryreg',['ParserFactoryReg',['../structdmlc_1_1ParserFactoryReg.html',1,'dmlc']]],
   ['passfunctionreg',['PassFunctionReg',['../structnnvm_1_1PassFunctionReg.html',1,'nnvm']]],
@@ -102,7 +101,6 @@ var searchData=
   ['plus',['plus',['../structmshadow_1_1op_1_1plus.html',1,'mshadow::op']]],
   ['plusto',['plusto',['../structmshadow_1_1sv_1_1plusto.html',1,'mshadow::sv']]],
   ['poolingexp',['PoolingExp',['../structmshadow_1_1expr_1_1PoolingExp.html',1,'mshadow::expr']]],
-  ['preluparam',['PReLUParam',['../structnnvm_1_1top_1_1PReLUParam.html',1,'nnvm::top']]],
   ['producer',['Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html',1,'dmlc::ThreadedIter']]],
   ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]]
 ];

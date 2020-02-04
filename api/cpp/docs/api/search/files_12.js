@@ -2,8 +2,7 @@ var searchData=
 [
   ['take_2eh',['take.h',['../take_8h.html',1,'']]],
   ['take_5fgrad_2eh',['take_grad.h',['../take__grad_8h.html',1,'']]],
-  ['tensor_2eh',['tensor.h',['../mshadow_2mshadow_2tensor_8h.html',1,'']]],
-  ['tensor_2eh',['tensor.h',['../tvm_2nnvm_2include_2nnvm_2top_2tensor_8h.html',1,'']]],
+  ['tensor_2eh',['tensor.h',['../tensor_8h.html',1,'']]],
   ['tensor_5fblob_2eh',['tensor_blob.h',['../tensor__blob_8h.html',1,'']]],
   ['tensor_5fcontainer_2eh',['tensor_container.h',['../tensor__container_8h.html',1,'']]],
   ['tensor_5fcpu_2dinl_2eh',['tensor_cpu-inl.h',['../tensor__cpu-inl_8h.html',1,'']]],

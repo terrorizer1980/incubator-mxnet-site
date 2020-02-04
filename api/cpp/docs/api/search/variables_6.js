@@ -9,6 +9,5 @@ var searchData=
   ['graph_5fattr_5fdependency',['graph_attr_dependency',['../structnnvm_1_1PassFunctionReg.html#a2b3d438c62ae31c24ac9dc10ac966c04',1,'nnvm::PassFunctionReg']]],
   ['graph_5fattr_5ftargets',['graph_attr_targets',['../structnnvm_1_1PassFunctionReg.html#a2323d1fb3da781cd8695d28c8800254e',1,'nnvm::PassFunctionReg']]],
   ['group_5fname',['group_name',['../classnnvm_1_1OpGroup.html#a9d49a03bc2cce737a4a0758563295b60',1,'nnvm::OpGroup']]],
-  ['group_5fsize',['group_size',['../structdnnl__shuffle__desc__t.html#ade974f8027fee2319a64477110bd0619',1,'dnnl_shuffle_desc_t']]],
-  ['groups',['groups',['../structnnvm_1_1top_1_1Conv2DParam.html#afc91986987da20e3896875d7b8e4dfaf',1,'nnvm::top::Conv2DParam::groups()'],['../structnnvm_1_1top_1_1WinogradConv2DParam.html#a6090f52b2bc6b5b25c65015e9e91b2a1',1,'nnvm::top::WinogradConv2DParam::groups()'],['../structnnvm_1_1top_1_1Conv2DTransposeParam.html#a583b85125987cfd9f4062fc06f01f0e7',1,'nnvm::top::Conv2DTransposeParam::groups()']]]
+  ['group_5fsize',['group_size',['../structdnnl__shuffle__desc__t.html#ade974f8027fee2319a64477110bd0619',1,'dnnl_shuffle_desc_t']]]
 ];
