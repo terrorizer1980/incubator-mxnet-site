@@ -39,7 +39,7 @@ var searchData=
   ['binarymapexp',['BinaryMapExp',['../structmshadow_1_1expr_1_1BinaryMapExp.html',1,'mshadow::expr']]],
   ['binarymapexp',['BinaryMapExp',['../structmshadow_1_1expr_1_1BinaryMapExp.html#a6d8c85b45bf135282092125b133dd3f7',1,'mshadow::expr::BinaryMapExp']]],
   ['binaryshapefunction',['BinaryShapeFunction',['../namespacemxnet_1_1op.html#a8973cbc1527a6c57c6e19c9f1ed82075',1,'mxnet::op']]],
-  ['bind',['Bind',['../classmxnet_1_1Executor.html#a8217aa9fbdd99d107bd836872d7d9692',1,'mxnet::Executor::Bind()'],['../classmxnet_1_1cpp_1_1Symbol.html#a1b6bab44e812186f742387527a1b4a97',1,'mxnet::cpp::Symbol::Bind()']]],
+  ['bind',['Bind',['../classmxnet_1_1Executor.html#ad4c72f642143d2eb264f29c1e28bab59',1,'mxnet::Executor::Bind()'],['../classmxnet_1_1cpp_1_1Symbol.html#a1b6bab44e812186f742387527a1b4a97',1,'mxnet::cpp::Symbol::Bind()']]],
   ['bits',['bits',['../structDLDataType.html#a412e36fa9c58e808a2333e9044c5d9b5',1,'DLDataType']]],
   ['blas_5fapple',['BLAS_APPLE',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da21d980a465ba2dd528b0218697d9ab28',1,'mxnet::features']]],
   ['blas_5fatlas',['BLAS_ATLAS',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87da1fcc301aeb4cf67ddb7317625d240852',1,'mxnet::features']]],
