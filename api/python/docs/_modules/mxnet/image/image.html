@@ -685,7 +685,11 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>  <span class="c1"># pylint: disable=reimported</span>
 
 
@@ -1268,6 +1272,145 @@
 
     <span class="c1"># fall back to center_crop</span>
     <span class="k">return</span> <span class="n">center_crop</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="imrotate"><a class="viewcode-back" href="../../../api/mxnet/image/index.html#mxnet.image.imrotate">[docs]</a><span class="k">def</span> <span class="nf">imrotate</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rotates the input image(s) of a specific rotation degree.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : NDArray</span>
+<span class="sd">        Input image (format CHW) or batch of images (format NCHW),</span>
+<span class="sd">        in both case is required a float32 data type.</span>
+<span class="sd">    rotation_degrees: scalar or NDArray</span>
+<span class="sd">        Wanted rotation in degrees. In case of `src` being a single image</span>
+<span class="sd">        a scalar is needed, otherwise a mono-dimensional vector of angles</span>
+<span class="sd">        or a scalar.</span>
+<span class="sd">    zoom_in: bool</span>
+<span class="sd">        If True input image(s) will be zoomed in a way so that no padding</span>
+<span class="sd">        will be shown in the output result.</span>
+<span class="sd">    zoom_out: bool</span>
+<span class="sd">        If True input image(s) will be zoomed in a way so that the whole</span>
+<span class="sd">        original image will be contained in the output result.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NDArray</span>
+<span class="sd">        An `NDArray` containing the rotated image(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">zoom_in</span> <span class="ow">and</span> <span class="n">zoom_out</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`zoom_in` and `zoom_out` cannot be both True&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only `float32` images are supported by this function&quot;</span><span class="p">)</span>
+    <span class="c1"># handles the case in which a single image is passed to this function</span>
+    <span class="n">expanded</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">expanded</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;When a single image is passed the rotation angle is &quot;</span>
+                            <span class="s2">&quot;required to be a scalar.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">src</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only 3D and 4D are supported by this function&quot;</span><span class="p">)</span>
+
+    <span class="c1"># when a scalar is passed we wrap it into an array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
+        <span class="n">rotation_degrees</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rotation_degrees</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">),</span>
+                                    <span class="n">ctx</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotation_degrees</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The number of images must be equal to the number of rotation angles&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">rotation_degrees</span> <span class="o">=</span> <span class="n">rotation_degrees</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+    <span class="n">rotation_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rotation_degrees</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="c1"># reshape the rotations angle in order to be broadcasted</span>
+    <span class="c1"># over the `src` tensor</span>
+    <span class="n">rotation_rad</span> <span class="o">=</span> <span class="n">rotation_rad</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Generate a grid centered at the center of the image</span>
+    <span class="n">hscale</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">wscale</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">h_matrix</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">nd</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">hscale</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">w_matrix</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">nd</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">h</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">wscale</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># perform rotation on the grid</span>
+    <span class="n">c_alpha</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)</span>
+    <span class="n">s_alpha</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)</span>
+    <span class="n">w_matrix_rot</span> <span class="o">=</span> <span class="n">w_matrix</span> <span class="o">*</span> <span class="n">c_alpha</span> <span class="o">-</span> <span class="n">h_matrix</span> <span class="o">*</span> <span class="n">s_alpha</span>
+    <span class="n">h_matrix_rot</span> <span class="o">=</span> <span class="n">w_matrix</span> <span class="o">*</span> <span class="n">s_alpha</span> <span class="o">+</span> <span class="n">h_matrix</span> <span class="o">*</span> <span class="n">c_alpha</span>
+    <span class="c1"># NOTE: grid normalization must be performed after the rotation</span>
+    <span class="c1">#       to keep the aspec ratio</span>
+    <span class="n">w_matrix_rot</span> <span class="o">=</span> <span class="n">w_matrix_rot</span> <span class="o">/</span> <span class="n">wscale</span>
+    <span class="n">h_matrix_rot</span> <span class="o">=</span> <span class="n">h_matrix_rot</span> <span class="o">/</span> <span class="n">hscale</span>
+
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h</span><span class="p">],</span> <span class="n">ctx</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">),</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">w</span><span class="p">],</span> <span class="n">ctx</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+    <span class="c1"># compute the scale factor in case `zoom_in` or `zoom_out` are True</span>
+    <span class="k">if</span> <span class="n">zoom_in</span> <span class="ow">or</span> <span class="n">zoom_out</span><span class="p">:</span>
+        <span class="n">rho_corner</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">w</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">ang_corner</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">h</span> <span class="o">/</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">corner1_x_pos</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rho_corner</span> <span class="o">*</span> <span class="n">nd</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang_corner</span> <span class="o">+</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)))</span>
+        <span class="n">corner1_y_pos</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rho_corner</span> <span class="o">*</span> <span class="n">nd</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang_corner</span> <span class="o">+</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)))</span>
+        <span class="n">corner2_x_pos</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rho_corner</span> <span class="o">*</span> <span class="n">nd</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang_corner</span> <span class="o">-</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)))</span>
+        <span class="n">corner2_y_pos</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rho_corner</span> <span class="o">*</span> <span class="n">nd</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang_corner</span> <span class="o">-</span> <span class="n">nd</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rotation_rad</span><span class="p">)))</span>
+        <span class="n">max_x</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">corner1_x_pos</span><span class="p">,</span> <span class="n">corner2_x_pos</span><span class="p">)</span>
+        <span class="n">max_y</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">corner1_y_pos</span><span class="p">,</span> <span class="n">corner2_y_pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">zoom_out</span><span class="p">:</span>
+            <span class="n">scale_x</span> <span class="o">=</span> <span class="n">max_x</span> <span class="o">/</span> <span class="n">w</span>
+            <span class="n">scale_y</span> <span class="o">=</span> <span class="n">max_y</span> <span class="o">/</span> <span class="n">h</span>
+            <span class="n">globalscale</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale_x</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">max_x</span>
+            <span class="n">scale_y</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="n">max_y</span>
+            <span class="n">globalscale</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span><span class="p">)</span>
+        <span class="n">globalscale</span> <span class="o">=</span> <span class="n">globalscale</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">globalscale</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">w_matrix_rot</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                     <span class="n">h_matrix_rot</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span> <span class="o">*</span> <span class="n">globalscale</span>
+    <span class="n">rot_img</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">BilinearSampler</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expanded</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rot_img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rot_img</span></div>
+
+
+<div class="viewcode-block" id="random_rotate"><a class="viewcode-back" href="../../../api/mxnet/image/index.html#mxnet.image.random_rotate">[docs]</a><span class="k">def</span> <span class="nf">random_rotate</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">angle_limits</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Random rotates `src` by an angle included in angle limits.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : NDArray</span>
+<span class="sd">        Input image (format CHW) or batch of images (format NCHW),</span>
+<span class="sd">        in both case is required a float32 data type.</span>
+<span class="sd">    angle_limits: tuple</span>
+<span class="sd">        Tuple of 2 elements containing the upper and lower limit</span>
+<span class="sd">        for rotation angles in degree.</span>
+<span class="sd">    zoom_in: bool</span>
+<span class="sd">        If True input image(s) will be zoomed in a way so that no padding</span>
+<span class="sd">        will be shown in the output result.</span>
+<span class="sd">    zoom_out: bool</span>
+<span class="sd">        If True input image(s) will be zoomed in a way so that the whole</span>
+<span class="sd">        original image will be contained in the output result.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NDArray</span>
+<span class="sd">        An `NDArray` containing the rotated image(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">rotation_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="n">angle_limits</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rotation_degrees</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">angle_limits</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">n</span>
+        <span class="p">))</span>
+    <span class="k">return</span> <span class="n">imrotate</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">rotation_degrees</span><span class="p">,</span>
+                    <span class="n">zoom_in</span><span class="o">=</span><span class="n">zoom_in</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="n">zoom_out</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Augmenter"><a class="viewcode-back" href="../../../api/mxnet/image/index.html#mxnet.image.Augmenter">[docs]</a><span class="k">class</span> <span class="nc">Augmenter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>

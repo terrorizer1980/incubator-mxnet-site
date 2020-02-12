@@ -678,6 +678,8 @@
 <span class="s2">&quot;Image transforms.&quot;</span>
 
 <span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">...block</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">HybridBlock</span>
 <span class="kn">from</span> <span class="nn">...nn</span> <span class="kn">import</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">HybridSequential</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">image</span>
@@ -854,6 +856,77 @@
         <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
             <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Rotate"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Rotate">[docs]</a><span class="k">class</span> <span class="nc">Rotate</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rotate the input image by a given angle. Keeps the original image shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rotation_degrees : float32</span>
+<span class="sd">        Desired rotation angle in degrees.</span>
+<span class="sd">    zoom_in : bool</span>
+<span class="sd">        Zoom in image so that no padding is present in final output.</span>
+<span class="sd">    zoom_out : bool</span>
+<span class="sd">        Zoom out image so that the entire original image is present in final output.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: output tensor with (C x H x W) or (N x C x H x W) shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Rotate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">zoom_in</span><span class="p">,</span> <span class="n">zoom_out</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Rotate.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Rotate.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;This transformation only supports float32. &quot;</span>
+                            <span class="s2">&quot;Consider calling it after ToTensor&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">imrotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RandomRotation"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomRotation">[docs]</a><span class="k">class</span> <span class="nc">RandomRotation</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Random rotate the input image by a random angle.</span>
+<span class="sd">       Keeps the original image shape and aspect ratio.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    angle_limits: tuple</span>
+<span class="sd">        Tuple of 2 elements containing the upper and lower limit</span>
+<span class="sd">        for rotation angles in degree.</span>
+<span class="sd">    zoom_in : bool</span>
+<span class="sd">        Zoom in image so that no padding is present in final output.</span>
+<span class="sd">    zoom_out : bool</span>
+<span class="sd">        Zoom out image so that the entire original image is present in final output.</span>
+<span class="sd">    rotate_with_proba : float32</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: output tensor with (C x H x W) or (N x C x H x W) shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle_limits</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rotate_with_proba</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RandomRotation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">angle_limits</span>
+        <span class="k">if</span> <span class="n">lower</span> <span class="o">&gt;=</span> <span class="n">upper</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`angle_limits` must be an ordered tuple&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rotate_with_proba</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rotate_with_proba</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Probability of rotating the image should be between 0 and 1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle_limits</span><span class="p">,</span> <span class="n">zoom_in</span><span class="p">,</span> <span class="n">zoom_out</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotate_with_proba</span> <span class="o">=</span> <span class="n">rotate_with_proba</span>
+
+<div class="viewcode-block" id="RandomRotation.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomRotation.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rotate_with_proba</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;This transformation only supports float32. &quot;</span>
+                            <span class="s2">&quot;Consider calling it after ToTensor&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">random_rotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="RandomResizedCrop"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomResizedCrop">[docs]</a><span class="k">class</span> <span class="nc">RandomResizedCrop</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
