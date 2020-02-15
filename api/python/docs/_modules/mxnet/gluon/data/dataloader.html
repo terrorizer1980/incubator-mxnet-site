@@ -676,7 +676,6 @@
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable=ungrouped-imports</span>
 <span class="sd">&quot;&quot;&quot;Dataset generator.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DataLoader&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">pickle</span>
@@ -713,10 +712,7 @@
     <span class="k">def</span> <span class="nf">rebuild_ndarray</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rebuild ndarray from pickled shared memory&quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=no-value-for-parameter</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">rebuild_handle</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">_new_from_shared_mem</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">reduce_ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -724,10 +720,7 @@
         <span class="c1"># keep a local ref before duplicating fd</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;cpu_shared&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_to_shared_mem</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">reduce_handle</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">DupFd</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">DupFd</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rebuild_ndarray</span><span class="p">,</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
 <span class="n">ForkingPickler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">reduce_ndarray</span><span class="p">)</span>
@@ -745,10 +738,7 @@
     <span class="k">def</span> <span class="nf">rebuild_np_ndarray</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rebuild ndarray from pickled shared memory&quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=no-value-for-parameter</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">rebuild_handle</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">nd</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">_new_from_shared_mem</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">reduce_np_ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -756,10 +746,7 @@
         <span class="c1"># keep a local ref before duplicating fd</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;cpu_shared&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_to_shared_mem</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">reduce_handle</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">DupFd</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">reduction</span><span class="o">.</span><span class="n">DupFd</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rebuild_np_ndarray</span><span class="p">,</span> <span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
 <span class="n">ForkingPickler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">_mx_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduce_np_ndarray</span><span class="p">)</span>
@@ -792,11 +779,7 @@
 <span class="k">class</span> <span class="nc">Queue</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">queues</span><span class="o">.</span><span class="n">Queue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper for multiprocessing queue that dumps NDArray with shared memory.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">Queue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">Queue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(),</span>
-                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">ConnectionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">ConnectionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">send</span>
@@ -808,11 +791,7 @@
 <span class="sd">       SimpleQueue don&#39;t use threading internally.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">SimpleQueue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">SimpleQueue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(),</span>
-                                              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">ConnectionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">ConnectionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">send</span>
@@ -898,7 +877,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_key_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">SimpleQueue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_queue</span> <span class="o">=</span> <span class="n">SimpleQueue</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_buffer_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
