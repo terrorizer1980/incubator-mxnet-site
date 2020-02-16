@@ -684,6 +684,7 @@
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">_LIB</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">mx_uint</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">ExecutorHandle</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">mx_int</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_handle_array</span><span class="p">,</span> <span class="n">c_array_buf</span><span class="p">,</span> <span class="n">c_str_array</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ndarray</span>
 <span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span>
 <span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">_ndarray_cls</span>
 
@@ -884,11 +885,11 @@
         <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">out_grads</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;inputs must be NDArray&quot;</span><span class="p">)</span>
-        <span class="n">ndarray</span> <span class="o">=</span> <span class="n">c_handle_array</span><span class="p">(</span><span class="n">out_grads</span><span class="p">)</span>
+        <span class="n">handle_array</span> <span class="o">=</span> <span class="n">c_handle_array</span><span class="p">(</span><span class="n">out_grads</span><span class="p">)</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXExecutorBackwardEx</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
             <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out_grads</span><span class="p">)),</span>
-            <span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">handle_array</span><span class="p">,</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">is_train</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="Executor.set_monitor_callback"><a class="viewcode-back" href="../../api/mxnet/executor/index.html#mxnet.executor.Executor.set_monitor_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_monitor_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1015,7 +1016,11 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">arg_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_dict</span><span class="p">:</span>
                 <span class="n">dst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-                <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dst</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;bfloat16&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)]):</span>
+                    <span class="n">cast_array</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">amp_cast</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                    <span class="n">cast_array</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">allow_extra_params</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Find name </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s1"> that is not in the arguments&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
@@ -1025,7 +1030,11 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">aux_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_dict</span><span class="p">:</span>
                 <span class="n">dst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-                <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dst</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;bfloat16&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)]):</span>
+                    <span class="n">cast_array</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">amp_cast</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                    <span class="n">cast_array</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dst</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">allow_extra_params</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Find name </span><span class="si">%s</span><span class="s1"> that is not in the auxiliary states&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span></div>
 

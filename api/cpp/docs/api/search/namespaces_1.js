@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['bfloat',['bfloat',['../namespacemshadow_1_1bfloat.html',1,'mshadow']]],
   ['common',['common',['../namespacemxnet_1_1common.html',1,'mxnet']]],
   ['complex',['complex',['../namespacemshadow_1_1op_1_1complex.html',1,'mshadow::op']]],
   ['contrib',['contrib',['../namespacemxnet_1_1cpp_1_1contrib.html',1,'mxnet::cpp']]],
@@ -17,8 +18,8 @@ var searchData=
   ['limits',['limits',['../namespacemshadow_1_1red_1_1limits.html',1,'mshadow::red']]],
   ['mshadow',['mshadow',['../namespacemshadow.html',1,'']]],
   ['mxnet',['mxnet',['../namespacemxnet.html',1,'']]],
-  ['op',['op',['../namespacemxnet_1_1op.html',1,'mxnet']]],
   ['op',['op',['../namespacemshadow_1_1op.html',1,'mshadow']]],
+  ['op',['op',['../namespacemxnet_1_1op.html',1,'mxnet']]],
   ['packet',['packet',['../namespacemshadow_1_1packet.html',1,'mshadow']]],
   ['random',['random',['../namespacemxnet_1_1common_1_1random.html',1,'mxnet::common']]],
   ['red',['red',['../namespacemshadow_1_1red.html',1,'mshadow']]],
