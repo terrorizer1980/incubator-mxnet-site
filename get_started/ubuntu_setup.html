@@ -193,8 +193,8 @@ Further information is provided in the source guide&#39;s <a href="build_from_so
 Selection</a> section.</p>
 
 <p><code>libopencv-dev</code> is an optional dependency. You can delete it from above <code>apt-get
-install</code> line and build MXNet without OpenCV support by passing
-<code>-DUSE_OPENCV=OFF</code> to the <code>cmake</code> command below.</p>
+install</code> line and build MXNet without OpenCV support by setting <code>USE_OPENCV</code> to
+<code>OFF</code> in the configuration file described below.</p>
 
 <p>Note: CMake 3.13 or higher is required. If you are running an older version of
 CMake, you will see an error message like <code>CMake 3.13 or higher is required. You
@@ -210,12 +210,11 @@ python3-pip</code>. After installing cmake with <code>pip3</code>, it is usually
 <p>Clone the repository:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">git clone <span class="nt">--recursive</span> https://github.com/apache/incubator-mxnet.git mxnet
 <span class="nb">cd </span>mxnet
-<span class="nb">cp </span>config/config.cmake config.cmake
+<span class="nb">cp </span>config/linux.cmake config.cmake  <span class="c"># or config/linux_gpu.cmake for build with CUDA</span>
 </code></pre></div>
 <p>Please edit the config.cmake file based on your needs. The file contains a
-series of <code>set(name value CACHE TYPE &quot;Description&quot;)</code> entries. For example, to
-build without Cuda, change <code>set(USE_CUDA ON CACHE TYPE &quot;Build with CUDA
-support&quot;)</code> to <code>set(USE_CUDA OFF CACHE TYPE &quot;Build with CUDA support&quot;)</code>.</p>
+series of <code>set(name value CACHE TYPE &quot;Description&quot;)</code> entries. You can change the
+values of the respective <code>value</code>.</p>
 
 <p>For a GPU-enabled build make sure you have installed the <a href="#cuda-dependencies">CUDA dependencies
 first</a>). When building a GPU-enabled build on a machine
@@ -243,8 +242,8 @@ bindings described in the next section.</p>
 
 <h2 id="installing-language-packages-for-mxnet">Installing Language Packages for MXNet</h2>
 
-<p>After you have installed the MXNet core library. You may install MXNet interface packages for the programming language
-of your choice:
+<p>After you have installed the MXNet core library. You may install MXNet interface
+packages for the programming language of your choice:
 - <a href="#install-mxnet-for-python">Python</a>
 - <a href="#install-the-mxnet-package-for-c&plus;&plus;">C++</a>
 - <a href="#install-the-mxnet-package-for-clojure">Clojure</a>
@@ -262,8 +261,9 @@ of your choice:
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>python
 pip <span class="nb">install</span> <span class="nt">--user</span> <span class="nt">-e</span> <span class="nb">.</span>
 </code></pre></div>
-<p>Note that the <code>-e</code> flag is optional. It is equivalent to <code>--editable</code> and means that if you edit the source files, these
-changes will be reflected in the package installed.</p>
+<p>Note that the <code>-e</code> flag is optional. It is equivalent to <code>--editable</code> and means
+that if you edit the source files, these changes will be reflected in the
+package installed.</p>
 
 <h4 id="optional-python-packages">Optional Python Packages</h4>
 

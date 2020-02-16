@@ -126,151 +126,140 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 
 <h1 id="installing-mxnet-from-source-on-os-x-mac">Installing MXNet from source on OS X (Mac)</h1>
 
-<p><strong>NOTE:</strong> For pre-built MXNet with Python, please refer to the <a href="/get_started">new install guide</a>.</p>
+<p>The following installation instructions are for building MXNet from source. For
+instructions to build MXNet from source on other platforms, see the general
+<a href="build_from_source">Build From Source guide</a>.</p>
 
-<p>Installing MXNet is a two-step process:</p>
+<p>Instead of building from source, you can install a binary version of MXNet. For
+that, please follow the information at <a href="get_started">Get Started</a>.</p>
+
+<p>Building MXNet from source is a two-step process:</p>
 
 <ol>
 <li>Build the shared library from the MXNet C++ source code.</li>
-<li>Install the supported language-specific packages for MXNet.</li>
+<li>(optional) Install the supported language-specific packages for MXNet.</li>
 </ol>
 
-<p><strong>Note:</strong> To change the compilation options for your build, edit the <code>make/config.mk</code> file and submit a build request with the <code>make</code> command.</p>
+<p>If you plan to build with GPU, you need to set up the environment for CUDA and
+cuDNN. Please follow the <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html">NVIDIA CUDA Installation Guide for Mac OS
+X</a> and
+<a href="https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#install-mac">cuDNN Installation
+Guide</a>.
+Note that CUDA stopped supporting macOS in 2019 and future versions of CUDA may
+not support macOS.</p>
 
-<h2 id="prepare-environment-for-gpu-installation">Prepare Environment for GPU Installation</h2>
+<h2 id="contents">Contents</h2>
 
-<p>This section is optional. Skip to next section if you don&#39;t plan to use GPUs. If you plan to build with GPU, you need to set up the environment for CUDA and cuDNN.</p>
+<ul>
+<li><a href="#build-mxnet-from-source">Build the MXNet shared library from source</a></li>
+<li><a href="#installing-language-packages-for-mxnet">Install Language Packages</a>
 
-<p>First, download and install <a href="https://developer.nvidia.com/cuda-toolkit">CUDA 8 toolkit</a>.</p>
+<ul>
+<li><a href="#install-the-mxnet-package-for-r">R</a></li>
+<li><a href="#install-the-mxnet-package-for-julia">Julia</a></li>
+<li><a href="#install-the-mxnet-package-for-scala">Scala</a></li>
+<li><a href="#install-the-mxnet-package-for-java">Java</a></li>
+<li><a href="#install-the-mxnet-package-for-perl">Perl</a></li>
+<li><a href="#contributions">Contributions</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
 
-<p>Once you have the CUDA Toolkit installed you will need to set up the required environment variables by adding the following to your ~/.bash_profile file:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">export </span><span class="nv">CUDA_HOME</span><span class="o">=</span>/usr/local/cuda
-    <span class="nb">export </span><span class="nv">DYLD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$CUDA_HOME</span><span class="s2">/lib:</span><span class="nv">$DYLD_LIBRARY_PATH</span><span class="s2">"</span>
-    <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$CUDA_HOME</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+<p><hr></p>
+
+<h2 id="build-the-mxnet-shared-library-from-source">Build the MXNet shared library from source</h2>
+
+<p>On OS X, you need the following dependencies:</p>
+
+<p><strong>Step 1:</strong> Install prerequisite packages.</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Install OS X Developer Tools</span>
+xcode-select <span class="nt">--install</span>
+
+<span class="c"># Install Homebrew</span>
+/usr/bin/ruby <span class="nt">-e</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/master/install<span class="si">)</span><span class="s2">"</span>
+
+<span class="c"># Install dependencies</span>
+brew <span class="nb">install </span>cmake ninja ccache opencv
 </code></pre></div>
-<p>Reload ~/.bash_profile file and install dependencies:
-<code>bash
-    . ~/.bash_profile
-    brew install coreutils
-    brew tap caskroom/cask
-</code></p>
+<p><code>opencv</code> is an optional dependency. You can delete it from above <code>brew install</code>
+line and build MXNet without OpenCV support by setting <code>USE_OPENCV</code> to <code>OFF</code> in
+the configuration file described below.</p>
 
-<p>Then download <a href="https://developer.nvidia.com/cudnn">cuDNN 5</a>.</p>
+<p><strong>Step 2:</strong> Download MXNet sources and configure</p>
 
-<p>Unzip the file and change to the cudnn root directory. Move the header files and libraries to your local CUDA Toolkit folder:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span><span class="nb">sudo mv </span>include/cudnn.h /Developer/NVIDIA/CUDA-8.0/include/
-    <span class="nv">$ </span><span class="nb">sudo mv </span>lib/libcudnn<span class="k">*</span> /Developer/NVIDIA/CUDA-8.0/lib
-    <span class="nv">$ </span><span class="nb">sudo ln</span> <span class="nt">-s</span> /Developer/NVIDIA/CUDA-8.0/lib/libcudnn<span class="k">*</span> /usr/local/cuda/lib/
+<p>Clone the repository:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">git clone <span class="nt">--recursive</span> https://github.com/apache/incubator-mxnet.git mxnet
+<span class="nb">cd </span>mxnet
+<span class="nb">cp </span>config/darwin.cmake config.cmake
 </code></pre></div>
-<p>Now we can start to build MXNet.</p>
+<p>Please edit the config.cmake file based on your needs. The file contains a
+series of <code>set(name value CACHE TYPE &quot;Description&quot;)</code> entries. For example, to
+build without Cuda, change <code>set(USE_CUDA ON CACHE TYPE &quot;Build with CUDA
+support&quot;)</code> to <code>set(USE_CUDA OFF CACHE TYPE &quot;Build with CUDA support&quot;)</code>.</p>
 
-<h2 id="build-the-shared-library">Build the Shared Library</h2>
+<p>For a GPU-enabled build make sure you have installed the <a href="#cuda-dependencies">CUDA dependencies
+first</a>). When building a GPU-enabled build on a machine
+without GPU, MXNet build can&#39;t autodetect your GPU architecture and will target
+all available GPU architectures. Please set the <code>MXNET_CUDA_ARCH</code> variable in
+<code>config.cmake</code> to your desired cuda architecture to speed up the build.</p>
 
-<h3 id="install-mxnet-dependencies">Install MXNet dependencies</h3>
+<p>To (optionally) build with MKL math library, please install MKL first based on
+the guide in <a href="build_from_source#math-library-selection">Math Library Selection</a>.</p>
 
-<p>Install the dependencies, required for MXNet, with the following commands:
-- <a href="http://brew.sh/">Homebrew</a>
-- OpenBLAS and homebrew/core (for linear algebraic operations)
-- OpenCV (for computer vision operations)</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="c"># Paste this command in Mac terminal to install Homebrew</span>
-    /usr/bin/ruby <span class="nt">-e</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/master/install<span class="si">)</span><span class="s2">"</span>
-
-    <span class="c"># Insert the Homebrew directory at the top of your PATH environment variable</span>
-    <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>/usr/local/bin:/usr/local/sbin:<span class="nv">$PATH</span>
-</code></pre></div><div class="highlight"><pre><code class="language-bash" data-lang="bash">    brew update
-    brew <span class="nb">install </span>pkg-config
-    brew <span class="nb">install </span>graphviz
-    brew <span class="nb">install </span>openblas
-    brew tap homebrew/core
-    brew <span class="nb">install </span>opencv
-
-    <span class="c"># If building with MKLDNN</span>
-    brew <span class="nb">install </span>llvm
-
-    <span class="c"># Get pip</span>
-    easy_install pip
-    <span class="c"># For visualization of network graphs</span>
-    pip <span class="nb">install </span><span class="nv">graphviz</span><span class="o">==</span>0.8.4
-    <span class="c"># Jupyter notebook</span>
-    pip <span class="nb">install </span>jupyter
+<p><strong>Step 3:</strong> Build MXNet core shared library.</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">rm</span> <span class="nt">-rf</span> build
+<span class="nb">mkdir</span> <span class="nt">-p</span> build <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build
+cmake <span class="nt">-GNinja</span> <span class="nt">-C</span> ../config.cmake ..
+cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt">--parallel</span> 8
 </code></pre></div>
-<h3 id="build-mxnet-shared-library">Build MXNet Shared Library</h3>
+<p>You can increase the <code>--parallel 8</code> argument to match the number of processor
+cores of your computer.</p>
 
-<p>After you have installed the dependencies, pull the MXNet source code from Git and build MXNet to produce an MXNet library called <code>libmxnet.so</code>. You can clone the repository as described in the following code block, or you may try the <a href="download">download links</a> for your desired MXNet version.</p>
+<p>After a successful build, you will find the <code>libmxnet.dylib</code> in the <code>build</code>
+folder in your MXNet project root. <code>libmxnet.dylib</code> is required to install
+language bindings described in the next section.</p>
 
-<p>The file called <code>osx.mk</code> has the configuration required for building MXNet on OS X. First copy <code>make/osx.mk</code> into <code>config.mk</code>, which is used by the <code>make</code> command:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">    git clone <span class="nt">--recursive</span> https://github.com/apache/incubator-mxnet ~/mxnet
-    <span class="nb">cd</span> ~/mxnet
-    <span class="nb">cp </span>make/osx.mk ./config.mk
-    <span class="nb">echo</span> <span class="s2">"USE_BLAS = openblas"</span> <span class="o">&gt;&gt;</span> ./config.mk
-    <span class="nb">echo</span> <span class="s2">"ADD_CFLAGS += -I/usr/local/opt/openblas/include"</span> <span class="o">&gt;&gt;</span> ./config.mk
-    <span class="nb">echo</span> <span class="s2">"ADD_LDFLAGS += -L/usr/local/opt/openblas/lib"</span> <span class="o">&gt;&gt;</span> ./config.mk
-    <span class="nb">echo</span> <span class="s2">"ADD_LDFLAGS += -L/usr/local/lib/graphviz/"</span> <span class="o">&gt;&gt;</span> ./config.mk
-    make <span class="nt">-j</span><span class="si">$(</span>sysctl <span class="nt">-n</span> hw.ncpu<span class="si">)</span>
-</code></pre></div>
-<p>To build with MKLDNN</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s2">"CC=</span><span class="si">$(</span>brew <span class="nt">--prefix</span> llvm<span class="si">)</span><span class="s2">/bin/clang"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nb">echo</span> <span class="s2">"CXX=</span><span class="si">$(</span>brew <span class="nt">--prefix</span> llvm<span class="si">)</span><span class="s2">/bin/clang++"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nb">echo</span> <span class="s2">"USE_OPENCV=1"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nb">echo</span> <span class="s2">"USE_OPENMP=1"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nb">echo</span> <span class="s2">"USE_MKLDNN=1"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nb">echo</span> <span class="s2">"USE_BLAS=apple"</span> <span class="o">&gt;&gt;</span> ./config.mk
-<span class="nv">LIBRARY_PATH</span><span class="o">=</span><span class="si">$(</span>brew <span class="nt">--prefix</span> llvm<span class="si">)</span>/lib/ make <span class="nt">-j</span> <span class="si">$(</span>sysctl <span class="nt">-n</span> hw.ncpu<span class="si">)</span>
-</code></pre></div>
-<p>If building with <code>GPU</code> support, add the following configuration to config.mk and build:
-<code>bash
-    echo &quot;USE_CUDA = 1&quot; &gt;&gt; ./config.mk
-    echo &quot;USE_CUDA_PATH = /usr/local/cuda&quot; &gt;&gt; ./config.mk
-    echo &quot;USE_CUDNN = 1&quot; &gt;&gt; ./config.mk
-    make -j$(sysctl -n hw.ncpu)
-</code>
-<strong>Note:</strong> To change build parameters, edit <code>config.mk</code>.</p>
+<p><hr></p>
 
-<p>&nbsp;</p>
+<h2 id="installing-language-packages-for-mxnet">Installing Language Packages for MXNet</h2>
 
-<p>We have installed MXNet core library. Next, we will install MXNet interface package for the programming language of your choice:
+<p>After you have installed the MXNet core library. You may install MXNet interface
+packages for the programming language of your choice:
 - <a href="#install-mxnet-for-python">Python</a>
-- <a href="#install-the-mxnet-package-for-r">R</a>
+- <a href="#install-the-mxnet-package-for-c&plus;&plus;">C++</a>
+- <a href="#install-the-mxnet-package-for-clojure">Clojure</a>
 - <a href="#install-the-mxnet-package-for-julia">Julia</a>
+- <a href="#install-the-mxnet-package-for-perl">Perl</a>
+- <a href="#install-the-mxnet-package-for-r">R</a>
 - <a href="#install-the-mxnet-package-for-scala">Scala</a>
-- <a href="#install-the-mxnet-package-for-perl">Perl</a></p>
+- <a href="#install-the-mxnet-package-for-java">Java</a></p>
 
-<h2 id="install-mxnet-for-python">Install MXNet for Python</h2>
+<p><hr></p>
+
+<h3 id="install-mxnet-for-python">Install MXNet for Python</h3>
 
 <p>To install the MXNet Python binding navigate to the root of the MXNet folder then run the following:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd </span>python
-<span class="nv">$ </span>pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>python
+pip <span class="nb">install</span> <span class="nt">--user</span> <span class="nt">-e</span> <span class="nb">.</span>
 </code></pre></div>
-<p>Note that the <code>-e</code> flag is optional. It is equivalent to <code>--editable</code> and means that if you edit the source files, these changes will be reflected in the package installed.</p>
+<p>Note that the <code>-e</code> flag is optional. It is equivalent to <code>--editable</code> and means
+that if you edit the source files, these changes will be reflected in the
+package installed.</p>
 
-<h2 id="install-the-mxnet-package-for-r">Install the MXNet Package for R</h2>
+<h3 id="install-the-mxnet-package-for-c">Install the MXNet Package for C++</h3>
 
-<p>You have 2 options:
-1. Building MXNet with the Prebuilt Binary Package
-2. Building MXNet from Source Code</p>
+<p>Refer to the <a href="c_plus_plus">C++ Package setup guide</a>.
+<hr></p>
 
-<h3 id="building-mxnet-with-the-prebuilt-binary-package">Building MXNet with the Prebuilt Binary Package</h3>
+<h3 id="install-the-mxnet-package-for-clojure">Install the MXNet Package for Clojure</h3>
 
-<p>Install OpenCV and OpenBLAS.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">brew <span class="nb">install </span>opencv
-brew <span class="nb">install </span>openblas@0.3.1
-</code></pre></div>
-<p>Add a soft link to the OpenBLAS installation. This example links the 0.3.1 version:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">ln</span> <span class="nt">-sf</span> /usr/local/opt/openblas/lib/libopenblasp-r0.3.<span class="k">*</span> /usr/local/opt/openblas/lib/libopenblasp-r0.3.1.dylib
-</code></pre></div>
-<p>Note: packages for 3.6.x are not yet available.</p>
+<p>Refer to the <a href="https://github.com/apache/incubator-mxnet/tree/master/contrib/clojure-package">Clojure setup guide</a>.
+<hr></p>
 
-<p>Install 3.5.x of R from <a href="https://cran.r-project.org/bin/macosx/">CRAN</a>. The latest is <a href="https://cran.r-project.org/bin/macosx/R-3.5.3.pkg">v3.5.3</a>.</p>
+<h3 id="install-the-mxnet-package-for-r">Install the MXNet Package for R</h3>
 
-<p>For OS X (Mac) users, MXNet provides a prebuilt binary package for CPUs. The prebuilt package is updated weekly. You can install the package directly in the R console using the following commands:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="w">  </span><span class="n">cran</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">getOption</span><span class="p">(</span><span class="s2">"repos"</span><span class="p">)</span><span class="w">
-  </span><span class="n">cran</span><span class="p">[</span><span class="s2">"dmlc"</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"https://apache-mxnet.s3-accelerate.dualstack.amazonaws.com/R/CRAN/"</span><span class="w">
-  </span><span class="n">options</span><span class="p">(</span><span class="n">repos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cran</span><span class="p">)</span><span class="w">
-  </span><span class="n">install.packages</span><span class="p">(</span><span class="s2">"mxnet"</span><span class="p">)</span><span class="w">
-</span></code></pre></div>
-<h3 id="building-mxnet-from-source-code">Building MXNet from Source Code</h3>
-
-<p>Run the following commands to install the MXNet dependencies and build the MXNet R package.</p>
+<p>Run the following commands to install the MXNet dependencies and build the MXNet
+R package.</p>
 <div class="highlight"><pre><code class="language-r" data-lang="r"><span class="w">    </span><span class="n">Rscript</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="s2">"install.packages('devtools', repo = 'https://cran.rstudio.com')"</span><span class="w">
 </span></code></pre></div><div class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">cd </span>R-package
     Rscript <span class="nt">-e</span> <span class="s2">"library(devtools); library(methods); options(repos=c(CRAN='https://cran.rstudio.com')); install_deps(dependencies = TRUE)"</span>
@@ -290,7 +279,7 @@ brew <span class="nb">install </span>openblas@0.3.1
 </code></pre></div>
 <p>For more details about installing and using MXNet with Julia, see the <a href="/api/julia">MXNet Julia documentation</a>.</p>
 
-<h2 id="install-the-mxnet-package-for-scala">Install the MXNet Package for Scala</h2>
+<h3 id="install-the-mxnet-package-for-scala">Install the MXNet Package for Scala</h3>
 
 <p>To use the MXNet-Scala package, you can acquire the Maven package as a dependency.</p>
 
@@ -298,7 +287,7 @@ brew <span class="nb">install </span>openblas@0.3.1
 
 <p>If you use IntelliJ or a similar IDE, you may want to follow the <a href="/api/scala/docs/tutorials/mxnet_scala_on_intellij">MXNet-Scala on IntelliJ tutorial</a> instead.</p>
 
-<h2 id="install-the-mxnet-package-for-perl">Install the MXNet Package for Perl</h2>
+<h3 id="install-the-mxnet-package-for-perl">Install the MXNet Package for Perl</h3>
 
 <p>Before you build MXNet for Perl from source code, you must complete <a href="#build-the-shared-library">building the shared library</a>.
 After you build the shared library, run the following command from the MXNet source root directory to build the MXNet Perl package:</p>
@@ -329,6 +318,11 @@ After you build the shared library, run the following command from the MXNet sou
     perl Makefile.PL <span class="nv">INSTALL_BASE</span><span class="o">=</span><span class="k">${</span><span class="nv">HOME</span><span class="k">}</span>/perl5
     make <span class="nb">install</span>
 </code></pre></div>
+<h2 id="contributions">Contributions</h2>
+
+<p>You are more than welcome to contribute easy installation scripts for other operating systems and programming languages.
+See the <a href="/community/contribute">community contributions page</a> for further information.</p>
+
 <h2 id="next-steps">Next Steps</h2>
 
 <ul>

@@ -2022,7 +2022,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">c_str</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="Symbol.tojson"><a class="viewcode-back" href="../../../api/symbol/symbol.html#mxnet.symbol.Symbol.tojson">[docs]</a>    <span class="k">def</span> <span class="nf">tojson</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Symbol.tojson"><a class="viewcode-back" href="../../../api/symbol/symbol.html#mxnet.symbol.Symbol.tojson">[docs]</a>    <span class="k">def</span> <span class="nf">tojson</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves symbol to a JSON string.</span>
 
 <span class="sd">        See Also</span>
@@ -2030,7 +2030,12 @@
 <span class="sd">        symbol.load_json : Used to load symbol from JSON string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">json_str</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>
-        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToJSON</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">json_str</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">remove_amp_cast</span><span class="p">:</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolRemoveAmpCast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToJSON</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">json_str</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSymbolSaveToJSON</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">json_str</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">py_str</span><span class="p">(</span><span class="n">json_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
