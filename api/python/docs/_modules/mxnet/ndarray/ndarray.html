@@ -5653,6 +5653,7 @@
         <span class="s2">&quot;int32&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;uint8&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;uint32&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;uint64&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s1">&#39;float16&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -5689,7 +5690,7 @@
     <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">Py_DecRef</span><span class="p">(</span><span class="n">pyobj</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="from_numpy"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.from_numpy">[docs]</a><span class="k">def</span> <span class="nf">from_numpy</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">zero_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="from_numpy"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.from_numpy">[docs]</a><span class="k">def</span> <span class="nf">from_numpy</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">zero_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">array_cls</span><span class="o">=</span><span class="n">NDArray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns an MXNet&#39;s ndarray backed by numpy&#39;s ndarray.</span>
 <span class="sd">    When `zero_copy` is set to be true,</span>
 <span class="sd">    this API consumes numpy&#39;s ndarray and produces MXNet&#39;s ndarray</span>
@@ -5701,10 +5702,11 @@
 <span class="sd">    ----------</span>
 <span class="sd">    ndarray: numpy.ndarray</span>
 <span class="sd">        input data</span>
-
 <span class="sd">    zero_copy: bool</span>
 <span class="sd">        Whether we use DLPack&#39;s zero-copy conversion to convert to MXNet&#39;s NDArray.</span>
 <span class="sd">        This is only available for c-contiguous arrays, i.e. array.flags[C_CONTIGUOUS] == True.</span>
+<span class="sd">    array_cls: ndarray class type</span>
+<span class="sd">        The class type of the output array.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -5748,7 +5750,7 @@
     <span class="n">c_obj</span> <span class="o">=</span> <span class="n">_make_dl_managed_tensor</span><span class="p">(</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
     <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayFromDLPackEx</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">c_obj</span><span class="p">),</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">handle</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">array_cls</span><span class="p">(</span><span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
 </pre></div>
 
         </div>
