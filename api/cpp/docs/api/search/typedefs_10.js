@@ -12,7 +12,7 @@ var searchData=
   ['storagetypevector',['StorageTypeVector',['../namespacemxnet.html#a6606bef15f41cccade14c9400e8447cf',1,'mxnet']]],
   ['storagevector',['StorageVector',['../namespacennvm.html#ad3ab8a09faa366b06b78d31c65f620af',1,'nnvm']]],
   ['strupdater',['StrUpdater',['../classmxnet_1_1KVStore.html#abe6963a386cc6dc579029349a447d1cb',1,'mxnet::KVStore']]],
-  ['supportedops_5ft',['supportedOps_t',['../lib__api_8h.html#a852d337bb013884a07213da1e7c55cb7',1,'lib_api.h']]],
+  ['supportedops_5ft',['supportedOps_t',['../lib__api_8h.html#ad62981a49d9c9ab052cd21095920c5b9',1,'lib_api.h']]],
   ['symbolhandle',['SymbolHandle',['../include_2mxnet_2c__api_8h.html#a301e9a7722b326126defdd39ccd99b37',1,'SymbolHandle():&#160;c_api.h'],['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#a301e9a7722b326126defdd39ccd99b37',1,'SymbolHandle():&#160;c_api.h']]],
   ['syncfn',['SyncFn',['../classmxnet_1_1Engine.html#a07f30ab85fca436e1bbcc72cd4d8bb35',1,'mxnet::Engine']]]
 ];

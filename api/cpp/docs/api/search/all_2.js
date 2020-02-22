@@ -3,8 +3,6 @@ var searchData=
   ['a1',['a1',['../structmshadow_1_1expr_1_1SwapAxisExp.html#a793de7a06cc954a41b84f72c161c7f75',1,'mshadow::expr::SwapAxisExp::a1()'],['../structmshadow_1_1expr_1_1Plan_3_01SwapAxisExp_3_01SrcExp_00_01DType_00_01dimsrc_00_01m__a1_00_01a2_01_4_00_01DType_01_4.html#a98e51734090585f1cc1d5f9798f8dba3',1,'mshadow::expr::Plan&lt; SwapAxisExp&lt; SrcExp, DType, dimsrc, m_a1, a2 &gt;, DType &gt;::a1()']]],
   ['abnormalchecker',['AbnormalChecker',['../namespacemxnet.html#a286a016d2cb3a88a394adbaead2e3303a8dd3c3f3f02ca0da2fe3653fb7483373',1,'mxnet']]],
   ['abs_5fsquare',['abs_square',['../structmshadow_1_1op_1_1complex_1_1abs__square.html',1,'mshadow::op::complex']]],
-  ['accept_5fmap',['accept_map',['../classCustomPartitioner.html#a58c64c27ffc84a30ffcbf00d645dd32c',1,'CustomPartitioner']]],
-  ['acceptsubgraph_5ft',['acceptSubgraph_t',['../lib__api_8h.html#aa4e1a51bfe084c15da36fe984b8ce18e',1,'lib_api.h']]],
   ['accum_5fdata_5ftype',['accum_data_type',['../structdnnl__convolution__desc__t.html#a09ca2f54dc7a24ab71ab3e178f519dcd',1,'dnnl_convolution_desc_t::accum_data_type()'],['../structdnnl__pooling__desc__t.html#add70bfb59910284ac5600554560c8e55',1,'dnnl_pooling_desc_t::accum_data_type()'],['../structdnnl__inner__product__desc__t.html#a8fd7ff28b94fc9d485371536f6a2a1c8',1,'dnnl_inner_product_desc_t::accum_data_type()']]],
   ['accuracy',['Accuracy',['../classmxnet_1_1cpp_1_1Accuracy.html',1,'mxnet::cpp']]],
   ['accuracy',['Accuracy',['../classmxnet_1_1cpp_1_1Accuracy.html#a007228615a127c80b63faf9a2606b9ce',1,'mxnet::cpp::Accuracy']]],

@@ -1,7 +1,6 @@
 var searchData=
 [
   ['a1',['a1',['../structmshadow_1_1expr_1_1SwapAxisExp.html#a793de7a06cc954a41b84f72c161c7f75',1,'mshadow::expr::SwapAxisExp::a1()'],['../structmshadow_1_1expr_1_1Plan_3_01SwapAxisExp_3_01SrcExp_00_01DType_00_01dimsrc_00_01m__a1_00_01a2_01_4_00_01DType_01_4.html#a98e51734090585f1cc1d5f9798f8dba3',1,'mshadow::expr::Plan&lt; SwapAxisExp&lt; SrcExp, DType, dimsrc, m_a1, a2 &gt;, DType &gt;::a1()']]],
-  ['accept_5fmap',['accept_map',['../classCustomPartitioner.html#a58c64c27ffc84a30ffcbf00d645dd32c',1,'CustomPartitioner']]],
   ['accum_5fdata_5ftype',['accum_data_type',['../structdnnl__convolution__desc__t.html#a09ca2f54dc7a24ab71ab3e178f519dcd',1,'dnnl_convolution_desc_t::accum_data_type()'],['../structdnnl__pooling__desc__t.html#add70bfb59910284ac5600554560c8e55',1,'dnnl_pooling_desc_t::accum_data_type()'],['../structdnnl__inner__product__desc__t.html#a8fd7ff28b94fc9d485371536f6a2a1c8',1,'dnnl_inner_product_desc_t::accum_data_type()']]],
   ['activated',['activated',['../classmxnet_1_1cpp_1_1Monitor.html#a15202e3472d49d457b92810f14b0c837',1,'mxnet::cpp::Monitor']]],
   ['activation_5fkind',['activation_kind',['../structdnnl__rnn__desc__t.html#ac25cfdc16c19ba5d2b3c1eba086e8a75',1,'dnnl_rnn_desc_t']]],

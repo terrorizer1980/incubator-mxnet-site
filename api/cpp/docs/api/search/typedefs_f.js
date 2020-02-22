@@ -5,5 +5,6 @@ var searchData=
   ['real_5ft',['real_t',['../namespacedmlc.html#ab23d78846b42ebd3a436e3bc295b73f4',1,'dmlc::real_t()'],['../namespacemxnet.html#a4421326e33f2a848cb2fa3e70ab24ff4',1,'mxnet::real_t()']]],
   ['recordiohandle',['RecordIOHandle',['../include_2mxnet_2c__api_8h.html#a4cc6d9b5a408760fc893c0b568d6aeae',1,'c_api.h']]],
   ['reverse_5fiterator',['reverse_iterator',['../classnnvm_1_1Layout.html#a271f83387eac34590453e672f9b6d5e3',1,'nnvm::Layout']]],
+  ['reviewsubgraph_5ft',['reviewSubgraph_t',['../lib__api_8h.html#a940217b5bc54255ff21d02fb9ada9151',1,'lib_api.h']]],
   ['rtchandle',['RtcHandle',['../include_2mxnet_2c__api_8h.html#a58a159a7417ad988206970d46c4c7ee8',1,'c_api.h']]]
 ];

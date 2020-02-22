@@ -1010,7 +1010,7 @@ var searchData=
   ['mxlib_5fopregget_5fstr',['MXLIB_OPREGGET_STR',['../lib__api_8h.html#addceae596034e042d887954af8499f06',1,'lib_api.h']]],
   ['mxlib_5fopregsize_5fstr',['MXLIB_OPREGSIZE_STR',['../lib__api_8h.html#ac39728fb75d241b62d4ed9261b7ddca3',1,'lib_api.h']]],
   ['mxlib_5fopversion_5fstr',['MXLIB_OPVERSION_STR',['../lib__api_8h.html#a13594d09f1287481f1b7b6b695d6c1d8',1,'lib_api.h']]],
-  ['mxlib_5fpartcallacceptsubgraph_5fstr',['MXLIB_PARTCALLACCEPTSUBGRAPH_STR',['../lib__api_8h.html#a99982b0621dab9c41ff9eef8a630cf52',1,'lib_api.h']]],
+  ['mxlib_5fpartcallreviewsubgraph_5fstr',['MXLIB_PARTCALLREVIEWSUBGRAPH_STR',['../lib__api_8h.html#aebf42394c4714072d81f4612a9d425fe',1,'lib_api.h']]],
   ['mxlib_5fpartcallsupportedops_5fstr',['MXLIB_PARTCALLSUPPORTEDOPS_STR',['../lib__api_8h.html#a7e8e351e67da4f1822042c0d01e8bbf4',1,'lib_api.h']]],
   ['mxlib_5fpartregget_5fstr',['MXLIB_PARTREGGET_STR',['../lib__api_8h.html#a76dda0c1c4d6eafc6ac80a72527ec556',1,'lib_api.h']]],
   ['mxlib_5fpartreggetcount_5fstr',['MXLIB_PARTREGGETCOUNT_STR',['../lib__api_8h.html#a96ebb8de1ce9d8f8a493e262b477f0b7',1,'lib_api.h']]],
