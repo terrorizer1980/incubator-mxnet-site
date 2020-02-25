@@ -1,7 +1,8 @@
 var searchData=
 [
   ['mask_2eh',['mask.h',['../mask_8h.html',1,'']]],
-  ['memory_2eh',['memory.h',['../memory_8h.html',1,'']]],
+  ['memory_2eh',['memory.h',['../3rdparty_2dmlc-core_2include_2dmlc_2memory_8h.html',1,'']]],
+  ['memory_2eh',['memory.h',['../include_2mxnet_2runtime_2memory_8h.html',1,'']]],
   ['memory_5fio_2eh',['memory_io.h',['../memory__io_8h.html',1,'']]],
   ['metric_2eh',['metric.h',['../metric_8h.html',1,'']]],
   ['mirror_2eh',['mirror.h',['../mirror_8h.html',1,'']]],

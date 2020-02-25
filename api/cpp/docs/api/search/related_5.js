@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['handler_3c_20luaref_20_3e',['Handler&lt; LuaRef &gt;',['../classdmlc_1_1LuaRef.html#a97a0aabb9d8d59dbccf720f68ecc951b',1,'dmlc::LuaRef']]],
-  ['luaref',['LuaRef',['../classdmlc_1_1LuaState.html#ad76f409b883ed4be17beb2f183154ec4',1,'dmlc::LuaState']]],
-  ['luastate',['LuaState',['../classdmlc_1_1LuaRef.html#a9aa251d710bba4f257a519ebc5d01d51',1,'dmlc::LuaRef']]]
+  ['imperative',['Imperative',['../classmxnet_1_1NDArray.html#add286ab9a359eb017008c9a3ff53701f',1,'mxnet::NDArray']]]
 ];

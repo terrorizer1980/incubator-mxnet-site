@@ -1,4 +1,10 @@
 var searchData=
 [
-  ['zero',['zero',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01float_01_4.html#a98a73866e9513d63627f935531456ca7',1,'mxnet::common::cuda::CublasType&lt; float &gt;::zero()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01double_01_4.html#acb859823c71c7c2aeeb55de510dcb1b4',1,'mxnet::common::cuda::CublasType&lt; double &gt;::zero()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01mshadow_1_1half_1_1half__t_01_4.html#ae8222ef1a6cba23c5f196393d74c45ce',1,'mxnet::common::cuda::CublasType&lt; mshadow::half::half_t &gt;::zero()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01uint8__t_01_4.html#a05d6f7ce44f65f2dee8d919005359ad8',1,'mxnet::common::cuda::CublasType&lt; uint8_t &gt;::zero()'],['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01int32__t_01_4.html#afd9ad4f6ea376d89dfb5f9c77edf8eba',1,'mxnet::common::cuda::CublasType&lt; int32_t &gt;::zero()']]]
+  ['weak_5fref',['weak_ref',['../structnnvm_1_1IndexedGraph_1_1Node.html#a1fb87e2c471af26277432adeb1c3396f',1,'nnvm::IndexedGraph::Node']]],
+  ['weight',['weight',['../classdmlc_1_1Row.html#a7d3297d9d1e0345fd5cbcc79523c767b',1,'dmlc::Row::weight()'],['../structdmlc_1_1RowBlock.html#a34bbb9cd6aacf2544995c86c62ff4c6e',1,'dmlc::RowBlock::weight()']]],
+  ['weights_5fdesc',['weights_desc',['../structdnnl__convolution__desc__t.html#aeb5243cdb8efc246eecd28398716b76f',1,'dnnl_convolution_desc_t::weights_desc()'],['../structdnnl__inner__product__desc__t.html#af07d9a1980955d116ecd8294a1164459',1,'dnnl_inner_product_desc_t::weights_desc()']]],
+  ['weights_5fiter_5fdesc',['weights_iter_desc',['../structdnnl__rnn__desc__t.html#afb36d75add9d2606cc81d5bd18288d8e',1,'dnnl_rnn_desc_t']]],
+  ['weights_5flayer_5fdesc',['weights_layer_desc',['../structdnnl__rnn__desc__t.html#a1856a3555d8abf5be371b161b559b438',1,'dnnl_rnn_desc_t']]],
+  ['wino_5fdesc',['wino_desc',['../structdnnl__memory__desc__t.html#a17cbfada7a6188b0531ed563f44e6976',1,'dnnl_memory_desc_t']]],
+  ['wino_5fformat',['wino_format',['../structdnnl__wino__desc__t.html#a07b5b3c10724d9a9a68e5edebffc6e50',1,'dnnl_wino_desc_t']]]
 ];

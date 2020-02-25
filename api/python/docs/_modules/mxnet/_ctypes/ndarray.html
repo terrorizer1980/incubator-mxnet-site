@@ -684,6 +684,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">c_handle_array</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">CachedOpHandle</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">check_call</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">_global_var</span>
 
 
 <span class="k">def</span> <span class="nf">_monitor_callback_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
@@ -715,23 +716,7 @@
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayFree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">_ndarray_cls</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">())</span>
-
-
-<span class="n">_ndarray_cls</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">_np_ndarray_cls</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="k">def</span> <span class="nf">_set_ndarray_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the symbolic class to be cls&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">_ndarray_cls</span>
-    <span class="n">_ndarray_cls</span> <span class="o">=</span> <span class="bp">cls</span>
-
-
-<span class="k">def</span> <span class="nf">_set_np_ndarray_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the symbolic class to be cls&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">_np_ndarray_cls</span>
-    <span class="n">_np_ndarray_cls</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">_global_var</span><span class="o">.</span><span class="n">_ndarray_cls</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">())</span>
 
 
 <span class="k">def</span> <span class="nf">_imperative_invoke</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">ndargs</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">is_np_op</span><span class="p">,</span> <span class="n">output_is_list</span><span class="p">):</span>
@@ -763,7 +748,7 @@
         <span class="n">c_str_array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">]),</span>
         <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">out_stypes</span><span class="p">)))</span>
 
-    <span class="n">create_ndarray_fn</span> <span class="o">=</span> <span class="n">_np_ndarray_cls</span> <span class="k">if</span> <span class="n">is_np_op</span> <span class="k">else</span> <span class="n">_ndarray_cls</span>
+    <span class="n">create_ndarray_fn</span> <span class="o">=</span> <span class="n">_global_var</span><span class="o">.</span><span class="n">_np_ndarray_cls</span> <span class="k">if</span> <span class="n">is_np_op</span> <span class="k">else</span> <span class="n">_global_var</span><span class="o">.</span><span class="n">_ndarray_cls</span>
     <span class="k">if</span> <span class="n">original_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">original_output</span>
     <span class="k">if</span> <span class="n">num_output</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">output_is_list</span><span class="p">:</span>
@@ -828,7 +813,7 @@
 
         <span class="k">if</span> <span class="n">original_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">original_output</span>
-        <span class="n">create_ndarray_fn</span> <span class="o">=</span> <span class="n">_np_ndarray_cls</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_np_sym</span> <span class="k">else</span> <span class="n">_ndarray_cls</span>
+        <span class="n">create_ndarray_fn</span> <span class="o">=</span> <span class="n">_global_var</span><span class="o">.</span><span class="n">_np_ndarray_cls</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_np_sym</span> <span class="k">else</span> <span class="n">_global_var</span><span class="o">.</span><span class="n">_ndarray_cls</span>
         <span class="k">if</span> <span class="n">num_output</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">create_ndarray_fn</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">output_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">NDArrayHandle</span><span class="p">),</span>
                                      <span class="n">stype</span><span class="o">=</span><span class="n">out_stypes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>

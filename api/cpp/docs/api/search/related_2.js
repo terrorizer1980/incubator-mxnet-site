@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['registry_3c_20op_20_3e',['Registry&lt; Op &gt;',['../classnnvm_1_1Op.html#ac27d3a3a32f9258272ec64e446b539eb',1,'nnvm::Op']]]
+  ['config',['Config',['../classdmlc_1_1Config_1_1ConfigIterator.html#ac3da7e21a05bf8852638db7e4dd1b81a',1,'dmlc::Config::ConfigIterator']]]
 ];

@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['factor_5ftype',['factor_type',['../classmxnet_1_1cpp_1_1Xavier.html#aecdf5a414d18167bbbd48a84531f61c7',1,'mxnet::cpp::Xavier']]],
-  ['field',['field',['../classdmlc_1_1Row.html#af467a5aac22cdfd49952f8487e0aa04e',1,'dmlc::Row::field()'],['../structdmlc_1_1RowBlock.html#a8b1ae1de1eecc081042944ba180023b7',1,'dmlc::RowBlock::field()']]],
-  ['flags',['flags',['../structdnnl__memory__extra__desc__t.html#a31ba8b2b692bb3f77023f8f5f1cb2bcb',1,'dnnl_memory_extra_desc_t::flags()'],['../structdnnl__batch__normalization__desc__t.html#a6776a23c3a63580e4524994c68654d78',1,'dnnl_batch_normalization_desc_t::flags()'],['../structdnnl__layer__normalization__desc__t.html#a070cb38389b0c0c3434f8f48cf7c9f48',1,'dnnl_layer_normalization_desc_t::flags()'],['../structdnnl__rnn__desc__t.html#aaafd96a309b11d4d88a8f83530ae57b8',1,'dnnl_rnn_desc_t::flags()']]],
-  ['format',['format',['../structdnnl__rnn__packed__desc__t.html#a9c864a86aed452bb689c7ff625998122',1,'dnnl_rnn_packed_desc_t']]],
-  ['format_5fdesc',['format_desc',['../structdnnl__memory__desc__t.html#af4d55e681d75413385a316c2719485ab',1,'dnnl_memory_desc_t']]],
-  ['format_5fkind',['format_kind',['../structdnnl__memory__desc__t.html#ae6f8322c5cff0068a97e7fba2f123e2c',1,'dnnl_memory_desc_t']]],
-  ['forward',['forward',['../structNativeOpInfo.html#ae4deb88375716334d58f3dc28e693d2d',1,'NativeOpInfo::forward()'],['../structNDArrayOpInfo.html#ad39c62943775f93fd5cb1fdc39aa38a5',1,'NDArrayOpInfo::forward()']]],
-  ['forward_5fctx_5fcstr',['forward_ctx_cstr',['../classCustomOp.html#ab8890269c55585a8190e75c0399d3a65',1,'CustomOp']]],
-  ['forward_5ffp',['forward_fp',['../classCustomOp.html#a9a04a0ba769312d6330babbfd0461cf9',1,'CustomOp']]],
-  ['fresh_5fout_5fgrad',['fresh_out_grad',['../classmxnet_1_1Imperative_1_1AGInfo.html#aa98f7d65123fb64697769cfb952de310',1,'mxnet::Imperative::AGInfo']]]
+  ['enabled',['enabled',['../structLibFeature.html#a9918c579588ba4d31818212618d2d33d',1,'LibFeature']]],
+  ['end',['end',['../classmxnet_1_1cpp_1_1Uniform.html#aeef186638253f0fbc4e2f1a81ba7a145',1,'mxnet::cpp::Uniform']]],
+  ['end_5f',['end_',['../structmshadow_1_1expr_1_1SliceExExp.html#adc25b5aaaeaae2eaaf4a691f95f881c8',1,'mshadow::expr::SliceExExp']]],
+  ['epoch_5fsize',['epoch_size',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a1e955308739787e7dbd9c9026d18a3ce',1,'mxnet::cpp::FeedForwardConfig']]],
+  ['exes',['exes',['../classmxnet_1_1cpp_1_1Monitor.html#a036886927625e741a7360ab72a2832e1',1,'mxnet::cpp::Monitor']]],
+  ['exp',['exp',['../structmshadow_1_1expr_1_1TypecastExp.html#ab06a667c92d1e065532653024e603719',1,'mshadow::expr::TypecastExp::exp()'],['../structmshadow_1_1expr_1_1TransposeExp.html#a4dc0f3df318d1d4b21fb6630dae7edb9',1,'mshadow::expr::TransposeExp::exp()']]],
+  ['extra',['extra',['../structdnnl__memory__desc__t.html#ac60269949e318245e74713a7a0dae135',1,'dnnl_memory_desc_t']]],
+  ['extra_5fdata',['extra_data',['../structmxnet_1_1DataInst.html#a311b93ed629984fdcb29cb346d3062ee',1,'mxnet::DataInst::extra_data()'],['../structmxnet_1_1DataBatch.html#a2e9faeff00dd061f04a88c3ea5758aa2',1,'mxnet::DataBatch::extra_data()']]]
 ];

@@ -7,6 +7,7 @@ var searchData=
   ['cpp',['cpp',['../namespacemxnet_1_1cpp.html',1,'mxnet']]],
   ['csr',['csr',['../namespacemxnet_1_1csr.html',1,'mxnet']]],
   ['cuda',['cuda',['../namespacemxnet_1_1common_1_1cuda.html',1,'mxnet::common']]],
+  ['detail',['detail',['../namespacemxnet_1_1runtime_1_1detail.html',1,'mxnet::runtime']]],
   ['details',['details',['../namespacemxnet_1_1cpp_1_1details.html',1,'mxnet::cpp']]],
   ['engine',['engine',['../namespacemxnet_1_1engine.html',1,'mxnet']]],
   ['expr',['expr',['../namespacemshadow_1_1expr.html',1,'mshadow']]],
@@ -24,6 +25,7 @@ var searchData=
   ['random',['random',['../namespacemxnet_1_1common_1_1random.html',1,'mxnet::common']]],
   ['red',['red',['../namespacemshadow_1_1red.html',1,'mshadow']]],
   ['rowsparse',['rowsparse',['../namespacemxnet_1_1rowsparse.html',1,'mxnet']]],
+  ['runtime',['runtime',['../namespacemxnet_1_1runtime.html',1,'mxnet']]],
   ['sv',['sv',['../namespacemshadow_1_1sv.html',1,'mshadow']]],
   ['type',['type',['../namespacemshadow_1_1expr_1_1type.html',1,'mshadow::expr']]],
   ['utils',['utils',['../namespacemshadow_1_1utils.html',1,'mshadow']]]

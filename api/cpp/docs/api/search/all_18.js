@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['wait',['wait',['../classdmlc_1_1ManualEvent.html#a24af45c7c96d8b9421ed3337c5def886',1,'dmlc::ManualEvent::wait()'],['../structmshadow_1_1Stream_3_01gpu_01_4.html#a46151b12d2eae79e0a1de4adc2a1d706',1,'mshadow::Stream&lt; gpu &gt;::Wait()'],['../structmshadow_1_1Stream.html#ab17a2b049aacf5d71d8860262c4a98fd',1,'mshadow::Stream::Wait()']]],
+  ['wait',['Wait',['../structmshadow_1_1Stream_3_01gpu_01_4.html#a46151b12d2eae79e0a1de4adc2a1d706',1,'mshadow::Stream&lt; gpu &gt;::Wait()'],['../structmshadow_1_1Stream.html#ab17a2b049aacf5d71d8860262c4a98fd',1,'mshadow::Stream::Wait()'],['../classdmlc_1_1ManualEvent.html#a24af45c7c96d8b9421ed3337c5def886',1,'dmlc::ManualEvent::wait()']]],
   ['waitall',['WaitAll',['../classmxnet_1_1cpp_1_1NDArray.html#aeb8b119ca4ad4da3949ac5f7643b66ae',1,'mxnet::cpp::NDArray']]],
   ['waitforall',['WaitForAll',['../classmxnet_1_1Engine.html#a64483aecce780e96056be89d6289e782',1,'mxnet::Engine']]],
   ['waitforvar',['WaitForVar',['../classmxnet_1_1Engine.html#aed51bd7f294d9f2b569764a0c151d883',1,'mxnet::Engine']]],
@@ -13,6 +13,8 @@ var searchData=
   ['weights_5flayer_5fdesc',['weights_layer_desc',['../structdnnl__rnn__desc__t.html#a1856a3555d8abf5be371b161b559b438',1,'dnnl_rnn_desc_t']]],
   ['wino_5fdesc',['wino_desc',['../structdnnl__memory__desc__t.html#a17cbfada7a6188b0531ed563f44e6976',1,'dnnl_memory_desc_t']]],
   ['wino_5fformat',['wino_format',['../structdnnl__wino__desc__t.html#a07b5b3c10724d9a9a68e5edebffc6e50',1,'dnnl_wino_desc_t']]],
+  ['with_5fbits',['with_bits',['../classmxnet_1_1runtime_1_1MXNetDataType.html#a0c9d6f3d0f3c11a110560648b40dfb96',1,'mxnet::runtime::MXNetDataType']]],
+  ['with_5flanes',['with_lanes',['../classmxnet_1_1runtime_1_1MXNetDataType.html#ab3f22498760ef41fa7548d54d4990e5b',1,'mxnet::runtime::MXNetDataType']]],
   ['write',['Write',['../classdmlc_1_1Stream.html#a622f1377a64e841ca80c2dd8e1fa5ffd',1,'dmlc::Stream::Write(const void *ptr, size_t size)=0'],['../classdmlc_1_1Stream.html#a3600b93771ffdb0c3181bd477e045ce7',1,'dmlc::Stream::Write(const T &amp;data)'],['../classdmlc_1_1JSONWriter.html#ac16c9b279f64512117fdefb2ede8662d',1,'dmlc::JSONWriter::Write()'],['../structdmlc_1_1MemoryFixedSizeStream.html#ad654c8490301d8f00a24c5ba95891644',1,'dmlc::MemoryFixedSizeStream::Write()'],['../structdmlc_1_1MemoryStringStream.html#a4044c0c29db112f5b8ae79c6e7d2367e',1,'dmlc::MemoryStringStream::Write()'],['../structdmlc_1_1serializer_1_1Handler.html#a57ace2d259a78520ebdc38b9fb588420',1,'dmlc::serializer::Handler::Write()'],['../classmshadow_1_1utils_1_1IStream.html#ac2d9ef01d47584fe24aeb85fe896867b',1,'mshadow::utils::IStream::Write()']]],
   ['writearray',['WriteArray',['../classdmlc_1_1Stream.html#a3e9f1aae4606bb2dff4e1be8ff5ec079',1,'dmlc::Stream']]],
   ['writearrayitem',['WriteArrayItem',['../classdmlc_1_1JSONWriter.html#a9e8d7d68abca66384cd34872251c5487',1,'dmlc::JSONWriter']]],

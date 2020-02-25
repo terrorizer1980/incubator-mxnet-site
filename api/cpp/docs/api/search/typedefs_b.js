@@ -8,5 +8,8 @@ var searchData=
   ['mxgenericcallback',['MXGenericCallback',['../include_2mxnet_2c__api_8h.html#a0ee6dd8389c0dacae0f7c48156ec2f34',1,'c_api.h']]],
   ['mxkvstoreservercontroller',['MXKVStoreServerController',['../include_2mxnet_2c__api_8h.html#a8caaa3f8c8c3f9a5b11bd35fb2d28fc7',1,'c_api.h']]],
   ['mxkvstorestrupdater',['MXKVStoreStrUpdater',['../include_2mxnet_2c__api_8h.html#ac60268de9baa293170bb527bbac6f887',1,'c_api.h']]],
-  ['mxkvstoreupdater',['MXKVStoreUpdater',['../include_2mxnet_2c__api_8h.html#a854db84443397bf264480d4c20e3f1c4',1,'c_api.h']]]
+  ['mxkvstoreupdater',['MXKVStoreUpdater',['../include_2mxnet_2c__api_8h.html#a854db84443397bf264480d4c20e3f1c4',1,'c_api.h']]],
+  ['mxnetdatatype',['MXNetDataType',['../namespacemxnet.html#a4bbdf831dd26d941c8e3d3fbc3904bfb',1,'mxnet']]],
+  ['mxnetfunctionhandle',['MXNetFunctionHandle',['../c__runtime__api_8h.html#abe4da652882a4e6c478727da7971c167',1,'c_runtime_api.h']]],
+  ['mxnetobjecthandle',['MXNetObjectHandle',['../c__runtime__api_8h.html#a80d606e7a0b9f57099b1ac25aacf227c',1,'c_runtime_api.h']]]
 ];

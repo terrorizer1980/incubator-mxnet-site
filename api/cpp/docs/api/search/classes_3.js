@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['databatch',['DataBatch',['../structmxnet_1_1DataBatch.html',1,'mxnet']]],
   ['databatch',['DataBatch',['../classmxnet_1_1cpp_1_1DataBatch.html',1,'mxnet::cpp']]],
+  ['databatch',['DataBatch',['../structmxnet_1_1DataBatch.html',1,'mxnet']]],
   ['datainst',['DataInst',['../structmxnet_1_1DataInst.html',1,'mxnet']]],
-  ['dataiter',['DataIter',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiter',['DataIter',['../classmxnet_1_1cpp_1_1DataIter.html',1,'mxnet::cpp']]],
+  ['dataiter',['DataIter',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiter_3c_20rowblock_3c_20indextype_2c_20dtype_20_3e_20_3e',['DataIter&lt; RowBlock&lt; IndexType, DType &gt; &gt;',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiteratorreg',['DataIteratorReg',['../structmxnet_1_1DataIteratorReg.html',1,'mxnet']]],
   ['datatype',['DataType',['../structmshadow_1_1DataType.html',1,'mshadow']]],

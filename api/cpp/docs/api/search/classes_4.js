@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['ellipsisobj',['EllipsisObj',['../classmxnet_1_1runtime_1_1EllipsisObj.html',1,'mxnet::runtime']]],
   ['engine',['Engine',['../classmxnet_1_1Engine.html',1,'mxnet']]],
   ['enumnames',['EnumNames',['../structmxnet_1_1features_1_1EnumNames.html',1,'mxnet::features']]],
   ['envarguments',['EnvArguments',['../structmxnet_1_1op_1_1EnvArguments.html',1,'mxnet::op']]],
@@ -83,5 +84,6 @@ var searchData=
   ['expinfo_3c_20transposeexp_3c_20e_2c_20dtype_20_3e_20_3e',['ExpInfo&lt; TransposeExp&lt; E, DType &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TransposeExp_3_01E_00_01DType_01_4_01_4.html',1,'mshadow::expr']]],
   ['expinfo_3c_20transposeindicesexp_3c_20srcexp_2c_20dtype_2c_20dimsrc_2c_20etype_20_3e_20_3e',['ExpInfo&lt; TransposeIndicesExp&lt; SrcExp, DType, dimsrc, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TransposeIndicesExp_3_01SrcExp_00_01DType_00_01dimsrc_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
   ['expinfo_3c_20typecastexp_3c_20dstdtype_2c_20srcdtype_2c_20etype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; TypecastExp&lt; DstDType, SrcDType, EType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01TypecastExp_3_01DstDType_00_01SrcDType_00_01EType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
-  ['expinfo_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01UnaryMapExp_3_01OP_00_01TA_00_01DType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]]
+  ['expinfo_3c_20unarymapexp_3c_20op_2c_20ta_2c_20dtype_2c_20etype_20_3e_20_3e',['ExpInfo&lt; UnaryMapExp&lt; OP, TA, DType, etype &gt; &gt;',['../structmshadow_1_1expr_1_1ExpInfo_3_01UnaryMapExp_3_01OP_00_01TA_00_01DType_00_01etype_01_4_01_4.html',1,'mshadow::expr']]],
+  ['extension_5ftype_5finfo',['extension_type_info',['../structmxnet_1_1runtime_1_1extension__type__info.html',1,'mxnet::runtime']]]
 ];

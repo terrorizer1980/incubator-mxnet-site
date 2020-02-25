@@ -37,8 +37,8 @@ var searchData=
   ['trvalue_3c_20tensor_3c_20device_2c_20dimension_2c_20dtype_20_3e_2c_20device_2c_20dimension_2c_20dtype_20_3e',['TRValue&lt; Tensor&lt; Device, dimension, DType &gt;, Device, dimension, DType &gt;',['../structmshadow_1_1TRValue.html',1,'mshadow']]],
   ['trvalue_3c_20tensor_3c_20mshadow_3a_3acpu_2c_20dimension_2c_20dtype_20_3e_2c_20mshadow_3a_3acpu_2c_20dimension_2c_20dtype_20_3e',['TRValue&lt; Tensor&lt; mshadow::cpu, dimension, DType &gt;, mshadow::cpu, dimension, DType &gt;',['../structmshadow_1_1TRValue.html',1,'mshadow']]],
   ['trvalue_3c_20tensor_3c_20mshadow_3a_3agpu_2c_20dimension_2c_20dtype_20_3e_2c_20mshadow_3a_3agpu_2c_20dimension_2c_20dtype_20_3e',['TRValue&lt; Tensor&lt; mshadow::gpu, dimension, DType &gt;, mshadow::gpu, dimension, DType &gt;',['../structmshadow_1_1TRValue.html',1,'mshadow']]],
-  ['tshape',['TShape',['../classmxnet_1_1TShape.html',1,'mxnet']]],
   ['tshape',['TShape',['../classnnvm_1_1TShape.html',1,'nnvm']]],
+  ['tshape',['TShape',['../classmxnet_1_1TShape.html',1,'mxnet']]],
   ['tuple',['Tuple',['../classmxnet_1_1Tuple.html',1,'mxnet']]],
   ['tuple',['Tuple',['../classnnvm_1_1Tuple.html',1,'nnvm']]],
   ['tuple_3c_20dim_5ft_20_3e',['Tuple&lt; dim_t &gt;',['../classnnvm_1_1Tuple.html',1,'nnvm::Tuple&lt; dim_t &gt;'],['../classmxnet_1_1Tuple.html',1,'mxnet::Tuple&lt; dim_t &gt;']]],
@@ -49,5 +49,9 @@ var searchData=
   ['typecheck',['TypeCheck',['../structmshadow_1_1expr_1_1TypeCheck.html',1,'mshadow::expr']]],
   ['typecheckpass',['TypeCheckPass',['../structmshadow_1_1expr_1_1TypeCheckPass.html',1,'mshadow::expr']]],
   ['typecheckpass_3c_20false_20_3e',['TypeCheckPass&lt; false &gt;',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01false_01_4.html',1,'mshadow::expr']]],
-  ['typecheckpass_3c_20true_20_3e',['TypeCheckPass&lt; true &gt;',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01true_01_4.html',1,'mshadow::expr']]]
+  ['typecheckpass_3c_20true_20_3e',['TypeCheckPass&lt; true &gt;',['../structmshadow_1_1expr_1_1TypeCheckPass_3_01true_01_4.html',1,'mshadow::expr']]],
+  ['typed_5fpacked_5fcall_5fdispatcher',['typed_packed_call_dispatcher',['../structmxnet_1_1runtime_1_1detail_1_1typed__packed__call__dispatcher.html',1,'mxnet::runtime::detail']]],
+  ['typed_5fpacked_5fcall_5fdispatcher_3c_20void_20_3e',['typed_packed_call_dispatcher&lt; void &gt;',['../structmxnet_1_1runtime_1_1detail_1_1typed__packed__call__dispatcher_3_01void_01_4.html',1,'mxnet::runtime::detail']]],
+  ['typedpackedfunc',['TypedPackedFunc',['../classmxnet_1_1runtime_1_1TypedPackedFunc.html',1,'mxnet::runtime']]],
+  ['typedpackedfunc_3c_20r_28args_2e_2e_2e_29_3e',['TypedPackedFunc&lt; R(Args...)&gt;',['../classmxnet_1_1runtime_1_1TypedPackedFunc_3_01R_07Args_8_8_8_08_4.html',1,'mxnet::runtime']]]
 ];

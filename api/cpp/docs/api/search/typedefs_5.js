@@ -7,6 +7,7 @@ var searchData=
   ['fcomputeex',['FComputeEx',['../namespacemxnet.html#a294d2660c065f8d229c27e65f0461e10',1,'mxnet']]],
   ['fcorrectlayout',['FCorrectLayout',['../namespacennvm.html#a2df0ffb0a105133c97d5fbc9d782c618',1,'nnvm']]],
   ['fcreateopstate',['FCreateOpState',['../namespacemxnet.html#ac7ea5e68a319e4f7d7c0b4ee91c2d20f',1,'mxnet']]],
+  ['fdeleter',['FDeleter',['../classmxnet_1_1runtime_1_1Object.html#a0fab6c32914322b17bca50b3abc29a4a',1,'mxnet::runtime::Object']]],
   ['fexectype',['FExecType',['../namespacemxnet.html#a666f1055e5401ecec0278e8ba5790732',1,'mxnet']]],
   ['fgetattrdict',['FGetAttrDict',['../namespacennvm.html#ac04d7b8e69e50b67769cb496c15b5fce',1,'nnvm']]],
   ['fgradient',['FGradient',['../namespacennvm.html#ad12fee9c95a28ac9441c38d66cde559d',1,'nnvm']]],
@@ -33,6 +34,6 @@ var searchData=
   ['fsetinputvarattroncompose',['FSetInputVarAttrOnCompose',['../namespacennvm.html#aa7c5989aee30cef7813c484d12fc922d',1,'nnvm']]],
   ['fstatefulcompute',['FStatefulCompute',['../namespacemxnet.html#a9097a269dd76d833c014149ff3eaab9b',1,'mxnet']]],
   ['fstatefulcomputeex',['FStatefulComputeEx',['../namespacemxnet.html#ab12f1853179b1456152a563edff844a9',1,'mxnet']]],
-  ['ftype',['FType',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#a7290f773b036650e23afef7dfc59e69a',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl']]],
+  ['ftype',['FType',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#a7290f773b036650e23afef7dfc59e69a',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::FType()'],['../classmxnet_1_1runtime_1_1PackedFunc.html#ac40ab6eaaccdd24e7fff95913ee0494d',1,'mxnet::runtime::PackedFunc::FType()']]],
   ['functionhandle',['FunctionHandle',['../include_2mxnet_2c__api_8h.html#a197f06e1d873d34572b679532c268d35',1,'c_api.h']]]
 ];

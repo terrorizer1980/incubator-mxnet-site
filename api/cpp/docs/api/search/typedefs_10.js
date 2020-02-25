@@ -9,6 +9,7 @@ var searchData=
   ['sourceshapefunction',['SourceShapeFunction',['../namespacemxnet_1_1op.html#aa4ae310a00e36e5bfa260fc65205395e',1,'mxnet::op']]],
   ['stat',['Stat',['../classmxnet_1_1cpp_1_1Monitor.html#a9fbd53081c207c3262e5b0576dd3f934',1,'mxnet::cpp::Monitor']]],
   ['statfunc',['StatFunc',['../classmxnet_1_1cpp_1_1Monitor.html#a64cc3d2dc311b10e3a11664b67929bab',1,'mxnet::cpp::Monitor']]],
+  ['storagetype',['StorageType',['../classmxnet_1_1runtime_1_1SimpleObjAllocator_1_1Handler.html#a9675916e50521abebe2401fd65a85dbe',1,'mxnet::runtime::SimpleObjAllocator::Handler::StorageType()'],['../classmxnet_1_1runtime_1_1SimpleObjAllocator_1_1ArrayHandler.html#a6200c13f3e395e2920565e9d8e0897d5',1,'mxnet::runtime::SimpleObjAllocator::ArrayHandler::StorageType()']]],
   ['storagetypevector',['StorageTypeVector',['../namespacemxnet.html#a6606bef15f41cccade14c9400e8447cf',1,'mxnet']]],
   ['storagevector',['StorageVector',['../namespacennvm.html#ad3ab8a09faa366b06b78d31c65f620af',1,'nnvm']]],
   ['strupdater',['StrUpdater',['../classmxnet_1_1KVStore.html#abe6963a386cc6dc579029349a447d1cb',1,'mxnet::KVStore']]],

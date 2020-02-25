@@ -1,6 +1,7 @@
 var searchData=
 [
   ['packcoltopatchxexp',['PackColToPatchXExp',['../structmshadow_1_1expr_1_1PackColToPatchXExp.html',1,'mshadow::expr']]],
+  ['packedfunc',['PackedFunc',['../classmxnet_1_1runtime_1_1PackedFunc.html',1,'mxnet::runtime']]],
   ['packet',['Packet',['../structmshadow_1_1packet_1_1Packet.html',1,'mshadow::packet']]],
   ['packet_3c_20double_2c_20ksse2_20_3e',['Packet&lt; double, kSSE2 &gt;',['../structmshadow_1_1packet_1_1Packet_3_01double_00_01kSSE2_01_4.html',1,'mshadow::packet']]],
   ['packet_3c_20dtype_2c_20kplain_20_3e',['Packet&lt; DType, kPlain &gt;',['../structmshadow_1_1packet_1_1Packet_3_01DType_00_01kPlain_01_4.html',1,'mshadow::packet']]],
@@ -101,6 +102,8 @@ var searchData=
   ['plus',['plus',['../structmshadow_1_1op_1_1plus.html',1,'mshadow::op']]],
   ['plusto',['plusto',['../structmshadow_1_1sv_1_1plusto.html',1,'mshadow::sv']]],
   ['poolingexp',['PoolingExp',['../structmshadow_1_1expr_1_1PoolingExp.html',1,'mshadow::expr']]],
+  ['primexpr',['PrimExpr',['../classmxnet_1_1PrimExpr.html',1,'mxnet']]],
+  ['primexprnode',['PrimExprNode',['../classmxnet_1_1PrimExprNode.html',1,'mxnet']]],
   ['producer',['Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html',1,'dmlc::ThreadedIter']]],
   ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]]
 ];

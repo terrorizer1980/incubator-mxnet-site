@@ -7,6 +7,7 @@ var searchData=
   ['_5fdefault_5fmonitor_5ffunc',['_default_monitor_func',['../namespacemxnet_1_1cpp.html#af52dc7c5b66e9ee04b37f39cde0fcc5a',1,'mxnet::cpp']]],
   ['_5fdiv',['_Div',['../namespacemxnet_1_1cpp.html#aafc94488768fddc81e4bf7a6513c3d53',1,'mxnet::cpp']]],
   ['_5fdivscalar',['_DivScalar',['../namespacemxnet_1_1cpp.html#abd35f4aea1d59d116f442a9a198f7f08',1,'mxnet::cpp']]],
+  ['_5fgetorallocruntimetypeindex',['_GetOrAllocRuntimeTypeIndex',['../classmxnet_1_1runtime_1_1Object.html#a9a14f0cacdb1dc322de5b98714450586',1,'mxnet::runtime::Object']]],
   ['_5fgetsharedref',['_GetSharedRef',['../classmxnet_1_1Engine.html#ab6417f2ae519b946c104f975d84d55d5',1,'mxnet::Engine::_GetSharedRef()'],['../classmxnet_1_1Storage.html#a4c5e9c239447ee223ab912716d53d7c7',1,'mxnet::Storage::_GetSharedRef()'],['../classmxnet_1_1common_1_1ObjectPool.html#ac6e5e05a710c3f094efb4ba13d36ab89',1,'mxnet::common::ObjectPool::_GetSharedRef()']]],
   ['_5fmaximum',['_Maximum',['../namespacemxnet_1_1cpp.html#a36df72e0b01ec278c4fd12568aecb5f9',1,'mxnet::cpp']]],
   ['_5fmaximumscalar',['_MaximumScalar',['../namespacemxnet_1_1cpp.html#acfa6b946c2c1b6d67847a0d5ad33c7b9',1,'mxnet::cpp']]],
