@@ -749,7 +749,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, m a
 
 
 
-Defined in src/operator/optimizer_op.cc:L688
+Defined in src/operator/optimizer_op.cc:L679
 
 `weight`: Weight
 `grad`: Gradient
@@ -2653,7 +2653,7 @@ available at <a href="http://proceedings.mlr.press/v70/zheng17a/zheng17a.pdf">ht
 
 
 
-Defined in src/operator/optimizer_op.cc:L640
+Defined in src/operator/optimizer_op.cc:L631
 
 `weight`: Weight
 `grad`: Gradient
@@ -2690,7 +2690,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, z a
 
 
 
-Defined in src/operator/optimizer_op.cc:L876
+Defined in src/operator/optimizer_op.cc:L867
 
 `weight`: Weight
 `grad`: Gradient
@@ -3026,7 +3026,7 @@ Link to paper: <a href="https://arxiv.org/pdf/1904.00962.pdf">https://arxiv.org/
 
 
 
-Defined in src/operator/optimizer_op.cc:L953
+Defined in src/operator/optimizer_op.cc:L944
 
 `weight`: Weight
 `grad`: Gradient
@@ -3063,7 +3063,7 @@ Link to paper: <a href="https://arxiv.org/pdf/1904.00962.pdf">https://arxiv.org/
 
 
 
-Defined in src/operator/optimizer_op.cc:L992
+Defined in src/operator/optimizer_op.cc:L983
 
 `weight`: Weight
 `g`: Output of lamb_update_phase 1
@@ -3464,7 +3464,7 @@ it performs the following operations and returns g:.
 
           
 
-Defined in src/operator/optimizer_op.cc:L1033
+Defined in src/operator/optimizer_op.cc:L1024
 
 `weight`: Weight
 `grad`: Gradient
@@ -3504,7 +3504,7 @@ it performs the following operations and updates grad.
 
           
 
-Defined in src/operator/optimizer_op.cc:L1075
+Defined in src/operator/optimizer_op.cc:L1066
 
 `weight`: Weight
 `g`: Output of mp_lamb_update_phase 1
@@ -3517,7 +3517,7 @@ Defined in src/operator/optimizer_op.cc:L1075
 `out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-mp-nag-mom-update"><h3>mp-nag-mom-update</h3><div class="usage"><code>(mp-nag-mom-update weight grad mom weight32 lr)</code><code>(mp-nag-mom-update {:keys [weight grad mom weight32 lr momentum wd rescale-grad clip-gradient out], :or {momentum nil, wd nil, rescale-grad nil, clip-gradient nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Update function for multi-precision Nesterov Accelerated Gradient( NAG) optimizer.
 
 
-Defined in src/operator/optimizer_op.cc:L745
+Defined in src/operator/optimizer_op.cc:L736
 
 `weight`: Weight
 `grad`: Gradient
@@ -3590,7 +3590,7 @@ Where the parameter ``momentum`` is the decay rate of momentum estimates at each
 
 
 
-Defined in src/operator/optimizer_op.cc:L472
+Defined in src/operator/optimizer_op.cc:L463
 
 `data`: Weights
 `lrs`: Learning rates.
@@ -3607,7 +3607,7 @@ It updates the weights using::
 
 
 
-Defined in src/operator/optimizer_op.cc:L417
+Defined in src/operator/optimizer_op.cc:L408
 
 `data`: Weights
 `lrs`: Learning rates.
@@ -3635,7 +3635,7 @@ Where the parameter ``momentum`` is the decay rate of momentum estimates at each
 
 
 
-Defined in src/operator/optimizer_op.cc:L374
+Defined in src/operator/optimizer_op.cc:L365
 
 `data`: Weights, gradients and momentum
 `lrs`: Learning rates.
@@ -3652,7 +3652,7 @@ It updates the weights using::
 
 
 
-Defined in src/operator/optimizer_op.cc:L329
+Defined in src/operator/optimizer_op.cc:L320
 
 `data`: Weights
 `lrs`: Learning rates.
@@ -3682,7 +3682,7 @@ Where
 
 
 
-Defined in src/operator/optimizer_op.cc:L726
+Defined in src/operator/optimizer_op.cc:L717
 
 `weight`: Weight
 `grad`: Gradient
@@ -4401,7 +4401,7 @@ The storage type of ``rint`` output depends upon the input storage type:
 Defined in src/operator/tensor/elemwise_unary_op_basic.cc:L798
 
 `data`: The input array.
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rmsprop-update"><h3>rmsprop-update</h3><div class="usage"><code>(rmsprop-update weight grad n lr)</code><code>(rmsprop-update {:keys [weight grad n lr gamma1 epsilon wd rescale-grad clip-gradient clip-weights out], :or {gamma1 nil, epsilon nil, wd nil, rescale-grad nil, clip-gradient nil, clip-weights nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Update function for `RMSProp` optimizer.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rmsprop-update"><h3>rmsprop-update</h3><div class="usage"><code>(rmsprop-update weight grad n lr)</code><code>(rmsprop-update {:keys [weight grad n lr rho epsilon wd rescale-grad clip-gradient clip-weights out], :or {rho nil, epsilon nil, wd nil, rescale-grad nil, clip-gradient nil, clip-weights nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Update function for `RMSProp` optimizer.
 
 `RMSprop` is a variant of stochastic gradient descent where the gradients are
 divided by a cache which grows with the sum of squares of recent gradients?
@@ -4420,7 +4420,7 @@ gradient and :math:`E[g^2]_t` is the decaying average over past squared gradient
 The :math:`E[g^2]_t` is given by:
 
 .. math::
-  E[g^2]_t = \gamma * E[g^2]_{t-1} + (1-\gamma) * g_t^2
+  E[g^2]_t = \rho * E[g^2]_{t-1} + (1-\rho) * g_t^2
 
 The update step is
 
@@ -4431,24 +4431,24 @@ The RMSProp code follows the version in
 <a href="http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf">http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf</a>
 Tieleman &amp; Hinton, 2012.
 
-Hinton suggests the momentum term :math:`\gamma` to be 0.9 and the learning rate
+Hinton suggests the momentum term :math:`\rho` to be 0.9 and the learning rate
 :math:`\eta` to be 0.001.
 
 
 
-Defined in src/operator/optimizer_op.cc:L797
+Defined in src/operator/optimizer_op.cc:L788
 
 `weight`: Weight
 `grad`: Gradient
 `n`: n
 `lr`: Learning rate
-`gamma1`: The decay rate of momentum estimates. (optional)
+`rho`: The decay rate of momentum estimates. (optional)
 `epsilon`: A small constant for numerical stability. (optional)
 `wd`: Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight. (optional)
 `rescale-grad`: Rescale gradient to grad = rescale_grad*grad. (optional)
 `clip-gradient`: Clip gradient to the range of [-clip_gradient, clip_gradient] If clip_gradient &lt;= 0, gradient clipping is turned off. grad = max(min(grad, clip_gradient), -clip_gradient). (optional)
 `clip-weights`: Clip weights to the range of [-clip_weights, clip_weights] If clip_weights &lt;= 0, weight clipping is turned off. weights = max(min(weights, clip_weights), -clip_weights). (optional)
-`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rmspropalex-update"><h3>rmspropalex-update</h3><div class="usage"><code>(rmspropalex-update weight grad n g delta lr)</code><code>(rmspropalex-update {:keys [weight grad n g delta lr gamma1 gamma2 epsilon wd rescale-grad clip-gradient clip-weights out], :or {gamma1 nil, gamma2 nil, epsilon nil, wd nil, rescale-grad nil, clip-gradient nil, clip-weights nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Update function for RMSPropAlex optimizer.
+`out`: Output array. (optional)</pre></div></div><div class="public anchor" id="var-rmspropalex-update"><h3>rmspropalex-update</h3><div class="usage"><code>(rmspropalex-update weight grad n g delta lr)</code><code>(rmspropalex-update {:keys [weight grad n g delta lr rho momentum epsilon wd rescale-grad clip-gradient clip-weights out], :or {rho nil, momentum nil, epsilon nil, wd nil, rescale-grad nil, clip-gradient nil, clip-weights nil, out nil}, :as opts})</code></div><div class="doc"><pre class="plaintext">Update function for RMSPropAlex optimizer.
 
 `RMSPropAlex` is non-centered version of `RMSProp`.
 
@@ -4456,23 +4456,23 @@ Define :math:`E[g^2]_t` is the decaying average over past squared gradient and
 :math:`E[g]_t` is the decaying average over past gradient.
 
 .. math::
-  E[g^2]_t = \gamma_1 * E[g^2]_{t-1} + (1 - \gamma_1) * g_t^2\\
-  E[g]_t = \gamma_1 * E[g]_{t-1} + (1 - \gamma_1) * g_t\\
-  \Delta_t = \gamma_2 * \Delta_{t-1} - \frac{\eta}{\sqrt{E[g^2]_t - E[g]_t^2 + \epsilon}} g_t\\
+  E[g^2]_t = \rho * E[g^2]_{t-1} + (1 - \rho) * g_t^2\\
+  E[g]_t = \rho * E[g]_{t-1} + (1 - \rho) * g_t\\
+  momentum_t = \gamma * momentum_{t-1} - \frac{\eta}{\sqrt{E[g^2]_t - E[g]_t^2 + \epsilon}} g_t\\
 
 The update step is
 
 .. math::
-  \theta_{t+1} = \theta_t + \Delta_t
+  \theta_{t+1} = \theta_t + momentum_t
 
 The RMSPropAlex code follows the version in
 <a href="http://arxiv.org/pdf/1308.0850v5.pdf">http://arxiv.org/pdf/1308.0850v5.pdf</a> Eq(38) - Eq(45) by Alex Graves, 2013.
 
-Graves suggests the momentum term :math:`\gamma_1` to be 0.95, :math:`\gamma_2`
+Graves suggests the momentum term :math:`\rho` to be 0.95, :math:`\gamma`
 to be 0.9 and the learning rate :math:`\eta` to be 0.0001.
 
 
-Defined in src/operator/optimizer_op.cc:L836
+Defined in src/operator/optimizer_op.cc:L827
 
 `weight`: Weight
 `grad`: Gradient
@@ -4480,8 +4480,8 @@ Defined in src/operator/optimizer_op.cc:L836
 `g`: g
 `delta`: delta
 `lr`: Learning rate
-`gamma1`: Decay rate. (optional)
-`gamma2`: Decay rate. (optional)
+`rho`: Decay rate. (optional)
+`momentum`: Decay rate. (optional)
 `epsilon`: A small constant for numerical stability. (optional)
 `wd`: Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight. (optional)
 `rescale-grad`: Rescale gradient to grad = rescale_grad*grad. (optional)
@@ -4920,7 +4920,7 @@ only the row slices whose indices appear in grad.indices are updated (for both w
 
 
 
-Defined in src/operator/optimizer_op.cc:L565
+Defined in src/operator/optimizer_op.cc:L556
 
 `weight`: Weight
 `grad`: Gradient
@@ -4945,7 +4945,7 @@ only the row slices whose indices appear in grad.indices are updated::
 
 
 
-Defined in src/operator/optimizer_op.cc:L524
+Defined in src/operator/optimizer_op.cc:L515
 
 `weight`: Weight
 `grad`: Gradient

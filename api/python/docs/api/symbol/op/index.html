@@ -1325,7 +1325,7 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.symbol.op.rint" title="mxnet.symbol.op.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a>([data, name, attr, out])</p></td>
 <td><p>Returns element-wise rounded value to the nearest integer of the input.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.symbol.op.rmsprop_update" title="mxnet.symbol.op.rmsprop_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmsprop_update</span></code></a>([weight, grad, n, lr, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.symbol.op.rmsprop_update" title="mxnet.symbol.op.rmsprop_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmsprop_update</span></code></a>([weight, grad, n, lr, rho, …])</p></td>
 <td><p>Update function for <cite>RMSProp</cite> optimizer.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.symbol.op.rmspropalex_update" title="mxnet.symbol.op.rmspropalex_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmspropalex_update</span></code></a>([weight, grad, n, g, …])</p></td>
@@ -4322,7 +4322,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, m a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L688</p>
+<p>Defined in src/operator/optimizer_op.cc:L679</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -6917,7 +6917,7 @@ d_t = \frac{ 1 - \beta_1^t }{ \eta_t } (\sqrt{ \frac{ v_t }{ 1 - \beta_2^t } } +
 \sigma_t = d_t - \beta_1 d_{t-1}
 z_t = \beta_1 z_{ t-1 } + (1 - \beta_1^t) g_t - \sigma_t W_{t-1}
 W_t = - \frac{ z_t }{ d_t }\end{split}\]</div>
-<p>Defined in src/operator/optimizer_op.cc:L640</p>
+<p>Defined in src/operator/optimizer_op.cc:L631</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -6968,7 +6968,7 @@ only the row slices whose indices appear in grad.indices are updated (for w, z a
     <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sign</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">*</span> <span class="n">lamda1</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">/</span> <span class="p">((</span><span class="n">beta</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="n">row</span><span class="p">]))</span> <span class="o">/</span> <span class="n">learning_rate</span> <span class="o">+</span> <span class="n">wd</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">lamda1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L876</p>
+<p>Defined in src/operator/optimizer_op.cc:L867</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -7229,7 +7229,7 @@ then
 else
      g = mean / (var_data^(1/2) + epsilon) + wd * weight;
 \end{gather*}\end{aligned}\end{align} \]</div>
-<p>Defined in src/operator/optimizer_op.cc:L953</p>
+<p>Defined in src/operator/optimizer_op.cc:L944</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -7276,7 +7276,7 @@ else
      lr = lr * (r1/r2)
 weight = weight - lr * g
 \end{gather*}\end{aligned}\end{align} \]</div>
-<p>Defined in src/operator/optimizer_op.cc:L992</p>
+<p>Defined in src/operator/optimizer_op.cc:L983</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8624,7 +8624,7 @@ else
      g = mean / (var_data^(1/2) + epsilon) + wd * weight32;
 \end{gather*}\end{aligned}\end{align} \]</div>
 </div></blockquote>
-<p>Defined in src/operator/optimizer_op.cc:L1033</p>
+<p>Defined in src/operator/optimizer_op.cc:L1024</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8676,7 +8676,7 @@ weight32 = weight32 - lr * g
 weight(float16) = weight32
 \end{gather*}\end{aligned}\end{align} \]</div>
 </div></blockquote>
-<p>Defined in src/operator/optimizer_op.cc:L1075</p>
+<p>Defined in src/operator/optimizer_op.cc:L1066</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8704,7 +8704,7 @@ weight(float16) = weight32
 <dt id="mxnet.symbol.op.mp_nag_mom_update">
 <code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">mp_nag_mom_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">mom=None</em>, <em class="sig-param">weight32=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">momentum=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.mp_nag_mom_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update function for multi-precision Nesterov Accelerated Gradient( NAG) optimizer.</p>
-<p>Defined in src/operator/optimizer_op.cc:L745</p>
+<p>Defined in src/operator/optimizer_op.cc:L736</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8851,7 +8851,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 </pre></div>
 </div>
 <p>Where the parameter <code class="docutils literal notranslate"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
-<p>Defined in src/operator/optimizer_op.cc:L472</p>
+<p>Defined in src/operator/optimizer_op.cc:L463</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8882,7 +8882,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L417</p>
+<p>Defined in src/operator/optimizer_op.cc:L408</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8920,7 +8920,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 </pre></div>
 </div>
 <p>Where the parameter <code class="docutils literal notranslate"><span class="pre">momentum</span></code> is the decay rate of momentum estimates at each epoch.</p>
-<p>Defined in src/operator/optimizer_op.cc:L374</p>
+<p>Defined in src/operator/optimizer_op.cc:L365</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -8951,7 +8951,7 @@ W_t = W_{t-1} + v_t\end{split}\]</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L329</p>
+<p>Defined in src/operator/optimizer_op.cc:L320</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -9008,7 +9008,7 @@ W_t = W_{t-1} - v_t\end{split}\]</div>
 <span class="math notranslate nohighlight">\(\gamma\)</span> is the decay rate of the momentum estimate
 <span class="math notranslate nohighlight">\(\v_t\)</span> is the update vector at time step <cite>t</cite>
 <span class="math notranslate nohighlight">\(\W_t\)</span> is the weight vector at time step <cite>t</cite></p>
-<p>Defined in src/operator/optimizer_op.cc:L726</p>
+<p>Defined in src/operator/optimizer_op.cc:L717</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10647,7 +10647,7 @@ Examples:</p>
 
 <dl class="function">
 <dt id="mxnet.symbol.op.rmsprop_update">
-<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">rmsprop_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">n=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">gamma1=_Null</em>, <em class="sig-param">epsilon=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">clip_weights=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.rmsprop_update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">rmsprop_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">n=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">rho=_Null</em>, <em class="sig-param">epsilon=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">clip_weights=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.rmsprop_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update function for <cite>RMSProp</cite> optimizer.</p>
 <p><cite>RMSprop</cite> is a variant of stochastic gradient descent where the gradients are
 divided by a cache which grows with the sum of squares of recent gradients?</p>
@@ -10662,16 +10662,16 @@ learning rates to rebound as the denominator decays over time.</p>
 gradient and <span class="math notranslate nohighlight">\(E[g^2]_t\)</span> is the decaying average over past squared gradient.</p>
 <p>The <span class="math notranslate nohighlight">\(E[g^2]_t\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
-\[E[g^2]_t = \gamma * E[g^2]_{t-1} + (1-\gamma) * g_t^2\]</div>
+\[E[g^2]_t = \rho * E[g^2]_{t-1} + (1-\rho) * g_t^2\]</div>
 <p>The update step is</p>
 <div class="math notranslate nohighlight">
 \[\theta_{t+1} = \theta_t - \frac{\eta}{RMS[g]_t} g_t\]</div>
 <p>The RMSProp code follows the version in
 <a class="reference external" href="http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf">http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf</a>
 Tieleman &amp; Hinton, 2012.</p>
-<p>Hinton suggests the momentum term <span class="math notranslate nohighlight">\(\gamma\)</span> to be 0.9 and the learning rate
+<p>Hinton suggests the momentum term <span class="math notranslate nohighlight">\(\rho\)</span> to be 0.9 and the learning rate
 <span class="math notranslate nohighlight">\(\eta\)</span> to be 0.001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L797</p>
+<p>Defined in src/operator/optimizer_op.cc:L788</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10679,7 +10679,7 @@ Tieleman &amp; Hinton, 2012.</p>
 <li><p><strong>grad</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – Gradient</p></li>
 <li><p><strong>n</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – n</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate</p></li>
-<li><p><strong>gamma1</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.949999988</em>) – The decay rate of momentum estimates.</p></li>
+<li><p><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.949999988</em>) – The decay rate of momentum estimates.</p></li>
 <li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=9.99999994e-09</em>) – A small constant for numerical stability.</p></li>
 <li><p><strong>wd</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</p></li>
 <li><p><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</p></li>
@@ -10699,23 +10699,23 @@ Tieleman &amp; Hinton, 2012.</p>
 
 <dl class="function">
 <dt id="mxnet.symbol.op.rmspropalex_update">
-<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">rmspropalex_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">n=None</em>, <em class="sig-param">g=None</em>, <em class="sig-param">delta=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">gamma1=_Null</em>, <em class="sig-param">gamma2=_Null</em>, <em class="sig-param">epsilon=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">clip_weights=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.rmspropalex_update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.symbol.op.</code><code class="sig-name descname">rmspropalex_update</code><span class="sig-paren">(</span><em class="sig-param">weight=None</em>, <em class="sig-param">grad=None</em>, <em class="sig-param">n=None</em>, <em class="sig-param">g=None</em>, <em class="sig-param">delta=None</em>, <em class="sig-param">lr=_Null</em>, <em class="sig-param">rho=_Null</em>, <em class="sig-param">momentum=_Null</em>, <em class="sig-param">epsilon=_Null</em>, <em class="sig-param">wd=_Null</em>, <em class="sig-param">rescale_grad=_Null</em>, <em class="sig-param">clip_gradient=_Null</em>, <em class="sig-param">clip_weights=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.symbol.op.rmspropalex_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update function for RMSPropAlex optimizer.</p>
 <p><cite>RMSPropAlex</cite> is non-centered version of <cite>RMSProp</cite>.</p>
 <p>Define <span class="math notranslate nohighlight">\(E[g^2]_t\)</span> is the decaying average over past squared gradient and
 <span class="math notranslate nohighlight">\(E[g]_t\)</span> is the decaying average over past gradient.</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}E[g^2]_t = \gamma_1 * E[g^2]_{t-1} + (1 - \gamma_1) * g_t^2\\
-E[g]_t = \gamma_1 * E[g]_{t-1} + (1 - \gamma_1) * g_t\\
-\Delta_t = \gamma_2 * \Delta_{t-1} - \frac{\eta}{\sqrt{E[g^2]_t - E[g]_t^2 + \epsilon}} g_t\\\end{split}\]</div>
+\[\begin{split}E[g^2]_t = \rho * E[g^2]_{t-1} + (1 - \rho) * g_t^2\\
+E[g]_t = \rho * E[g]_{t-1} + (1 - \rho) * g_t\\
+momentum_t = \gamma * momentum_{t-1} - \frac{\eta}{\sqrt{E[g^2]_t - E[g]_t^2 + \epsilon}} g_t\\\end{split}\]</div>
 <p>The update step is</p>
 <div class="math notranslate nohighlight">
-\[\theta_{t+1} = \theta_t + \Delta_t\]</div>
+\[\theta_{t+1} = \theta_t + momentum_t\]</div>
 <p>The RMSPropAlex code follows the version in
 <a class="reference external" href="http://arxiv.org/pdf/1308.0850v5.pdf">http://arxiv.org/pdf/1308.0850v5.pdf</a> Eq(38) - Eq(45) by Alex Graves, 2013.</p>
-<p>Graves suggests the momentum term <span class="math notranslate nohighlight">\(\gamma_1\)</span> to be 0.95, <span class="math notranslate nohighlight">\(\gamma_2\)</span>
+<p>Graves suggests the momentum term <span class="math notranslate nohighlight">\(\rho\)</span> to be 0.95, <span class="math notranslate nohighlight">\(\gamma\)</span>
 to be 0.9 and the learning rate <span class="math notranslate nohighlight">\(\eta\)</span> to be 0.0001.</p>
-<p>Defined in src/operator/optimizer_op.cc:L836</p>
+<p>Defined in src/operator/optimizer_op.cc:L827</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -10725,8 +10725,8 @@ to be 0.9 and the learning rate <span class="math notranslate nohighlight">\(\et
 <li><p><strong>g</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – g</p></li>
 <li><p><strong>delta</strong> (<a class="reference internal" href="../symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – delta</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>required</em>) – Learning rate</p></li>
-<li><p><strong>gamma1</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.949999988</em>) – Decay rate.</p></li>
-<li><p><strong>gamma2</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.899999976</em>) – Decay rate.</p></li>
+<li><p><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.949999988</em>) – Decay rate.</p></li>
+<li><p><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.899999976</em>) – Decay rate.</p></li>
 <li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=9.99999994e-09</em>) – A small constant for numerical stability.</p></li>
 <li><p><strong>wd</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Weight decay augments the objective function with a regularization term that penalizes large weights. The penalty scales with the square of the magnitude of each weight.</p></li>
 <li><p><strong>rescale_grad</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Rescale gradient to grad = rescale_grad*grad.</p></li>
@@ -11257,7 +11257,7 @@ only the row slices whose indices appear in grad.indices are updated (for both w
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L565</p>
+<p>Defined in src/operator/optimizer_op.cc:L556</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -11296,7 +11296,7 @@ only the row slices whose indices appear in grad.indices are updated:</p>
     <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">gradient</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">row</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Defined in src/operator/optimizer_op.cc:L524</p>
+<p>Defined in src/operator/optimizer_op.cc:L515</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

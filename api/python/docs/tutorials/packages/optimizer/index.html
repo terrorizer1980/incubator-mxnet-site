@@ -792,10 +792,10 @@ learnable parameter in the model.</p>
 <div class="math notranslate nohighlight">
 \[w_{i+1} = w_i + v_{i+1}\]</div>
 <p>Here is an example snippet creating the RMSProp optimizer in MXNet.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmsprop_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">RMSProp</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">gamma1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">gamma2</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-07</span><span class="p">,</span> <span class="n">centered</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmsprop_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">RMSProp</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-07</span><span class="p">,</span> <span class="n">centered</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In the code snippet above, <code class="docutils literal notranslate"><span class="pre">gamma1</span></code> is <span class="math notranslate nohighlight">\(\beta\)</span> in the equations above and <code class="docutils literal notranslate"><span class="pre">gamma2</span></code> is <span class="math notranslate nohighlight">\(\gamma\)</span>, which is only used where <code class="docutils literal notranslate"><span class="pre">centered=True</span></code>.</p>
+<p>In the code snippet above, <code class="docutils literal notranslate"><span class="pre">rho</span></code> is <span class="math notranslate nohighlight">\(\beta\)</span> in the equations above and <code class="docutils literal notranslate"><span class="pre">momentum</span></code> is <span class="math notranslate nohighlight">\(\gamma\)</span>, which is only used where <code class="docutils literal notranslate"><span class="pre">centered=True</span></code>.</p>
 </div>
 <div class="section" id="AdaDelta">
 <h2><a class="reference external" href="/api/python/docs/api/optimizer/index.html#mxnet.optimizer.AdaDelta">AdaDelta</a><a class="headerlink" href="#AdaDelta" title="Permalink to this headline">¶</a></h2>
@@ -890,24 +890,6 @@ vector.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">signum_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">Signum</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">wd_lh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="LBSGD">
-<h2><a class="reference external" href="/api/python/docs/api/optimizer/index.html#mxnet.optimizer.LBSGD">LBSGD</a><a class="headerlink" href="#LBSGD" title="Permalink to this headline">¶</a></h2>
-<p>LBSGD stands for Large Batch Stochastic Gradient Descent and implements a technique where Layer-wise Adaptive Rate Scaling (LARS) is used to maintain a separate learning rate for each layer of the neural network. LBSGD has no additional modifications to SGD and performs the same parameter update steps as the SGD optimizer described above.</p>
-<p>LBSGD was introduced by <a class="reference external" href="https://arxiv.org/pdf/1708.03888.pdf">You et al</a> for distributed training with data-parallel synchronous SGD across multiple worker nodes to overcome the issue of reduced model accuracy when the number of workers, and by extension effective batch size, is increased.</p>
-<p>Here is how to initialize the LBSGD optimizer in MXNet.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lbsgd_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">LBSGD</span><span class="p">(</span><span class="n">momentum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                                  <span class="n">multi_precision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                  <span class="n">warmup_strategy</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
-                                  <span class="n">warmup_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                                  <span class="n">batch_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                  <span class="n">updates_per_epoch</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-                                  <span class="n">begin_epoch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                                  <span class="n">num_epochs</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>LBSGD has a number of extra keyword arguments described below * <code class="docutils literal notranslate"><span class="pre">multi_precision</span></code> - When True performs updates with float32 precision weights regardless of whether weights are initialized with lower precision. When False perform updates with same precision as the weights when initialized. Set to True to improve performance when training with low precision weight represenations. * <code class="docutils literal notranslate"><span class="pre">warmup_strategy</span></code> - The warmup is period where the learning rate is increased through the first few epochs. The
-following strategies are supported: [‘linear’, ‘power2’, ‘sqrt’,‘lars’] * <code class="docutils literal notranslate"><span class="pre">warmup_epochs</span></code> - How many epochs to perform warmup for * <code class="docutils literal notranslate"><span class="pre">batch_scale</span></code> - use batch size<em>numworkers</em> <code class="docutils literal notranslate"><span class="pre">updates_per_epoch</span></code> - How many updates to the learning rate to perform every epoch. For example during warmup the warmup strategy is applied to increase the learning rate a total of <code class="docutils literal notranslate"><span class="pre">warmup_epochs*updates_per_epoch</span></code> number of times. * <code class="docutils literal notranslate"><span class="pre">begin_epoch</span></code> - The epoch at which to start warmup.</p>
 </div>
 <div class="section" id="DCASGD">
 <h2><a class="reference external" href="/api/python/docs/api/optimizer/index.html#mxnet.optimizer.DCASGD">DCASGD</a><a class="headerlink" href="#DCASGD" title="Permalink to this headline">¶</a></h2>
@@ -1045,7 +1027,6 @@ learn how to create learning rate schedules to supercharge the convergence of yo
 </ul>
 </li>
 <li><a class="reference internal" href="#Signum">Signum</a></li>
-<li><a class="reference internal" href="#LBSGD">LBSGD</a></li>
 <li><a class="reference internal" href="#DCASGD">DCASGD</a><ul>
 <li><a class="reference internal" href="#Online-Learning-Algorithms">Online Learning Algorithms</a></li>
 </ul>
