@@ -3418,6 +3418,20 @@ ReLU and Tanh.</p>
           c_t = f_t * c_{(t-1)} + i_t * g_t \\
           h_t = o_t * \tanh(c_t)
           \end{array}\end{split}\]</div>
+<p>With the projection size being set, LSTM could use the projection feature to reduce the parameters
+size and give some speedups without significant damage to the accuracy.</p>
+<p>Long Short-Term Memory Based Recurrent Neural Network Architectures for Large Vocabulary Speech
+Recognition - Sak et al. 2014. <a class="reference external" href="https://arxiv.org/abs/1402.1128">https://arxiv.org/abs/1402.1128</a></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{ll}
+          i_t = \mathrm{sigmoid}(W_{ii} x_t + b_{ii} + W_{ri} r_{(t-1)} + b_{ri}) \\
+          f_t = \mathrm{sigmoid}(W_{if} x_t + b_{if} + W_{rf} r_{(t-1)} + b_{rf}) \\
+          g_t = \tanh(W_{ig} x_t + b_{ig} + W_{rc} r_{(t-1)} + b_{rg}) \\
+          o_t = \mathrm{sigmoid}(W_{io} x_t + b_{o} + W_{ro} r_{(t-1)} + b_{ro}) \\
+          c_t = f_t * c_{(t-1)} + i_t * g_t \\
+          h_t = o_t * \tanh(c_t)
+          r_t = W_{hr} h_t
+          \end{array}\end{split}\]</div>
 <p><strong>GRU</strong></p>
 <p>Gated Recurrent Unit - Cho et al. 2014. <a class="reference external" href="http://arxiv.org/abs/1406.1078">http://arxiv.org/abs/1406.1078</a></p>
 <p>The definition of GRU here is slightly different from paper but compatible with CUDNN.</p>
@@ -3428,7 +3442,7 @@ ReLU and Tanh.</p>
           n_t = \tanh(W_{in} x_t + b_{in} + r_t * (W_{hn} h_{(t-1)}+ b_{hn})) \\
           h_t = (1 - z_t) * n_t + z_t * h_{(t-1)} \\
           \end{array}\end{split}\]</div>
-<p>Defined in src/operator/rnn.cc:L354</p>
+<p>Defined in src/operator/rnn.cc:L368</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
