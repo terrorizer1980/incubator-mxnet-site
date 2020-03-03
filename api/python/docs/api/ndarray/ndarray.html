@@ -1608,7 +1608,7 @@ Show Source
 <td><p>Return a new array of given shape and type, filled with zeros.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.indexing_key_expand_implicit_axes" title="mxnet.ndarray.indexing_key_expand_implicit_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indexing_key_expand_implicit_axes</span></code></a>(key, shape)</p></td>
-<td><p>Make implicit axes explicit by adding <code class="docutils literal notranslate"><span class="pre">slice(None)</span></code>.</p></td>
+<td><p>Make implicit axes explicit by adding <code class="docutils literal notranslate"><span class="pre">slice(None)</span></code> and convert boolean array to integer array through <cite>nonzero</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.get_indexing_dispatch_code" title="mxnet.ndarray.get_indexing_dispatch_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_indexing_dispatch_code</span></code></a>(key)</p></td>
 <td><p>Returns a dispatch code for calling basic or advanced indexing functions.</p></td>
@@ -16187,8 +16187,9 @@ This is only available for c-contiguous arrays, i.e. array.flags[C_CONTIGUOUS] =
 <dl class="function">
 <dt id="mxnet.ndarray.indexing_key_expand_implicit_axes">
 <code class="sig-prename descclassname">mxnet.ndarray.</code><code class="sig-name descname">indexing_key_expand_implicit_axes</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">shape</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/ndarray/ndarray.html#indexing_key_expand_implicit_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.ndarray.indexing_key_expand_implicit_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make implicit axes explicit by adding <code class="docutils literal notranslate"><span class="pre">slice(None)</span></code>.
-.. rubric:: Examples</p>
+<dd><p>Make implicit axes explicit by adding <code class="docutils literal notranslate"><span class="pre">slice(None)</span></code>
+and convert boolean array to integer array through <cite>nonzero</cite>.</p>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
 <span class="go">(2, 1, 1)</span>
@@ -16198,6 +16199,11 @@ This is only available for c-contiguous arrays, i.e. array.flags[C_CONTIGUOUS] =
 <span class="go">(0, slice(None, None, None), slice(None, None, None))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
 <span class="go">(slice(None, 2, None), None, 0, slice(None, None, None))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bool_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+<span class="go">                           [False, True, False, True],</span>
+<span class="go">                           [True, False, True, False]], dtype=np.bool)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">bool_array</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
+<span class="go">(array([0, 0, 1, 1, 2, 2], dtype=int64), array([0, 2, 1, 3, 0, 2], dtype=int64), None, slice(None, 2, None))</span>
 </pre></div>
 </div>
 </dd></dl>

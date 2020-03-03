@@ -697,6 +697,7 @@
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">ctypes2buffer</span>
 <span class="kn">from</span> <span class="nn">..runtime</span> <span class="kn">import</span> <span class="n">Features</span>
 <span class="kn">from</span> <span class="nn">..context</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">current_context</span>
+<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_internal</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">op</span>
 <span class="kn">from</span> <span class="nn">._internal</span> <span class="kn">import</span> <span class="n">NDArrayBase</span>
@@ -769,7 +770,11 @@
 <span class="n">_NDARRAY_BASIC_INDEXING</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">_NDARRAY_ADVANCED_INDEXING</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">_NDARRAY_EMPTY_TUPLE_INDEXING</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">_NDARRAY_BOOLEAN_INDEXING</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1"># Return code for 0-d boolean array handler</span>
+<span class="n">_NDARRAY_NO_ZERO_DIM_BOOL_ARRAY</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">_NDARRAY_ZERO_DIM_BOOL_ARRAY_FALSE</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_NDARRAY_ZERO_DIM_BOOL_ARRAY_TRUE</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="c1"># Caching whether MXNet was built with INT64 support or not</span>
 <span class="n">_INT64_TENSOR_SIZE_ENABLED</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1179,7 +1184,7 @@
             <span class="k">return</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="n">slc_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slc_key</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
@@ -1372,7 +1377,7 @@
             <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;slice step cannot be zero&quot;</span><span class="p">)</span>
 
-        <span class="n">key</span> <span class="o">=</span> <span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;indexing key cannot be an empty tuple&#39;</span><span class="p">)</span>
 
@@ -3232,9 +3237,12 @@
 <span class="sd">        &gt;&gt;&gt; type(x.asscalar())</span>
 <span class="sd">        &lt;type &#39;numpy.int32&#39;&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The current array is not a scalar&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()[()]</span></div>
 
 <div class="viewcode-block" id="NDArray.astype"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.NDArray.astype">[docs]</a>    <span class="k">def</span> <span class="nf">astype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a copy of the array after casting to a specified type.</span>
@@ -3601,9 +3609,23 @@
             <span class="n">lhs</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">value_nd</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span>
         <span class="p">)</span></div>
 
+<span class="k">def</span> <span class="nf">check_boolean_array_dimension</span><span class="p">(</span><span class="n">array_shape</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">bool_shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Advanced boolean indexing is implemented through the use of `nonzero`.</span>
+<span class="sd">    Size check is necessary to make sure that the boolean array</span>
+<span class="sd">    has exactly as many dimensions as it is supposed to work with before the conversion</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bool_shape</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">array_shape</span><span class="p">[</span><span class="n">axis</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;boolean index did not match indexed array along axis </span><span class="si">{}</span><span class="s1">;&#39;</span>
+                             <span class="s1">&#39; size is </span><span class="si">{}</span><span class="s1"> but corresponding boolean size is </span><span class="si">{}</span><span class="s1">&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">array_shape</span><span class="p">[</span><span class="n">axis</span> <span class="o">+</span> <span class="n">i</span><span class="p">],</span> <span class="n">val</span><span class="p">))</span>
 
 <div class="viewcode-block" id="indexing_key_expand_implicit_axes"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.indexing_key_expand_implicit_axes">[docs]</a><span class="k">def</span> <span class="nf">indexing_key_expand_implicit_axes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make implicit axes explicit by adding ``slice(None)``.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make implicit axes explicit by adding ``slice(None)``</span>
+<span class="sd">    and convert boolean array to integer array through `nonzero`.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; shape = (3, 4, 5)</span>
@@ -3615,6 +3637,11 @@
 <span class="sd">    (0, slice(None, None, None), slice(None, None, None))</span>
 <span class="sd">    &gt;&gt;&gt; indexing_key_expand_implicit_axes(np.s_[:2, None, 0, ...], shape)</span>
 <span class="sd">    (slice(None, 2, None), None, 0, slice(None, None, None))</span>
+<span class="sd">    &gt;&gt;&gt; bool_array = np.array([[True, False, True, False],</span>
+<span class="sd">                               [False, True, False, True],</span>
+<span class="sd">                               [True, False, True, False]], dtype=np.bool)</span>
+<span class="sd">    &gt;&gt;&gt; indexing_key_expand_implicit_axes(np.s_[bool_array, None, 0:2], shape)</span>
+<span class="sd">    (array([0, 0, 1, 1, 2, 2], dtype=int64), array([0, 2, 1, 3, 0, 2], dtype=int64), None, slice(None, 2, None))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,)</span>
@@ -3624,6 +3651,17 @@
     <span class="n">ell_idx</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">num_none</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">nonell_key</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># For 0-d boolean indices: A new axis is added,</span>
+    <span class="c1"># but at the same time no axis is &quot;used&quot;. So if we have True,</span>
+    <span class="c1"># we add a new axis (a bit like with np.newaxis). If it is</span>
+    <span class="c1"># False, we add a new axis, but this axis has 0 entries.</span>
+    <span class="c1"># prepend is defined to handle this case.</span>
+    <span class="c1"># prepend = _NDARRAY_NO_ZERO_DIM_BOOL_ARRAY/-1 means there is no 0-d boolean scalar</span>
+    <span class="c1"># prepend = _NDARRAY_ZERO_DIM_BOOL_ARRAY_FALSE/0 means an zero dim must be expanded</span>
+    <span class="c1"># prepend = _NDARRAY_ZERO_DIM_BOOL_ARRAY_TRUE/1 means a new axis must be expanded</span>
+    <span class="n">prepend</span> <span class="o">=</span> <span class="n">_NDARRAY_NO_ZERO_DIM_BOOL_ARRAY</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="bp">Ellipsis</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ell_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3632,14 +3670,38 @@
                 <span class="p">)</span>
             <span class="n">ell_idx</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># convert primitive type boolean value to mx.np.bool type</span>
+            <span class="c1"># otherwise will be treated as 1/0</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">num_none</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span><span class="p">:</span> <span class="c1"># array(False) has priority</span>
+                    <span class="n">prepend</span> <span class="o">=</span> <span class="n">_NDARRAY_ZERO_DIM_BOOL_ARRAY_FALSE</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prepend</span> <span class="o">=</span> <span class="n">_NDARRAY_ZERO_DIM_BOOL_ARRAY_TRUE</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
                 <span class="c1"># This handles ndarray of zero dim. e.g array(1)</span>
                 <span class="c1"># while advoid converting zero dim boolean array</span>
-                <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                <span class="c1"># float type will be converted to int</span>
+                <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+                <span class="n">axis</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
+                <span class="c1"># Necessary size check before using `nonzero`</span>
+                <span class="n">check_boolean_array_dimension</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="c1"># If the whole array is false and npx.set_np() is not set_up</span>
+                <span class="c1"># the program will throw infer shape error</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_np_array</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot perform boolean indexing in legacy mode. Please activate&#39;</span>
+                                     <span class="s1">&#39; numpy semantics by calling `npx.set_np()` in the global scope&#39;</span>
+                                     <span class="s1">&#39; before calling this function.&#39;</span><span class="p">)</span>
+                <span class="c1"># Add the arrays from the nonzero result to the index</span>
+                <span class="n">nonell_key</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())</span>
+                <span class="n">axis</span> <span class="o">+=</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">nonell_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="n">axis</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">nonell_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nonell_key</span><span class="p">)</span>
 
@@ -3653,7 +3715,7 @@
                     <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),)</span> <span class="o">*</span> <span class="n">ell_ndim</span> <span class="o">+</span>
                     <span class="n">nonell_key</span><span class="p">[</span><span class="n">ell_idx</span><span class="p">:])</span>
 
-    <span class="k">return</span> <span class="n">expanded_key</span></div>
+    <span class="k">return</span> <span class="n">expanded_key</span><span class="p">,</span> <span class="n">prepend</span></div>
 
 
 <span class="k">def</span> <span class="nf">_int_to_slice</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
@@ -3711,32 +3773,18 @@
 <div class="viewcode-block" id="get_indexing_dispatch_code"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.get_indexing_dispatch_code">[docs]</a><span class="k">def</span> <span class="nf">get_indexing_dispatch_code</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a dispatch code for calling basic or advanced indexing functions.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-    <span class="n">num_bools</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">_NDARRAY_EMPTY_TUPLE_INDEXING</span>
-            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
-                <span class="n">num_bools</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
-            <span class="n">basic_indexing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">py_slice</span><span class="p">,</span> <span class="n">integer_types</span><span class="p">))</span> <span class="ow">or</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;NDArray does not support slicing with key </span><span class="si">{}</span><span class="s1"> of type </span><span class="si">{}</span><span class="s1">.&#39;</span>
                 <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
             <span class="p">)</span>
-    <span class="k">if</span> <span class="n">basic_indexing</span> <span class="ow">and</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="n">basic_indexing</span> <span class="ow">and</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_ADVANCED_INDEXING</span>
-    <span class="k">elif</span> <span class="n">num_bools</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_NDARRAY_BOOLEAN_INDEXING</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;ndarray indexing does not more than one boolean ndarray&#39;</span>
-                        <span class="s1">&#39; in a tuple of complex indices.&#39;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_NDARRAY_BASIC_INDEXING</span></div>
 
 
 <span class="k">def</span> <span class="nf">_get_index_range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -5746,6 +5794,7 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">&#39;C_CONTIGUOUS&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only c-contiguous arrays are supported for zero-copy&quot;</span><span class="p">)</span>
+
     <span class="n">ndarray</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">&#39;WRITEABLE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">c_obj</span> <span class="o">=</span> <span class="n">_make_dl_managed_tensor</span><span class="p">(</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>

@@ -1305,6 +1305,93 @@
     <span class="k">return</span> <span class="n">_wrap_np_binary_func</span>
 
 
+<span class="c1"># pylint: disable=exec-used</span>
+<span class="k">def</span> <span class="nf">numpy_fallback</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;decorator for falling back to offical numpy for a specific function&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">new_ctx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">new_ctx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">new_ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
+            <span class="k">assert</span> <span class="n">ctx</span> <span class="o">==</span> <span class="n">new_ctx</span><span class="p">,</span> <span class="s2">&quot;inconsistent context </span><span class="si">%s</span><span class="s2"> and </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_ctx</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ctx</span>
+
+    <span class="k">def</span> <span class="nf">_as_official_np_array</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="s1">&#39;asnumpy&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="nb">object</span><span class="o">.</span><span class="n">ctx</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">:</span>
+                <span class="n">new_arr</span><span class="p">,</span> <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">_as_official_np_array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="n">ctx</span> <span class="o">=</span> <span class="n">get_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">new_ctx</span><span class="p">)</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_arr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span> <span class="n">ctx</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">object</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new_v</span><span class="p">,</span> <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">_as_official_np_array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">ctx</span> <span class="o">=</span> <span class="n">get_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">new_ctx</span><span class="p">)</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_v</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">ctx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="kn">from</span> <span class="nn">.ndarray</span> <span class="kn">import</span> <span class="n">from_numpy</span>
+    <span class="kn">from</span> <span class="nn">.numpy</span> <span class="kn">import</span> <span class="n">array</span>
+    <span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">current_context</span>
+    <span class="k">def</span> <span class="nf">_as_mx_np_array</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">current_context</span><span class="p">()):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">from_numpy</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ret</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;cpu&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="p">))</span> <span class="k">else</span> <span class="n">ret</span><span class="o">.</span><span class="n">as_in_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">_as_mx_np_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">_as_mx_np_array</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span>
+
+    <span class="kn">import</span> <span class="nn">re</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">func_doc</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="n">func_source</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">func_source</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;np\.&#39;</span><span class="p">,</span> <span class="s1">&#39;onp.&#39;</span><span class="p">,</span> <span class="n">func_source</span><span class="p">)</span>
+    <span class="n">func_source</span> <span class="o">=</span> <span class="n">func_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">indentation</span> <span class="o">=</span> <span class="n">func_source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;def&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">indentation</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;should wrap a function&quot;</span><span class="p">)</span>
+    <span class="n">stripped</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">func_source</span><span class="p">:</span>
+        <span class="n">stripped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">indentation</span><span class="p">:])</span>
+    <span class="n">stripped</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;    import numpy as onp&#39;</span><span class="p">)</span>
+    <span class="n">func_source</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stripped</span><span class="p">)</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">func_source</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="p">)</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">local</span><span class="p">[</span><span class="n">func_name</span><span class="p">]</span>
+    <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">func_doc</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_fallback_to_official_np</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># for every ndarray input, fallback</span>
+        <span class="n">new_args</span><span class="p">,</span> <span class="n">ctx0</span> <span class="o">=</span> <span class="n">_as_official_np_array</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">new_kwargs</span><span class="p">,</span> <span class="n">ctx1</span> <span class="o">=</span> <span class="n">_as_official_np_array</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">get_ctx</span><span class="p">(</span><span class="n">ctx0</span><span class="p">,</span> <span class="n">ctx1</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only functions with return values are allowed to use this decorator&quot;</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">_as_mx_np_array</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">return</span> <span class="n">_fallback_to_official_np</span>
+<span class="c1"># pylint: enable=exec-used</span>
+
+
 <span class="k">def</span> <span class="nf">_set_np_array</span><span class="p">(</span><span class="n">active</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Turns on/off NumPy array semantics for the current thread in which `mxnet.numpy.ndarray`</span>
 <span class="sd">    is expected to be created, instead of the legacy `mx.nd.NDArray`.</span>
