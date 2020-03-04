@@ -160,6 +160,7 @@ var searchData=
   ['dmlc_5fstr_5fconcat',['DMLC_STR_CONCAT',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a4feb28faa4c6af06986ecfc8eec9cd49',1,'base.h']]],
   ['dmlc_5fstr_5fconcat_5f',['DMLC_STR_CONCAT_',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a8f59dcd251f89608eb4b63b107454f9e',1,'base.h']]],
   ['dmlc_5fstrict_5fcxx11',['DMLC_STRICT_CXX11',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#ad139329fd3ea0747dfedfbbe1dfd6472',1,'base.h']]],
+  ['dmlc_5fsuppress_5fubsan',['DMLC_SUPPRESS_UBSAN',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#ae48f57de53e5271fa1394e04cef5dd23',1,'base.h']]],
   ['dmlc_5fthrow_5fexception',['DMLC_THROW_EXCEPTION',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#a80bde16113dc79e7adb7953e006d6b60',1,'base.h']]],
   ['dmlc_5fuse_5ffopen64',['DMLC_USE_FOPEN64',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#aec9404e93a9f9c89237b55cbe424eb1e',1,'base.h']]],
   ['dmlc_5fuse_5fglog',['DMLC_USE_GLOG',['../3rdparty_2dmlc-core_2include_2dmlc_2base_8h.html#aca2af218ad8222692ef1fcd588c40bf6',1,'base.h']]],
