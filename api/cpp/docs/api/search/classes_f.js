@@ -105,5 +105,6 @@ var searchData=
   ['primexpr',['PrimExpr',['../classmxnet_1_1PrimExpr.html',1,'mxnet']]],
   ['primexprnode',['PrimExprNode',['../classmxnet_1_1PrimExprNode.html',1,'mxnet']]],
   ['producer',['Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html',1,'dmlc::ThreadedIter']]],
-  ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]]
+  ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]],
+  ['pythonarg',['PythonArg',['../classmxnet_1_1runtime_1_1PythonArg.html',1,'mxnet::runtime']]]
 ];
