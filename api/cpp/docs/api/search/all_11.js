@@ -183,8 +183,8 @@ var searchData=
   ['plusto',['plusto',['../structmshadow_1_1sv_1_1plusto.html',1,'mshadow::sv']]],
   ['pointer',['pointer',['../classdmlc_1_1ThreadlocalAllocator.html#aa9509829a2b96a97eca105cfc918f8ee',1,'dmlc::ThreadlocalAllocator::pointer()'],['../classmxnet_1_1IterAdapter.html#a429dfffc5d6f3fc4b03a3dba5b84db64',1,'mxnet::IterAdapter::pointer()']]],
   ['pool',['pool',['../namespacemshadow_1_1expr.html#a9c0904ddf79b3f0df6d1b7747c71d921',1,'mshadow::expr::pool(const Exp&lt; SrcExp, DType, etype &gt; &amp;src, index_t ksize_y, index_t ksize_x, index_t kstride_y, index_t kstride_x)'],['../namespacemshadow_1_1expr.html#aca58fca4a4298af774668967daabd12c',1,'mshadow::expr::pool(const Exp&lt; SrcExp, DType, etype &gt; &amp;src, Shape&lt; 2 &gt; pshape, index_t ksize_y, index_t ksize_x, index_t kstride_y, index_t kstride_x)']]],
-  ['poolingexp',['PoolingExp',['../structmshadow_1_1expr_1_1PoolingExp.html',1,'mshadow::expr']]],
   ['poolingexp',['PoolingExp',['../structmshadow_1_1expr_1_1PoolingExp.html#ab95e8c1880665da294f6e69ac2dc708b',1,'mshadow::expr::PoolingExp::PoolingExp(const SrcExp &amp;src, index_t ksize_y, index_t ksize_x, index_t kstride_y, index_t kstride_x)'],['../structmshadow_1_1expr_1_1PoolingExp.html#a46902e1b64dfea8aaa9382cbc86ae216',1,'mshadow::expr::PoolingExp::PoolingExp(const SrcExp &amp;src, Shape&lt; 2 &gt; pshape, index_t ksize_y, index_t ksize_x, index_t kstride_y, index_t kstride_x)']]],
+  ['poolingexp',['PoolingExp',['../structmshadow_1_1expr_1_1PoolingExp.html',1,'mshadow::expr']]],
   ['pop',['Pop',['../classdmlc_1_1ConcurrentBlockingQueue.html#afb8bbf0d5ec39d22b9a3d7c86a649c86',1,'dmlc::ConcurrentBlockingQueue']]],
   ['posinfvalue',['PosInfValue',['../namespacemshadow_1_1red_1_1limits.html#a64ef2d1a92579d312b18fb04aaed0d4e',1,'mshadow::red::limits']]],
   ['posinfvalue_3c_20double_20_3e',['PosInfValue&lt; double &gt;',['../namespacemshadow_1_1red_1_1limits.html#a194ad52f15262c4acde6f4720f039858',1,'mshadow::red::limits']]],
@@ -215,6 +215,7 @@ var searchData=
   ['profilehandle',['ProfileHandle',['../include_2mxnet_2c__api_8h.html#a2f6ad8b0cc1e894f64b5ecad2ceb1aa7',1,'c_api.h']]],
   ['profiler',['PROFILER',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87daf655c75ca4b00702eef0ae2233dd706b',1,'mxnet::features']]],
   ['profiler_5fmessage_5ffuncname',['PROFILER_MESSAGE_FUNCNAME',['../include_2mxnet_2base_8h.html#ae34be2bf889657a1452b87fd36f034c3',1,'base.h']]],
+  ['profiler_5fscope',['profiler_scope',['../structmxnet_1_1Storage_1_1Handle.html#a774b62c70d76375a42f7ceb0ef77937b',1,'mxnet::Storage::Handle']]],
   ['prop',['prop',['../structmshadow_1_1Stream_3_01gpu_01_4.html#a4ec551c8440da0c89eb728e753906936',1,'mshadow::Stream&lt; gpu &gt;']]],
   ['prop_5fkind',['prop_kind',['../structdnnl__convolution__desc__t.html#a67ab71e4cb00699db3bd310e9997e090',1,'dnnl_convolution_desc_t::prop_kind()'],['../structdnnl__shuffle__desc__t.html#ad63715e635c96f9c97952ab5db3dbc89',1,'dnnl_shuffle_desc_t::prop_kind()'],['../structdnnl__eltwise__desc__t.html#ad01dd86738e3d04720716a962c3dd05f',1,'dnnl_eltwise_desc_t::prop_kind()'],['../structdnnl__softmax__desc__t.html#a63ef3b7d75b3870d50cb209e0a265e47',1,'dnnl_softmax_desc_t::prop_kind()'],['../structdnnl__pooling__desc__t.html#a8afb23b314a15ae9ee4e0654eb4b8371',1,'dnnl_pooling_desc_t::prop_kind()'],['../structdnnl__lrn__desc__t.html#a95d6f623b7874d24aaa89aabbf54adcf',1,'dnnl_lrn_desc_t::prop_kind()'],['../structdnnl__batch__normalization__desc__t.html#a76acc806f760eea2589c375fdc8b80b1',1,'dnnl_batch_normalization_desc_t::prop_kind()'],['../structdnnl__layer__normalization__desc__t.html#a15480bc3b7ef17d6d151258b7a751dca',1,'dnnl_layer_normalization_desc_t::prop_kind()'],['../structdnnl__inner__product__desc__t.html#a11f80370edffb5ec93508217096ccf9d',1,'dnnl_inner_product_desc_t::prop_kind()'],['../structdnnl__rnn__desc__t.html#a8b7898089ad817a0efd47aca420b6dbb',1,'dnnl_rnn_desc_t::prop_kind()']]],
   ['protocol',['protocol',['../structdmlc_1_1io_1_1URI.html#a78b53e079a958bac413f49601670aa3b',1,'dmlc::io::URI']]],
@@ -224,8 +225,8 @@ var searchData=
   ['pshape_5fy_5f',['pshape_y_',['../structmshadow_1_1expr_1_1UnPoolingExp.html#ad862c29476b4a7fcd1be5ea94f1123ba',1,'mshadow::expr::UnPoolingExp']]],
   ['psize_5fx_5f',['psize_x_',['../structmshadow_1_1expr_1_1PackColToPatchXExp.html#a5c85e450f2a44b1b41a4814cb7dcabf6',1,'mshadow::expr::PackColToPatchXExp::psize_x_()'],['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#ad846f044070ff91290ddd867f96b9fed',1,'mshadow::expr::UnpackPatchToColXExp::psize_x_()']]],
   ['psize_5fy_5f',['psize_y_',['../structmshadow_1_1expr_1_1PackColToPatchXExp.html#a5f8e41975d6743c9abe04e776852b434',1,'mshadow::expr::PackColToPatchXExp::psize_y_()'],['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a62846422e0a386185591536a5673fa0f',1,'mshadow::expr::UnpackPatchToColXExp::psize_y_()']]],
-  ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html#a0ee929dcfa7b8e4baa59d85b7071d22b',1,'mxnet::cpp::PSNR']]],
   ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html',1,'mxnet::cpp']]],
+  ['psnr',['PSNR',['../classmxnet_1_1cpp_1_1PSNR.html#a0ee929dcfa7b8e4baa59d85b7071d22b',1,'mxnet::cpp::PSNR']]],
   ['pstride_5fx_5f',['pstride_x_',['../structmshadow_1_1expr_1_1PackColToPatchXExp.html#abf29bd2523e4d9a405bb43faabeec410',1,'mshadow::expr::PackColToPatchXExp::pstride_x_()'],['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a4ed11533937090387f1a4b08c76bf84e',1,'mshadow::expr::UnpackPatchToColXExp::pstride_x_()']]],
   ['pstride_5fy_5f',['pstride_y_',['../structmshadow_1_1expr_1_1PackColToPatchXExp.html#ad282774d61ecbb4c76ca7b93274f4555',1,'mshadow::expr::PackColToPatchXExp::pstride_y_()'],['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a471862eda1225190af0c6c22ca2eafa4',1,'mshadow::expr::UnpackPatchToColXExp::pstride_y_()']]],
   ['ptr',['ptr',['../classmxnet_1_1runtime_1_1MXNetPODValue__.html#a52b7cdba3826cfcbfe2ed33c2e93c2a0',1,'mxnet::runtime::MXNetPODValue_']]],
@@ -241,6 +242,6 @@ var searchData=
   ['pushpull',['PushPull',['../classmxnet_1_1KVStore.html#a2e477197e8e9c3484370317315bb6648',1,'mxnet::KVStore::PushPull(const std::vector&lt; int &gt; &amp;vkeys, const std::vector&lt; int &gt; &amp;okeys, const std::vector&lt; NDArray &gt; &amp;values, const std::vector&lt; NDArray * &gt; &amp;outs, int priority=0)=0'],['../classmxnet_1_1KVStore.html#ad0267c28368496ba9ce5d2457ff497ae',1,'mxnet::KVStore::PushPull(const std::vector&lt; std::string &gt; &amp;str_vkeys, const std::vector&lt; std::string &gt; &amp;str_okeys, const std::vector&lt; NDArray &gt; &amp;values, const std::vector&lt; NDArray * &gt; &amp;outs, int priority=0)=0']]],
   ['pushsync',['PushSync',['../classmxnet_1_1Engine.html#ac4c1d74e906699cf074a34dfdc968d8c',1,'mxnet::Engine']]],
   ['py_5farg_2eh',['py_arg.h',['../py__arg_8h.html',1,'']]],
-  ['pythonarg',['PythonArg',['../classmxnet_1_1runtime_1_1PythonArg.html#a2ccd7f95280d7fc30712a5856cf50da2',1,'mxnet::runtime::PythonArg']]],
-  ['pythonarg',['PythonArg',['../classmxnet_1_1runtime_1_1PythonArg.html',1,'mxnet::runtime']]]
+  ['pythonarg',['PythonArg',['../classmxnet_1_1runtime_1_1PythonArg.html',1,'mxnet::runtime']]],
+  ['pythonarg',['PythonArg',['../classmxnet_1_1runtime_1_1PythonArg.html#a2ccd7f95280d7fc30712a5856cf50da2',1,'mxnet::runtime::PythonArg']]]
 ];

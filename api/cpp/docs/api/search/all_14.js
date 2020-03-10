@@ -247,7 +247,7 @@ var searchData=
   ['step_5f',['step_',['../structmshadow_1_1expr_1_1RangeExp.html#af135b07fde637436c3988643932d9705',1,'mshadow::expr::RangeExp']]],
   ['stod',['stod',['../namespacedmlc.html#a5f49479b0736b8709986ead800e1bfdc',1,'dmlc']]],
   ['stof',['stof',['../namespacedmlc.html#a43a149fb880b527d393975a884255341',1,'dmlc']]],
-  ['stop',['stop',['../classmxnet_1_1runtime_1_1SliceObj.html#ad7df2dd13479c28e8731bae5fe447ff8',1,'mxnet::runtime::SliceObj::stop()'],['../classmxnet_1_1Engine.html#a30f8947a7a1ad86b4c2cdb5b15b6d1e1',1,'mxnet::Engine::Stop()']]],
+  ['stop',['Stop',['../classmxnet_1_1Engine.html#a30f8947a7a1ad86b4c2cdb5b15b6d1e1',1,'mxnet::Engine::Stop()'],['../classmxnet_1_1runtime_1_1SliceObj.html#ad7df2dd13479c28e8731bae5fe447ff8',1,'mxnet::runtime::SliceObj::stop()']]],
   ['stop_5f',['stop_',['../structmshadow_1_1expr_1_1RangeExp.html#a2f42a5b4dc60c44c27510c50a76fdd5a',1,'mshadow::expr::RangeExp']]],
   ['storage',['Storage',['../classmxnet_1_1Storage.html',1,'mxnet']]],
   ['storage_2eh',['storage.h',['../storage_8h.html',1,'']]],

@@ -678,6 +678,7 @@
 <span class="c1"># pylint: disable=too-many-branches, too-many-statements</span>
 <span class="sd">&quot;&quot;&quot;Profiler setting methods.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">_LIB</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">c_str</span><span class="p">,</span> <span class="n">ProfileHandle</span><span class="p">,</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">KVStoreHandle</span>
 
@@ -694,6 +695,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    filename : string,</span>
 <span class="sd">        output file for profile data</span>
+<span class="sd">    gpu_memory_profile_filename_prefix : string</span>
+<span class="sd">        filename prefix for the GPU memory profile</span>
 <span class="sd">    profile_all : boolean,</span>
 <span class="sd">        all profile types enabled</span>
 <span class="sd">    profile_symbolic : boolean,</span>
@@ -1155,6 +1158,55 @@
 <span class="sd">            Default is `process`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXProfileSetMarker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">c_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">c_str</span><span class="p">(</span><span class="n">scope</span><span class="p">)))</span></div></div>
+
+
+<div class="viewcode-block" id="Scope"><a class="viewcode-back" href="../../api/mxnet/profiler/index.html#mxnet.profiler.Scope">[docs]</a><span class="k">class</span> <span class="nc">Scope</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The `_profiler.Scope` was developed to assign the profiler scope for the GPU</span>
+<span class="sd">    memory profiler. It is implicitly invoked when the Gluon API is used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ==========</span>
+<span class="sd">    name : Name of the Profiler Scope</span>
+<span class="sd">    append_mode : Whether to append the old profiler scope at the front.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_current</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;:&#39;</span><span class="p">,</span> <span class="n">append_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">append_mode</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+                <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># Invoke the C API to propagate the profiler scope information to the</span>
+        <span class="c1"># C++ backend.</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerScope</span><span class="p">(</span><span class="n">c_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span>
+        <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span>
+        <span class="c1"># If the old profiler scope is also of type `profiler.Scope`, invoke the</span>
+        <span class="c1"># C API once again to recover the previous scope information. Otherwise,</span>
+        <span class="c1"># the default scope `&lt;unk&gt;:` will be set.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span><span class="p">,</span> <span class="n">Scope</span><span class="p">):</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerScope</span><span class="p">(</span><span class="n">c_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span><span class="o">.</span><span class="n">name</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerScope</span><span class="p">(</span><span class="n">c_str</span><span class="p">(</span><span class="s2">&quot;&lt;unk&gt;:&quot;</span><span class="p">)))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
+
+<span class="c1"># initialize the default profiler scope</span>
+<span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
 </pre></div>
 
         </div>

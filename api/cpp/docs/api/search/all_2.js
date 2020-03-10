@@ -76,6 +76,7 @@ var searchData=
   ['assign',['assign',['../classmxnet_1_1Array.html#a9095f1bac4bfa8eec9f4c080dba54d8f',1,'mxnet::Array::assign()'],['../classmxnet_1_1Tuple.html#a2fa519288bdce42447674e78fa4c6fda',1,'mxnet::Tuple::assign()'],['../classnnvm_1_1Tuple.html#a6ff46861d8d09663978d03413b6f8ff7',1,'nnvm::Tuple::assign()']]],
   ['assign_5fdispatch',['ASSIGN_DISPATCH',['../operator__util_8h.html#a0e0ffc581a0c4a40815110163625b517',1,'operator_util.h']]],
   ['assigncontext',['AssignContext',['../namespacemxnet_1_1common.html#a19bebfe40260d14068675b893f6b1a6b',1,'mxnet::common']]],
+  ['assignstorageinfo',['AssignStorageInfo',['../classmxnet_1_1NDArray.html#ab160abff10bc69fdc0cff93fe502c74c',1,'mxnet::NDArray']]],
   ['assigntypedlambda',['AssignTypedLambda',['../classmxnet_1_1runtime_1_1TypedPackedFunc_3_01R_07Args_8_8_8_08_4.html#ac1475acbfa941e29a91a4438fc7d6ebd',1,'mxnet::runtime::TypedPackedFunc&lt; R(Args...)&gt;']]],
   ['async_5fon_5fcomplete',['async_on_complete',['../structmxnet_1_1OpContext.html#a40ce0e3d4ac21412cfafafc5b1fd32ef',1,'mxnet::OpContext']]],
   ['asyncfn',['AsyncFn',['../classmxnet_1_1Engine.html#ad41feff70bba0f29fc24f60b5381984c',1,'mxnet::Engine']]],

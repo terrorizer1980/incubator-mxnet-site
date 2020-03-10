@@ -301,6 +301,7 @@ var searchData=
   ['mxsetprocessprofilerconfig',['MXSetProcessProfilerConfig',['../include_2mxnet_2c__api_8h.html#a7b704b6d435cbf77c851ec722e6139e6',1,'c_api.h']]],
   ['mxsetprocessprofilerstate',['MXSetProcessProfilerState',['../include_2mxnet_2c__api_8h.html#a9211dbae2288461a235baa1745f86041',1,'c_api.h']]],
   ['mxsetprofilerconfig',['MXSetProfilerConfig',['../include_2mxnet_2c__api_8h.html#a47521044e7ddd44500ed478f45705564',1,'c_api.h']]],
+  ['mxsetprofilerscope',['MXSetProfilerScope',['../include_2mxnet_2c__api_8h.html#a1fa3d634c2c35ac6e15dcdb0d3e10f5e',1,'c_api.h']]],
   ['mxsetprofilerstate',['MXSetProfilerState',['../include_2mxnet_2c__api_8h.html#ac373802e0d3a38f297345f87d307a798',1,'c_api.h']]],
   ['mxsetsubgraphpropertyopnames',['MXSetSubgraphPropertyOpNames',['../c__api__test_8h.html#a46bef4e497c000f66704316b6a01eeba',1,'c_api_test.h']]],
   ['mxsetsubgraphpropertyopnamesv2',['MXSetSubgraphPropertyOpNamesV2',['../c__api__test_8h.html#a4d4fb64e7ea28aebf00dce4853e638e2',1,'c_api_test.h']]],

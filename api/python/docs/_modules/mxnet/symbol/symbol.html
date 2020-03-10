@@ -702,6 +702,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">op</span>
 <span class="kn">from</span> <span class="nn">._internal</span> <span class="kn">import</span> <span class="n">SymbolBase</span><span class="p">,</span> <span class="n">_set_symbol_class</span>
 <span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">is_np_shape</span>
+<span class="kn">from</span> <span class="nn">..profiler</span> <span class="kn">import</span> <span class="n">Scope</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;var&quot;</span><span class="p">,</span> <span class="s2">&quot;Variable&quot;</span><span class="p">,</span> <span class="s2">&quot;Group&quot;</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;load_json&quot;</span><span class="p">,</span>
            <span class="s2">&quot;pow&quot;</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;maximum&quot;</span><span class="p">,</span> <span class="s2">&quot;minimum&quot;</span><span class="p">,</span> <span class="s2">&quot;hypot&quot;</span><span class="p">,</span> <span class="s2">&quot;eye&quot;</span><span class="p">,</span> <span class="s2">&quot;zeros&quot;</span><span class="p">,</span>
@@ -3400,7 +3401,7 @@
         <span class="k">raise</span> <span class="n">NotImplementedForSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backward</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="var"><a class="viewcode-back" href="../../../api/symbol/symbol.html#mxnet.symbol.var">[docs]</a><span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lr_mult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wd_mult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">profiler_scope</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a symbolic variable with specified name.</span>
 
 <span class="sd">    Example</span>
@@ -3435,6 +3436,8 @@
 <span class="sd">        Initializer for this variable to (optionally) override the default initializer.</span>
 <span class="sd">    stype : str</span>
 <span class="sd">        The storage type of the variable, such as &#39;row_sparse&#39;, &#39;csr&#39;, &#39;default&#39;, etc</span>
+<span class="sd">    profiler_scope : str</span>
+<span class="sd">        The profiler scope for input variable.</span>
 <span class="sd">    kwargs : Additional attribute variables</span>
 <span class="sd">        Additional attributes must start and end with double underscores.</span>
 
@@ -3470,6 +3473,12 @@
         <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;__init__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">init</span>
     <span class="k">if</span> <span class="n">stype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;__storage_type__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_STORAGE_TYPE_STR_TO_ID</span><span class="p">[</span><span class="n">stype</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">profiler_scope</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;__profiler_scope__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profiler_scope</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">()</span>
+        <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;__profiler_scope__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">name</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">):</span>
             <span class="n">attr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
