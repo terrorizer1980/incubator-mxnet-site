@@ -242,6 +242,8 @@ var searchData=
   ['mxnetfuncgetglobal',['MXNetFuncGetGlobal',['../c__runtime__api_8h.html#a453f724d7c95c2bc54fa6e58cb371388',1,'c_runtime_api.h']]],
   ['mxnetfunclistglobalnames',['MXNetFuncListGlobalNames',['../c__runtime__api_8h.html#a4300e7198411eb1048e0470b9d39c361',1,'c_runtime_api.h']]],
   ['mxnetobjectfree',['MXNetObjectFree',['../c__runtime__api_8h.html#a0fbda9f8d3b3db7d5868a7110c6f052d',1,'c_runtime_api.h']]],
+  ['mxnetobjectgettypeindex',['MXNetObjectGetTypeIndex',['../c__runtime__api_8h.html#a1567be54a9d78d322e7759d501770017',1,'c_runtime_api.h']]],
+  ['mxnetobjecttypekey2index',['MXNetObjectTypeKey2Index',['../c__runtime__api_8h.html#afd532df1c5e28f933bb13925890360bd',1,'c_runtime_api.h']]],
   ['mxnetpodvalue_5f',['MXNetPODValue_',['../classmxnet_1_1runtime_1_1MXNetPODValue__.html#a0b794162f50bd4d2ad7e48baced031b2',1,'mxnet::runtime::MXNetPODValue_::MXNetPODValue_()'],['../classmxnet_1_1runtime_1_1MXNetPODValue__.html#a883e14a5432576a1c6cceba88b42c9e2',1,'mxnet::runtime::MXNetPODValue_::MXNetPODValue_(MXNetValue value, int type_code)']]],
   ['mxnetretvalue',['MXNetRetValue',['../classmxnet_1_1runtime_1_1MXNetRetValue.html#a4f18b7c504ff3c90f3a162791bb4af7c',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue()'],['../classmxnet_1_1runtime_1_1MXNetRetValue.html#aa4b9f1dc07e1297f63371be518e5ab0e',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue(MXNetRetValue &amp;&amp;other)'],['../classmxnet_1_1runtime_1_1MXNetRetValue.html#a4153d796c1eaa35aa511f3f4e44804dc',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue(const MXNetRetValue &amp;other)']]],
   ['mxnotifyshutdown',['MXNotifyShutdown',['../include_2mxnet_2c__api_8h.html#aa837df9930bbb46d0ca1674523f63e1c',1,'c_api.h']]],
