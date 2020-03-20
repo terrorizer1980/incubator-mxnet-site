@@ -12,6 +12,7 @@ var searchData=
   ['contexts',['contexts',['../structMXCallbackList.html#a332323a5f414bd3f5e423788804a0dcd',1,'MXCallbackList']]],
   ['control_5fdeps',['control_deps',['../structnnvm_1_1IndexedGraph_1_1Node.html#a4ea5256c0e198c3b6585bc69153a1e4e',1,'nnvm::IndexedGraph::Node::control_deps()'],['../classnnvm_1_1Node.html#a1e6f4bd01bb3bd688ce441144989b438',1,'nnvm::Node::control_deps()']]],
   ['count_5f',['count_',['../classmxnet_1_1cpp_1_1Optimizer.html#a9b50b92bbac6f55311e3f68f0edcc656',1,'mxnet::cpp::Optimizer']]],
+  ['cpu_5fruntime',['cpu_runtime',['../structdnnl__version__t.html#a2d0bade7e7ab7ff25d68f9011a3978e2',1,'dnnl_version_t']]],
   ['create_5fop_5fctx_5fcstr',['create_op_ctx_cstr',['../classCustomOp.html#aaecfcceef32fd03819decae33f63fff3',1,'CustomOp']]],
   ['create_5fop_5ffp',['create_op_fp',['../classCustomOp.html#a51032ba0354a1b73b47b38af866c1e50',1,'CustomOp']]],
   ['ctx',['ctx',['../structDLTensor.html#a552ca85f7d04138c876c636e25b3c484',1,'DLTensor::ctx()'],['../structmxnet_1_1RunContext.html#ace5970ed7c25ccc98ffd0dcf35fd3c88',1,'mxnet::RunContext::ctx()'],['../classmxnet_1_1Imperative_1_1AGInfo.html#afe2cb4d45bd32e40a86d2a49bfd20952',1,'mxnet::Imperative::AGInfo::ctx()'],['../structMXTensor.html#a4a9d7f3e262ab9ff4916d585f9236d12',1,'MXTensor::ctx()'],['../structmxnet_1_1Storage_1_1Handle.html#ae0a4202582aa12a598f5c55ef51ad4c8',1,'mxnet::Storage::Handle::ctx()'],['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#ab11ada6376da81efff528855a4f1affc',1,'mxnet::cpp::FeedForwardConfig::ctx()']]]

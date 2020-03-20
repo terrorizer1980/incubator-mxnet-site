@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['layer_20normalization',['Layer Normalization',['../group__c__api__layer__normalization.html',1,'']]],
-  ['lrn',['LRN',['../group__c__api__lrn.html',1,'']]],
   ['handler_3c_20luaref_20_3e',['Handler&lt; LuaRef &gt;',['../classdmlc_1_1LuaRef.html#a97a0aabb9d8d59dbccf720f68ecc951b',1,'dmlc::LuaRef']]],
   ['l_5f',['L_',['../classdmlc_1_1LuaState.html#aca1618783c1afc81b9f1dd0fb2512820',1,'dmlc::LuaState']]],
   ['label',['label',['../classdmlc_1_1Row.html#a696b4316f9e2aa22081a2cc85acc68f9',1,'dmlc::Row::label()'],['../structdmlc_1_1RowBlock.html#a0d5471d01726948ce91855e8b82b0f65',1,'dmlc::RowBlock::label()'],['../classmxnet_1_1cpp_1_1DataBatch.html#a4053743d9b862ca70fe553872beae483',1,'mxnet::cpp::DataBatch::label()']]],

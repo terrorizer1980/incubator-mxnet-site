@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['operation_20descriptors',['Operation descriptors',['../group__c__api__types__op__descs.html',1,'']]],
   ['ndarray_20_2a',['NDArray *',['../classmxnet_1_1runtime_1_1MXNetArgValue.html#afe7dfa61e604cce332568e087d4416c1',1,'mxnet::runtime::MXNetArgValue']]],
   ['objallocatorbase',['ObjAllocatorBase',['../classmxnet_1_1runtime_1_1ObjAllocatorBase.html',1,'mxnet::runtime']]],
   ['objallocatorbase',['ObjAllocatorBase',['../classmxnet_1_1runtime_1_1Object.html#a8fae619f3bd1a2b2f7273d8d6525032a',1,'mxnet::runtime::Object::ObjAllocatorBase()'],['../classmxnet_1_1runtime_1_1ObjectPtr.html#a8fae619f3bd1a2b2f7273d8d6525032a',1,'mxnet::runtime::ObjectPtr::ObjAllocatorBase()']]],
@@ -109,8 +108,8 @@ var searchData=
   ['opgroup',['OpGroup',['../classnnvm_1_1OpGroup.html',1,'nnvm']]],
   ['opgroup',['OpGroup',['../classnnvm_1_1Op.html#aa78b2abaef315001da64cae7a8050e61',1,'nnvm::Op']]],
   ['ophandle',['OpHandle',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2c__api_8h.html#acf157e26d64edaf2b857b04a69deb52b',1,'c_api.h']]],
-  ['opmap',['OpMap',['../classnnvm_1_1OpMap.html',1,'nnvm']]],
   ['opmap',['OpMap',['../classmxnet_1_1cpp_1_1OpMap.html',1,'mxnet::cpp']]],
+  ['opmap',['OpMap',['../classnnvm_1_1OpMap.html',1,'nnvm']]],
   ['opmap',['OpMap',['../classnnvm_1_1Op.html#afcf7d46a60dd033ce159ceceec21db70',1,'nnvm::Op::OpMap()'],['../classmxnet_1_1cpp_1_1OpMap.html#acf1933f350883656aa9a0765cb746e79',1,'mxnet::cpp::OpMap::OpMap()']]],
   ['opregget_5ft',['opRegGet_t',['../lib__api_8h.html#a8a5b244afbea5f12deb2972f68e7d14d',1,'lib_api.h']]],
   ['opregsize_5ft',['opRegSize_t',['../lib__api_8h.html#a62bc19b0f724d20fff152c4a67bcdbd4',1,'lib_api.h']]],
@@ -118,7 +117,7 @@ var searchData=
   ['opresource',['OpResource',['../classOpResource.html',1,'OpResource'],['../classOpResource.html#a1ae77b7d36499b5d562967dc57c53f8d',1,'OpResource::OpResource()']]],
   ['oprhandle',['OprHandle',['../classmxnet_1_1Engine.html#a832436e413a075291aa1a631942c3f01',1,'mxnet::Engine::OprHandle()'],['../namespacemxnet_1_1engine.html#a2d9b14b658e3f3c4e03ca49cd38ace94',1,'mxnet::engine::OprHandle()']]],
   ['opstateptr',['OpStatePtr',['../classmxnet_1_1OpStatePtr.html',1,'mxnet']]],
-  ['optimizer',['optimizer',['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a12146c3d98b52e4d89bc4ed683ee7e74',1,'mxnet::cpp::FeedForwardConfig::optimizer()'],['../classmxnet_1_1cpp_1_1Optimizer.html#a0f9555beda838a27b235ab5a3e4c13c4',1,'mxnet::cpp::Optimizer::Optimizer()']]],
+  ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html#a0f9555beda838a27b235ab5a3e4c13c4',1,'mxnet::cpp::Optimizer::Optimizer()'],['../structmxnet_1_1cpp_1_1FeedForwardConfig.html#a12146c3d98b52e4d89bc4ed683ee7e74',1,'mxnet::cpp::FeedForwardConfig::optimizer()']]],
   ['optimizer',['Optimizer',['../classmxnet_1_1cpp_1_1Optimizer.html',1,'mxnet::cpp']]],
   ['optimizer_2eh',['optimizer.h',['../optimizer_8h.html',1,'']]],
   ['optimizercreator',['OptimizerCreator',['../namespacemxnet_1_1cpp.html#a16a22578671e5ebcf8addb2275c317bc',1,'mxnet::cpp']]],

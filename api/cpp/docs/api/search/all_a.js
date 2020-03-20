@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['inner_20product',['Inner product',['../group__c__api__inner__product.html',1,'']]],
   ['i_5fchannel_5f',['i_channel_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a235dfd748d7f056854984b52feead132',1,'mshadow::expr::UnpackPatchToColXExp']]],
   ['i_5fheight_5f',['i_height_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#ac9154015985191c99545acc3a7efd2e3',1,'mshadow::expr::UnpackPatchToColXExp']]],
   ['i_5fwidth_5f',['i_width_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a16648a89c281647958dfe4f69a36ffe1',1,'mshadow::expr::UnpackPatchToColXExp']]],
