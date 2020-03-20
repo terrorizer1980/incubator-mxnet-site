@@ -106,7 +106,7 @@ var searchData=
   ['reverse',['reverse',['../classnnvm_1_1Layout.html#aaa11e2d349bcfb1a47efb63f364e15b4',1,'nnvm::Layout']]],
   ['reverse_5fiterator',['reverse_iterator',['../classmxnet_1_1Array.html#aad789d2d9ca9a4e9b5a4bfdf343c6aae',1,'mxnet::Array::reverse_iterator()'],['../classnnvm_1_1Layout.html#a271f83387eac34590453e672f9b6d5e3',1,'nnvm::Layout::reverse_iterator()']]],
   ['review_5fmap',['review_map',['../classCustomPartitioner.html#abaa35c7473eb997a3d2d7c513f7feb46',1,'CustomPartitioner']]],
-  ['reviewsubgraph_5ft',['reviewSubgraph_t',['../lib__api_8h.html#a940217b5bc54255ff21d02fb9ada9151',1,'lib_api.h']]],
+  ['reviewsubgraph_5ft',['reviewSubgraph_t',['../lib__api_8h.html#afd30e0165e1ef233fd40728045351989',1,'lib_api.h']]],
   ['rhs_5f',['rhs_',['../structmshadow_1_1expr_1_1DotExp.html#adb6e2f6570662aff428a2432dfc07e6f',1,'mshadow::expr::DotExp::rhs_()'],['../structmshadow_1_1expr_1_1BinaryMapExp.html#a9afdad54a6a226b251fc4cd4ed92050f',1,'mshadow::expr::BinaryMapExp::rhs_()'],['../structmshadow_1_1expr_1_1ComplexBinaryMapExp.html#a3fcd05127129e9713690deb24fd7429f',1,'mshadow::expr::ComplexBinaryMapExp::rhs_()'],['../structmshadow_1_1expr_1_1ImplicitGEMMExp.html#a012467415e838b426ba07db7ecd0a677',1,'mshadow::expr::ImplicitGEMMExp::rhs_()']]],
   ['right',['right',['../structmshadow_1_1op_1_1right.html',1,'mshadow::op']]],
   ['rmse',['RMSE',['../classmxnet_1_1cpp_1_1RMSE.html#a95114dec51bb2fa95e47d8dbd31c39d8',1,'mxnet::cpp::RMSE']]],

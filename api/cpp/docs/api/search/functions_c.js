@@ -88,7 +88,7 @@ var searchData=
   ['mxbuildsubgraphbyopnames',['MXBuildSubgraphByOpNames',['../c__api__test_8h.html#a6bc6a3c7b5a7dea6acd93a98d3d293d2',1,'c_api_test.h']]],
   ['mxcachedopregisterophook',['MXCachedOpRegisterOpHook',['../include_2mxnet_2c__api_8h.html#a7d4d65764a5e1b5e1556aa66191d101e',1,'c_api.h']]],
   ['mxcreatecachedop',['MXCreateCachedOp',['../include_2mxnet_2c__api_8h.html#a46d056bad70ea014110923da41524cfc',1,'c_api.h']]],
-  ['mxcreatecachedopex',['MXCreateCachedOpEX',['../include_2mxnet_2c__api_8h.html#a3c66740faa50551765f802f7b786371a',1,'MXCreateCachedOpEX(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out, bool thread_safe DEFAULT(false)):&#160;c_api.h'],['../include_2mxnet_2c__api_8h.html#a43627f2162552f27a6ced69309a9d269',1,'MXCreateCachedOpEx(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out):&#160;c_api.h']]],
+  ['mxcreatecachedopex',['MXCreateCachedOpEx',['../include_2mxnet_2c__api_8h.html#a43627f2162552f27a6ced69309a9d269',1,'MXCreateCachedOpEx(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out):&#160;c_api.h'],['../include_2mxnet_2c__api_8h.html#a3c66740faa50551765f802f7b786371a',1,'MXCreateCachedOpEX(SymbolHandle handle, int num_flags, const char **keys, const char **vals, CachedOpHandle *out, bool thread_safe DEFAULT(false)):&#160;c_api.h']]],
   ['mxcustomfunctionrecord',['MXCustomFunctionRecord',['../include_2mxnet_2c__api_8h.html#ae1f7686cd08133d865ed6b9ea23eb31b',1,'c_api.h']]],
   ['mxcustomopregister',['MXCustomOpRegister',['../include_2mxnet_2c__api_8h.html#a92233cd9477ce12458bbd2b3e628dec9',1,'c_api.h']]],
   ['mxdataiter',['MXDataIter',['../classmxnet_1_1cpp_1_1MXDataIter.html#aa4ca276f3f007d16b3a6d8ccb31022fd',1,'mxnet::cpp::MXDataIter::MXDataIter(const std::string &amp;mxdataiter_type)'],['../classmxnet_1_1cpp_1_1MXDataIter.html#afe4be15da6b1dd0e3516b587d58a610c',1,'mxnet::cpp::MXDataIter::MXDataIter(const MXDataIter &amp;other)']]],
@@ -247,7 +247,7 @@ var searchData=
   ['mxnetpodvalue_5f',['MXNetPODValue_',['../classmxnet_1_1runtime_1_1MXNetPODValue__.html#a0b794162f50bd4d2ad7e48baced031b2',1,'mxnet::runtime::MXNetPODValue_::MXNetPODValue_()'],['../classmxnet_1_1runtime_1_1MXNetPODValue__.html#a883e14a5432576a1c6cceba88b42c9e2',1,'mxnet::runtime::MXNetPODValue_::MXNetPODValue_(MXNetValue value, int type_code)']]],
   ['mxnetretvalue',['MXNetRetValue',['../classmxnet_1_1runtime_1_1MXNetRetValue.html#a4f18b7c504ff3c90f3a162791bb4af7c',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue()'],['../classmxnet_1_1runtime_1_1MXNetRetValue.html#aa4b9f1dc07e1297f63371be518e5ab0e',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue(MXNetRetValue &amp;&amp;other)'],['../classmxnet_1_1runtime_1_1MXNetRetValue.html#a4153d796c1eaa35aa511f3f4e44804dc',1,'mxnet::runtime::MXNetRetValue::MXNetRetValue(const MXNetRetValue &amp;other)']]],
   ['mxnotifyshutdown',['MXNotifyShutdown',['../include_2mxnet_2c__api_8h.html#aa837df9930bbb46d0ca1674523f63e1c',1,'c_api.h']]],
-  ['mxoptimizeforbackend',['MXOptimizeForBackend',['../include_2mxnet_2c__api_8h.html#a968c79913ef68e02d0f0d277c3f58056',1,'c_api.h']]],
+  ['mxoptimizeforbackend',['MXOptimizeForBackend',['../include_2mxnet_2c__api_8h.html#ac90984ff8e66981bc0dc848859add9ab',1,'c_api.h']]],
   ['mxpredcreate',['MXPredCreate',['../c__predict__api_8h.html#adec8e789ff745e4dd4f874666e053691',1,'c_predict_api.h']]],
   ['mxpredcreateex',['MXPredCreateEx',['../c__predict__api_8h.html#a8d9bd01b061603e0d2963713ab72a8d6',1,'c_predict_api.h']]],
   ['mxpredcreatemultithread',['MXPredCreateMultiThread',['../c__predict__api_8h.html#af9a789f59254408bff3b8094a05908b8',1,'c_predict_api.h']]],
@@ -348,5 +348,5 @@ var searchData=
   ['mxsymbolsavetofile',['MXSymbolSaveToFile',['../include_2mxnet_2c__api_8h.html#a8b3a7394a8a641f2490f4c5246be1083',1,'c_api.h']]],
   ['mxsymbolsavetojson',['MXSymbolSaveToJSON',['../include_2mxnet_2c__api_8h.html#a5c99eac0fe3cfa0912259d0fa12b6651',1,'c_api.h']]],
   ['mxsymbolsetattr',['MXSymbolSetAttr',['../include_2mxnet_2c__api_8h.html#aebeac35c3110eb391035fbbeb29e9436',1,'c_api.h']]],
-  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#a9896fb6f4037505c192bf9df8229e50f',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID, MXContext mx_ctx)']]]
+  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#a19f8cb31945c06164798a1ee30664f41',1,'MXTensor::MXTensor(const MXTensor &amp;oth)'],['../structMXTensor.html#a9896fb6f4037505c192bf9df8229e50f',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID, MXContext mx_ctx)']]]
 ];

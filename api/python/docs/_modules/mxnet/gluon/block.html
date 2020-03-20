@@ -1647,10 +1647,14 @@
             <span class="c1"># get list of params in the order of out.list_arguments</span>
             <span class="n">arg_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
                          <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()]</span>
+            <span class="n">aux_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+                         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()]</span>
             <span class="c1"># Partition the graph.</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">,</span> <span class="n">arg_array</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span><span class="p">)</span>
-
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">,</span> <span class="n">arg_array</span><span class="p">,</span> <span class="n">aux_array</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span><span class="p">)</span>
+            <span class="c1">#update cached graph with partitioned graph</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">out</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">CachedOp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">_deferred_infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1699,6 +1703,69 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HybridBlock.optimize_for"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.optimize_for">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Partitions the current HybridBlock and optimizes it for a given backend</span>
+<span class="sd">        without executing a forward pass. Modifies the HybridBlock in-place.</span>
+
+<span class="sd">        Immediately partitions a HybridBlock using the specified backend. Combines</span>
+<span class="sd">        the work done in the hybridize API with part of the work done in the forward</span>
+<span class="sd">        pass without calling the CachedOp. Can be used in place of hybridize,</span>
+<span class="sd">        afterwards `export` can be called or inference can be run. See README.md in</span>
+<span class="sd">        example/extensions/lib_subgraph/README.md for more details.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        # partition and then export to file</span>
+<span class="sd">        block.optimize_for(x, backend=&#39;myPart&#39;)</span>
+<span class="sd">        block.export(&#39;partitioned&#39;)</span>
+
+<span class="sd">        # partition and then run inference</span>
+<span class="sd">        block.optimize_for(x, backend=&#39;myPart&#39;)</span>
+<span class="sd">        block(x)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : NDArray</span>
+<span class="sd">            first input to model</span>
+<span class="sd">        *args : NDArray</span>
+<span class="sd">            other inputs to model</span>
+<span class="sd">        backend : str</span>
+<span class="sd">            The name of backend, as registered in `SubgraphBackendRegistry`, default None</span>
+<span class="sd">        backend_opts : dict of user-specified options to pass to the backend for partitioning, optional</span>
+<span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
+<span class="sd">        static_alloc : bool, default False</span>
+<span class="sd">            Statically allocate memory to improve speed. Memory usage may increase.</span>
+<span class="sd">        static_shape : bool, default False</span>
+<span class="sd">            Optimize for invariant input shapes between iterations. Must also</span>
+<span class="sd">            set static_alloc to True. Change of input shapes is still allowed</span>
+<span class="sd">            but slower.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># do hybrize API call</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">backend_opts</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># do part of forward API call</span>
+        <span class="n">has_symbol</span><span class="p">,</span> <span class="n">has_ndarray</span><span class="p">,</span> <span class="n">ctx_set</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_gather_type_ctx_info</span><span class="p">([</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">has_symbol</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inputs must be NDArrays for the optimize_for API&#39;</span>
+                             <span class="s1">&#39; Please check the type of the args.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_symbol</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_ndarray</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;In HybridBlock, there must be one NDArray as input.&#39;</span>
+                             <span class="s1">&#39; Please check the type of the args.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctx_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Find multiple contexts in the input, &#39;</span>
+                             <span class="s1">&#39;After hybridized, the HybridBlock only supports one input &#39;</span>
+                             <span class="s1">&#39;context. You can print the ele.ctx in the &#39;</span>
+                             <span class="s1">&#39;input arguments to inspect their contexts. &#39;</span>
+                             <span class="s1">&#39;Find all contexts = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ctx_set</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_cache</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">,</span> <span class="s2">&quot;Gluon failed to build the cache. &quot;</span> \
+                                <span class="s2">&quot;This should never happen. &quot;</span> \
+                                <span class="s2">&quot;Please submit an issue on Github&quot;</span> \
+                                <span class="s2">&quot; https://github.com/apache/incubator-mxnet.&quot;</span></div>
+        <span class="c1"># do not actually call the cached_op</span>
 
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>

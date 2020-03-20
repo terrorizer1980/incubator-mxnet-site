@@ -93,7 +93,7 @@ var searchData=
   ['parsetriple',['ParseTriple',['../namespacedmlc.html#ade27d0fd3a6c3e57a64e225a78e56ced',1,'dmlc']]],
   ['parseunsignedint',['ParseUnsignedInt',['../namespacedmlc.html#ae5d2f93a1b7b7683df3c674e0c3d1863',1,'dmlc']]],
   ['part_5fpack_5fsize',['part_pack_size',['../structdnnl__rnn__packed__desc__t.html#aa76dc9b94eb7f28328d013feba9009f8',1,'dnnl_rnn_packed_desc_t']]],
-  ['partcallreviewsubgraph_5ft',['partCallReviewSubgraph_t',['../lib__api_8h.html#a4f40765537dd6e3295725abfc25f304e',1,'lib_api.h']]],
+  ['partcallreviewsubgraph_5ft',['partCallReviewSubgraph_t',['../lib__api_8h.html#a44515b28b2a4b57550638211a6e391bc',1,'lib_api.h']]],
   ['partcallsupportedops_5ft',['partCallSupportedOps_t',['../lib__api_8h.html#a006663c60de1c6d71c3b38aa49ae3303',1,'lib_api.h']]],
   ['partialforward',['PartialForward',['../classmxnet_1_1Executor.html#a3e261d44065848e434c527000d4390c8',1,'mxnet::Executor']]],
   ['partialgrad',['PartialGrad',['../structmshadow_1_1red_1_1sum.html#a351d0e761cb9944c4d98919535754142',1,'mshadow::red::sum::PartialGrad()'],['../structmshadow_1_1red_1_1maximum.html#ac2d455ca3b4eb12554eb31ed6a1387b7',1,'mshadow::red::maximum::PartialGrad()'],['../structmshadow_1_1red_1_1minimum.html#aa3f7b2a1f96f77caca258e8c594f67bd',1,'mshadow::red::minimum::PartialGrad()']]],

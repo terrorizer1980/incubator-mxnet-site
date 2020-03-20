@@ -2709,10 +2709,13 @@ If False, <cite>beta</cite> is ignored.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.infer_type" title="mxnet.gluon.nn.HybridBlock.infer_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_type</span></code></a>(*args)</p></td>
 <td><p>Infers data type of Parameters from inputs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.register_child" title="mxnet.gluon.nn.HybridBlock.register_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_child</span></code></a>(block[, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.optimize_for" title="mxnet.gluon.nn.HybridBlock.optimize_for"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_for</span></code></a>(x, *args[, backend, backend_opts])</p></td>
+<td><p>Partitions the current HybridBlock and optimizes it for a given backend without executing a forward pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.register_child" title="mxnet.gluon.nn.HybridBlock.register_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_child</span></code></a>(block[, name])</p></td>
 <td><p>Registers block as a child of self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.register_op_hook" title="mxnet.gluon.nn.HybridBlock.register_op_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_op_hook</span></code></a>(callback[, monitor_all])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.HybridBlock.register_op_hook" title="mxnet.gluon.nn.HybridBlock.register_op_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_op_hook</span></code></a>(callback[, monitor_all])</p></td>
 <td><p>Install op hook for block recursively.</p></td>
 </tr>
 </tbody>
@@ -2820,6 +2823,39 @@ but slower.</p></li>
 <dt id="mxnet.gluon.nn.HybridBlock.infer_type">
 <code class="sig-name descname">infer_type</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#HybridBlock.infer_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.HybridBlock.infer_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infers data type of Parameters from inputs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.gluon.nn.HybridBlock.optimize_for">
+<code class="sig-name descname">optimize_for</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">*args</em>, <em class="sig-param">backend=None</em>, <em class="sig-param">backend_opts=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/block.html#HybridBlock.optimize_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.HybridBlock.optimize_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partitions the current HybridBlock and optimizes it for a given backend
+without executing a forward pass. Modifies the HybridBlock in-place.</p>
+<p>Immediately partitions a HybridBlock using the specified backend. Combines
+the work done in the hybridize API with part of the work done in the forward
+pass without calling the CachedOp. Can be used in place of hybridize,
+afterwards <cite>export</cite> can be called or inference can be run. See README.md in
+example/extensions/lib_subgraph/README.md for more details.</p>
+<p class="rubric">Examples</p>
+<p># partition and then export to file
+block.optimize_for(x, backend=’myPart’)
+block.export(‘partitioned’)</p>
+<p># partition and then run inference
+block.optimize_for(x, backend=’myPart’)
+block(x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – first input to model</p></li>
+<li><p><strong>*args</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – other inputs to model</p></li>
+<li><p><strong>backend</strong> (<em>str</em>) – The name of backend, as registered in <cite>SubgraphBackendRegistry</cite>, default None</p></li>
+<li><p><strong>backend_opts</strong> (<em>dict of user-specified options to pass to the backend for partitioning</em><em>, </em><em>optional</em>) – Passed on to <cite>PrePartition</cite> and <cite>PostPartition</cite> functions of <cite>SubgraphProperty</cite></p></li>
+<li><p><strong>static_alloc</strong> (<em>bool</em><em>, </em><em>default False</em>) – Statically allocate memory to improve speed. Memory usage may increase.</p></li>
+<li><p><strong>static_shape</strong> (<em>bool</em><em>, </em><em>default False</em>) – Optimize for invariant input shapes between iterations. Must also
+set static_alloc to True. Change of input shapes is still allowed
+but slower.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
