@@ -348,5 +348,5 @@ var searchData=
   ['mxsymbolsavetofile',['MXSymbolSaveToFile',['../include_2mxnet_2c__api_8h.html#a8b3a7394a8a641f2490f4c5246be1083',1,'c_api.h']]],
   ['mxsymbolsavetojson',['MXSymbolSaveToJSON',['../include_2mxnet_2c__api_8h.html#a5c99eac0fe3cfa0912259d0fa12b6651',1,'c_api.h']]],
   ['mxsymbolsetattr',['MXSymbolSetAttr',['../include_2mxnet_2c__api_8h.html#aebeac35c3110eb391035fbbeb29e9436',1,'c_api.h']]],
-  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#a19f8cb31945c06164798a1ee30664f41',1,'MXTensor::MXTensor(const MXTensor &amp;oth)'],['../structMXTensor.html#a9896fb6f4037505c192bf9df8229e50f',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID, MXContext mx_ctx)']]]
+  ['mxtensor',['MXTensor',['../structMXTensor.html#a2981dba10746e7d095b38e5f6c96b17a',1,'MXTensor::MXTensor()'],['../structMXTensor.html#a19f8cb31945c06164798a1ee30664f41',1,'MXTensor::MXTensor(const MXTensor &amp;oth)'],['../structMXTensor.html#a945ab9c3aafcc3ea74507d2190ddadfc',1,'MXTensor::MXTensor(void *data_ptr, const std::vector&lt; int64_t &gt; &amp;shape, MXDType dtype, size_t vID, MXContext mx_ctx, MXStorageType stype=kDefaultStorage)']]]
 ];

@@ -23,6 +23,7 @@ var searchData=
   ['alloc',['Alloc',['../classmxnet_1_1Storage.html#a8ac978f345ba93f26b11ae4331406561',1,'mxnet::Storage::Alloc(size_t size, Context ctx)'],['../classmxnet_1_1Storage.html#a5badd0ec4eae08f2134c46436a952401',1,'mxnet::Storage::Alloc(Handle *handle)=0']]],
   ['alloc_5fcpu',['alloc_cpu',['../classOpResource.html#aef99a61504c8ead58a72cefb022f1818',1,'OpResource']]],
   ['alloc_5fgpu',['alloc_gpu',['../classOpResource.html#a34a83a97d2d83a033df3c2f6f9f262d8',1,'OpResource']]],
+  ['alloc_5fsparse',['alloc_sparse',['../classOpResource.html#af86844343d1ca1241be41b31a0414ed4',1,'OpResource']]],
   ['allocate',['allocate',['../classdmlc_1_1MemoryPool.html#a891d237cfb487524ee4934d9c9c91a48',1,'dmlc::MemoryPool::allocate()'],['../classdmlc_1_1ThreadlocalAllocator.html#ae0d77e0a063397c0f769f04947e662bd',1,'dmlc::ThreadlocalAllocator::allocate()']]],
   ['allochost',['AllocHost',['../namespacemshadow.html#ad0eacae3492e97f53fcd2f210bf9c645',1,'mshadow']]],
   ['allochost_5f',['AllocHost_',['../namespacemshadow.html#a1d4e86f18ce66c1b7073537647bd4374',1,'mshadow']]],

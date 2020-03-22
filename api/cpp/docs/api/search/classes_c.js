@@ -37,8 +37,8 @@ var searchData=
   ['monitor',['Monitor',['../classmxnet_1_1cpp_1_1Monitor.html',1,'mxnet::cpp']]],
   ['mse',['MSE',['../classmxnet_1_1cpp_1_1MSE.html',1,'mxnet::cpp']]],
   ['msraprelu',['MSRAPrelu',['../classmxnet_1_1cpp_1_1MSRAPrelu.html',1,'mxnet::cpp']]],
-  ['mul',['mul',['../structmshadow_1_1op_1_1mul.html',1,'mshadow::op']]],
   ['mul',['mul',['../structmshadow_1_1op_1_1complex_1_1mul.html',1,'mshadow::op::complex']]],
+  ['mul',['mul',['../structmshadow_1_1op_1_1mul.html',1,'mshadow::op']]],
   ['multo',['multo',['../structmshadow_1_1sv_1_1multo.html',1,'mshadow::sv']]],
   ['mxcallbacklist',['MXCallbackList',['../structMXCallbackList.html',1,'']]],
   ['mxcontext',['MXContext',['../structMXContext.html',1,'']]],
@@ -54,5 +54,6 @@ var searchData=
   ['mxnetretvalue',['MXNetRetValue',['../classmxnet_1_1runtime_1_1MXNetRetValue.html',1,'mxnet::runtime']]],
   ['mxnetvalue',['MXNetValue',['../unionMXNetValue.html',1,'']]],
   ['mxnetvaluecast',['MXNetValueCast',['../structmxnet_1_1runtime_1_1detail_1_1MXNetValueCast.html',1,'mxnet::runtime::detail']]],
+  ['mxsparse',['MXSparse',['../structMXSparse.html',1,'']]],
   ['mxtensor',['MXTensor',['../structMXTensor.html',1,'']]]
 ];

@@ -757,6 +757,7 @@ var searchData=
   ['mxlib_5fopcallfree_5fstr',['MXLIB_OPCALLFREE_STR',['../lib__api_8h.html#aa9581ed05ac3aefc194698100cc54e5a',1,'lib_api.h']]],
   ['mxlib_5fopcallfstatefulcomp_5fstr',['MXLIB_OPCALLFSTATEFULCOMP_STR',['../lib__api_8h.html#ad10be40f94357f8913f99288ccae5bea',1,'lib_api.h']]],
   ['mxlib_5fopcallinfershape_5fstr',['MXLIB_OPCALLINFERSHAPE_STR',['../lib__api_8h.html#ac21fd9c191ceab0d17561f4523ad6d23',1,'lib_api.h']]],
+  ['mxlib_5fopcallinferstype_5fstr',['MXLIB_OPCALLINFERSTYPE_STR',['../lib__api_8h.html#a95494016bf876dcb3ec4ae0b3c5f6941',1,'lib_api.h']]],
   ['mxlib_5fopcallinfertype_5fstr',['MXLIB_OPCALLINFERTYPE_STR',['../lib__api_8h.html#a7dfca2084c7df461862458f77a8f6244',1,'lib_api.h']]],
   ['mxlib_5fopcallmutateinputs_5fstr',['MXLIB_OPCALLMUTATEINPUTS_STR',['../lib__api_8h.html#abf2577efc9a9eed8d27d6ca0af98abe1',1,'lib_api.h']]],
   ['mxlib_5fopcallparseattrs_5fstr',['MXLIB_OPCALLPARSEATTRS_STR',['../lib__api_8h.html#a6ff60ae5ae2081aac9715da91f38845e',1,'lib_api.h']]],
