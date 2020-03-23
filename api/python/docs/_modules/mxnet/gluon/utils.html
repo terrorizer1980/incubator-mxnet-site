@@ -790,15 +790,23 @@
 <span class="sd">      False. Otherwise a float is returned.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_norm</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
-            <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">square</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="c1"># group arrays by ctx</span>
+    <span class="k">def</span> <span class="nf">group_by_ctx</span><span class="p">(</span><span class="n">arr_list</span><span class="p">):</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arr_list</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">context</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">ctx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">groups</span>
+    <span class="n">arrays_groups</span> <span class="o">=</span> <span class="n">group_by_ctx</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+    <span class="n">all_ctx_sum</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">ctx</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span>
-    <span class="n">total_norm</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">add_n</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">_norm</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">])</span>
-    <span class="n">total_norm</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">total_norm</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">arrays_groups</span><span class="p">:</span>
+        <span class="n">sum_sq</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">multi_sum_sq</span><span class="p">(</span><span class="o">*</span><span class="n">arrays_groups</span><span class="p">[</span><span class="n">group</span><span class="p">],</span>
+                                      <span class="n">num_arrays</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arrays_groups</span><span class="p">[</span><span class="n">group</span><span class="p">]))</span>
+        <span class="n">sum_sq</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">add_n</span><span class="p">(</span><span class="o">*</span><span class="n">sum_sq</span><span class="p">)</span>
+        <span class="n">all_ctx_sum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_sq</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">))</span>
+    <span class="c1"># global reduce</span>
+    <span class="n">total_norm</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">add_n</span><span class="p">(</span><span class="o">*</span><span class="n">all_ctx_sum</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">check_isfinite</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">total_norm</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>

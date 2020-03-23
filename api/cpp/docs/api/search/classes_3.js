@@ -18,6 +18,7 @@ var searchData=
   ['datatype_3c_20int64_5ft_20_3e',['DataType&lt; int64_t &gt;',['../structmshadow_1_1DataType_3_01int64__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20int8_5ft_20_3e',['DataType&lt; int8_t &gt;',['../structmshadow_1_1DataType_3_01int8__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20uint8_5ft_20_3e',['DataType&lt; uint8_t &gt;',['../structmshadow_1_1DataType_3_01uint8__t_01_4.html',1,'mshadow']]],
+  ['dcinfo',['DCInfo',['../classmxnet_1_1Imperative_1_1DCInfo.html',1,'mxnet::Imperative']]],
   ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html',1,'mxnet::common::cuda']]],
   ['div',['div',['../structmshadow_1_1op_1_1complex_1_1div.html',1,'mshadow::op::complex']]],
   ['div',['div',['../structmshadow_1_1op_1_1div.html',1,'mshadow::op']]],

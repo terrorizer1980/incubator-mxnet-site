@@ -38,7 +38,7 @@ var searchData=
   ['onehotencodeexp',['OneHotEncodeExp',['../structmshadow_1_1expr_1_1OneHotEncodeExp.html',1,'mshadow::expr']]],
   ['onehotencodeexp',['OneHotEncodeExp',['../structmshadow_1_1expr_1_1OneHotEncodeExp.html#a13539c04420e750a76ba13e9353b026a',1,'mshadow::expr::OneHotEncodeExp']]],
   ['op',['Op',['../classnnvm_1_1Op.html',1,'nnvm']]],
-  ['op',['op',['../structnnvm_1_1NodeAttrs.html#a3ac836e9058e02f4f365a7b95bf995a6',1,'nnvm::NodeAttrs::op()'],['../classnnvm_1_1Node.html#aa3b6611ccae41d6d7d4b65250d7eed38',1,'nnvm::Node::op()'],['../classnnvm_1_1OpMap.html#a2c31e8a3c11caeb061d69db14ebb0e95',1,'nnvm::OpMap::Op()'],['../namespacemxnet.html#ac2fb286fd7ddfbc7af1456f6c7a7ee52',1,'mxnet::Op()']]],
+  ['op',['Op',['../classnnvm_1_1OpMap.html#a2c31e8a3c11caeb061d69db14ebb0e95',1,'nnvm::OpMap::Op()'],['../structnnvm_1_1NodeAttrs.html#a3ac836e9058e02f4f365a7b95bf995a6',1,'nnvm::NodeAttrs::op()'],['../classnnvm_1_1Node.html#aa3b6611ccae41d6d7d4b65250d7eed38',1,'nnvm::Node::op()'],['../namespacemxnet.html#ac2fb286fd7ddfbc7af1456f6c7a7ee52',1,'mxnet::Op()']]],
   ['op_2eh',['op.h',['../op_8h.html',1,'']]],
   ['op_5fattr_5fdependency',['op_attr_dependency',['../structnnvm_1_1PassFunctionReg.html#a93583ae9a177f1e496d16c33ad58292d',1,'nnvm::PassFunctionReg']]],
   ['op_5fattr_5ftypes_2eh',['op_attr_types.h',['../include_2mxnet_2op__attr__types_8h.html',1,'']]],
