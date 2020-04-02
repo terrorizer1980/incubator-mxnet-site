@@ -33,7 +33,7 @@ var searchData=
   ['beta',['beta',['../structdnnl__eltwise__desc__t.html#a4c6ad13e2440d6e523dccf1a256dfb5f',1,'dnnl_eltwise_desc_t::beta()'],['../structdnnl__rnn__desc__t.html#af05666d00d87fdf465a7cd5d925238d6',1,'dnnl_rnn_desc_t::beta()']]],
   ['betablas',['BetaBLAS',['../structmshadow_1_1sv_1_1saveto.html#a4dab404c405fe7476eadbd02e727738b',1,'mshadow::sv::saveto::BetaBLAS()'],['../structmshadow_1_1sv_1_1plusto.html#a916ea217bd0200ab7b23a4e2ac26887f',1,'mshadow::sv::plusto::BetaBLAS()'],['../structmshadow_1_1sv_1_1minusto.html#a48fae34ea7d461ced6ac9c98c5e38019',1,'mshadow::sv::minusto::BetaBLAS()']]],
   ['bfloat_2eh',['bfloat.h',['../bfloat_8h.html',1,'']]],
-  ['bias_5fdesc',['bias_desc',['../structdnnl__convolution__desc__t.html#ac05cda60b6614029cc7a28fd2f1f77cb',1,'dnnl_convolution_desc_t::bias_desc()'],['../structdnnl__inner__product__desc__t.html#a89c838b9cf12a95465a9c679002c66c8',1,'dnnl_inner_product_desc_t::bias_desc()'],['../structdnnl__rnn__desc__t.html#aab26def80bd3afaa3ebe5b0968aa38de',1,'dnnl_rnn_desc_t::bias_desc()'],['../structdnnl__matmul__desc__t.html#a996d0b2dec63ebe06d43b5fed3d803f4',1,'dnnl_matmul_desc_t::bias_desc()']]],
+  ['bias_5fdesc',['bias_desc',['../structdnnl__convolution__desc__t.html#ac05cda60b6614029cc7a28fd2f1f77cb',1,'dnnl_convolution_desc_t::bias_desc()'],['../structdnnl__inner__product__desc__t.html#a89c838b9cf12a95465a9c679002c66c8',1,'dnnl_inner_product_desc_t::bias_desc()'],['../structdnnl__rnn__desc__t.html#aab26def80bd3afaa3ebe5b0968aa38de',1,'dnnl_rnn_desc_t::bias_desc()']]],
   ['bilinear',['Bilinear',['../classmxnet_1_1cpp_1_1Bilinear.html#a03c2368e6dec3999965ece7061890d03',1,'mxnet::cpp::Bilinear']]],
   ['bilinear',['Bilinear',['../classmxnet_1_1cpp_1_1Bilinear.html',1,'mxnet::cpp']]],
   ['binarycalculationtype',['BinaryCalculationType',['../namespacemshadow_1_1op_1_1complex.html#af062961d218e28c7307bed158f71db06',1,'mshadow::op::complex']]],
@@ -76,10 +76,10 @@ var searchData=
   ['broadcast_5fwith_5faxis_2eh',['broadcast_with_axis.h',['../broadcast__with__axis_8h.html',1,'']]],
   ['broadcastscalarexp',['BroadcastScalarExp',['../structmshadow_1_1expr_1_1BroadcastScalarExp.html',1,'mshadow::expr']]],
   ['broadcastscalarexp',['BroadcastScalarExp',['../structmshadow_1_1expr_1_1BroadcastScalarExp.html#a87f6bd1b452af63fb4ebad8a1d9c20b1',1,'mshadow::expr::BroadcastScalarExp']]],
-  ['broadcastwithaxisexp',['BroadcastWithAxisExp',['../structmshadow_1_1expr_1_1BroadcastWithAxisExp.html#a3d95d42170ab6e7fc72412b3eca415e6',1,'mshadow::expr::BroadcastWithAxisExp']]],
   ['broadcastwithaxisexp',['BroadcastWithAxisExp',['../structmshadow_1_1expr_1_1BroadcastWithAxisExp.html',1,'mshadow::expr']]],
-  ['broadcastwithmultiaxesexp',['BroadcastWithMultiAxesExp',['../structmshadow_1_1expr_1_1BroadcastWithMultiAxesExp.html',1,'mshadow::expr']]],
+  ['broadcastwithaxisexp',['BroadcastWithAxisExp',['../structmshadow_1_1expr_1_1BroadcastWithAxisExp.html#a3d95d42170ab6e7fc72412b3eca415e6',1,'mshadow::expr::BroadcastWithAxisExp']]],
   ['broadcastwithmultiaxesexp',['BroadcastWithMultiAxesExp',['../structmshadow_1_1expr_1_1BroadcastWithMultiAxesExp.html#a59169a48be47025ef0c48abcde6432a4',1,'mshadow::expr::BroadcastWithMultiAxesExp']]],
+  ['broadcastwithmultiaxesexp',['BroadcastWithMultiAxesExp',['../structmshadow_1_1expr_1_1BroadcastWithMultiAxesExp.html',1,'mshadow::expr']]],
   ['build_5fconfig_5fdefault_2eh',['build_config_default.h',['../build__config__default_8h.html',1,'']]],
   ['bulk_5fsize',['bulk_size',['../classmxnet_1_1Engine.html#a78baf44fa0dfed3285d6b9b65845825c',1,'mxnet::Engine']]],
   ['bulkexecmaxnodetrainbwd',['BulkExecMaxNodeTrainBwd',['../classmxnet_1_1Imperative.html#a482d9ab2ab7d969c55f7c13797a662a0',1,'mxnet::Imperative']]],
@@ -89,5 +89,8 @@ var searchData=
   ['bytes_5fread',['bytes_read',['../classdmlc_1_1istream.html#ac73ea2619fa7de3663f73ca7242235d7',1,'dmlc::istream']]],
   ['bytes_5fwritten',['bytes_written',['../classdmlc_1_1ostream.html#a68276bbdf1ddf2f6930ffc6094fc2071',1,'dmlc::ostream']]],
   ['bytesread',['BytesRead',['../classdmlc_1_1Parser.html#ab1502841c20f75244aa21618c01112ee',1,'dmlc::Parser']]],
-  ['byteswap',['ByteSwap',['../namespacedmlc.html#adbe9d2411f71ee9f165b44bd0a6fbad1',1,'dmlc']]]
+  ['byteswap',['ByteSwap',['../namespacedmlc.html#adbe9d2411f71ee9f165b44bd0a6fbad1',1,'dmlc']]],
+  ['batch_20normalization',['Batch Normalization',['../group__c__api__batch__normalization.html',1,'']]],
+  ['binary',['Binary',['../group__c__api__binary.html',1,'']]],
+  ['blas_20functions',['BLAS functions',['../group__c__api__blas.html',1,'']]]
 ];

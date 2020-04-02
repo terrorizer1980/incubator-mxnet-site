@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['resampling',['Resampling',['../group__dnnl__api__resampling.html',1,'']]],
+  ['reorder',['Reorder',['../group__c__api__reorder.html',1,'']]],
+  ['rnn',['RNN',['../group__c__api__rnn.html',1,'']]],
   ['r',['r',['../structdnnl__wino__desc__t.html#a0434664cf7d9286426bbd8e35911929e',1,'dnnl_wino_desc_t']]],
   ['rand',['rand',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#ab0c9e07876283262b448ba484695f1e0',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::rand()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#a1b93a653772f69ba2922d51f93612813',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::rand()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#a6b3157a5c54dffb36f0610242aa277a9',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::rand()']]],
   ['rand_5fint64',['rand_int64',['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01cpu_00_01DType_01_4_1_1Impl.html#af275a432e8b6b8a05f7e5d0eeed426b4',1,'mxnet::common::random::RandGenerator&lt; cpu, DType &gt;::Impl::rand_int64()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01DType_01_4_1_1Impl.html#a42abb5579954664341298cce84f586cf',1,'mxnet::common::random::RandGenerator&lt; gpu, DType &gt;::Impl::rand_int64()'],['../classmxnet_1_1common_1_1random_1_1RandGenerator_3_01gpu_00_01double_01_4_1_1Impl.html#ad881e5f172b84f7df1cbd13aa18fd028',1,'mxnet::common::random::RandGenerator&lt; gpu, double &gt;::Impl::rand_int64()']]],
@@ -65,8 +66,8 @@ var searchData=
   ['register',['Register',['../classmxnet_1_1runtime_1_1Registry.html#a1d574df0edaa072df58a09f6788e72ac',1,'mxnet::runtime::Registry']]],
   ['register_5fop',['REGISTER_OP',['../lib__api_8h.html#abb165f6d1b3c2f0d4edfb5667a8b3638',1,'lib_api.h']]],
   ['register_5fpartitioner',['REGISTER_PARTITIONER',['../lib__api_8h.html#a93f481366195b39d8e4ea3bbec2a1b04',1,'lib_api.h']]],
-  ['registry',['Registry',['../classdmlc_1_1Registry.html',1,'dmlc']]],
   ['registry',['Registry',['../classRegistry.html',1,'']]],
+  ['registry',['Registry',['../classdmlc_1_1Registry.html',1,'dmlc']]],
   ['registry',['Registry',['../classmxnet_1_1runtime_1_1Registry.html',1,'mxnet::runtime']]],
   ['registry_2eh',['registry.h',['../3rdparty_2dmlc-core_2include_2dmlc_2registry_8h.html',1,'']]],
   ['registry_2eh',['registry.h',['../include_2mxnet_2runtime_2registry_8h.html',1,'']]],
@@ -92,7 +93,7 @@ var searchData=
   ['reshapeexp',['ReshapeExp',['../structmshadow_1_1expr_1_1ReshapeExp.html#afffb19f1a7fea9ed82e1c6c79bb2ae29',1,'mshadow::expr::ReshapeExp']]],
   ['reshapeorcreate',['ReshapeOrCreate',['../namespacemxnet_1_1common.html#a02752372972ae43c182e4994df2bddc5',1,'mxnet::common']]],
   ['reshapewithrecord',['ReshapeWithRecord',['../classmxnet_1_1NDArray.html#a318e6f3ae6f94026dec90aa98a7e3f10',1,'mxnet::NDArray']]],
-  ['resize',['Resize',['../classmshadow_1_1TensorContainer.html#a6afe06f823ca587fe0051fbdc2228af8',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape)'],['../classmshadow_1_1TensorContainer.html#a3a9d3363747f7a567bb6475a29482874',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape, DType initv)'],['../classmxnet_1_1Array.html#a9c11277e346b8a78155f3ff46f7a9298',1,'mxnet::Array::resize()']]],
+  ['resize',['resize',['../classmxnet_1_1Array.html#a9c11277e346b8a78155f3ff46f7a9298',1,'mxnet::Array::resize()'],['../classmshadow_1_1TensorContainer.html#a6afe06f823ca587fe0051fbdc2228af8',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape)'],['../classmshadow_1_1TensorContainer.html#a3a9d3363747f7a567bb6475a29482874',1,'mshadow::TensorContainer::Resize(const Shape&lt; dimension &gt; &amp;shape, DType initv)']]],
   ['resource',['resource',['../structmxnet_1_1op_1_1EnvArguments.html#a6b62df4767fd50d6a1fd9ebd44193bef',1,'mxnet::op::EnvArguments::resource()'],['../structmxnet_1_1Resource.html#a76a2cc8f2a94b67b3533a048a80396aa',1,'mxnet::Resource::Resource()']]],
   ['resource',['Resource',['../structmxnet_1_1Resource.html',1,'mxnet']]],
   ['resource_2eh',['resource.h',['../resource_8h.html',1,'']]],

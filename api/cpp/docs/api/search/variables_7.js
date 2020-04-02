@@ -2,7 +2,6 @@ var searchData=
 [
   ['get_5fnum_5finputs',['get_num_inputs',['../classnnvm_1_1Op.html#aaed55d545403aca8cd4fff730c40e4bd',1,'nnvm::Op']]],
   ['get_5fnum_5foutputs',['get_num_outputs',['../classnnvm_1_1Op.html#a676849f49f99c9a299d5c50cf00f3b5b',1,'nnvm::Op']]],
-  ['gpu_5fruntime',['gpu_runtime',['../structdnnl__version__t.html#ac15e5566f96a65b2c97903c787f129ac',1,'dnnl_version_t']]],
   ['grad_5farrays',['grad_arrays',['../classmxnet_1_1cpp_1_1Executor.html#a42694f583467b2b517ea8f8c0250655b',1,'mxnet::cpp::Executor']]],
   ['grad_5fpooled_5f',['grad_pooled_',['../structmshadow_1_1expr_1_1ChannelUnpoolingExp.html#a77e7cd0ef8a6383263b577e54c219868',1,'mshadow::expr::ChannelUnpoolingExp::grad_pooled_()'],['../structmshadow_1_1expr_1_1UnPoolingExp.html#a12bafa72db1235aa17ec36433fdc122f',1,'mshadow::expr::UnPoolingExp::grad_pooled_()']]],
   ['grad_5freq',['grad_req',['../classmxnet_1_1Imperative_1_1AGInfo.html#ad1da7fe0f83dbe5eb89770460c985a64',1,'mxnet::Imperative::AGInfo']]],
