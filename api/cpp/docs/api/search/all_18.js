@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['wait',['Wait',['../structmshadow_1_1Stream_3_01gpu_01_4.html#a46151b12d2eae79e0a1de4adc2a1d706',1,'mshadow::Stream&lt; gpu &gt;::Wait()'],['../structmshadow_1_1Stream.html#ab17a2b049aacf5d71d8860262c4a98fd',1,'mshadow::Stream::Wait()'],['../classdmlc_1_1ManualEvent.html#a24af45c7c96d8b9421ed3337c5def886',1,'dmlc::ManualEvent::wait()']]],
+  ['wait',['wait',['../classdmlc_1_1ManualEvent.html#a24af45c7c96d8b9421ed3337c5def886',1,'dmlc::ManualEvent::wait()'],['../structmshadow_1_1Stream_3_01gpu_01_4.html#a46151b12d2eae79e0a1de4adc2a1d706',1,'mshadow::Stream&lt; gpu &gt;::Wait()'],['../structmshadow_1_1Stream.html#ab17a2b049aacf5d71d8860262c4a98fd',1,'mshadow::Stream::Wait()']]],
   ['waitall',['WaitAll',['../classmxnet_1_1cpp_1_1NDArray.html#aeb8b119ca4ad4da3949ac5f7643b66ae',1,'mxnet::cpp::NDArray']]],
   ['waitforall',['WaitForAll',['../classmxnet_1_1Engine.html#a64483aecce780e96056be89d6289e782',1,'mxnet::Engine']]],
   ['waitforvar',['WaitForVar',['../classmxnet_1_1Engine.html#aed51bd7f294d9f2b569764a0c151d883',1,'mxnet::Engine']]],
@@ -8,7 +8,7 @@ var searchData=
   ['waittowrite',['WaitToWrite',['../classmxnet_1_1NDArray.html#a4b88b5d86ec9ddf4ca96701107337461',1,'mxnet::NDArray::WaitToWrite()'],['../classmxnet_1_1cpp_1_1NDArray.html#a6e50ec10807a7ffd130c5ffae3591c2e',1,'mxnet::cpp::NDArray::WaitToWrite()']]],
   ['weak_5fref',['weak_ref',['../structnnvm_1_1IndexedGraph_1_1Node.html#a1fb87e2c471af26277432adeb1c3396f',1,'nnvm::IndexedGraph::Node']]],
   ['weight',['weight',['../classdmlc_1_1Row.html#a7d3297d9d1e0345fd5cbcc79523c767b',1,'dmlc::Row::weight()'],['../structdmlc_1_1RowBlock.html#a34bbb9cd6aacf2544995c86c62ff4c6e',1,'dmlc::RowBlock::weight()']]],
-  ['weights_5fdesc',['weights_desc',['../structdnnl__convolution__desc__t.html#aeb5243cdb8efc246eecd28398716b76f',1,'dnnl_convolution_desc_t::weights_desc()'],['../structdnnl__inner__product__desc__t.html#af07d9a1980955d116ecd8294a1164459',1,'dnnl_inner_product_desc_t::weights_desc()']]],
+  ['weights_5fdesc',['weights_desc',['../structdnnl__convolution__desc__t.html#aeb5243cdb8efc246eecd28398716b76f',1,'dnnl_convolution_desc_t::weights_desc()'],['../structdnnl__inner__product__desc__t.html#af07d9a1980955d116ecd8294a1164459',1,'dnnl_inner_product_desc_t::weights_desc()'],['../structdnnl__matmul__desc__t.html#a22eaca0d885cda5bd8a6a952c5d22b48',1,'dnnl_matmul_desc_t::weights_desc()']]],
   ['weights_5fiter_5fdesc',['weights_iter_desc',['../structdnnl__rnn__desc__t.html#afb36d75add9d2606cc81d5bd18288d8e',1,'dnnl_rnn_desc_t']]],
   ['weights_5flayer_5fdesc',['weights_layer_desc',['../structdnnl__rnn__desc__t.html#a1856a3555d8abf5be371b161b559b438',1,'dnnl_rnn_desc_t']]],
   ['wino_5fdesc',['wino_desc',['../structdnnl__memory__desc__t.html#a17cbfada7a6188b0531ed563f44e6976',1,'dnnl_memory_desc_t']]],

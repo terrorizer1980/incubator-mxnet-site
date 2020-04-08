@@ -97,7 +97,7 @@ var searchData=
   ['nnvm_5fstringize_5fdetail',['NNVM_STRINGIZE_DETAIL',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2base_8h.html#a574f46bf8b39aa993070ac0e92d47b58',1,'base.h']]],
   ['node',['Node',['../structnnvm_1_1IndexedGraph_1_1Node.html',1,'nnvm::IndexedGraph']]],
   ['node',['Node',['../classnnvm_1_1Node.html',1,'nnvm']]],
-  ['node',['Node',['../classnnvm_1_1Node.html#a8c11333506be8aa6be4ecd689f9a528c',1,'nnvm::Node::Node()=default'],['../classnnvm_1_1Node.html#a1943fabebfd58b0de3f7aa641c46d529',1,'nnvm::Node::Node(const Op *op, const std::string &amp;name)'],['../structnnvm_1_1NodeEntry.html#ae438981d6f9d3a890e197d917b9e1a4f',1,'nnvm::NodeEntry::node()']]],
+  ['node',['node',['../structnnvm_1_1NodeEntry.html#ae438981d6f9d3a890e197d917b9e1a4f',1,'nnvm::NodeEntry::node()'],['../classnnvm_1_1Node.html#a8c11333506be8aa6be4ecd689f9a528c',1,'nnvm::Node::Node()=default'],['../classnnvm_1_1Node.html#a1943fabebfd58b0de3f7aa641c46d529',1,'nnvm::Node::Node(const Op *op, const std::string &amp;name)']]],
   ['node_2eh',['node.h',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2node_8h.html',1,'']]],
   ['node_2eh',['node.h',['../include_2mxnet_2node_2node_8h.html',1,'']]],
   ['node_5fid',['node_id',['../structnnvm_1_1IndexedGraph_1_1NodeEntry.html#ae73ae8527f6416a91d8d9c5457019688',1,'nnvm::IndexedGraph::NodeEntry::node_id()'],['../classnnvm_1_1IndexedGraph.html#ab900bbf0e6c80ccbf20220bde96e017d',1,'nnvm::IndexedGraph::node_id()']]],

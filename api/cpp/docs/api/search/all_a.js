@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['inner_20product',['Inner product',['../group__c__api__inner__product.html',1,'']]],
   ['i_5fchannel_5f',['i_channel_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a235dfd748d7f056854984b52feead132',1,'mshadow::expr::UnpackPatchToColXExp']]],
   ['i_5fheight_5f',['i_height_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#ac9154015985191c99545acc3a7efd2e3',1,'mshadow::expr::UnpackPatchToColXExp']]],
   ['i_5fwidth_5f',['i_width_',['../structmshadow_1_1expr_1_1UnpackPatchToColXExp.html#a16648a89c281647958dfe4f69a36ffe1',1,'mshadow::expr::UnpackPatchToColXExp']]],
@@ -154,9 +153,9 @@ var searchData=
   ['isservernode',['IsServerNode',['../classmxnet_1_1KVStore.html#a101178924ce1d635b0c8c2a5bce0ceaf',1,'mxnet::KVStore']]],
   ['issgop',['isSGop',['../classCustomOp.html#a15e8cbd8b3727f58b8979dd7dc7ec9cd',1,'CustomOp']]],
   ['isspace',['isspace',['../namespacedmlc.html#a52dcf01c9ba22be9b08e455194fb2ab3',1,'dmlc']]],
-  ['istream',['IStream',['../classmshadow_1_1utils_1_1IStream.html',1,'mshadow::utils']]],
-  ['istream',['istream',['../classdmlc_1_1istream.html#a777f9d3bb1c338f92258732517626a19',1,'dmlc::istream']]],
   ['istream',['istream',['../classdmlc_1_1istream.html',1,'dmlc']]],
+  ['istream',['istream',['../classdmlc_1_1istream.html#a777f9d3bb1c338f92258732517626a19',1,'dmlc::istream']]],
+  ['istream',['IStream',['../classmshadow_1_1utils_1_1IStream.html',1,'mshadow::utils']]],
   ['isvariable',['IsVariable',['../classmxnet_1_1Imperative_1_1AGInfo.html#a9cbce8aa6881a4cbc9ff736e3a3e7b35',1,'mxnet::Imperative::AGInfo']]],
   ['isview',['IsView',['../classmxnet_1_1NDArray.html#a117e3af0d08abf56ff8852adfb71f413',1,'mxnet::NDArray']]],
   ['isworkernode',['IsWorkerNode',['../classmxnet_1_1KVStore.html#ab216fb292fa77e843e95f474fa671a20',1,'mxnet::KVStore']]],
