@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Subgraph API | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Subgraph API" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/cpp/docs/tutorials/subgraph_api" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Subgraph API","@type":"WebPage","url":"https://mxnet.apache.org/api/cpp/docs/tutorials/subgraph_api","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Subgraph API","url":"https://mxnet.apache.org/api/cpp/docs/tutorials/subgraph_api","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -469,6 +469,8 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
+                
+                   <!-- resource-p -->
                   <!-- page -->
                 
             </ul>
@@ -670,36 +672,27 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
            <!-- resource-p -->
         
            <!-- resource-p -->
+        
+           <!-- resource-p -->
           <!-- page -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h2 id="subgraph-api">Subgraph API</h2>
@@ -709,26 +702,27 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 <p>The subgraph API works as the following steps:</p>
 
 <ul>
-<li>Search for particular patterns in a graph.</li>
-<li>Group the operators/nodes with particular patterns into a subgraph and shrink the subgraph into a single node.</li>
-<li>Replace the subgraph in the original graph with the subgraph node.</li>
+  <li>Search for particular patterns in a graph.</li>
+  <li>Group the operators/nodes with particular patterns into a subgraph and shrink the subgraph into a single node.</li>
+  <li>Replace the subgraph in the original graph with the subgraph node.</li>
 </ul>
 
 <p>The figure below illustrates the subgraph mechanism.</p>
 
-<p><img src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/subgraph/subgraph.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/subgraph/subgraph.png" alt="" /></p>
 
 <p>The subgraph API allows the backend developers to customize the subgraph mechanism in two places:</p>
 
 <ul>
-<li>Subgraph searching: define a subgraph selector to search for particular patterns in a computation graph.</li>
-<li>Subgraph node creation: attach an operator to run the computation in the subgraph. We can potentially manipulate the subgraph here.</li>
+  <li>Subgraph searching: define a subgraph selector to search for particular patterns in a computation graph.</li>
+  <li>Subgraph node creation: attach an operator to run the computation in the subgraph. We can potentially manipulate the subgraph here.</li>
 </ul>
 
-<p>The following is a demonstration of how the subgraph API can be applied to a simple task. Refer to the previous figure for an overview of the process. That is, replacing <code>Convolution</code> and <code>BatchNorm</code> with the conv_bn.</p>
+<p>The following is a demonstration of how the subgraph API can be applied to a simple task. Refer to the previous figure for an overview of the process. That is, replacing <code class="highlighter-rouge">Convolution</code> and <code class="highlighter-rouge">BatchNorm</code> with the conv_bn.</p>
 
-<p>The first step is to define a subgraph selector to find the required pattern. To find a pattern that has <code>Convolution</code> and <code>BatchNorm</code>, we can start the search on the node with <code>Convolution</code>. Then from the <code>Convolution</code> node, we search for <code>BatchNorm</code> along the outgoing edge.</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">SgSelector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">SubgraphSelector</span> <span class="p">{</span>
+<p>The first step is to define a subgraph selector to find the required pattern. To find a pattern that has <code class="highlighter-rouge">Convolution</code> and <code class="highlighter-rouge">BatchNorm</code>, we can start the search on the node with <code class="highlighter-rouge">Convolution</code>. Then from the <code class="highlighter-rouge">Convolution</code> node, we search for <code class="highlighter-rouge">BatchNorm</code> along the outgoing edge.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SgSelector</span> <span class="o">:</span> <span class="k">public</span> <span class="n">SubgraphSelector</span> <span class="p">{</span>
  <span class="nl">public:</span>
   <span class="n">SgSelector</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">find_bn</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
@@ -763,9 +757,11 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
  <span class="nl">private:</span>
   <span class="kt">bool</span> <span class="n">find_bn</span><span class="p">;</span>
 <span class="p">};</span>
-</code></pre></div>
-<p>The second step is to define a subgraph property to use the subgraph selector above to customize the subgraph searching. By defining this class, we can also customize subgraph node creation. When customizing node creation, we can specify what operator to run the subgraph on the node. In this example, we use <code>CachedOp</code>, which itself is a graph executor, to run the subgraph with <code>Convolution</code> and <code>BatchNorm</code>. In practice, it&#39;s most likely that we use a single operator from a backend library to replace the two operators for execution.</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">SgProperty</span> <span class="o">:</span> <span class="k">public</span> <span class="n">SubgraphProperty</span> <span class="p">{</span>
+</code></pre></div></div>
+
+<p>The second step is to define a subgraph property to use the subgraph selector above to customize the subgraph searching. By defining this class, we can also customize subgraph node creation. When customizing node creation, we can specify what operator to run the subgraph on the node. In this example, we use <code class="highlighter-rouge">CachedOp</code>, which itself is a graph executor, to run the subgraph with <code class="highlighter-rouge">Convolution</code> and <code class="highlighter-rouge">BatchNorm</code>. In practice, it’s most likely that we use a single operator from a backend library to replace the two operators for execution.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SgProperty</span> <span class="o">:</span> <span class="k">public</span> <span class="n">SubgraphProperty</span> <span class="p">{</span>
  <span class="nl">public:</span>
   <span class="k">static</span> <span class="n">SubgraphPropertyPtr</span> <span class="n">Create</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">SgProperty</span><span class="o">&gt;</span><span class="p">();</span>
@@ -788,26 +784,32 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
     <span class="k">return</span> <span class="n">property</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">};</span>
-</code></pre></div>
-<p><code>SetAttr</code> is optional and developer can define their own attributes to control property behavior.
-There&#39;re some built-in attributes that used by MXNet executor.</p>
+</code></pre></div></div>
 
-<p><code>property_name</code>  : std::string, name of this property, used for diagnose.</p>
+<p><code class="highlighter-rouge">SetAttr</code> is optional and developer can define their own attributes to control property behavior.
+There’re some built-in attributes that used by MXNet executor.</p>
 
-<p><code>disable</code> : bool, whther to disable this property.</p>
+<p><code class="highlighter-rouge">property_name</code>  : std::string, name of this property, used for diagnose.</p>
 
-<p><code>inference_only</code> : bool, apply this property only for inference. Property will be skiped when need_grad=True. Default <code>false</code> if this attribute isn&#39;t defined.</p>
+<p><code class="highlighter-rouge">disable</code> : bool, whther to disable this property.</p>
+
+<p><code class="highlighter-rouge">inference_only</code> : bool, apply this property only for inference. Property will be skiped when need_grad=True. Default <code class="highlighter-rouge">false</code> if this attribute isn’t defined.</p>
 
 <p>After defining the subgraph property, we need to register it under a backend in .cc file.</p>
 
 <p>Firstly, we need to register the backend</p>
-<div class="highlight"><pre><code class="language-C++" data-lang="C++">MXNET_REGISTER_SUBGRAPH_BACKEND(SgTest);
-</code></pre></div>
+
+<pre><code class="language-C++">MXNET_REGISTER_SUBGRAPH_BACKEND(SgTest);
+</code></pre>
+
 <p>Then register the property under it.</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>
-</code></pre></div>
-<p>It&#39;s possible to register multiple properties for same backend. In practice, we recommend to put each property definition into .h file, and register backend in single .cc file. Property will be executed according to the register order.</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="cp">#include "SgProperty.h" // Define SgProperty class
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>It’s possible to register multiple properties for same backend. In practice, we recommend to put each property definition into .h file, and register backend in single .cc file. Property will be executed according to the register order.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "SgProperty.h" // Define SgProperty class
 #include "SgProperty2.h" // Define SgProperty2 class
 #include "SgProperty3.h" // Define SgProperty3 class
 </span>
@@ -815,19 +817,26 @@ There&#39;re some built-in attributes that used by MXNet executor.</p>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty</span><span class="p">);</span>  <span class="c1">// Execution order 1.</span>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty2</span><span class="p">);</span> <span class="c1">// Execution order 2.</span>
 <span class="n">MXNET_REGISTER_SUBGRAPH_PROPERTY</span><span class="p">(</span><span class="n">SgTest</span><span class="p">,</span> <span class="n">SgProperty3</span><span class="p">);</span> <span class="c1">// Execution order 3.</span>
-</code></pre></div>
-<p>After compiling this subgraph mechanism into MXNet, we can use the environment variable <code>MXNET_SUBGRAPH_BACKEND</code> to activate it during symbol bind.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">MXNET_SUBGRAPH_BACKEND</span><span class="o">=</span>SgTest
-</code></pre></div>
-<p>Or you can use python symbol API <code>get_backend_symbol</code> to run all properties registered for this backend and get returned symbol.</p>
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>After compiling this subgraph mechanism into MXNet, we can use the environment variable <code class="highlighter-rouge">MXNET_SUBGRAPH_BACKEND</code> to activate it during symbol bind.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">MXNET_SUBGRAPH_BACKEND</span><span class="o">=</span>SgTest
+</code></pre></div></div>
+
+<p>Or you can use python symbol API <code class="highlighter-rouge">get_backend_symbol</code> to run all properties registered for this backend and get returned symbol.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
 <span class="n">sym</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_backend_symbol</span><span class="p">(</span><span class="s">'SgTest'</span><span class="p">)</span>
-</code></pre></div>
-<p>When <code>SgProperty</code> is activated, a message will be shown in terminal as</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">start to execute subgraph example pass.
-</code></pre></div>
+</code></pre></div></div>
+
+<p>When <code class="highlighter-rouge">SgProperty</code> is activated, a message will be shown in terminal as</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>start to execute subgraph example pass.
+</code></pre></div></div>
+
 <p>This tutorial shows a simple example of how to use the subgraph API to search for patterns in an NNVM graph.
-Intested users can try different pattern matching rules (i.e., define their own <code>SubgraphSelector</code>) and
+Intested users can try different pattern matching rules (i.e., define their own <code class="highlighter-rouge">SubgraphSelector</code>) and
 attach different operators to execute the subgraphs.</p>
 
 <!-- INSERT SOURCE DOWNLOAD BUTTONS -->

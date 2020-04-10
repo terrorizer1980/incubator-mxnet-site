@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Data Parallelism with Multiple CPU/GPUs on MXNet | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Data Parallelism with Multiple CPU/GPUs on MXNet" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/faq/multi_device" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Data Parallelism with Multiple CPU/GPUs on MXNet","@type":"WebPage","url":"https://mxnet.apache.org/api/faq/multi_device","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Data Parallelism with Multiple CPU/GPUs on MXNet","url":"https://mxnet.apache.org/api/faq/multi_device","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -385,39 +385,30 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
               <!-- page-category -->
             
               <!-- page-category -->
+            
+              <!-- page-category -->
                <!-- resource-p -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
-<h1 id="run-mxnet-on-multiple-cpu-gpus-with-data-parallelism">Run MXNet on Multiple CPU/GPUs with Data Parallelism</h1>
+<h1 id="run-mxnet-on-multiple-cpugpus-with-data-parallelism">Run MXNet on Multiple CPU/GPUs with Data Parallelism</h1>
 
 <p><em>MXNet</em> supports training with multiple CPUs and GPUs, which may be located on different physical machines.</p>
 
@@ -436,7 +427,7 @@ In this approach, each device holds onto only part of the model.
 This proves useful when the model is too large to fit onto a single device.
 As an example, see the following <a href="./model_parallel_lstm.md">tutorial</a>
 which shows how to use model parallelism for training a multi-layer LSTM model.
-In this tutorial, we&#39;ll focus on data parallelism.</p>
+In this tutorial, we’ll focus on data parallelism.</p>
 
 <h2 id="multiple-gpus-within-a-single-machine">Multiple GPUs within a Single Machine</h2>
 
@@ -450,35 +441,32 @@ gradients are then summed over all GPUs before updating the model.</p>
 <h3 id="how-to-use">How to Use</h3>
 
 <blockquote>
-<p>To use GPUs, we need to compile MXNet with GPU support. For
-example, set <code>USE_CUDA=1</code> in <code>config.mk</code> before <code>make</code>. (see
+  <p>To use GPUs, we need to compile MXNet with GPU support. For
+example, set <code class="highlighter-rouge">USE_CUDA=1</code> in <code class="highlighter-rouge">config.mk</code> before <code class="highlighter-rouge">make</code>. (see
 <a href="/get_started">MXNet installation guide</a> for more options).</p>
 </blockquote>
 
 <p>If a machine has one or more GPU cards installed,
 then each card is labeled by a number starting from 0.
 To use a particular GPU, one can either
-specify the context <code>context</code> in code
-or pass <code>--gpus</code> at the command line.
+specify the context <code class="highlighter-rouge">context</code> in code
+or pass <code class="highlighter-rouge">--gpus</code> at the command line.
 For example, to use GPU 0 and 2 in python,
-one can typically create a module with
-<code>python
-import mxnet as mx
-module = mx.module.Module(context=[mx.gpu(0), mx.gpu(2)], ...)
-</code>
-while if the program accepts a <code>--gpus</code> flag (as seen in
+one can typically create a module with</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="n">mx</span>
+<span class="n">module</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">2</span><span class="p">)],</span> <span class="o">...</span><span class="p">)</span>
+</code></pre></div></div>
+<p>while if the program accepts a <code class="highlighter-rouge">--gpus</code> flag (as seen in
 <a href="https://github.com/dmlc/mxnet/tree/master/example/image-classification">example/image-classification</a>),
-then we can try
-<code>bash
-python train_mnist.py --gpus 0,2 ...
-</code></p>
+then we can try</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python train_mnist.py <span class="nt">--gpus</span> 0,2 ...
+</code></pre></div></div>
 
 <h3 id="advanced-usage">Advanced Usage</h3>
-
 <p>If the available GPUs are not all equally powerful,
 we can partition the workload accordingly.
 For example, if GPU 0 is 3 times faster than GPU 2,
-then we might use the workload option <code>work_load_list=[3, 1]</code>,
+then we might use the workload option <code class="highlighter-rouge">work_load_list=[3, 1]</code>,
 see <a href="/api/python/docs/api/module/index.html">Module</a>
 for more details.</p>
 
@@ -489,36 +477,36 @@ owing to the randomness of I/O (random order or other augmentations),
 weight initialization with different seeds, and CUDNN.</p>
 
 <p>We can control on which devices the gradient is aggregated
-and on which device the model is updated via <a href="/api/python/docs/api/kvstore/index.html"><code>KVStore</code></a>,
+and on which device the model is updated via <a href="/api/python/docs/api/kvstore/index.html"><code class="highlighter-rouge">KVStore</code></a>,
 the <em>MXNet</em> module that supports data communication.
-One can either use <code>mx.kvstore.create(type)</code> to get an instance
-or use the program flag <code>--kv-store type</code>.</p>
+One can either use <code class="highlighter-rouge">mx.kvstore.create(type)</code> to get an instance
+or use the program flag <code class="highlighter-rouge">--kv-store type</code>.</p>
 
 <p>There are two commonly used types,</p>
 
 <ul>
-<li><code>local</code>: all gradients are copied to CPU memory and weights are updated there.</li>
-<li><code>device</code>: both gradient aggregation and weight updates are run on GPUs.
-With this setting, the <code>KVStore</code> also attempts to use GPU peer-to-peer communication,
+  <li><code class="highlighter-rouge">local</code>: all gradients are copied to CPU memory and weights are updated there.</li>
+  <li><code class="highlighter-rouge">device</code>: both gradient aggregation and weight updates are run on GPUs.
+With this setting, the <code class="highlighter-rouge">KVStore</code> also attempts to use GPU peer-to-peer communication,
 potentially accelerating the communication.
 Note that this option may result in higher GPU memory usage.</li>
 </ul>
 
-<p>When using a large number of GPUs, e.g. &gt;=4, we suggest using <code>device</code> for better performance.</p>
+<p>When using a large number of GPUs, e.g. &gt;=4, we suggest using <code class="highlighter-rouge">device</code> for better performance.</p>
 
 <h2 id="distributed-training-with-multiple-machines">Distributed Training with Multiple Machines</h2>
 
-<p><code>KVStore</code> also supports a number of options for running on multiple machines.</p>
+<p><code class="highlighter-rouge">KVStore</code> also supports a number of options for running on multiple machines.</p>
 
 <ul>
-<li><code>dist_sync</code> behaves similarly to <code>local</code> but exhibits one major difference.
-With <code>dist_sync</code>, <code>batch-size</code> now means the batch size used on each machine.
+  <li><code class="highlighter-rouge">dist_sync</code> behaves similarly to <code class="highlighter-rouge">local</code> but exhibits one major difference.
+With <code class="highlighter-rouge">dist_sync</code>, <code class="highlighter-rouge">batch-size</code> now means the batch size used on each machine.
 So if there are <em>n</em> machines and we use batch size <em>b</em>,
-then <code>dist_sync</code> behaves like <code>local</code> with batch size <em>n*b</em>.</li>
-<li><code>dist_device_sync</code> is similar to <code>dist_sync</code>. The difference between them is that
-<code>dist_device_sync</code> aggregates gradients and updates weight on GPUs
-while <code>dist_sync</code> does so on CPU memory.</li>
-<li><code>dist_async</code>  performs asynchronous updates.
+then <code class="highlighter-rouge">dist_sync</code> behaves like <code class="highlighter-rouge">local</code> with batch size <em>n*b</em>.</li>
+  <li><code class="highlighter-rouge">dist_device_sync</code> is similar to <code class="highlighter-rouge">dist_sync</code>. The difference between them is that
+<code class="highlighter-rouge">dist_device_sync</code> aggregates gradients and updates weight on GPUs
+while <code class="highlighter-rouge">dist_sync</code> does so on CPU memory.</li>
+  <li><code class="highlighter-rouge">dist_async</code>  performs asynchronous updates.
 The weight is updated whenever gradients are received from any machine.
 The update is atomic, i.e., no two updates happen on the same weight at the same time.
 However, the order is not guaranteed.</li>
@@ -527,84 +515,92 @@ However, the order is not guaranteed.</li>
 <h3 id="how-to-launch-a-job">How to Launch a Job</h3>
 
 <blockquote>
-<p>To use distributed training, we need to compile with <code>USE_DIST_KVSTORE=1</code>
+  <p>To use distributed training, we need to compile with <code class="highlighter-rouge">USE_DIST_KVSTORE=1</code>
 (see <a href="/get_started">MXNet installation guide</a> for more options).</p>
 </blockquote>
 
 <p>Launching a distributed job is a bit different from running on a single
 machine. MXNet provides
 <a href="https://github.com/dmlc/mxnet/blob/master/tools/launch.py">tools/launch.py</a> to
-start a job by using <code>ssh</code>, <code>mpi</code>, <code>sge</code>, or <code>yarn</code>.</p>
+start a job by using <code class="highlighter-rouge">ssh</code>, <code class="highlighter-rouge">mpi</code>, <code class="highlighter-rouge">sge</code>, or <code class="highlighter-rouge">yarn</code>.</p>
 
 <p>An easy way to set up a cluster of EC2 instances for distributed deep learning
 is using an <a href="https://github.com/awslabs/deeplearning-cfn">AWS CloudFormation template</a>.
 If you do not have a cluster, you can check the repository before you continue.</p>
 
-<p>Assume we are at the directory <code>mxnet/example/image-classification</code>
+<p>Assume we are at the directory <code class="highlighter-rouge">mxnet/example/image-classification</code>
 and want to train LeNet to classify MNIST images, as demonstrated here:
 <a href="https://github.com/dmlc/mxnet/blob/master/example/image-classification/train_mnist.py">train_mnist.py</a>.</p>
 
 <p>On a single machine, we can run:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">python train_mnist.py <span class="nt">--network</span> lenet
-</code></pre></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python train_mnist.py <span class="nt">--network</span> lenet
+</code></pre></div></div>
+
 <p>Now, say we are given two ssh-able machines and <em>MXNet</em> is installed on both machines.
 We want to train LeNet on these two machines.
-First, we save the IPs (or hostname) of these two machines in file <code>hosts</code>, e.g.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cat </span>hosts
+First, we save the IPs (or hostname) of these two machines in file <code class="highlighter-rouge">hosts</code>, e.g.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>hosts
 172.30.0.172
 172.30.0.171
-</code></pre></div>
+</code></pre></div></div>
+
 <p>Next, if the mxnet folder is accessible from both machines, e.g. on a
 <a href="https://help.ubuntu.com/lts/serverguide/network-file-system.html">network filesystem</a>,
 then we can run:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">python ../../tools/launch.py <span class="nt">-n</span> 2 <span class="nt">--launcher</span> ssh <span class="nt">-H</span> hosts python train_mnist.py <span class="nt">--network</span> lenet <span class="nt">--kv-store</span> dist_sync
-</code></pre></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python ../../tools/launch.py <span class="nt">-n</span> 2 <span class="nt">--launcher</span> ssh <span class="nt">-H</span> hosts python train_mnist.py <span class="nt">--network</span> lenet <span class="nt">--kv-store</span> dist_sync
+</code></pre></div></div>
+
 <p>Note that here we</p>
 
 <ul>
-<li>use <code>launch.py</code> to submit the job.</li>
-<li>provide launcher, <code>ssh</code> if all machines are ssh-able, <code>mpi</code> if <code>mpirun</code> is
-available, <code>sge</code> for Sun Grid Engine, and <code>yarn</code> for Apache Yarn.</li>
-<li><code>-n</code> number of worker nodes to run on</li>
-<li><code>-H</code> the host file which is required by <code>ssh</code> and <code>mpi</code></li>
-<li><code>--kv-store</code> use either <code>dist_sync</code> or <code>dist_async</code></li>
+  <li>use <code class="highlighter-rouge">launch.py</code> to submit the job.</li>
+  <li>provide launcher, <code class="highlighter-rouge">ssh</code> if all machines are ssh-able, <code class="highlighter-rouge">mpi</code> if <code class="highlighter-rouge">mpirun</code> is
+available, <code class="highlighter-rouge">sge</code> for Sun Grid Engine, and <code class="highlighter-rouge">yarn</code> for Apache Yarn.</li>
+  <li><code class="highlighter-rouge">-n</code> number of worker nodes to run on</li>
+  <li><code class="highlighter-rouge">-H</code> the host file which is required by <code class="highlighter-rouge">ssh</code> and <code class="highlighter-rouge">mpi</code></li>
+  <li><code class="highlighter-rouge">--kv-store</code> use either <code class="highlighter-rouge">dist_sync</code> or <code class="highlighter-rouge">dist_async</code></li>
 </ul>
 
 <h3 id="synchronize-directory">Synchronize Directory</h3>
 
 <p>Now consider if the mxnet folder is not accessible.
-We can first copy the <code>MXNet</code> library to this folder by
-<code>bash
-cp -r ../../python/mxnet .
-cp -r ../../lib/libmxnet.so mxnet
-</code></p>
+We can first copy the <code class="highlighter-rouge">MXNet</code> library to this folder by</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> <span class="nt">-r</span> ../../python/mxnet <span class="nb">.</span>
+<span class="nb">cp</span> <span class="nt">-r</span> ../../lib/libmxnet.so mxnet
+</code></pre></div></div>
 
-<p>then ask <code>launch.py</code> to synchronize the current directory to all machines&#39;
- <code>/tmp/mxnet</code> directory with <code>--sync-dst-dir</code></p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">python ../../tools/launch.py <span class="nt">-n</span> 2 <span class="nt">-H</span> hosts <span class="nt">--sync-dst-dir</span> /tmp/mxnet <span class="se">\</span>
+<p>then ask <code class="highlighter-rouge">launch.py</code> to synchronize the current directory to all machines’
+ <code class="highlighter-rouge">/tmp/mxnet</code> directory with <code class="highlighter-rouge">--sync-dst-dir</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python ../../tools/launch.py <span class="nt">-n</span> 2 <span class="nt">-H</span> hosts <span class="nt">--sync-dst-dir</span> /tmp/mxnet <span class="se">\</span>
    python train_mnist.py <span class="nt">--network</span> lenet <span class="nt">--kv-store</span> dist_sync
-</code></pre></div>
+</code></pre></div></div>
+
 <h3 id="use-a-particular-network-interface">Use a Particular Network Interface</h3>
 
 <p><em>MXNet</em> often chooses the first available network interface.
 But for machines that have multiple interfaces,
 we can specify which network interface to use for data
-communication by the environment variable <code>DMLC_INTERFACE</code>.
-For example, to use the interface <code>eth0</code>, we can</p>
-<div class="highlight"><pre><code class="language-" data-lang="">export DMLC_INTERFACE=eth0; python ../../tools/launch.py ...
-</code></pre></div>
+communication by the environment variable <code class="highlighter-rouge">DMLC_INTERFACE</code>.
+For example, to use the interface <code class="highlighter-rouge">eth0</code>, we can</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export DMLC_INTERFACE=eth0; python ../../tools/launch.py ...
+</code></pre></div></div>
+
 <h3 id="debug-connection">Debug Connection</h3>
 
-<p>Set<code>PS_VERBOSE=1</code> to see the debug logging, e.g
-<code>
-export PS_VERBOSE=1; python ../../tools/launch.py ...
-</code></p>
+<p>Set<code class="highlighter-rouge">PS_VERBOSE=1</code> to see the debug logging, e.g</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export PS_VERBOSE=1; python ../../tools/launch.py ...
+</code></pre></div></div>
 
 <h3 id="more">More</h3>
 
 <ul>
-<li>See more launch options by <code>python ../../tools/launch.py -h</code></li>
-<li>See more options of <a href="http://ps-lite.readthedocs.org/en/latest/how_to.html">ps-lite</a></li>
+  <li>See more launch options by <code class="highlighter-rouge">python ../../tools/launch.py -h</code></li>
+  <li>See more options of <a href="http://ps-lite.readthedocs.org/en/latest/how_to.html">ps-lite</a></li>
 </ul>
 
     </div>

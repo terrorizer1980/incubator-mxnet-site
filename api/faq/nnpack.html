@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>NNPACK for Multi-Core CPU Support in MXNet | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="NNPACK for Multi-Core CPU Support in MXNet" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/faq/nnpack" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"NNPACK for Multi-Core CPU Support in MXNet","@type":"WebPage","url":"https://mxnet.apache.org/api/faq/nnpack","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"NNPACK for Multi-Core CPU Support in MXNet","url":"https://mxnet.apache.org/api/faq/nnpack","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -385,40 +385,30 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
               <!-- page-category -->
             
               <!-- page-category -->
+            
+              <!-- page-category -->
                <!-- resource-p -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h3 id="nnpack-for-multi-core-cpu-support-in-mxnet">NNPACK for Multi-Core CPU Support in MXNet</h3>
-
 <p><a href="https://github.com/Maratyszcza/NNPACK">NNPACK</a> is an acceleration package
 for neural network computations, which can run on x86-64, ARMv7, or ARM64 architecture CPUs.
 Using NNPACK, higher-level libraries like <em>MXNet</em> can speed up
@@ -428,10 +418,9 @@ the execution on multi-core CPU computers, including laptops and mobile devices.
 In this document, we give a high level overview of how to use NNPACK with <em>MXNet</em>.</p>
 
 <h3 id="conditions">Conditions</h3>
-
 <p>The underlying implementation of NNPACK utilizes several acceleration methods,
 including <a href="https://arxiv.org/abs/1312.5851">fft</a> and <a href="https://arxiv.org/abs/1509.09308">winograd</a>.
-These algorithms work better on some special <code>batch size</code>, <code>kernel size</code>, and <code>stride</code> settings than on other,
+These algorithms work better on some special <code class="highlighter-rouge">batch size</code>, <code class="highlighter-rouge">kernel size</code>, and <code class="highlighter-rouge">stride</code> settings than on other,
 so depending on the context, not all convolution, max-pooling, or fully-connected layers can be powered by NNPACK.
 When favorable conditions for running NNPACKS are not met,
 <em>MXNet</em> will fall back to the default implementation automatically.</p>
@@ -439,35 +428,41 @@ When favorable conditions for running NNPACKS are not met,
 <p>NNPACK only supports Linux and OS X systems. Windows is not supported at present.
 The following table explains under which conditions NNPACK will work.</p>
 
-<table><thead>
-<tr>
-<th style="text-align: left">operation</th>
-<th style="text-align: left">conditions</th>
-</tr>
-</thead><tbody>
-<tr>
-<td style="text-align: left">convolution</td>
-<td style="text-align: left">2d convolution <code>and</code> no-bias=False <code>and</code> dilate=(1,1) <code>and</code> num_group=1 <code>and</code> batch-size = 1 or batch-size &gt; 1 &amp;&amp; stride = (1,1);</td>
-</tr>
-<tr>
-<td style="text-align: left">pooling</td>
-<td style="text-align: left">max-pooling <code>and</code> kernel=(2,2) <code>and</code> stride=(2,2) <code>and</code> pooling_convention=full</td>
-</tr>
-<tr>
-<td style="text-align: left">fully-connected</td>
-<td style="text-align: left">without any restrictions</td>
-</tr>
-</tbody></table>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">operation</th>
+      <th style="text-align: left">conditions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">convolution</td>
+      <td style="text-align: left">2d convolution <code class="highlighter-rouge">and</code> no-bias=False <code class="highlighter-rouge">and</code> dilate=(1,1) <code class="highlighter-rouge">and</code> num_group=1 <code class="highlighter-rouge">and</code> batch-size = 1 or batch-size &gt; 1 &amp;&amp; stride = (1,1);</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">pooling</td>
+      <td style="text-align: left">max-pooling <code class="highlighter-rouge">and</code> kernel=(2,2) <code class="highlighter-rouge">and</code> stride=(2,2) <code class="highlighter-rouge">and</code> pooling_convention=full</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">fully-connected</td>
+      <td style="text-align: left">without any restrictions</td>
+    </tr>
+  </tbody>
+</table>
 
-<h3 id="build-install-nnpack-with-mxnet">Build/Install NNPACK with MXNet</h3>
+<h3 id="buildinstall-nnpack-with-mxnet">Build/Install NNPACK with MXNet</h3>
 
 <p>If the trained model meets some conditions of using NNPACK,
 you can build MXNet with NNPACK support.
-Follow these simple steps:
-* Build NNPACK shared library with the following commands. <em>MXNet</em> will link NNPACK dynamically.</p>
+Follow these simple steps:</p>
+<ul>
+  <li>Build NNPACK shared library with the following commands. <em>MXNet</em> will link NNPACK dynamically.</li>
+</ul>
 
 <p>Note: The following NNPACK installation instructions have been tested on Ubuntu 14.04 and 16.04.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Install Pip</span>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install Pip</span>
 <span class="nv">$ </span><span class="nb">sudo </span>apt-get update
 <span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> python-pip
 <span class="nv">$ </span><span class="nb">sudo </span>pip <span class="nb">install</span> <span class="nt">--upgrade</span> pip
@@ -495,12 +490,13 @@ Follow these simple steps:
 <span class="nv">$ </span>ninja
 <span class="nv">$ </span><span class="nb">cd</span> ~
 
-</code></pre></div>
+</code></pre></div></div>
+
 <ul>
-<li>Set lib path of NNPACK as the environment variable, e.g. <code>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$YOUR_NNPACK_INSTALL_PATH/lib</code></li>
-<li>Add the include file of NNPACK and its third-party to  <code>ADD_CFLAGS</code> in config.mk, e.g. <code>ADD_CFLAGS = -I$(YOUR_NNPACK_INSTALL_PATH)/include/ -I$(YOUR_NNPACK_INSTALL_PATH)/third-party/pthreadpool/include/</code></li>
-<li>Set <code>USE_NNPACK = 1</code> in config.mk.</li>
-<li>Build MXNet from source following the <a href="/get_started">install guide</a>.</li>
+  <li>Set lib path of NNPACK as the environment variable, e.g. <code class="highlighter-rouge">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$YOUR_NNPACK_INSTALL_PATH/lib</code></li>
+  <li>Add the include file of NNPACK and its third-party to  <code class="highlighter-rouge">ADD_CFLAGS</code> in config.mk, e.g. <code class="highlighter-rouge">ADD_CFLAGS = -I$(YOUR_NNPACK_INSTALL_PATH)/include/ -I$(YOUR_NNPACK_INSTALL_PATH)/third-party/pthreadpool/include/</code></li>
+  <li>Set <code class="highlighter-rouge">USE_NNPACK = 1</code> in config.mk.</li>
+  <li>Build MXNet from source following the <a href="/get_started">install guide</a>.</li>
 </ul>
 
 <h3 id="nnpack-performance">NNPACK Performance</h3>
@@ -508,11 +504,10 @@ Follow these simple steps:
 <p>Though not all convolutional, pooling, and fully-connected layers can make full use of NNPACK,
 for some popular models it provides significant speedups. These include the most popular image recognition networks: Alexnet, VGG, and Inception-bn.</p>
 
-<p>To benchmark NNPACK, we use <code>example/image-classification/benchmark_score.py</code>(changed with  more range of batch-size). We use CPU e5-2670, MXNET_CPU_NNPACK_NTHREADS=4.</p>
+<p>To benchmark NNPACK, we use <code class="highlighter-rouge">example/image-classification/benchmark_score.py</code>(changed with  more range of batch-size). We use CPU e5-2670, MXNET_CPU_NNPACK_NTHREADS=4.</p>
 
-<p>build MXNet without NNPACK, the log is:
-<code>
-INFO:root:network: alexnet
+<p>build MXNet without NNPACK, the log is:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INFO:root:network: alexnet
 INFO:root:device: cpu(0)
 INFO:root:batch size  1, image/sec: 6.389429
 INFO:root:batch size  2, image/sec: 7.961457
@@ -534,10 +529,11 @@ INFO:root:batch size 32, image/sec: 1.428377
 INFO:root:batch size 64, image/sec: 1.443987
 INFO:root:batch size 128, image/sec: 1.427531
 INFO:root:batch size 256, image/sec: 1.435279
-</code></p>
+</code></pre></div></div>
 
 <p>build MXNet with NNPACK, log is:</p>
-<div class="highlight"><pre><code class="language-" data-lang="">INFO:root:network: alexnet
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INFO:root:network: alexnet
 INFO:root:device: cpu(0)
 INFO:root:batch size  1, image/sec: 19.027215
 INFO:root:batch size  2, image/sec: 12.879975
@@ -559,12 +555,13 @@ INFO:root:batch size 32, image/sec: 7.614288
 INFO:root:batch size 64, image/sec: 8.826084
 INFO:root:batch size 128, image/sec: 9.193653
 INFO:root:batch size 256, image/sec: 9.991472
-</code></pre></div>
+</code></pre></div></div>
+
 <p>The results show that NNPACK can confer a speedup of about 2X~7X as compared to the original <em>MXNet</em> CPU implementation.</p>
 
 <h3 id="tips">Tips</h3>
 
-<p>NNPACK aims to provide high-performance implementations of some layers for multi-core CPUs, so you can easily set the thread number by changing the environmental variable <code>MXNET_CPU_NNPACK_NTHREADS</code>. However, we found that the performance is not proportional to the number of threads, and suggest using 4~8 threads when using NNPACK.</p>
+<p>NNPACK aims to provide high-performance implementations of some layers for multi-core CPUs, so you can easily set the thread number by changing the environmental variable <code class="highlighter-rouge">MXNET_CPU_NNPACK_NTHREADS</code>. However, we found that the performance is not proportional to the number of threads, and suggest using 4~8 threads when using NNPACK.</p>
 
     </div>
 </div>

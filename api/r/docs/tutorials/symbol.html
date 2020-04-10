@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>NDArray | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="NDArray" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/r/docs/tutorials/symbol" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"NDArray","@type":"WebPage","url":"https://mxnet.apache.org/api/r/docs/tutorials/symbol","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"NDArray","url":"https://mxnet.apache.org/api/r/docs/tutorials/symbol","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -484,6 +484,8 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
+                
+                   <!-- resource-p -->
                   <!-- page -->
                 
             </ul>
@@ -681,56 +683,51 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
            <!-- resource-p -->
         
            <!-- resource-p -->
+        
+           <!-- resource-p -->
           <!-- page -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h1 id="symbol-and-automatic-differentiation">Symbol and Automatic Differentiation</h1>
 
-<p>The computational unit <code>NDArray</code> requires a way to construct neural networks. MXNet provides a symbolic interface, named Symbol, to do this. Symbol combines both flexibility and efficiency.</p>
+<p>The computational unit <code class="highlighter-rouge">NDArray</code> requires a way to construct neural networks. MXNet provides a symbolic interface, named Symbol, to do this. Symbol combines both flexibility and efficiency.</p>
 
 <h2 id="basic-composition-of-symbols">Basic Composition of Symbols</h2>
 
 <p>The following code creates a two-layer perceptron network:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">require</span><span class="p">(</span><span class="n">mxnet</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">require</span><span class="p">(</span><span class="n">mxnet</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"fc1"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Activation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"relu1"</span><span class="p">,</span><span class="w"> </span><span class="n">act_type</span><span class="o">=</span><span class="s2">"relu"</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"fc2"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">64</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Softmax</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"out"</span><span class="p">)</span><span class="w">
 </span><span class="nf">class</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] "Rcpp_MXSymbol"
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Rcpp_MXSymbol"
 ## attr(,"package")
 ## [1] "mxnet"
-</code></pre></div>
+</code></pre></div></div>
+
 <p>Each symbol takes a (unique) string name. <em>Variable</em> often defines the inputs,
 or free variables. Other symbols take a symbol as the input (<em>data</em>),
 and may accept other hyper parameters, such as the number of hidden neurons (<em>num_hidden</em>)
@@ -738,48 +735,64 @@ or the activation type (<em>act_type</em>).</p>
 
 <p>A symbol can be viewed as a function that takes several arguments, whose
 names are automatically generated and can be retrieved with the following command:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] "data"       "fc1_weight" "fc1_bias"   "fc2_weight" "fc2_bias"
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "data"       "fc1_weight" "fc1_bias"   "fc2_weight" "fc2_bias"
 ## [6] "out_label"
-</code></pre></div>
+</code></pre></div></div>
+
 <p>The arguments are the parameters need by each symbol:</p>
 
 <ul>
-<li><em>data</em>: Input data needed by the variable <em>data</em></li>
-<li><em>fc1_weight</em> and <em>fc1_bias</em>: The weight and bias for the first fully connected layer, <em>fc1</em></li>
-<li><em>fc2_weight</em> and <em>fc2_bias</em>: The weight and bias for the second fully connected layer, <em>fc2</em></li>
-<li><em>out_label</em>: The label needed by the loss</li>
+  <li><em>data</em>: Input data needed by the variable <em>data</em></li>
+  <li><em>fc1_weight</em> and <em>fc1_bias</em>: The weight and bias for the first fully connected layer, <em>fc1</em></li>
+  <li><em>fc2_weight</em> and <em>fc2_bias</em>: The weight and bias for the second fully connected layer, <em>fc2</em></li>
+  <li><em>out_label</em>: The label needed by the loss</li>
 </ul>
 
 <p>We can also specify the automatically generated names explicitly:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
 </span><span class="n">w</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"myweight"</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">weight</span><span class="o">=</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"fc1"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span><span class="w">
 </span><span class="n">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] "data"     "myweight" "fc1_bias"
-</code></pre></div>
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "data"     "myweight" "fc1_bias"
+</code></pre></div></div>
+
 <h2 id="more-complicated-composition-of-symbols">More Complicated Composition of Symbols</h2>
 
 <p>MXNet provides well-optimized symbols for
 commonly used layers in deep learning. You can also define new operators
 in Python. The following example first performs an element-wise add between two
 symbols, then feeds them to the fully connected operator:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">lhs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data1"</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lhs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data1"</span><span class="p">)</span><span class="w">
 </span><span class="n">rhs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data2"</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">lhs</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rhs</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"fc1"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span><span class="w">
 </span><span class="n">arguments</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] "data1"      "data2"      "fc1_weight" "fc1_bias"
-</code></pre></div>
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "data1"      "data2"      "fc1_weight" "fc1_bias"
+</code></pre></div></div>
+
 <p>We can construct a symbol more flexibly than by using the single
 forward composition, for example:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"fc1"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span><span class="w">
 </span><span class="n">net2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data2"</span><span class="p">)</span><span class="w">
 </span><span class="n">net2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net2</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"net2"</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="o">=</span><span class="m">128</span><span class="p">)</span><span class="w">
 </span><span class="n">composed.net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.apply</span><span class="p">(</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">net2</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"compose"</span><span class="p">)</span><span class="w">
 </span><span class="n">arguments</span><span class="p">(</span><span class="n">composed.net</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] "data2"       "net2_weight" "net2_bias"   "fc1_weight"  "fc1_bias"
-</code></pre></div>
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "data2"       "net2_weight" "net2_bias"   "fc1_weight"  "fc1_bias"
+</code></pre></div></div>
+
 <p>In the example, <em>net</em> is used as a function to apply to an existing symbol
 <em>net</em>. The resulting <em>composed.net</em> will replace the original argument <em>data</em> with
 <em>net2</em> instead.</p>
@@ -805,13 +818,12 @@ be more memory efficient than CXXNet and gets to the same runtime with
 greater flexibility.</p>
 
 <h2 id="next-steps">Next Steps</h2>
-
 <ul>
-<li><a href="/api/r/docs/tutorials/callback_function">Write and use callback functions</a></li>
-<li><a href="/api/r/docs/tutorials/five_minutes_neural_network">Neural Networks with MXNet in Five Minutes</a></li>
-<li><a href="/api/r/docs/tutorials/classify_real_image_with_pretrained_model">Classify Real-World Images with Pre-trained Model</a></li>
-<li><a href="/api/r/docs/tutorials/mnist_competition">Handwritten Digits Classification Competition</a></li>
-<li><a href="/api/r/docs/tutorials/char_rnn_model">Character Language Model using RNN</a></li>
+  <li><a href="/api/r/docs/tutorials/callback_function">Write and use callback functions</a></li>
+  <li><a href="/api/r/docs/tutorials/five_minutes_neural_network">Neural Networks with MXNet in Five Minutes</a></li>
+  <li><a href="/api/r/docs/tutorials/classify_real_image_with_pretrained_model">Classify Real-World Images with Pre-trained Model</a></li>
+  <li><a href="/api/r/docs/tutorials/mnist_competition">Handwritten Digits Classification Competition</a></li>
+  <li><a href="/api/r/docs/tutorials/char_rnn_model">Character Language Model using RNN</a></li>
 </ul>
 
     </div>

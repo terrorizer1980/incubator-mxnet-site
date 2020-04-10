@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Custom Iterator Tutorial | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Custom Iterator Tutorial" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/r/docs/tutorials/custom_iterator" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Custom Iterator Tutorial","@type":"WebPage","url":"https://mxnet.apache.org/api/r/docs/tutorials/custom_iterator","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Custom Iterator Tutorial","url":"https://mxnet.apache.org/api/r/docs/tutorials/custom_iterator","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -686,31 +686,20 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h1 id="custom-iterator-tutorial">Custom Iterator Tutorial</h1>
@@ -718,121 +707,131 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 <p>This tutorial provides a guideline on how to use and write custom iterators, which can very useful when having a dataset that does not fit into memory.</p>
 
 <h2 id="getting-the-data">Getting the data</h2>
-
 <p>The data we are going to use is the <a href="https://yann.lecun.com/exdb/mnist/">MNIST dataset</a> in CSV format, the data can be found in this <a href="https://pjreddie.com/projects/mnist-in-csv/">web</a>.</p>
 
 <p>To download the data:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">wget http://pjreddie.com/media/files/mnist_train.csv
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://pjreddie.com/media/files/mnist_train.csv
 wget http://pjreddie.com/media/files/mnist_test.csv
-</code></pre></div>
-<p>You&#39;ll get two files, <code>mnist_train.csv</code> that contains 60.000 examples of hand written numbers and <code>mxnist_test.csv</code> that contains 10.000 examples. The first element of each line in the CSV is the label, which is a number between 0 and 9. The rest of the line are 784 numbers between 0 and 255, corresponding to the levels of grey of a matrix of 28x28. Therefore, each line contains an image of 28x28 pixels of a hand written number and its true label.</p>
+</code></pre></div></div>
+
+<p>You’ll get two files, <code class="highlighter-rouge">mnist_train.csv</code> that contains 60.000 examples of hand written numbers and <code class="highlighter-rouge">mxnist_test.csv</code> that contains 10.000 examples. The first element of each line in the CSV is the label, which is a number between 0 and 9. The rest of the line are 784 numbers between 0 and 255, corresponding to the levels of grey of a matrix of 28x28. Therefore, each line contains an image of 28x28 pixels of a hand written number and its true label.</p>
 
 <h2 id="custom-csv-iterator">Custom CSV Iterator</h2>
-
 <p>Next we are going to create a custom CSV Iterator based on the <a href="https://github.com/dmlc/mxnet/blob/master/src/io/iter_csv.cc">C++ CSVIterator class</a>.</p>
 
-<p>For that we are going to use the R function <code>mx.io.CSVIter</code> as a base class. This class has as parameters <code>data.csv, data.shape, batch.size</code> and two main functions, <code>iter.next()</code> that calls the iterator in the next batch of data and <code>value()</code> that returns the train data and the label.</p>
+<p>For that we are going to use the R function <code class="highlighter-rouge">mx.io.CSVIter</code> as a base class. This class has as parameters <code class="highlighter-rouge">data.csv, data.shape, batch.size</code> and two main functions, <code class="highlighter-rouge">iter.next()</code> that calls the iterator in the next batch of data and <code class="highlighter-rouge">value()</code> that returns the train data and the label.</p>
 
-<p>The R Custom Iterator needs to inherit from the C++ data iterator class, for that we used the class <code>Rcpp_MXArrayDataIter</code> extracted with RCPP. Also, it needs to have the same parameters: <code>data.csv, data.shape, batch.size</code>. Apart from that, we can also add the field <code>iter</code>, which is the CSV Iterator that we are going to expand.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
-                                </span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="c1">#...</span><span class="w">
+<p>The R Custom Iterator needs to inherit from the C++ data iterator class, for that we used the class <code class="highlighter-rouge">Rcpp_MXArrayDataIter</code> extracted with RCPP. Also, it needs to have the same parameters: <code class="highlighter-rouge">data.csv, data.shape, batch.size</code>. Apart from that, we can also add the field <code class="highlighter-rouge">iter</code>, which is the CSV Iterator that we are going to expand.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
+								</span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
+								</span><span class="c1">#...</span><span class="w">
                             </span><span class="p">)</span><span class="w">
-</span></code></pre></div>
-<p>The next step is to initialize the class. For that we call the base <code>mx.io.CSVIter</code> and fill the rest of the fields.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
-                                </span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
-                                    </span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
-                                        </span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
-                                        </span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
-                                        </span><span class="n">.self</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                </span><span class="c1">#...</span><span class="w">
-                                </span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The next step is to initialize the class. For that we call the base <code class="highlighter-rouge">mx.io.CSVIter</code> and fill the rest of the fields.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
+								</span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
+	                             	</span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
+										</span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
+										</span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
+										</span><span class="n">.self</span><span class="w">
+	                               	</span><span class="p">},</span><span class="w">
+                             	</span><span class="c1">#...</span><span class="w">
+                             	</span><span class="p">)</span><span class="w">
                             </span><span class="p">)</span><span class="w">
-</span></code></pre></div>
-<p>So far there is no difference between the original class and the custom class. Let&#39;s implement the function <code>value()</code>. In this case what we are going to do is transform the data that comes from the original class as an array of 785 numbers into a matrix of 28x28 and a label. We will also normalize the training data to be between 0 and 1.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
-                                </span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
-                                    </span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
-                                        </span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
-                                        </span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
-                                        </span><span class="n">.self</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">value</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">val</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.array</span><span class="p">(</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">value</span><span class="p">()</span><span class="o">$</span><span class="n">data</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">-1</span><span class="p">,]</span><span class="w">
-                                        </span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">1</span><span class="p">,]</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val.x</span><span class="o">/</span><span class="m">255</span><span class="w">
-                                        </span><span class="nf">dim</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="p">(</span><span class="n">val.x</span><span class="p">))</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.y</span><span class="p">)</span><span class="w">
-                                        </span><span class="nf">list</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val.x</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="o">=</span><span class="n">val.y</span><span class="p">)</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                </span><span class="c1">#...</span><span class="w">
-                                </span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>So far there is no difference between the original class and the custom class. Let’s implement the function <code class="highlighter-rouge">value()</code>. In this case what we are going to do is transform the data that comes from the original class as an array of 785 numbers into a matrix of 28x28 and a label. We will also normalize the training data to be between 0 and 1.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
+								</span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
+	                             	</span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
+										</span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
+										</span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
+										</span><span class="n">.self</span><span class="w">
+	                               	</span><span class="p">},</span><span class="w">
+									</span><span class="n">value</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">val</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.array</span><span class="p">(</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">value</span><span class="p">()</span><span class="o">$</span><span class="n">data</span><span class="p">)</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">-1</span><span class="p">,]</span><span class="w">
+										</span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">1</span><span class="p">,]</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val.x</span><span class="o">/</span><span class="m">255</span><span class="w">
+										</span><span class="nf">dim</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="p">(</span><span class="n">val.x</span><span class="p">))</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w">
+										</span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.y</span><span class="p">)</span><span class="w">
+										</span><span class="nf">list</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val.x</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="o">=</span><span class="n">val.y</span><span class="p">)</span><span class="w">
+									</span><span class="p">},</span><span class="w">
+                             	</span><span class="c1">#...</span><span class="w">
+                             	</span><span class="p">)</span><span class="w">
                             </span><span class="p">)</span><span class="w">
-</span></code></pre></div>
-<p>Finally we are going to add the rest of the functions needed for the training to work correctly. The final <code>CustomCSVIter</code> looks like this:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
-                                </span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
-                                    </span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
-                                        </span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
-                                        </span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
-                                        </span><span class="n">.self</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">value</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">val</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.array</span><span class="p">(</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">value</span><span class="p">()</span><span class="o">$</span><span class="n">data</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">-1</span><span class="p">,]</span><span class="w">
-                                        </span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">1</span><span class="p">,]</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val.x</span><span class="o">/</span><span class="m">255</span><span class="w">
-                                        </span><span class="nf">dim</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="p">(</span><span class="n">val.x</span><span class="p">))</span><span class="w">
-                                        </span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w">
-                                        </span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.y</span><span class="p">)</span><span class="w">
-                                        </span><span class="nf">list</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val.x</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="o">=</span><span class="n">val.y</span><span class="p">)</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">iter.next</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">iter.next</span><span class="p">()</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">reset</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">reset</span><span class="p">()</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">num.pad</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">num.pad</span><span class="p">()</span><span class="w">
-                                    </span><span class="p">},</span><span class="w">
-                                    </span><span class="n">finalize</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
-                                        </span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">finalize</span><span class="p">()</span><span class="w">
-                                    </span><span class="p">}</span><span class="w">
-                                </span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+<p>Finally we are going to add the rest of the functions needed for the training to work correctly. The final <code class="highlighter-rouge">CustomCSVIter</code> looks like this:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CustomCSVIter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">setRefClass</span><span class="p">(</span><span class="s2">"CustomCSVIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">fields</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"iter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.csv"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data.shape"</span><span class="p">,</span><span class="w"> </span><span class="s2">"batch.size"</span><span class="p">),</span><span class="w">
+								</span><span class="n">contains</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Rcpp_MXArrayDataIter"</span><span class="p">,</span><span class="w">
+								</span><span class="n">methods</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="w">
+	                             	</span><span class="n">initialize</span><span class="o">=</span><span class="k">function</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="p">){</span><span class="w">
+										</span><span class="n">feature_len</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="o">*</span><span class="n">data.shape</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
+										</span><span class="n">csv_iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.io.CSVIter</span><span class="p">(</span><span class="n">data.csv</span><span class="o">=</span><span class="n">data.csv</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">feature_len</span><span class="p">),</span><span class="w"> </span><span class="n">batch.size</span><span class="o">=</span><span class="n">batch.size</span><span class="p">)</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">csv_iter</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.csv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.csv</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">data.shape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.shape</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">batch.size</span><span class="w">
+										</span><span class="n">.self</span><span class="w">
+	                               	</span><span class="p">},</span><span class="w">
+									</span><span class="n">value</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">val</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.array</span><span class="p">(</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">value</span><span class="p">()</span><span class="o">$</span><span class="n">data</span><span class="p">)</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">-1</span><span class="p">,]</span><span class="w">
+										</span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val</span><span class="p">[</span><span class="m">1</span><span class="p">,]</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">val.x</span><span class="o">/</span><span class="m">255</span><span class="w">
+										</span><span class="nf">dim</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="p">(</span><span class="n">val.x</span><span class="p">))</span><span class="w">
+										</span><span class="n">val.x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.x</span><span class="p">)</span><span class="w">
+										</span><span class="n">val.y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.nd.array</span><span class="p">(</span><span class="n">val.y</span><span class="p">)</span><span class="w">
+										</span><span class="nf">list</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">val.x</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="o">=</span><span class="n">val.y</span><span class="p">)</span><span class="w">
+									</span><span class="p">},</span><span class="w">
+									</span><span class="n">iter.next</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">iter.next</span><span class="p">()</span><span class="w">
+									</span><span class="p">},</span><span class="w">
+									</span><span class="n">reset</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">reset</span><span class="p">()</span><span class="w">
+									</span><span class="p">},</span><span class="w">
+									</span><span class="n">num.pad</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">num.pad</span><span class="p">()</span><span class="w">
+									</span><span class="p">},</span><span class="w">
+									</span><span class="n">finalize</span><span class="o">=</span><span class="k">function</span><span class="p">(){</span><span class="w">
+										</span><span class="n">.self</span><span class="o">$</span><span class="n">iter</span><span class="o">$</span><span class="n">finalize</span><span class="p">()</span><span class="w">
+									</span><span class="p">}</span><span class="w">
+                             	</span><span class="p">)</span><span class="w">
                             </span><span class="p">)</span><span class="w">
-</span></code></pre></div>
+</span></code></pre></div></div>
+
 <p>To call the class we can just do:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">100</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">batch.size</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">100</span><span class="w">
 </span><span class="n">train.iter</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">CustomCSVIter</span><span class="o">$</span><span class="n">new</span><span class="p">(</span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">data.csv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"mnist_train.csv"</span><span class="p">,</span><span class="w"> </span><span class="n">data.shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">28</span><span class="p">,</span><span class="w"> </span><span class="n">batch.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">batch.size</span><span class="p">)</span><span class="w">
-</span></code></pre></div>
+</span></code></pre></div></div>
+
 <h2 id="cnn-model">CNN Model</h2>
 
 <p>For this tutorial we are going to use the known LeNet architecture:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">lenet.model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(){</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lenet.model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(){</span><span class="w">
   </span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span><span class="w">
   </span><span class="n">conv1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Convolution</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">kernel</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">),</span><span class="w"> </span><span class="n">num_filter</span><span class="o">=</span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="c1">#first conv</span><span class="w">
   </span><span class="n">tanh1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Activation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">conv1</span><span class="p">,</span><span class="w"> </span><span class="n">act_type</span><span class="o">=</span><span class="s2">"tanh"</span><span class="p">)</span><span class="w">
@@ -848,11 +847,12 @@ wget http://pjreddie.com/media/files/mnist_test.csv
   </span><span class="n">network</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span><span class="n">network</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lenet.model</span><span class="p">()</span><span class="w">
-</span></code></pre></div>
-<h2 id="training-with-the-custom-iterator">Training with the Custom Iterator</h2>
+</span></code></pre></div></div>
 
+<h2 id="training-with-the-custom-iterator">Training with the Custom Iterator</h2>
 <p>Finally, we can directly add the custom iterator as the training data source.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.model.FeedForward.create</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">network</span><span class="p">,</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.model.FeedForward.create</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">network</span><span class="p">,</span><span class="w">
                                      </span><span class="n">X</span><span class="o">=</span><span class="n">train.iter</span><span class="p">,</span><span class="w">
                                      </span><span class="n">ctx</span><span class="o">=</span><span class="n">mx.gpu</span><span class="p">(</span><span class="m">0</span><span class="p">),</span><span class="w">
                                      </span><span class="n">num.round</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w">
@@ -863,9 +863,11 @@ wget http://pjreddie.com/media/files/mnist_test.csv
                                      </span><span class="n">wd</span><span class="o">=</span><span class="m">0.00001</span><span class="p">,</span><span class="w">
                                      </span><span class="n">batch.end.callback</span><span class="o">=</span><span class="n">mx.callback.log.speedometer</span><span class="p">(</span><span class="n">batch.size</span><span class="p">,</span><span class="w"> </span><span class="n">frequency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">)</span><span class="w">
                                      </span><span class="p">)</span><span class="w">
-</span></code></pre></div>
+</span></code></pre></div></div>
+
 <p>The last 2 iterations with a K80 GPU looks like this:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>8] Train-accuracy<span class="o">=</span>0.998866666666667
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>8] Train-accuracy<span class="o">=</span>0.998866666666667
 Batch <span class="o">[</span>100] Speed: 15413.0104454713 samples/sec Train-accuracy<span class="o">=</span>0.999
 Batch <span class="o">[</span>200] Speed: 16629.3412459049 samples/sec Train-accuracy<span class="o">=</span>0.99935
 Batch <span class="o">[</span>300] Speed: 18412.6900509319 samples/sec Train-accuracy<span class="o">=</span>0.9995
@@ -880,10 +882,11 @@ Batch <span class="o">[</span>400] Speed: 17103.0705411788 samples/sec Train-acc
 Batch <span class="o">[</span>500] Speed: 15104.8656902394 samples/sec Train-accuracy<span class="o">=</span>0.99974
 Batch <span class="o">[</span>600] Speed: 13818.7899518255 samples/sec Train-accuracy<span class="o">=</span>0.99975
 <span class="o">[</span>10] Train-accuracy<span class="o">=</span>0.99975
-</code></pre></div>
+</code></pre></div></div>
+
 <h2 id="conclusion">Conclusion</h2>
 
-<p>We have shown how to create a custom CSV Iterator by extending the class <code>mx.io.CSVIter</code>. In our class, we iteratively read from a CSV file a batch of data that will be transformed and then processed in the stochastic gradient descent optimization. That way, we are able to manage CSV files that are bigger than the memory of the machine we are using.</p>
+<p>We have shown how to create a custom CSV Iterator by extending the class <code class="highlighter-rouge">mx.io.CSVIter</code>. In our class, we iteratively read from a CSV file a batch of data that will be transformed and then processed in the stochastic gradient descent optimization. That way, we are able to manage CSV files that are bigger than the memory of the machine we are using.</p>
 
 <p>Based of this custom iterator, we can also create data loaders that internally transform or expand the data, allowing to manage files of any size.</p>
 

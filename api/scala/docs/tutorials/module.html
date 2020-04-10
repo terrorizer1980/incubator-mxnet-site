@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Module API | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Module API" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/scala/docs/tutorials/module" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Module API","@type":"WebPage","url":"https://mxnet.apache.org/api/scala/docs/tutorials/module","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Module API","url":"https://mxnet.apache.org/api/scala/docs/tutorials/module","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -476,6 +476,8 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
+                
+                   <!-- resource-p -->
                   <!-- page -->
                 
             </ul>
@@ -683,51 +685,42 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
            <!-- resource-p -->
         
            <!-- resource-p -->
+        
+           <!-- resource-p -->
           <!-- page -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h1 id="module-api">Module API</h1>
-
-<p>The module API provides an intermediate and high-level interface for performing computation with neural networks in MXNet. A <em>module</em> is an instance of subclasses of the <code>BaseModule</code>. The most widely used module class is called <code>Module</code>. Module wraps a <code>Symbol</code> and one or more <code>Executors</code>. For a full list of functions, see <code>BaseModule</code>.
-A subclass of modules might have extra interface functions. This topic provides some examples of common use cases. All of the module APIs are in the <code>Module</code> namespace.</p>
+<p>The module API provides an intermediate and high-level interface for performing computation with neural networks in MXNet. A <em>module</em> is an instance of subclasses of the <code class="highlighter-rouge">BaseModule</code>. The most widely used module class is called <code class="highlighter-rouge">Module</code>. Module wraps a <code class="highlighter-rouge">Symbol</code> and one or more <code class="highlighter-rouge">Executors</code>. For a full list of functions, see <code class="highlighter-rouge">BaseModule</code>.
+A subclass of modules might have extra interface functions. This topic provides some examples of common use cases. All of the module APIs are in the <code class="highlighter-rouge">Module</code> namespace.</p>
 
 <h2 id="preparing-a-module-for-computation">Preparing a Module for Computation</h2>
 
-<p>To construct a module, refer to the constructors for the module class. For example, the <code>Module</code> class accepts a <code>Symbol</code> as input:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="k">import</span> <span class="nn">org.apache.mxnet._</span>
+<p>To construct a module, refer to the constructors for the module class. For example, the <code class="highlighter-rouge">Module</code> class accepts a <code class="highlighter-rouge">Symbol</code> as input:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">import</span> <span class="nn">org.apache.mxnet._</span>
     <span class="k">import</span> <span class="nn">org.apache.mxnet.module.</span><span class="o">{</span><span class="nc">FitParams</span><span class="o">,</span> <span class="nc">Module</span><span class="o">}</span>
 
-    <span class="c1">// construct a simple MLP
-</span>    <span class="k">val</span> <span class="nv">data</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">Variable</span><span class="o">(</span><span class="s">"data"</span><span class="o">)</span>
+    <span class="c1">// construct a simple MLP</span>
+    <span class="k">val</span> <span class="nv">data</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">Variable</span><span class="o">(</span><span class="s">"data"</span><span class="o">)</span>
     <span class="k">val</span> <span class="nv">fc1</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">api</span><span class="o">.</span><span class="py">FullyConnected</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">data</span><span class="o">),</span> <span class="n">num_hidden</span> <span class="k">=</span> <span class="mi">128</span><span class="o">,</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"fc1"</span><span class="o">)</span>
     <span class="k">val</span> <span class="nv">act1</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">api</span><span class="o">.</span><span class="py">Activation</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">fc1</span><span class="o">),</span> <span class="s">"relu"</span><span class="o">,</span> <span class="s">"relu1"</span><span class="o">)</span>
     <span class="k">val</span> <span class="nv">fc2</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">api</span><span class="o">.</span><span class="py">FullyConnected</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">act1</span><span class="o">),</span> <span class="n">num_hidden</span> <span class="k">=</span> <span class="mi">64</span><span class="o">,</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"fc2"</span><span class="o">)</span>
@@ -735,91 +728,113 @@ A subclass of modules might have extra interface functions. This topic provides 
     <span class="k">val</span> <span class="nv">fc3</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">api</span><span class="o">.</span><span class="py">FullyConnected</span><span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">act2</span><span class="o">),</span> <span class="n">num_hidden</span> <span class="k">=</span> <span class="mi">10</span><span class="o">,</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"fc3"</span><span class="o">)</span>
     <span class="k">val</span> <span class="nv">out</span> <span class="k">=</span> <span class="nv">Symbol</span><span class="o">.</span><span class="py">api</span><span class="o">.</span><span class="py">SoftmaxOutput</span><span class="o">(</span><span class="n">fc3</span><span class="o">,</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"softmax"</span><span class="o">)</span>
 
-    <span class="c1">// construct the module
-</span>    <span class="k">val</span> <span class="nv">mod</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Module</span><span class="o">(</span><span class="n">out</span><span class="o">)</span>
-</code></pre></div>
-<p>By default, <code>context</code> is the CPU. If you need data parallelization, you can specify a GPU context or an array of GPU contexts.</p>
+    <span class="c1">// construct the module</span>
+    <span class="k">val</span> <span class="nv">mod</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Module</span><span class="o">(</span><span class="n">out</span><span class="o">)</span>
+</code></pre></div></div>
 
-<p>Before you can compute with a module, you need to call <code>bind()</code> to allocate the device memory and <code>initParams()</code> or <code>SetParams()</code> to initialize the parameters.
-If you simply want to fit a module, you don&#39;t need to call <code>bind()</code> and <code>initParams()</code> explicitly, because the fit() function automatically calls them if they are needed.</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">bind</span><span class="o">(</span><span class="n">dataShapes</span> <span class="k">=</span> <span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideData</span><span class="o">,</span> <span class="n">labelShapes</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideLabel</span><span class="o">))</span>
+<p>By default, <code class="highlighter-rouge">context</code> is the CPU. If you need data parallelization, you can specify a GPU context or an array of GPU contexts.</p>
+
+<p>Before you can compute with a module, you need to call <code class="highlighter-rouge">bind()</code> to allocate the device memory and <code class="highlighter-rouge">initParams()</code> or <code class="highlighter-rouge">SetParams()</code> to initialize the parameters.
+If you simply want to fit a module, you don’t need to call <code class="highlighter-rouge">bind()</code> and <code class="highlighter-rouge">initParams()</code> explicitly, because the fit() function automatically calls them if they are needed.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">bind</span><span class="o">(</span><span class="n">dataShapes</span> <span class="k">=</span> <span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideData</span><span class="o">,</span> <span class="n">labelShapes</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideLabel</span><span class="o">))</span>
     <span class="nv">mod</span><span class="o">.</span><span class="py">initParams</span><span class="o">()</span>
-</code></pre></div>
-<p>Now you can compute with the module using functions like <code>forward()</code>, <code>backward()</code>, etc.</p>
+</code></pre></div></div>
+
+<p>Now you can compute with the module using functions like <code class="highlighter-rouge">forward()</code>, <code class="highlighter-rouge">backward()</code>, etc.</p>
 
 <h2 id="training-predicting-and-evaluating">Training, Predicting, and Evaluating</h2>
 
-<p>Modules provide high-level APIs for training, predicting, and evaluating. To fit a module, call the <code>fit()</code> function with some <code>DataIter</code>s:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="k">import</span> <span class="nn">org.apache.mxnet.optimizer.SGD</span>
+<p>Modules provide high-level APIs for training, predicting, and evaluating. To fit a module, call the <code class="highlighter-rouge">fit()</code> function with some <code class="highlighter-rouge">DataIter</code>s:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">import</span> <span class="nn">org.apache.mxnet.optimizer.SGD</span>
     <span class="k">val</span> <span class="nv">mod</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Module</span><span class="o">(</span><span class="n">softmax</span><span class="o">)</span>
 
     <span class="nv">mod</span><span class="o">.</span><span class="py">fit</span><span class="o">(</span><span class="n">train_dataiter</span><span class="o">,</span> <span class="n">evalData</span> <span class="k">=</span> <span class="nv">scala</span><span class="o">.</span><span class="py">Option</span><span class="o">(</span><span class="n">eval_dataiter</span><span class="o">),</span> <span class="o">\</span>
     <span class="n">numEpoch</span> <span class="k">=</span> <span class="n">n_epoch</span><span class="o">,</span> <span class="n">fitParams</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FitParams</span><span class="o">()\</span>
     <span class="o">.</span><span class="py">setOptimizer</span><span class="o">(</span><span class="k">new</span> <span class="nc">SGD</span><span class="o">(</span><span class="n">learningRate</span> <span class="k">=</span> <span class="mf">0.1f</span><span class="o">,</span> <span class="n">momentum</span> <span class="k">=</span> <span class="mf">0.9f</span><span class="o">,</span> <span class="n">wd</span> <span class="k">=</span> <span class="mf">0.0001f</span><span class="o">)))</span>
-</code></pre></div>
-<p>The interface is very similar to the old <code>FeedForward</code> class. You can pass in batch-end callbacks using <code>setBatchEndCallback</code> and epoch-end callbacks using <code>setEpochEndCallback</code>. You can also set parameters using methods like <code>setOptimizer</code> and <code>setEvalMetric</code>. To learn more about the <code>FitParams()</code>, see the <a href="/api/scala/docs/api/#org.apache.mxnet.module.FitParams">API page</a>. To predict with a module, call <code>predict()</code> with a <code>DataIter</code>:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">predict</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">)</span>
-</code></pre></div>
-<p>The module collects and returns all of the prediction results. For more details about the format of the return values, see the documentation for the <a href="/api/scala/docs/api/#org.apache.mxnet.module.BaseModule"><code>predict()</code> function</a>.</p>
+</code></pre></div></div>
 
-<p>When prediction results might be too large to fit in memory, use the <code>predictEveryBatch</code> API:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="k">val</span> <span class="nv">preds</span> <span class="k">=</span> <span class="nv">mod</span><span class="o">.</span><span class="py">predictEveryBatch</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">)</span>
+<p>The interface is very similar to the old <code class="highlighter-rouge">FeedForward</code> class. You can pass in batch-end callbacks using <code class="highlighter-rouge">setBatchEndCallback</code> and epoch-end callbacks using <code class="highlighter-rouge">setEpochEndCallback</code>. You can also set parameters using methods like <code class="highlighter-rouge">setOptimizer</code> and <code class="highlighter-rouge">setEvalMetric</code>. To learn more about the <code class="highlighter-rouge">FitParams()</code>, see the <a href="/api/scala/docs/api/#org.apache.mxnet.module.FitParams">API page</a>. To predict with a module, call <code class="highlighter-rouge">predict()</code> with a <code class="highlighter-rouge">DataIter</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">predict</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>The module collects and returns all of the prediction results. For more details about the format of the return values, see the documentation for the <a href="/api/scala/docs/api/#org.apache.mxnet.module.BaseModule"><code class="highlighter-rouge">predict()</code> function</a>.</p>
+
+<p>When prediction results might be too large to fit in memory, use the <code class="highlighter-rouge">predictEveryBatch</code> API:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">val</span> <span class="nv">preds</span> <span class="k">=</span> <span class="nv">mod</span><span class="o">.</span><span class="py">predictEveryBatch</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">)</span>
     <span class="nv">val_dataiter</span><span class="o">.</span><span class="py">reset</span><span class="o">()</span>
     <span class="k">var</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span>
     <span class="nf">while</span> <span class="o">(</span><span class="nv">val_dataiter</span><span class="o">.</span><span class="py">hasNext</span><span class="o">)</span> <span class="o">{</span>
        <span class="k">val</span> <span class="nv">batch</span> <span class="k">=</span> <span class="nv">val_dataiter</span><span class="o">.</span><span class="py">next</span><span class="o">()</span>
        <span class="k">val</span> <span class="nv">predLabel</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nv">NDArray</span><span class="o">.</span><span class="py">argmax_channel</span><span class="o">(</span><span class="nf">preds</span><span class="o">(</span><span class="n">i</span><span class="o">)(</span><span class="mi">0</span><span class="o">)).</span><span class="py">toArray</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">toInt</span><span class="o">)</span>
        <span class="k">val</span> <span class="nv">label</span> <span class="k">=</span> <span class="nv">batch</span><span class="o">.</span><span class="py">label</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="py">toArray</span><span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">toInt</span><span class="o">)</span>
-       <span class="c1">//do something...
-</span>       <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+       <span class="c1">//do something...</span>
+       <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="o">}</span>
-</code></pre></div>
-<p>If you need to evaluate on a test set and don&#39;t need the prediction output, call the <code>score()</code> function with a <code>DataIter</code> and an <code>EvalMetric</code>:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">score</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">,</span> <span class="n">metric</span><span class="o">)</span>
-</code></pre></div>
-<p>This runs predictions on each batch in the provided <code>DataIter</code> and computes the evaluation score using the provided <code>EvalMetric</code>. The evaluation results are stored in <code>metric</code> so that you can query later.</p>
+</code></pre></div></div>
+
+<p>If you need to evaluate on a test set and don’t need the prediction output, call the <code class="highlighter-rouge">score()</code> function with a <code class="highlighter-rouge">DataIter</code> and an <code class="highlighter-rouge">EvalMetric</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">score</span><span class="o">(</span><span class="n">val_dataiter</span><span class="o">,</span> <span class="n">metric</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>This runs predictions on each batch in the provided <code class="highlighter-rouge">DataIter</code> and computes the evaluation score using the provided <code class="highlighter-rouge">EvalMetric</code>. The evaluation results are stored in <code class="highlighter-rouge">metric</code> so that you can query later.</p>
 
 <h2 id="saving-and-loading-module-parameters">Saving and Loading Module Parameters</h2>
 
-<p>To save the module parameters in each training epoch, use a <code>checkpoint</code> callback:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="k">val</span> <span class="nv">modelPrefix</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"mymodel"</span>
+<p>To save the module parameters in each training epoch, use a <code class="highlighter-rouge">checkpoint</code> callback:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">val</span> <span class="nv">modelPrefix</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"mymodel"</span>
 
     <span class="nf">for</span> <span class="o">(</span><span class="n">epoch</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
       <span class="nf">while</span><span class="o">(</span><span class="nv">train_dataiter</span><span class="o">.</span><span class="py">hasNext</span><span class="o">){</span>
-          <span class="c1">// forward backward pass
-</span>         <span class="c1">//do something...
-</span>       <span class="o">}</span>
+          <span class="c1">// forward backward pass</span>
+         <span class="c1">//do something...</span>
+       <span class="o">}</span>
         <span class="k">val</span> <span class="nv">checkpoint</span> <span class="k">=</span> <span class="nv">mod</span><span class="o">.</span><span class="py">saveCheckpoint</span><span class="o">(</span><span class="n">modelPrefix</span><span class="o">,</span> <span class="n">epoch</span><span class="o">,</span> <span class="n">saveOptStates</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
 
     <span class="o">}</span>
-</code></pre></div>
-<p>To load the saved module parameters, call the <code>loadCheckpoint</code> function:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="k">val</span> <span class="nv">mod</span> <span class="k">=</span> <span class="nv">Module</span><span class="o">.</span><span class="py">loadCheckpoint</span><span class="o">(</span><span class="n">modelPrefix</span><span class="o">,</span> <span class="n">loadModelEpoch</span><span class="o">,</span> <span class="n">loadOptimizerStates</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
-</code></pre></div>
-<p>To initialize parameters, Bind the symbols to construct executors first with <code>bind</code> method. Then, initialize the parameters and auxiliary states by calling <code>initParams()</code> method.</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">bind</span><span class="o">(</span><span class="n">dataShapes</span> <span class="k">=</span> <span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideData</span><span class="o">,</span> <span class="n">labelShapes</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideLabel</span><span class="o">))</span>
+</code></pre></div></div>
+
+<p>To load the saved module parameters, call the <code class="highlighter-rouge">loadCheckpoint</code> function:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">val</span> <span class="nv">mod</span> <span class="k">=</span> <span class="nv">Module</span><span class="o">.</span><span class="py">loadCheckpoint</span><span class="o">(</span><span class="n">modelPrefix</span><span class="o">,</span> <span class="n">loadModelEpoch</span><span class="o">,</span> <span class="n">loadOptimizerStates</span> <span class="k">=</span> <span class="kc">true</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>To initialize parameters, Bind the symbols to construct executors first with <code class="highlighter-rouge">bind</code> method. Then, initialize the parameters and auxiliary states by calling <code class="highlighter-rouge">initParams()</code> method.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">bind</span><span class="o">(</span><span class="n">dataShapes</span> <span class="k">=</span> <span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideData</span><span class="o">,</span> <span class="n">labelShapes</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nv">train_dataiter</span><span class="o">.</span><span class="py">provideLabel</span><span class="o">))</span>
     <span class="nv">mod</span><span class="o">.</span><span class="py">initParams</span><span class="o">()</span>
-</code></pre></div>
-<p>To get current parameters, use <code>getParams</code> method.</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nf">val</span> <span class="o">(</span><span class="n">argParams</span><span class="o">,</span> <span class="n">auxParams</span><span class="o">)</span> <span class="k">=</span> <span class="nv">mod</span><span class="o">.</span><span class="py">getParams</span>
-</code></pre></div>
-<p>To assign parameter and aux state values, use <code>setParams</code> method.</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">setParams</span><span class="o">(</span><span class="n">argParams</span><span class="o">,</span> <span class="n">auxParams</span><span class="o">)</span>
-</code></pre></div>
-<p>To resume training from a saved checkpoint, instead of calling <code>setParams()</code>, directly call <code>fit()</code>, passing the loaded parameters, so that <code>fit()</code> knows to start from those parameters instead of initializing randomly:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala">    <span class="nv">mod</span><span class="o">.</span><span class="py">fit</span><span class="o">(...,</span> <span class="n">fitParams</span><span class="k">=new</span> <span class="nc">FitParams</span><span class="o">().</span><span class="py">setArgParams</span><span class="o">(</span><span class="n">argParams</span><span class="o">).\</span>
+</code></pre></div></div>
+
+<p>To get current parameters, use <code class="highlighter-rouge">getParams</code> method.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nf">val</span> <span class="o">(</span><span class="n">argParams</span><span class="o">,</span> <span class="n">auxParams</span><span class="o">)</span> <span class="k">=</span> <span class="nv">mod</span><span class="o">.</span><span class="py">getParams</span>
+</code></pre></div></div>
+
+<p>To assign parameter and aux state values, use <code class="highlighter-rouge">setParams</code> method.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">setParams</span><span class="o">(</span><span class="n">argParams</span><span class="o">,</span> <span class="n">auxParams</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>To resume training from a saved checkpoint, instead of calling <code class="highlighter-rouge">setParams()</code>, directly call <code class="highlighter-rouge">fit()</code>, passing the loaded parameters, so that <code class="highlighter-rouge">fit()</code> knows to start from those parameters instead of initializing randomly:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nv">mod</span><span class="o">.</span><span class="py">fit</span><span class="o">(...,</span> <span class="n">fitParams</span><span class="k">=new</span> <span class="nc">FitParams</span><span class="o">().</span><span class="py">setArgParams</span><span class="o">(</span><span class="n">argParams</span><span class="o">).\</span>
     <span class="nf">setAuxParams</span><span class="o">(</span><span class="n">auxParams</span><span class="o">).</span><span class="py">setBeginEpoch</span><span class="o">(</span><span class="n">beginEpoch</span><span class="o">))</span>
-</code></pre></div>
-<p>Create an object of the <code>FitParams()</code> class, and then use it to call the <code>setBeginEpoch()</code> method to pass <code>beginEpoch</code> so that <code>fit()</code> knows to resume from a saved epoch.</p>
+</code></pre></div></div>
+
+<p>Create an object of the <code class="highlighter-rouge">FitParams()</code> class, and then use it to call the <code class="highlighter-rouge">setBeginEpoch()</code> method to pass <code class="highlighter-rouge">beginEpoch</code> so that <code class="highlighter-rouge">fit()</code> knows to resume from a saved epoch.</p>
 
 <h2 id="next-steps">Next Steps</h2>
-
 <ul>
-<li>See <a href="model">Model API</a> for an alternative simple high-level interface for training neural networks.</li>
-<li>See <a href="symbol">Symbolic API</a> for operations on NDArrays that assemble neural networks from layers.</li>
-<li>See <a href="io">IO Data Loading API</a> for parsing and loading data.</li>
-<li>See <a href="ndarray">NDArray API</a> for vector/matrix/tensor operations.</li>
-<li>See <a href="kvstore">KVStore API</a> for multi-GPU and multi-host distributed training.</li>
+  <li>See <a href="model">Model API</a> for an alternative simple high-level interface for training neural networks.</li>
+  <li>See <a href="symbol">Symbolic API</a> for operations on NDArrays that assemble neural networks from layers.</li>
+  <li>See <a href="io">IO Data Loading API</a> for parsing and loading data.</li>
+  <li>See <a href="ndarray">NDArray API</a> for vector/matrix/tensor operations.</li>
+  <li>See <a href="kvstore">KVStore API</a> for multi-GPU and multi-host distributed training.</li>
 </ul>
 
     </div>

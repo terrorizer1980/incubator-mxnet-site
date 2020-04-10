@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Use data from S3 for training | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Use data from S3 for training" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/faq/s3_integration" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Use data from S3 for training","@type":"WebPage","url":"https://mxnet.apache.org/api/faq/s3_integration","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Use data from S3 for training","url":"https://mxnet.apache.org/api/faq/s3_integration","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -385,49 +385,41 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
               <!-- page-category -->
             
               <!-- page-category -->
+            
+              <!-- page-category -->
                <!-- resource-p -->
         </ul>
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h1 id="use-data-from-s3-for-training">Use data from S3 for training</h1>
 
 <p>AWS S3 is a cloud-based object storage service that allows storage and retrieval of large amounts of data at a very low cost. This makes it an attractive option to store large training datasets. MXNet is deeply integrated with S3 for this purpose.</p>
 
-<p>An S3 protocol URL (like <code>s3://bucket-name/training-data</code>) can be provided as a parameter for any data iterator that takes a file path as input. For example,</p>
-<div class="highlight"><pre><code class="language-" data-lang="">data_iter = mx.io.ImageRecordIter(
+<p>An S3 protocol URL (like <code class="highlighter-rouge">s3://bucket-name/training-data</code>) can be provided as a parameter for any data iterator that takes a file path as input. For example,</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data_iter = mx.io.ImageRecordIter(
     path_imgrec="s3://bucket-name/training-data/caltech_train.rec",
     data_shape=(3, 227, 227),
     batch_size=4,
     resize=256)
-</code></pre></div>
+</code></pre></div></div>
 <p>Following are detailed instructions on how to use data from S3 for training.</p>
 
 <h2 id="step-1-build-mxnet-with-s3-integration-enabled">Step 1: Build MXNet with S3 integration enabled</h2>
@@ -435,30 +427,35 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 <p>Follow instructions <a href="/get_started">here</a> to install MXNet from source with the following additional steps to enable S3 integration.</p>
 
 <ol>
-<li>Install <code>libcurl4-openssl-dev</code> and <code>libssl-dev</code> before building MXNet. These packages are required to read/write from AWS S3.</li>
-<li>Append <code>USE_S3=1</code> to <code>config.mk</code> before building MXNet.
-<code>
-echo &quot;USE_S3=1&quot; &gt;&gt; config.mk
-</code></li>
+  <li>Install <code class="highlighter-rouge">libcurl4-openssl-dev</code> and <code class="highlighter-rouge">libssl-dev</code> before building MXNet. These packages are required to read/write from AWS S3.</li>
+  <li>Append <code class="highlighter-rouge">USE_S3=1</code> to <code class="highlighter-rouge">config.mk</code> before building MXNet.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> echo "USE_S3=1" &gt;&gt; config.mk
+</code></pre></div>    </div>
+  </li>
 </ol>
 
 <h2 id="step-2-configure-s3-authentication-tokens">Step 2: Configure S3 authentication tokens</h2>
 
-<p>MXNet requires the S3 environment variables <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> to be set. <a href="https://aws.amazon.com/blogs/security/wheres-my-secret-access-key/">Here</a> are instructions to get the access keys from AWS console.</p>
-<div class="highlight"><pre><code class="language-" data-lang="">export AWS_ACCESS_KEY_ID=&lt;your-access-key-id&gt;
+<p>MXNet requires the S3 environment variables <code class="highlighter-rouge">AWS_ACCESS_KEY_ID</code> and <code class="highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> to be set. <a href="https://aws.amazon.com/blogs/security/wheres-my-secret-access-key/">Here</a> are instructions to get the access keys from AWS console.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export AWS_ACCESS_KEY_ID=&lt;your-access-key-id&gt;
 AWS_SECRET_ACCESS_KEY=&lt;your-secret-access-key&gt;
-</code></pre></div>
+</code></pre></div></div>
+
 <h2 id="step-3-upload-data-to-s3">Step 3: Upload data to S3</h2>
 
-<p>There are several ways to upload data to S3. One easy way is to use the AWS command line utility. For example, the following <code>sync</code> command will recursively copy contents from a local directory to a directory in S3.</p>
-<div class="highlight"><pre><code class="language-" data-lang="">aws s3 sync ./training-data s3://bucket-name/training-data
-</code></pre></div>
+<p>There are several ways to upload data to S3. One easy way is to use the AWS command line utility. For example, the following <code class="highlighter-rouge">sync</code> command will recursively copy contents from a local directory to a directory in S3.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 sync ./training-data s3://bucket-name/training-data
+</code></pre></div></div>
+
 <h2 id="step-4-train-with-data-from-s3">Step 4: Train with data from S3</h2>
 
 <p>Once the data is in S3, it is very straightforward to use it from MXNet. Any data iterator that can read/write data from a local drive can also read/write data from S3.</p>
 
-<p>Let&#39;s modify an existing example code in MXNet repository to read data from S3 instead of local disk. <a href="https://github.com/dmlc/mxnet/blob/master/tests/python/train/test_conv.py"><code>mxnet/tests/python/train/test_conv.py</code></a> trains a convolutional network using MNIST data from local disk. We&#39;ll do the following change to read the data from S3 instead.</p>
-<div class="highlight"><pre><code class="language-" data-lang=""><span class="err">~/mxnet$</span> sed -i -- 's/data\//s3:\/\/bucket-name\/training-data\//g' ./tests/python/train/test_conv.py
+<p>Let’s modify an existing example code in MXNet repository to read data from S3 instead of local disk. <a href="https://github.com/dmlc/mxnet/blob/master/tests/python/train/test_conv.py"><code class="highlighter-rouge">mxnet/tests/python/train/test_conv.py</code></a> trains a convolutional network using MNIST data from local disk. We’ll do the following change to read the data from S3 instead.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">~/mxnet$</span> sed -i -- 's/data\//s3:\/\/bucket-name\/training-data\//g' ./tests/python/train/test_conv.py
 
 ~/mxnet$ git diff ./tests/python/train/test_conv.py
 <span class="gh">diff --git a/tests/python/train/test_conv.py b/tests/python/train/test_conv.py
@@ -484,9 +481,11 @@ index 039790e..66a60ce 100644
 </span>             data_shape=(1, 28, 28),
              label_name='sm_label',
              batch_size=batch_size, shuffle=True, flat=False, silent=False)
-</code></pre></div>
-<p>After the above change <code>test_conv.py</code> will fetch data from S3 instead of the local disk.</p>
-<div class="highlight"><pre><code class="language-" data-lang="">python ./tests/python/train/test_conv.py
+</code></pre></div></div>
+
+<p>After the above change <code class="highlighter-rouge">test_conv.py</code> will fetch data from S3 instead of the local disk.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python ./tests/python/train/test_conv.py
 [21:59:19] src/io/s3_filesys.cc:878: No AWS Region set, using default region us-east-1
 [21:59:21] src/io/iter_mnist.cc:94: MNISTIter: load 60000 images, shuffle=1, shape=(100,1,28,28)
 [21:59:21] src/io/iter_mnist.cc:94: MNISTIter: load 10000 images, shuffle=1, shape=(100,1,28,28)
@@ -504,7 +503,8 @@ INFO:root:Finish predict...
 Finish predict...
 INFO:root:final accuracy = 0.955100
 final accuracy = 0.955100
-</code></pre></div>
+</code></pre></div></div>
+
     </div>
 </div>
 

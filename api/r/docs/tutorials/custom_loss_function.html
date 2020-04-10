@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/image/mxnet-icon.png" rel="icon" type="image/png"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Custom Loss Function | Apache MXNet</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Custom Loss Function" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="A flexible and efficient library for deep learning." />
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mxnet.apache.org/api/r/docs/tutorials/custom_loss_function" />
 <meta property="og:site_name" content="Apache MXNet" />
 <script type="application/ld+json">
-{"description":"A flexible and efficient library for deep learning.","headline":"Custom Loss Function","@type":"WebPage","url":"https://mxnet.apache.org/api/r/docs/tutorials/custom_loss_function","@context":"https://schema.org"}</script>
+{"description":"A flexible and efficient library for deep learning.","@type":"WebPage","headline":"Custom Loss Function","url":"https://mxnet.apache.org/api/r/docs/tutorials/custom_loss_function","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <script src="https://medium-widget.pixelpoint.io/widget.js"></script>
   <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mxnet.apache.org/feed.xml" title="Apache MXNet" /><script>
@@ -686,31 +686,20 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
     </div>
     <div class="col-9">
         <!--- Licensed to the Apache Software Foundation (ASF) under one -->
-
 <!--- or more contributor license agreements.  See the NOTICE file -->
-
 <!--- distributed with this work for additional information -->
-
 <!--- regarding copyright ownership.  The ASF licenses this file -->
-
 <!--- to you under the Apache License, Version 2.0 (the -->
-
 <!--- "License"); you may not use this file except in compliance -->
-
 <!--- with the License.  You may obtain a copy of the License at -->
 
 <!---   http://www.apache.org/licenses/LICENSE-2.0 -->
 
 <!--- Unless required by applicable law or agreed to in writing, -->
-
 <!--- software distributed under the License is distributed on an -->
-
 <!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-
 <!--- KIND, either express or implied.  See the License for the -->
-
 <!--- specific language governing permissions and limitations -->
-
 <!--- under the License. -->
 
 <h1 id="customized-loss-function">Customized loss function</h1>
@@ -719,8 +708,9 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 
 <h2 id="model-training-example">Model Training Example</h2>
 
-<p>Let&#39;s begin with a small regression example. We can build and train a regression model with the following code:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">,</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"mlbench"</span><span class="p">)</span><span class="w">
+<p>Let’s begin with a small regression example. We can build and train a regression model with the following code:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">,</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"mlbench"</span><span class="p">)</span><span class="w">
 </span><span class="n">BostonHousing</span><span class="p">[,</span><span class="w"> </span><span class="n">sapply</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">,</span><span class="w"> </span><span class="n">is.factor</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">
   </span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">as.character</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">[,</span><span class="w"> </span><span class="n">sapply</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">,</span><span class="w"> </span><span class="n">is.factor</span><span class="p">)]))</span><span class="w">
 </span><span class="n">BostonHousing</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">))</span><span class="w">
@@ -732,8 +722,12 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 </span><span class="n">test.y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BostonHousing</span><span class="p">[</span><span class="o">--</span><span class="n">test.ind</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">]</span><span class="w">
 
 </span><span class="n">require</span><span class="p">(</span><span class="n">mxnet</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Loading required package: mxnet
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Loading required package: mxnet
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
 </span><span class="n">label</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"label"</span><span class="p">)</span><span class="w">
 </span><span class="n">fc1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fc1"</span><span class="p">)</span><span class="w">
 </span><span class="n">tanh1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Activation</span><span class="p">(</span><span class="n">fc1</span><span class="p">,</span><span class="w"> </span><span class="n">act_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tanh"</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tanh1"</span><span class="p">)</span><span class="w">
@@ -750,26 +744,40 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                                      </span><span class="n">array.layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"rowmajor"</span><span class="p">,</span><span class="w">
                                      </span><span class="n">batch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
                                      </span><span class="n">epoch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Start training with 1 devices
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">pred</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred</span><span class="p">[</span><span class="m">1</span><span class="p">,])</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] 0.2485236
-</code></pre></div>
-<p>Besides the <code>LinearRegressionOutput</code>, we also provide <code>LogisticRegressionOutput</code> and <code>MAERegressionOutput</code>. However, this might not be enough for real-world models. You can provide your own loss function by using <code>mx.symbol.MakeLoss</code> when constructing the network.</p>
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Start training with 1 devices
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pred</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred</span><span class="p">[</span><span class="m">1</span><span class="p">,])</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 0.2485236
+</code></pre></div></div>
+
+<p>Besides the <code class="highlighter-rouge">LinearRegressionOutput</code>, we also provide <code class="highlighter-rouge">LogisticRegressionOutput</code> and <code class="highlighter-rouge">MAERegressionOutput</code>. However, this might not be enough for real-world models. You can provide your own loss function by using <code class="highlighter-rouge">mx.symbol.MakeLoss</code> when constructing the network.</p>
 
 <h2 id="how-to-use-your-own-loss-function">How to Use Your Own Loss Function</h2>
 
-<p>We still use our previous example, but this time we use <code>mx.symbol.MakeLoss</code> to minimize the <code>(pred-label)^2</code></p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
+<p>We still use our previous example, but this time we use <code class="highlighter-rouge">mx.symbol.MakeLoss</code> to minimize the <code class="highlighter-rouge">(pred-label)^2</code></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="w">
 </span><span class="n">label</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Variable</span><span class="p">(</span><span class="s2">"label"</span><span class="p">)</span><span class="w">
 </span><span class="n">fc1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">14</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fc1"</span><span class="p">)</span><span class="w">
 </span><span class="n">tanh1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.Activation</span><span class="p">(</span><span class="n">fc1</span><span class="p">,</span><span class="w"> </span><span class="n">act_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tanh"</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tanh1"</span><span class="p">)</span><span class="w">
 </span><span class="n">fc2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.FullyConnected</span><span class="p">(</span><span class="n">tanh1</span><span class="p">,</span><span class="w"> </span><span class="n">num_hidden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fc2"</span><span class="p">)</span><span class="w">
 </span><span class="n">lro2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.MakeLoss</span><span class="p">(</span><span class="n">mx.symbol.square</span><span class="p">(</span><span class="n">mx.symbol.Reshape</span><span class="p">(</span><span class="n">fc2</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">label</span><span class="p">),</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s2">"lro2"</span><span class="p">)</span><span class="w">
-</span></code></pre></div>
+</span></code></pre></div></div>
+
 <p>Then we can train the network just as usual.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">mx.set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mx.set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="w">
 </span><span class="n">model2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.model.FeedForward.create</span><span class="p">(</span><span class="n">lro2</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.y</span><span class="p">,</span><span class="w">
                                       </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mx.cpu</span><span class="p">(),</span><span class="w">
                                       </span><span class="n">num.round</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w">
@@ -779,16 +787,28 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                                       </span><span class="n">array.layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"rowmajor"</span><span class="p">,</span><span class="w">
                                       </span><span class="n">batch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
                                       </span><span class="n">epoch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Start training with 1 devices
-</code></pre></div>
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Start training with 1 devices
+</code></pre></div></div>
+
 <p>We should get very similar results because we are actually minimizing the same loss function. However, the result is quite different.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">pred2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model2</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred2</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] 1.234584
-</code></pre></div>
-<p>This is because output of <code>mx.symbol.MakeLoss</code> is the gradient of loss with respect to the input data. We can get the real prediction as below.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">internals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">(</span><span class="n">model2</span><span class="o">$</span><span class="n">symbol</span><span class="p">)</span><span class="w">
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pred2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model2</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred2</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1.234584
+</code></pre></div></div>
+
+<p>This is because output of <code class="highlighter-rouge">mx.symbol.MakeLoss</code> is the gradient of loss with respect to the input data. We can get the real prediction as below.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">internals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">(</span><span class="n">model2</span><span class="o">$</span><span class="n">symbol</span><span class="p">)</span><span class="w">
 </span><span class="n">fc_symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">[[</span><span class="n">match</span><span class="p">(</span><span class="s2">"fc2_output"</span><span class="p">,</span><span class="w"> </span><span class="n">outputs</span><span class="p">(</span><span class="n">internals</span><span class="p">))]]</span><span class="w">
 
 </span><span class="n">model3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fc_symbol</span><span class="p">,</span><span class="w">
@@ -798,12 +818,20 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 </span><span class="nf">class</span><span class="p">(</span><span class="n">model3</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"MXFeedForwardModel"</span><span class="w">
 
 </span><span class="n">pred3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model3</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred3</span><span class="p">[</span><span class="m">1</span><span class="p">,])</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] 0.248294
-</code></pre></div>
-<p>We have provided many operations on the symbols. An example of <code>|pred-label|</code> can be found below.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">lro_abs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.MakeLoss</span><span class="p">(</span><span class="n">mx.symbol.abs</span><span class="p">(</span><span class="n">mx.symbol.Reshape</span><span class="p">(</span><span class="n">fc2</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">label</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="p">((</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred3</span><span class="p">[</span><span class="m">1</span><span class="p">,])</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 0.248294
+</code></pre></div></div>
+
+<p>We have provided many operations on the symbols. An example of <code class="highlighter-rouge">|pred-label|</code> can be found below.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lro_abs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.MakeLoss</span><span class="p">(</span><span class="n">mx.symbol.abs</span><span class="p">(</span><span class="n">mx.symbol.Reshape</span><span class="p">(</span><span class="n">fc2</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">label</span><span class="p">))</span><span class="w">
 </span><span class="n">mx.set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="w">
 </span><span class="n">model4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.model.FeedForward.create</span><span class="p">(</span><span class="n">lro_abs</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.y</span><span class="p">,</span><span class="w">
                                       </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mx.cpu</span><span class="p">(),</span><span class="w">
@@ -815,8 +843,12 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                                       </span><span class="n">array.layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"rowmajor"</span><span class="p">,</span><span class="w">
                                       </span><span class="n">batch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
                                       </span><span class="n">epoch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Start training with 1 devices
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">internals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">(</span><span class="n">model4</span><span class="o">$</span><span class="n">symbol</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Start training with 1 devices
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">internals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">(</span><span class="n">model4</span><span class="o">$</span><span class="n">symbol</span><span class="p">)</span><span class="w">
 </span><span class="n">fc_symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internals</span><span class="p">[[</span><span class="n">match</span><span class="p">(</span><span class="s2">"fc2_output"</span><span class="p">,</span><span class="w"> </span><span class="n">outputs</span><span class="p">(</span><span class="n">internals</span><span class="p">))]]</span><span class="w">
 
 </span><span class="n">model5</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fc_symbol</span><span class="p">,</span><span class="w">
@@ -826,10 +858,18 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 </span><span class="nf">class</span><span class="p">(</span><span class="n">model5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"MXFeedForwardModel"</span><span class="w">
 
 </span><span class="n">pred5</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model5</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="nf">sum</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred5</span><span class="p">[</span><span class="m">1</span><span class="p">,]))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] 0.7056902
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">lro_mae</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.MAERegressionOutput</span><span class="p">(</span><span class="n">fc2</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lro"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred5</span><span class="p">[</span><span class="m">1</span><span class="p">,]))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 0.7056902
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lro_mae</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.symbol.MAERegressionOutput</span><span class="p">(</span><span class="n">fc2</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lro"</span><span class="p">)</span><span class="w">
 </span><span class="n">mx.set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="w">
 </span><span class="n">model6</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mx.model.FeedForward.create</span><span class="p">(</span><span class="n">lro_mae</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">train.y</span><span class="p">,</span><span class="w">
                                       </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mx.cpu</span><span class="p">(),</span><span class="w">
@@ -841,19 +881,29 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                                       </span><span class="n">array.layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"rowmajor"</span><span class="p">,</span><span class="w">
                                       </span><span class="n">batch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
                                       </span><span class="n">epoch.end.callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Start training with 1 devices
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">pred6</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model6</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
-</code></pre></div><div class="highlight"><pre><code class="language-r" data-lang="r"><span class="nf">sum</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred6</span><span class="p">[</span><span class="m">1</span><span class="p">,]))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
-</span></code></pre></div><div class="highlight"><pre><code class="language-" data-lang="">## [1] 0.7056902
-</code></pre></div>
-<h2 id="next-steps">Next Steps</h2>
+</span></code></pre></div></div>
 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Start training with 1 devices
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pred6</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">model6</span><span class="p">,</span><span class="w"> </span><span class="n">test.x</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Warning in mx.model.select.layout.predict(X, model): Auto detect layout of input matrix, use rowmajor..
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">test.y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pred6</span><span class="p">[</span><span class="m">1</span><span class="p">,]))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">test.y</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 0.7056902
+</code></pre></div></div>
+
+<h2 id="next-steps">Next Steps</h2>
 <ul>
-<li><a href="/api/r/docs/tutorials/five_minutes_neural_network">Neural Networks with MXNet in Five Minutes</a></li>
-<li><a href="/api/r/docs/tutorials/classify_real_image_with_pretrained_model">Classify Real-World Images with a PreTrained Model</a></li>
-<li><a href="/api/r/docs/tutorials/mnist_competition">Handwritten Digits Classification Competition</a></li>
-<li><a href="/api/r/docs/tutorials/char_rnn_model">Character Language Model Using RNN</a></li>
+  <li><a href="/api/r/docs/tutorials/five_minutes_neural_network">Neural Networks with MXNet in Five Minutes</a></li>
+  <li><a href="/api/r/docs/tutorials/classify_real_image_with_pretrained_model">Classify Real-World Images with a PreTrained Model</a></li>
+  <li><a href="/api/r/docs/tutorials/mnist_competition">Handwritten Digits Classification Competition</a></li>
+  <li><a href="/api/r/docs/tutorials/char_rnn_model">Character Language Model Using RNN</a></li>
 </ul>
 
     </div>
