@@ -6,6 +6,7 @@ var searchData=
   ['weights_5fiter_5fdesc',['weights_iter_desc',['../structdnnl__rnn__desc__t.html#afb36d75add9d2606cc81d5bd18288d8e',1,'dnnl_rnn_desc_t']]],
   ['weights_5flayer_5fdesc',['weights_layer_desc',['../structdnnl__rnn__desc__t.html#a1856a3555d8abf5be371b161b559b438',1,'dnnl_rnn_desc_t']]],
   ['weights_5fpeephole_5fdesc',['weights_peephole_desc',['../structdnnl__rnn__desc__t.html#aca86677fb7aadfca20fac609bdadeb60',1,'dnnl_rnn_desc_t']]],
+  ['weights_5fprojection_5fdesc',['weights_projection_desc',['../structdnnl__rnn__desc__t.html#a5cd42ad59082a5d7e290e76db066e738',1,'dnnl_rnn_desc_t']]],
   ['wino_5fdesc',['wino_desc',['../structdnnl__memory__desc__t.html#a17cbfada7a6188b0531ed563f44e6976',1,'dnnl_memory_desc_t']]],
   ['wino_5fformat',['wino_format',['../structdnnl__wino__desc__t.html#a07b5b3c10724d9a9a68e5edebffc6e50',1,'dnnl_wino_desc_t']]]
 ];
