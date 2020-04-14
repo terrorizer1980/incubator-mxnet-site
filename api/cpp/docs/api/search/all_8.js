@@ -85,7 +85,7 @@ var searchData=
   ['getparams',['GetParams',['../classmxnet_1_1OperatorProperty.html#a704ae43181c8a88bfd0a47e8005f7cb8',1,'mxnet::OperatorProperty']]],
   ['getparamvalues_5f',['GetParamValues_',['../classmxnet_1_1cpp_1_1Optimizer.html#a74656e689b598755a47aa651de71971d',1,'mxnet::cpp::Optimizer']]],
   ['getpathinfo',['GetPathInfo',['../classdmlc_1_1io_1_1FileSystem.html#a62577b6d6daa6e34656c5bd76b6cea60',1,'dmlc::io::FileSystem']]],
-  ['getrandint',['GetRandInt',['../classmshadow_1_1Random_3_01gpu_00_01DType_01_4.html#a8c3a2f7df5bc62093b4a55b9d42bb60e',1,'mshadow::Random&lt; gpu, DType &gt;']]],
+  ['getrandint',['GetRandInt',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a874c3496e212241ae5b127c9f26d17ad',1,'mshadow::Random&lt; cpu, DType &gt;::GetRandInt()'],['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a7afa2530a465aadc5151b6841cbf34d6',1,'mshadow::Random&lt; cpu, DType &gt;::GetRandInt(const Tensor&lt; cpu, 1, unsigned &gt; &amp;dst)'],['../classmshadow_1_1Random_3_01gpu_00_01DType_01_4.html#a8c3a2f7df5bc62093b4a55b9d42bb60e',1,'mshadow::Random&lt; gpu, DType &gt;::GetRandInt()']]],
   ['getrank',['GetRank',['../classmxnet_1_1cpp_1_1KVStore.html#a6a1586faccdea3d36088246b076d75b9',1,'mxnet::cpp::KVStore']]],
   ['getref',['GetRef',['../classmxnet_1_1runtime_1_1ObjectPtr.html#ac798b7092b8c4c6665631be6db1d4327',1,'mxnet::runtime::ObjectPtr::GetRef()'],['../namespacemxnet_1_1runtime.html#a1bf05d799bd2a8ee18e9ef22335977ce',1,'mxnet::runtime::GetRef(const ObjectType *ptr)'],['../namespacemxnet_1_1runtime.html#ab16bad32a0ce5d28b9201a6998b4a6d2',1,'mxnet::runtime::GetRef(const ObjType *ptr)']]],
   ['getreviewsubgraph',['getReviewSubgraph',['../classCustomPartitioner.html#a66653d30737a4b9a50db48196a01237b',1,'CustomPartitioner']]],
