@@ -25,7 +25,7 @@ var searchData=
   ['is_5ffloating_5fpoint',['is_floating_point',['../structdmlc_1_1is__floating__point.html',1,'dmlc']]],
   ['is_5fintegral',['is_integral',['../structdmlc_1_1is__integral.html',1,'dmlc']]],
   ['is_5fpod',['is_pod',['../structdmlc_1_1is__pod.html',1,'dmlc']]],
-  ['istream',['istream',['../classdmlc_1_1istream.html',1,'dmlc']]],
   ['istream',['IStream',['../classmshadow_1_1utils_1_1IStream.html',1,'mshadow::utils']]],
+  ['istream',['istream',['../classdmlc_1_1istream.html',1,'dmlc']]],
   ['iteradapter',['IterAdapter',['../classmxnet_1_1IterAdapter.html',1,'mxnet']]]
 ];

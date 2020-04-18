@@ -12,7 +12,6 @@ var searchData=
   ['datatype_3c_20bool_20_3e',['DataType&lt; bool &gt;',['../structmshadow_1_1DataType_3_01bool_01_4.html',1,'mshadow']]],
   ['datatype_3c_20double_20_3e',['DataType&lt; double &gt;',['../structmshadow_1_1DataType_3_01double_01_4.html',1,'mshadow']]],
   ['datatype_3c_20float_20_3e',['DataType&lt; float &gt;',['../structmshadow_1_1DataType_3_01float_01_4.html',1,'mshadow']]],
-  ['datatype_3c_20half_3a_3ahalf2_5ft_20_3e',['DataType&lt; half::half2_t &gt;',['../structmshadow_1_1DataType_3_01half_1_1half2__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20half_3a_3ahalf_5ft_20_3e',['DataType&lt; half::half_t &gt;',['../structmshadow_1_1DataType_3_01half_1_1half__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20int32_5ft_20_3e',['DataType&lt; int32_t &gt;',['../structmshadow_1_1DataType_3_01int32__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20int64_5ft_20_3e',['DataType&lt; int64_t &gt;',['../structmshadow_1_1DataType_3_01int64__t_01_4.html',1,'mshadow']]],
