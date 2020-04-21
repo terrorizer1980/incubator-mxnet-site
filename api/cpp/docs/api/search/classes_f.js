@@ -36,6 +36,7 @@ var searchData=
   ['parser',['Parser',['../classdmlc_1_1Parser.html',1,'dmlc']]],
   ['parserfactoryreg',['ParserFactoryReg',['../structdmlc_1_1ParserFactoryReg.html',1,'dmlc']]],
   ['passfunctionreg',['PassFunctionReg',['../structnnvm_1_1PassFunctionReg.html',1,'nnvm']]],
+  ['passresource',['PassResource',['../classPassResource.html',1,'']]],
   ['plan',['Plan',['../classmshadow_1_1expr_1_1Plan.html',1,'mshadow::expr']]],
   ['plan_3c_20binarymapexp_3c_20op_2c_20ta_2c_20tb_2c_20dtype_2c_20etype_20_3e_2c_20dtype_20_3e',['Plan&lt; BinaryMapExp&lt; OP, TA, TB, DType, etype &gt;, DType &gt;',['../classmshadow_1_1expr_1_1Plan_3_01BinaryMapExp_3_01OP_00_01TA_00_01TB_00_01DType_00_01etype_01_4_00_01DType_01_4.html',1,'mshadow::expr']]],
   ['plan_3c_20broadcast1dexp_3c_20srcexp_2c_20dtype_2c_20dimdst_2c_201_20_3e_2c_20dtype_20_3e',['Plan&lt; Broadcast1DExp&lt; SrcExp, DType, dimdst, 1 &gt;, DType &gt;',['../structmshadow_1_1expr_1_1Plan_3_01Broadcast1DExp_3_01SrcExp_00_01DType_00_01dimdst_00_011_01_4_00_01DType_01_4.html',1,'mshadow::expr']]],

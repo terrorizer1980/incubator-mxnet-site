@@ -2169,6 +2169,7 @@
         <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
 
 
+    <span class="c1"># pylint: disable=too-many-locals</span>
 <div class="viewcode-block" id="Symbol.optimize_for"><a class="viewcode-back" href="../../../api/symbol/symbol.html#mxnet.symbol.Symbol.optimize_for">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aux</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Partitions current symbol and optimizes it for a given backend,</span>
 <span class="sd">        returns new partitioned symbol.</span>
@@ -2223,6 +2224,13 @@
             <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_context</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">Context</span><span class="p">)</span>
 
+        <span class="n">new_args_size</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">()</span>
+        <span class="n">new_arg_names</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">)()</span>
+        <span class="n">new_args_handle</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">)()</span>
+        <span class="n">new_aux_size</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">()</span>
+        <span class="n">new_aux_names</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">)()</span>
+        <span class="n">new_aux_handle</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">)()</span>
+
         <span class="n">key_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">val_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -2238,7 +2246,37 @@
                                              <span class="n">aux_handle</span><span class="p">,</span>
                                              <span class="n">mx_uint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key_list</span><span class="p">)),</span>
                                              <span class="n">c_str_array</span><span class="p">(</span><span class="n">key_list</span><span class="p">),</span>
-                                             <span class="n">c_str_array</span><span class="p">(</span><span class="n">val_list</span><span class="p">)))</span>
+                                             <span class="n">c_str_array</span><span class="p">(</span><span class="n">val_list</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_args_size</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_size</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">),</span>
+                                             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">)))</span>
+        <span class="n">arg_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_args_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">py_str</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_args_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">py_str</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">arg_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">args</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+        <span class="n">aux_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_aux_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">aux</span><span class="p">[</span><span class="n">py_str</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_aux_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">py_str</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">aux_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">aux</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">aux</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
         <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 

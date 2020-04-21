@@ -58,8 +58,8 @@ var searchData=
   ['str2t_3c_20int64_5ft_20_3e',['Str2T&lt; int64_t &gt;',['../classdmlc_1_1Str2T_3_01int64__t_01_4.html',1,'dmlc']]],
   ['str2t_3c_20uint32_5ft_20_3e',['Str2T&lt; uint32_t &gt;',['../classdmlc_1_1Str2T_3_01uint32__t_01_4.html',1,'dmlc']]],
   ['str2t_3c_20uint64_5ft_20_3e',['Str2T&lt; uint64_t &gt;',['../classdmlc_1_1Str2T_3_01uint64__t_01_4.html',1,'dmlc']]],
-  ['stream',['Stream',['../structmshadow_1_1Stream.html',1,'mshadow']]],
   ['stream',['Stream',['../classdmlc_1_1Stream.html',1,'dmlc']]],
+  ['stream',['Stream',['../structmshadow_1_1Stream.html',1,'mshadow']]],
   ['stream_3c_20gpu_20_3e',['Stream&lt; gpu &gt;',['../structmshadow_1_1Stream_3_01gpu_01_4.html',1,'mshadow']]],
   ['stream_3c_20mshadow_3a_3acpu_20_3e',['Stream&lt; mshadow::cpu &gt;',['../structmshadow_1_1Stream.html',1,'mshadow']]],
   ['stream_3c_20mshadow_3a_3agpu_20_3e',['Stream&lt; mshadow::gpu &gt;',['../structmshadow_1_1Stream.html',1,'mshadow']]],
@@ -73,7 +73,7 @@ var searchData=
   ['sum_5freal_5fimag',['sum_real_imag',['../structmshadow_1_1op_1_1complex_1_1sum__real__imag.html',1,'mshadow::op::complex']]],
   ['swapaxisexp',['SwapAxisExp',['../structmshadow_1_1expr_1_1SwapAxisExp.html',1,'mshadow::expr']]],
   ['symblob',['SymBlob',['../structmxnet_1_1cpp_1_1SymBlob.html',1,'mxnet::cpp']]],
-  ['symbol',['Symbol',['../classnnvm_1_1Symbol.html',1,'nnvm']]],
   ['symbol',['Symbol',['../classmxnet_1_1cpp_1_1Symbol.html',1,'mxnet::cpp']]],
+  ['symbol',['Symbol',['../classnnvm_1_1Symbol.html',1,'nnvm']]],
   ['syncedgpuauxstream',['SyncedGPUAuxStream',['../classmxnet_1_1SyncedGPUAuxStream.html',1,'mxnet']]]
 ];

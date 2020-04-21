@@ -8,6 +8,6 @@ var searchData=
   ['reference',['reference',['../classmxnet_1_1IterAdapter.html#ad2934b89143cf3b3fd1e4df66e6d524c',1,'mxnet::IterAdapter']]],
   ['resulttype',['ResultType',['../structmxnet_1_1Array_1_1ValueConverter.html#acec87be634e2aa1f36b1f0d7b703f3ba',1,'mxnet::Array::ValueConverter']]],
   ['reverse_5fiterator',['reverse_iterator',['../classmxnet_1_1Array.html#aad789d2d9ca9a4e9b5a4bfdf343c6aae',1,'mxnet::Array::reverse_iterator()'],['../classnnvm_1_1Layout.html#a271f83387eac34590453e672f9b6d5e3',1,'nnvm::Layout::reverse_iterator()']]],
-  ['reviewsubgraph_5ft',['reviewSubgraph_t',['../lib__api_8h.html#afd30e0165e1ef233fd40728045351989',1,'lib_api.h']]],
+  ['reviewsubgraph_5ft',['reviewSubgraph_t',['../lib__api_8h.html#a81025cba587b988a2f6a9b619139e30d',1,'lib_api.h']]],
   ['rtchandle',['RtcHandle',['../include_2mxnet_2c__api_8h.html#a58a159a7417ad988206970d46c4c7ee8',1,'c_api.h']]]
 ];

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['monitorcallback',['MonitorCallback',['../classmxnet_1_1Executor.html#a5684c74daafc9b80681cde6a9b7b4587',1,'mxnet::Executor']]],
-  ['mutateinputs_5ft',['mutateInputs_t',['../lib__api_8h.html#a66c394211a70570a42e16b79cf49485c',1,'lib_api.h']]],
+  ['mutateinputs_5ft',['mutateInputs_t',['../lib__api_8h.html#af42d89d470e8cf1d12ead00bcb474ff5',1,'lib_api.h']]],
   ['mx_5fcpu_5frand_5ft',['mx_cpu_rand_t',['../lib__api_8h.html#a9157ce7266380f368c7108e9c01de9cf',1,'lib_api.h']]],
   ['mx_5ffloat',['mx_float',['../include_2mxnet_2c__api_8h.html#a4e709067707d9f90c534bd65494ae668',1,'mx_float():&#160;c_api.h'],['../c__predict__api_8h.html#a4e709067707d9f90c534bd65494ae668',1,'mx_float():&#160;c_predict_api.h']]],
   ['mx_5fgpu_5frand_5ft',['mx_gpu_rand_t',['../lib__api_8h.html#ac3e9b5f89cdbed5da83c4d1e82b353f6',1,'lib_api.h']]],

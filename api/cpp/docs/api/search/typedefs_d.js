@@ -6,7 +6,7 @@ var searchData=
   ['opcallfcomp_5ft',['opCallFComp_t',['../lib__api_8h.html#a0ac1050db449d058b76aaaf6f819c66d',1,'lib_api.h']]],
   ['opcallfree_5ft',['opCallFree_t',['../lib__api_8h.html#a3258239cea429bb3cde850f5886a7e35',1,'lib_api.h']]],
   ['opcallfstatefulcomp_5ft',['opCallFStatefulComp_t',['../lib__api_8h.html#a29a3efc8ef032d3c7f50780aa72f36fa',1,'lib_api.h']]],
-  ['opcallinfershape_5ft',['opCallInferShape_t',['../lib__api_8h.html#a9169574e4cbf5f51cebbb394328508e2',1,'lib_api.h']]],
+  ['opcallinfershape_5ft',['opCallInferShape_t',['../lib__api_8h.html#a5336c8ebf9827e531319758104911729',1,'lib_api.h']]],
   ['opcallinferstype_5ft',['opCallInferSType_t',['../lib__api_8h.html#a4fefda369e84aaa9e946d26df07ac09f',1,'lib_api.h']]],
   ['opcallinfertype_5ft',['opCallInferType_t',['../lib__api_8h.html#a1da81448912eff1a562a33731e048a71',1,'lib_api.h']]],
   ['opcallmutateinputs_5ft',['opCallMutateInputs_t',['../lib__api_8h.html#a7ed08a9d2a50d541b15b9ecde67a5848',1,'lib_api.h']]],

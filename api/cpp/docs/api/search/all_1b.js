@@ -14,7 +14,7 @@ var searchData=
   ['_7einplacearraybase',['~InplaceArrayBase',['../classmxnet_1_1runtime_1_1InplaceArrayBase.html#afa0adb8ab7d5c7c76812b6ec8807a46b',1,'mxnet::runtime::InplaceArrayBase']]],
   ['_7einputsplit',['~InputSplit',['../classdmlc_1_1InputSplit.html#a00a1f234a44de0950d1011495f41b265',1,'dmlc::InputSplit']]],
   ['_7einputsplitshuffle',['~InputSplitShuffle',['../classdmlc_1_1InputSplitShuffle.html#afbce8f23fe731fb5ae087020f6274ab4',1,'dmlc::InputSplitShuffle']]],
-  ['_7eistream',['~IStream',['../classmshadow_1_1utils_1_1IStream.html#a3fd2a7483255a8ba3348a4a88117e2c3',1,'mshadow::utils::IStream::~IStream()'],['../classdmlc_1_1istream.html#abfb8b1af4df69cfb24836d837bd3e316',1,'dmlc::istream::~istream()']]],
+  ['_7eistream',['~istream',['../classdmlc_1_1istream.html#abfb8b1af4df69cfb24836d837bd3e316',1,'dmlc::istream::~istream()'],['../classmshadow_1_1utils_1_1IStream.html#a3fd2a7483255a8ba3348a4a88117e2c3',1,'mshadow::utils::IStream::~IStream()']]],
   ['_7ekvstore',['~KVStore',['../classmxnet_1_1KVStore.html#a02e23071eb46464b58f2e2bf5654d6d6',1,'mxnet::KVStore']]],
   ['_7elrscheduler',['~LRScheduler',['../classmxnet_1_1cpp_1_1LRScheduler.html#a6f269c0118f9d2c34ecd32a29f8e542f',1,'mxnet::cpp::LRScheduler']]],
   ['_7eluaref',['~LuaRef',['../classdmlc_1_1LuaRef.html#ab97c83cda0db04b89cb587ee54d5b3ec',1,'dmlc::LuaRef']]],

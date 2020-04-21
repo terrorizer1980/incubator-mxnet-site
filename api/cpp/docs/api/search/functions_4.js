@@ -174,5 +174,6 @@ var searchData=
   ['dptr',['dptr',['../classmxnet_1_1TBlob.html#a3449ca0a9130e87c343130b041b68c53',1,'mxnet::TBlob']]],
   ['dtype',['dtype',['../classmxnet_1_1PrimExpr.html#a36bb9a05c5ae36a1ab34f5c348fba493',1,'mxnet::PrimExpr::dtype()'],['../classmxnet_1_1NDArray.html#a1b6038a196c14d038bd3e6d6bbe36ad2',1,'mxnet::NDArray::dtype()']]],
   ['dtype_5fstring',['dtype_string',['../namespacemshadow.html#af5aa21f20dbeaa38194b4dadbd37a072',1,'mshadow']]],
+  ['dump',['dump',['../structJsonParser.html#a19a4af98d15849a15126ab3c4250e3ca',1,'JsonParser']]],
   ['dump_5fto_5ffile',['dump_to_file',['../classmxnet_1_1TensorInspector.html#a817a0addf872741c69b8209e4503617f',1,'mxnet::TensorInspector']]]
 ];

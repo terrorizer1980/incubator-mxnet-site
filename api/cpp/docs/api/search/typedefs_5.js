@@ -2,7 +2,7 @@ var searchData=
 [
   ['factory',['Factory',['../classdmlc_1_1Parser.html#aacf539079f2aab0d75c6dad286d7653e',1,'dmlc::Parser']]],
   ['favoidquantizeinput',['FAvoidQuantizeInput',['../namespacemxnet.html#a3cb7e17c82420da9bac723fee0bb044c',1,'mxnet']]],
-  ['fcomp_5ft',['fcomp_t',['../lib__api_8h.html#abe41961ecb26debd2ce96db5ba57f6c8',1,'lib_api.h']]],
+  ['fcomp_5ft',['fcomp_t',['../lib__api_8h.html#a1f08ddfbd009eee6f4e7c3d09b7dcec4',1,'lib_api.h']]],
   ['fcompute',['FCompute',['../namespacemxnet.html#ad77e2048b7e8db91a12e05b477aac13e',1,'mxnet']]],
   ['fcomputeex',['FComputeEx',['../namespacemxnet.html#a294d2660c065f8d229c27e65f0461e10',1,'mxnet']]],
   ['fcorrectlayout',['FCorrectLayout',['../namespacennvm.html#a2df0ffb0a105133c97d5fbc9d782c618',1,'nnvm']]],

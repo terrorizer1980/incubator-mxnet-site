@@ -24,7 +24,9 @@ var searchData=
   ['cublastype_3c_20mshadow_3a_3ahalf_3a_3ahalf_5ft_20_3e',['CublasType&lt; mshadow::half::half_t &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01mshadow_1_1half_1_1half__t_01_4.html',1,'mxnet::common::cuda']]],
   ['cublastype_3c_20uint8_5ft_20_3e',['CublasType&lt; uint8_t &gt;',['../structmxnet_1_1common_1_1cuda_1_1CublasType_3_01uint8__t_01_4.html',1,'mxnet::common::cuda']]],
   ['customop',['CustomOp',['../classCustomOp.html',1,'']]],
+  ['customopselector',['CustomOpSelector',['../classCustomOpSelector.html',1,'']]],
   ['custompartitioner',['CustomPartitioner',['../classCustomPartitioner.html',1,'']]],
+  ['custompass',['CustomPass',['../classCustomPass.html',1,'']]],
   ['customstatefulop',['CustomStatefulOp',['../classCustomStatefulOp.html',1,'']]],
   ['customstatefulopwrapper',['CustomStatefulOpWrapper',['../classCustomStatefulOpWrapper.html',1,'']]]
 ];
