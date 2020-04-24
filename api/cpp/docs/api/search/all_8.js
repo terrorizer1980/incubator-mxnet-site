@@ -92,7 +92,7 @@ var searchData=
   ['getreviewsubgraph',['getReviewSubgraph',['../classCustomPartitioner.html#a66653d30737a4b9a50db48196a01237b',1,'CustomPartitioner']]],
   ['getrndengine',['GetRndEngine',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a02bf4cce9c068da452494452432fcf7f',1,'mshadow::Random&lt; cpu, DType &gt;']]],
   ['getrole',['GetRole',['../classmxnet_1_1cpp_1_1KVStore.html#ad946968681e5716d7d7fcf00ff24d423',1,'mxnet::cpp::KVStore']]],
-  ['getseed',['GetSeed',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a836851153d5a873833e3804762786152',1,'mshadow::Random&lt; cpu, DType &gt;::GetSeed()'],['../classmshadow_1_1Random_3_01gpu_00_01DType_01_4.html#ab9160c46d51f2443bace3437c0e51660',1,'mshadow::Random&lt; gpu, DType &gt;::GetSeed()']]],
+  ['getseed',['GetSeed',['../classmshadow_1_1Random_3_01cpu_00_01DType_01_4.html#a3f8cdfe67076940b082c87ebf49954fc',1,'mshadow::Random&lt; cpu, DType &gt;']]],
   ['getshape',['GetShape',['../classmxnet_1_1cpp_1_1NDArray.html#aa67f8f39b54c1a66c67d124b90eda847',1,'mxnet::cpp::NDArray::GetShape()'],['../namespacemshadow_1_1expr.html#a1552427378286a426185fe2c503c8ad2',1,'mshadow::expr::GetShape()']]],
   ['getshapeat',['getShapeAt',['../lib__api_8h.html#aa30ea1031e51376a72af965e02dc8f99',1,'lib_api.h']]],
   ['getsolverhandle',['GetSolverHandle',['../structmshadow_1_1Stream_3_01gpu_01_4.html#acfc432c1165c8fb238df5e3bd9f9efcc',1,'mshadow::Stream&lt; gpu &gt;']]],
