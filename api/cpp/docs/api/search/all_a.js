@@ -118,7 +118,7 @@ var searchData=
   ['is_5ffloat',['is_float',['../classmxnet_1_1runtime_1_1MXNetDataType.html#ac989f9258c8db92ddce7f117b4ab38d6',1,'mxnet::runtime::MXNetDataType::is_float()'],['../namespacemxnet_1_1common.html#a5e0a47792e9132c71a77897d1cdf6f0b',1,'mxnet::common::is_float()']]],
   ['is_5ffloating_5fpoint',['is_floating_point',['../structdmlc_1_1is__floating__point.html',1,'dmlc']]],
   ['is_5fhandle',['is_handle',['../classmxnet_1_1runtime_1_1MXNetDataType.html#a3cd9f894b25d20dd2e5fd60c425dddc6',1,'mxnet::runtime::MXNetDataType']]],
-  ['is_5fint',['is_int',['../classmxnet_1_1runtime_1_1MXNetDataType.html#a470d2450f3c7bc52908aae83ba3dee70',1,'mxnet::runtime::MXNetDataType']]],
+  ['is_5fint',['is_int',['../classmxnet_1_1runtime_1_1MXNetDataType.html#a470d2450f3c7bc52908aae83ba3dee70',1,'mxnet::runtime::MXNetDataType::is_int()'],['../namespacemxnet_1_1common.html#a936c985e4dfd7d43ace2e57babb06393',1,'mxnet::common::is_int()']]],
   ['is_5fintegral',['is_integral',['../structdmlc_1_1is__integral.html',1,'dmlc']]],
   ['is_5fnil',['is_nil',['../classdmlc_1_1LuaRef.html#a9122b82f2125d103a528a2882cbef6f6',1,'dmlc::LuaRef']]],
   ['is_5fnone',['is_none',['../classmxnet_1_1NDArray.html#a2a15ffdbf29d4d5455a4fbb4b607880c',1,'mxnet::NDArray']]],
