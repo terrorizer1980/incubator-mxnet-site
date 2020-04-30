@@ -48,7 +48,6 @@ var searchData=
   ['getdata',['GetData',['../classmxnet_1_1cpp_1_1DataIter.html#aba3881f9d8359db4083508d4e399e8d3',1,'mxnet::cpp::DataIter::GetData()'],['../classmxnet_1_1cpp_1_1MXDataIter.html#a53288b5429781d18cf55fd8803918ad5',1,'mxnet::cpp::MXDataIter::GetData()'],['../classmxnet_1_1cpp_1_1NDArray.html#acd290ed385f9b3c9cf9e11ea74dc24f1',1,'mxnet::cpp::NDArray::GetData()']]],
   ['getdatabatch',['GetDataBatch',['../classmxnet_1_1cpp_1_1DataIter.html#a49d4597309b648efa9f69992a8392ecb',1,'mxnet::cpp::DataIter']]],
   ['getdataptr',['GetDataPtr',['../classmxnet_1_1runtime_1_1ObjectRef.html#a44873861fe3a0ee963314402eb3e1f47',1,'mxnet::runtime::ObjectRef']]],
-  ['getdefaultdtype',['GetDefaultDtype',['../namespacemxnet_1_1common.html#ae0b36e2468ddcac38fac199dd4c7e51a',1,'mxnet::common::GetDefaultDtype()'],['../namespacemxnet_1_1common.html#a88e6401b252fe60509bf79d5ea67ee5b',1,'mxnet::common::GetDefaultDtype(int dtype)']]],
   ['getdeferredcomputesymbol',['GetDeferredComputeSymbol',['../classmxnet_1_1Imperative.html#a0f901368c813c144b8ec6aacac7567db',1,'mxnet::Imperative']]],
   ['getdeviceid',['GetDeviceId',['../classmxnet_1_1cpp_1_1Context.html#aa8fa947447033e822ac0a61bd116993d',1,'mxnet::cpp::Context']]],
   ['getdevicetype',['GetDeviceType',['../classmxnet_1_1cpp_1_1Context.html#a6bffb0f2869b2968440e3ed20480ea62',1,'mxnet::cpp::Context']]],
