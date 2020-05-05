@@ -173,8 +173,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 
 <p>This document explains how to build MXNet from source code.</p>
 
-<p><strong>For Java/Scala/Clojure, please follow <a href="scala_setup">this guide instead</a></strong></p>
-
 <h2 id="overview">Overview</h2>
 
 <p>Building from source follows this general two-step flow of building the shared library, then installing your preferred language binding. Use the following links to jump to the different sections of this guide.</p>
@@ -185,6 +183,7 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
       <li><a href="#clone-the-mxnet-project">Clone the repository</a></li>
       <li><a href="#prerequisites">Prerequisites</a>
         <ul>
+          <li><a href="#compiler-requirement">Compiler requirement</a></li>
           <li><a href="#math-library-selection">Math library selection</a></li>
           <li><a href="#install-gpu-software">Install GPU software</a></li>
           <li><a href="#install-optional-software">Install optional software</a></li>
@@ -255,6 +254,9 @@ You may jump to those, but it is recommended that you continue reading to unders
 
 <p>The following sections will help you decide which specific prerequisites you need to install.</p>
 
+<h4 id="compiler-requirement">Compiler Requirement</h4>
+<p>Building MXNet from source requires at least <a href="https://gcc.gnu.org/">gcc7</a>, clang6 or any C++17 compatible compiler</p>
+
 <h4 id="math-library-selection">Math Library Selection</h4>
 <p>It is useful to consider your math library selection prior to your other prerequisites.
 MXNet relies on the
@@ -278,58 +280,11 @@ The following lists show this order by library and <code class="highlighter-roug
 <p>For desktop platforms (x86_64):</p>
 
 <ol>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>MKL-DNN (submodule)</td>
-          <td><code class="highlighter-rouge">USE_MKLDNN</code></td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>MKL</td>
-          <td><code class="highlighter-rouge">USE_MKL_IF_AVAILABLE</code></td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>MKLML (downloaded)</td>
-          <td><code class="highlighter-rouge">USE_MKLML</code></td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>Apple Accelerate</td>
-          <td><code class="highlighter-rouge">USE_APPLE_ACCELERATE_IF_AVAILABLE</code></td>
-          <td>Mac only</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>OpenBLAS</td>
-          <td><code class="highlighter-rouge">BLAS</code></td>
-          <td>Options: Atlas, Open, MKL, Apple</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
+  <li>MKL-DNN (submodule), <code class="highlighter-rouge">USE_MKLDNN</code></li>
+  <li>MKL, <code class="highlighter-rouge">USE_MKL_IF_AVAILABLE</code></li>
+  <li>MKLML (downloaded), <code class="highlighter-rouge">USE_MKLML</code></li>
+  <li>Apple Accelerate (Mac only), <code class="highlighter-rouge">USE_APPLE_ACCELERATE_IF_AVAILABLE</code></li>
+  <li>OpenBLAS, <code class="highlighter-rouge">BLAS</code></li>
 </ol>
 
 <p>Note: If <code class="highlighter-rouge">USE_MKL_IF_AVAILABLE</code> is set to False then MKLML and MKL-DNN will be disabled as well for configuration
@@ -338,17 +293,7 @@ backwards compatibility.</p>
 <p>For embedded platforms (all other and if cross compiled):</p>
 
 <ol>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>OpenBLAS</td>
-          <td><code class="highlighter-rouge">BLAS</code></td>
-          <td>Options: Atlas, Open, MKL, Apple</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
+  <li>OpenBLAS, <code class="highlighter-rouge">BLAS</code></li>
 </ol>
 
 <p>You can set the BLAS library explicitly by setting the BLAS variable to:</p>
@@ -408,6 +353,8 @@ unpredictable.</p>
 <h4 id="install-gpu-software">Install GPU Software</h4>
 
 <p>If you want to run MXNet with GPUs, you must install <a href="https://developer.nvidia.com/cuda-downloads">NVDIA CUDA and cuDNN</a>.</p>
+
+<p>After installation, run nvidia-smi to verify cuda is available on your machine.</p>
 
 <h4 id="install-optional-software">Install Optional Software</h4>
 
@@ -565,7 +512,7 @@ ninja <span class="nt">-v</span>
 <h2 id="installing-mxnet-language-bindings">Installing MXNet Language Bindings</h2>
 <p>After building MXNet’s shared library, you can install other language bindings.</p>
 
-<p><strong>NOTE:</strong> The C++ API binding must be built when you build MXNet from source. See <a href="/api/cpp">Build MXNet with C++</a>.</p>
+<p><strong>NOTE:</strong> The C++ API binding must be built when you build MXNet from source. See <a href="/api/cpp.html">Build MXNet with C++</a>.</p>
 
 <p>The following table provides links to each language binding by operating system:</p>
 
