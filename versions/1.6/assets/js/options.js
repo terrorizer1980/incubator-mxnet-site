@@ -45,7 +45,7 @@ $(document).ready(function () {
         }
     }
 
-    function setSelects(urlParams) {
+    function setSelects(urlParams, dontPushState) {
         if (urlParams.get('version'))
             versionSelect = urlParams.get('version');
         $('.current-version').html( versionSelect + ' <span class="caret"></span>' );
@@ -68,7 +68,7 @@ $(document).ready(function () {
 
         showContent();
         let queryString = '?version=' + versionSelect + '&platform=' + platformSelect + '&language=' + languageSelect + '&environ=' + environSelect + '&processor=' + processorSelect
-        if (window.location.href.indexOf("/get_started") >= 0) {
+        if (window.location.href.indexOf("/get_started") >= 0 && !dontPushState) {
             history.pushState(null, null, queryString);
         }
     }
@@ -107,5 +107,28 @@ $(document).ready(function () {
     $('.opt-group').on('click', '.opt', setContent);
     $('.install-widget').css("visibility", "visible");
     $('.install-content').css("visibility", "visible");
+    $(window).on('popstate', function(){
+        setSelects(urlSearchParams(window.location.search), true);
+    });
 
+    let timer;
+    const toggleDropdown = function(showContent) {
+        if (timer) clearTimeout(timer);
+        if (showContent) {
+            timer = setTimeout(function() {
+                $(".version-dropdown").show()
+            }, 250);  
+        } else {
+            $(".version-dropdown").hide()
+        }
+    }
+
+    $("#version-dropdown-container")
+        .mouseenter(toggleDropdown.bind(null, true))
+        .mouseleave(toggleDropdown.bind(null, false))
+        .click(function() {$(".version-dropdown").toggle()});
+
+    $("ul.version-dropdown").click(function(e) {
+        e.preventDefault();
+    });    
 });
