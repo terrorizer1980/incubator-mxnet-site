@@ -882,7 +882,7 @@ iteration.</p>
 
 <dl class="class">
 <dt id="mxnet.gluon.data.DataLoader">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.data.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">batch_size=None</em>, <em class="sig-param">shuffle=False</em>, <em class="sig-param">sampler=None</em>, <em class="sig-param">last_batch=None</em>, <em class="sig-param">batch_sampler=None</em>, <em class="sig-param">batchify_fn=None</em>, <em class="sig-param">num_workers=0</em>, <em class="sig-param">pin_memory=False</em>, <em class="sig-param">pin_device_id=0</em>, <em class="sig-param">prefetch=None</em>, <em class="sig-param">thread_pool=False</em>, <em class="sig-param">timeout=120</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.DataLoader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.data.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">batch_size=None</em>, <em class="sig-param">shuffle=False</em>, <em class="sig-param">sampler=None</em>, <em class="sig-param">last_batch=None</em>, <em class="sig-param">batch_sampler=None</em>, <em class="sig-param">batchify_fn=None</em>, <em class="sig-param">num_workers=0</em>, <em class="sig-param">pin_memory=False</em>, <em class="sig-param">pin_device_id=0</em>, <em class="sig-param">prefetch=None</em>, <em class="sig-param">thread_pool=False</em>, <em class="sig-param">timeout=120</em>, <em class="sig-param">try_nopython=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.data.DataLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Loads data from a dataset and returns mini-batches of data.</p>
 <dl class="field-list simple">
@@ -901,20 +901,8 @@ rollover - The remaining samples are rolled over to the next epoch.</p>
 </p></li>
 <li><p><strong>batch_sampler</strong> (<a class="reference internal" href="#mxnet.gluon.data.Sampler" title="mxnet.gluon.data.Sampler"><em>Sampler</em></a>) – A sampler that returns mini-batches. Do not specify batch_size,
 shuffle, sampler, and last_batch if batch_sampler is specified.</p></li>
-<li><p><strong>batchify_fn</strong> (<em>callable</em>) – <p>Callback function to allow users to specify how to merge samples
-into a batch. Defaults to <cite>default_batchify_fn</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">default_batchify_fn</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">default_batchify_fn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-</pre></div>
-</div>
-</p></li>
+<li><p><strong>batchify_fn</strong> (<em>callable</em>) – Callback function to allow users to specify how to merge samples
+into a batch. Defaults to <cite>gluon.data.batchify.Stack()</cite>:</p></li>
 <li><p><strong>num_workers</strong> (<em>int</em><em>, </em><em>default 0</em>) – The number of multiprocessing workers to use for data preprocessing.</p></li>
 <li><p><strong>pin_memory</strong> (<em>boolean</em><em>, </em><em>default False</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the dataloader will copy NDArrays into pinned memory
 before returning them. Copying from CPU pinned memory to GPU is faster
@@ -934,6 +922,13 @@ problem, threadpool version may achieve better performance than multiprocessing.
 unless you are experiencing timeout and you know it’s due to slow data loading.
 Sometimes full <cite>shared_memory</cite> will cause all workers to hang and causes timeout. In these
 cases please reduce <cite>num_workers</cite> or increase system <cite>shared_memory</cite> size instead.</p></li>
+<li><p><strong>try_nopython</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>default is None</em>) – Try compile python dataloading pipeline into pure MXNet c++ implementation. The benefit is
+potentially faster iteration, no <cite>shared_memory</cite> usage, and less processes managed by python.
+The compilation is not gauranteed to support all use cases, but it will fallback to python in
+case of failure. You can set <cite>try_nopython</cite> to <cite>False</cite> to disable auto-detection of the
+compilation feature or leave it to <cite>None</cite> to allow MXNet to determine it automatically.
+If you request <cite>try_nopython</cite> to <cite>True</cite> and the compilation fails, it will raise a
+RuntimeError with the failure reason.</p></li>
 </ul>
 </dd>
 </dl>

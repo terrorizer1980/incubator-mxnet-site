@@ -744,6 +744,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DataLoader&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">signal</span>
@@ -760,6 +761,7 @@
     <span class="k">pass</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">sampler</span> <span class="k">as</span> <span class="n">_sampler</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">batchify</span> <span class="k">as</span> <span class="n">_batchify</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">context</span>
 <span class="kn">from</span> <span class="nn">...util</span> <span class="kn">import</span> <span class="n">is_np_shape</span><span class="p">,</span> <span class="n">is_np_array</span><span class="p">,</span> <span class="n">set_np</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>  <span class="c1"># pylint: disable=reimported</span>
@@ -861,7 +863,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">ConnectionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">send</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">recv</span>
-
 
 <span class="k">def</span> <span class="nf">default_batchify_fn</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Collate data into batch.&quot;&quot;&quot;</span>
@@ -1103,9 +1104,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span> <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">batchify_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_mp_batchify_fn</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">_batchify</span><span class="o">.</span><span class="n">Stack</span><span class="p">(</span><span class="n">use_shared_mem</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_batchify_fn</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">_batchify</span><span class="o">.</span><span class="n">Stack</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
 
@@ -1258,17 +1259,7 @@
 <span class="sd">        shuffle, sampler, and last_batch if batch_sampler is specified.</span>
 <span class="sd">    batchify_fn : callable</span>
 <span class="sd">        Callback function to allow users to specify how to merge samples</span>
-<span class="sd">        into a batch. Defaults to `default_batchify_fn`::</span>
-
-<span class="sd">            def default_batchify_fn(data):</span>
-<span class="sd">                if isinstance(data[0], nd.NDArray):</span>
-<span class="sd">                    return nd.stack(*data)</span>
-<span class="sd">                elif isinstance(data[0], tuple):</span>
-<span class="sd">                    data = zip(*data)</span>
-<span class="sd">                    return [default_batchify_fn(i) for i in data]</span>
-<span class="sd">                else:</span>
-<span class="sd">                    data = np.asarray(data)</span>
-<span class="sd">                    return nd.array(data, dtype=data.dtype)</span>
+<span class="sd">        into a batch. Defaults to `gluon.data.batchify.Stack()`::</span>
 
 <span class="sd">    num_workers : int, default 0</span>
 <span class="sd">        The number of multiprocessing workers to use for data preprocessing.</span>
@@ -1295,16 +1286,26 @@
 <span class="sd">        unless you are experiencing timeout and you know it&#39;s due to slow data loading.</span>
 <span class="sd">        Sometimes full `shared_memory` will cause all workers to hang and causes timeout. In these</span>
 <span class="sd">        cases please reduce `num_workers` or increase system `shared_memory` size instead.</span>
+<span class="sd">    try_nopython : bool or None, default is None</span>
+<span class="sd">        Try compile python dataloading pipeline into pure MXNet c++ implementation. The benefit is</span>
+<span class="sd">        potentially faster iteration, no `shared_memory` usage, and less processes managed by python.</span>
+<span class="sd">        The compilation is not gauranteed to support all use cases, but it will fallback to python in</span>
+<span class="sd">        case of failure. You can set `try_nopython` to `False` to disable auto-detection of the</span>
+<span class="sd">        compilation feature or leave it to `None` to allow MXNet to determine it automatically.</span>
+<span class="sd">        If you request `try_nopython` to `True` and the compilation fails, it will raise a</span>
+<span class="sd">        RuntimeError with the failure reason.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">last_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">prefetch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thread_pool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
+                 <span class="n">prefetch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thread_pool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">try_nopython</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span> <span class="o">=</span> <span class="n">pin_device_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span> <span class="o">=</span> <span class="n">thread_pool</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mx_iter</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;timeout must be positive, given </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">batch_sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1330,28 +1331,51 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span> <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">prefetch</span><span class="p">)</span> <span class="k">if</span> <span class="n">prefetch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span>
-                                               <span class="n">initializer</span><span class="o">=</span><span class="n">_thread_worker_initializer</span><span class="p">,</span>
-                                               <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># set ignore keyboard interupt signal before forking processes</span>
-                <span class="n">original_sigint_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_initializer</span><span class="p">,</span>
-                    <span class="n">initargs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()])</span>
-                <span class="c1"># resume keyboard interupt signal in main process</span>
-                <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">original_sigint_handler</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">batchify_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_mp_batchify_fn</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">_batchify</span><span class="o">.</span><span class="n">Stack</span><span class="p">(</span><span class="n">use_shared_mem</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">default_batchify_fn</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">_batchify</span><span class="o">.</span><span class="n">Stack</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
 
+        <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">try_nopython</span> <span class="ow">or</span> <span class="n">try_nopython</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># check for capability to use mx backend threadedLoader</span>
+            <span class="n">use_mx_iter</span><span class="p">,</span> <span class="n">mx_iter_args</span> <span class="o">=</span> <span class="n">_check_mx_loader_capability</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">use_mx_iter</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">try_nopython</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">mx_iter_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_mx_iter</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">use_mx_iter</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using MXNet backend ThreadedDataLoader with </span><span class="si">%s</span><span class="s2"> workers &quot;</span>
+                         <span class="s2">&quot;instead of python dataloader.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mx_iter</span> <span class="o">=</span> <span class="n">_MXThreadedDataLoader</span><span class="p">(</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span>
+                <span class="n">pin_memory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_memory</span><span class="p">,</span>
+                <span class="n">pin_device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pin_device_id</span><span class="p">,</span>
+                <span class="n">prefetch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefetch</span><span class="p">,</span> <span class="o">**</span><span class="n">mx_iter_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span>
+                                                   <span class="n">initializer</span><span class="o">=</span><span class="n">_thread_worker_initializer</span><span class="p">,</span>
+                                                   <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># set ignore keyboard interupt signal before forking processes</span>
+                    <span class="n">original_sigint_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_initializer</span><span class="p">,</span>
+                        <span class="n">initargs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span> <span class="n">is_np_shape</span><span class="p">(),</span> <span class="n">is_np_array</span><span class="p">()])</span>
+                    <span class="c1"># resume keyboard interupt signal in main process</span>
+                    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">original_sigint_handler</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mx_iter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mx_iter</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">def</span> <span class="nf">same_process_iter</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span><span class="p">:</span>
@@ -1378,6 +1402,122 @@
             <span class="c1"># https://bugs.python.org/issue34172</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">Pool</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_worker_pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
+
+<span class="k">def</span> <span class="nf">_check_mx_loader_capability</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">._internal</span> <span class="kn">import</span> <span class="n">MXDataset</span><span class="p">,</span> <span class="n">MXSampler</span>
+    <span class="kn">from</span> <span class="nn">._internal</span> <span class="kn">import</span> <span class="n">MXBatchifyFunction</span>
+    <span class="n">mx_loader_args</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">error_template</span> <span class="o">=</span> <span class="s2">&quot;MXNet backend loader compatibility: &quot;</span> \
+        <span class="s2">&quot;[dataset - </span><span class="si">{}</span><span class="s2">][batchify_fn - </span><span class="si">{}</span><span class="s2">][batch sampler - </span><span class="si">{}</span><span class="s2">]&quot;</span>
+
+    <span class="c1"># supported dataset</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">MXDataset</span><span class="p">):</span>
+        <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;__mx_handle__&#39;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">__mx_handle__</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;fail&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;fail&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+
+    <span class="c1"># supported batchify functions</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">batchify_fn</span><span class="p">,</span> <span class="s1">&#39;__mx_handle__&#39;</span><span class="p">):</span>
+        <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;batchify_fn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batchify_fn</span><span class="o">.</span><span class="n">__mx_handle__</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batchify_fn</span><span class="p">,</span> <span class="n">MXBatchifyFunction</span><span class="p">):</span>
+        <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;batchify_fn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batchify_fn</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;fail&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+
+    <span class="c1"># supported sampler</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">BatchSampler</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_sampler</span><span class="p">,</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">SequentialSampler</span><span class="p">):</span>
+            <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;batch_sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MXSampler</span><span class="p">(</span>
+                <span class="s1">&#39;SequentialSampler&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">_length</span><span class="p">,</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span>
+                <span class="n">last_batch</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_last_batch</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_sampler</span><span class="p">,</span> <span class="n">_sampler</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">):</span>
+            <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;batch_sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MXSampler</span><span class="p">(</span>
+                <span class="s1">&#39;RandomSampler&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">_length</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span>
+                <span class="n">last_batch</span><span class="o">=</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">_last_batch</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;fail&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">MXSampler</span><span class="p">):</span>
+        <span class="n">mx_loader_args</span><span class="p">[</span><span class="s1">&#39;batch_sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_sampler</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;fail&#39;</span><span class="p">)</span>
+    <span class="c1"># all good</span>
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">mx_loader_args</span>
+
+
+<span class="k">class</span> <span class="nc">_MXThreadedDataLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;MXNet internal C++ threaded Data Iterator in form of DataLoader</span>
+
+<span class="sd">    parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : Dataset</span>
+<span class="sd">        Source dataset. Note that numpy and mxnet arrays can be directly used</span>
+<span class="sd">        as a Dataset.</span>
+<span class="sd">    batch_sampler : Sampler</span>
+<span class="sd">        A sampler that returns mini-batches.</span>
+<span class="sd">    batchify_fn : callable</span>
+<span class="sd">        Callback function to allow users to specify how to merge samples</span>
+<span class="sd">        into a batch. Defaults to `gluon.data.batchify.Stack()`::</span>
+<span class="sd">    num_workers : int, default 0</span>
+<span class="sd">        The number of multiprocessing workers to use for data preprocessing.</span>
+<span class="sd">    pin_memory : boolean, default False</span>
+<span class="sd">        If ``True``, the dataloader will copy NDArrays into pinned memory</span>
+<span class="sd">        before returning them. Copying from CPU pinned memory to GPU is faster</span>
+<span class="sd">        than from normal CPU memory.</span>
+<span class="sd">    pin_device_id : int, default 0</span>
+<span class="sd">        The device id to use for allocating pinned memory if pin_memory is ``True``</span>
+<span class="sd">    prefetch : int, default is `num_workers * 2`</span>
+<span class="sd">        The number of prefetching batches only works if `num_workers` &gt; 0.</span>
+<span class="sd">        If `prefetch` &gt; 0, it allow worker process to prefetch certain batches before</span>
+<span class="sd">        acquiring data from iterators.</span>
+<span class="sd">        Note that using large prefetching batch will provide smoother bootstrapping performance,</span>
+<span class="sd">        but will consume more shared_memory. Using smaller number may forfeit the purpose of using</span>
+<span class="sd">        multiple worker processes, try reduce `num_workers` in this case.</span>
+<span class="sd">        By default it defaults to `num_workers * 2`, maximum prefetch size is `16`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pin_device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">prefetch</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">._internal</span> <span class="kn">import</span> <span class="n">MXDataset</span><span class="p">,</span> <span class="n">MXSampler</span><span class="p">,</span> <span class="n">MXBatchifyFunction</span>
+        <span class="kn">from</span> <span class="nn">...io.io</span> <span class="kn">import</span> <span class="n">ThreadedDataLoader</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">MXDataset</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">MXSampler</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batchify_fn</span><span class="p">,</span> <span class="n">MXBatchifyFunction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_sampler</span> <span class="o">=</span> <span class="n">batch_sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batchify_fn</span> <span class="o">=</span> <span class="n">batchify_fn</span>
+        <span class="k">if</span> <span class="n">num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># different convention for single thread</span>
+        <span class="k">if</span> <span class="n">prefetch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prefetch</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># at least one buffer required</span>
+        <span class="n">pin_device_id</span> <span class="o">=</span> <span class="n">pin_device_id</span> <span class="k">if</span> <span class="n">pin_memory</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="s1">&#39;cpu_pinned&#39;</span> <span class="k">if</span> <span class="n">pin_memory</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="n">ThreadedDataLoader</span><span class="p">(</span><span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                                        <span class="n">sampler</span><span class="o">=</span><span class="n">batch_sampler</span><span class="p">,</span> <span class="n">batchify_fn</span><span class="o">=</span><span class="n">batchify_fn</span><span class="p">,</span>
+                                        <span class="n">prefetch_buffer</span><span class="o">=</span><span class="n">prefetch</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span>
+                                        <span class="n">device_id</span><span class="o">=</span><span class="n">pin_device_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="o">.</span><span class="n">iter_next</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="o">.</span><span class="n">first_batch</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="o">.</span><span class="n">getitems</span><span class="p">()</span>
+            <span class="n">pad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="o">.</span><span class="n">getpad</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pad</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="n">pad</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">yield</span> <span class="n">items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">)</span>
 </pre></div>
 
         </div>

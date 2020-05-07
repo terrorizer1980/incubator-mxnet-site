@@ -2,6 +2,8 @@ var searchData=
 [
   ['baseexpr',['BaseExpr',['../classmxnet_1_1BaseExpr.html',1,'mxnet']]],
   ['baseexprnode',['BaseExprNode',['../classmxnet_1_1BaseExprNode.html',1,'mxnet']]],
+  ['batchifyfunction',['BatchifyFunction',['../classmxnet_1_1BatchifyFunction.html',1,'mxnet']]],
+  ['batchifyfunctionreg',['BatchifyFunctionReg',['../structmxnet_1_1BatchifyFunctionReg.html',1,'mxnet']]],
   ['bilinear',['Bilinear',['../classmxnet_1_1cpp_1_1Bilinear.html',1,'mxnet::cpp']]],
   ['binarymapexp',['BinaryMapExp',['../structmshadow_1_1expr_1_1BinaryMapExp.html',1,'mshadow::expr']]],
   ['blasengine',['BLASEngine',['../structmshadow_1_1expr_1_1BLASEngine.html',1,'mshadow::expr']]],

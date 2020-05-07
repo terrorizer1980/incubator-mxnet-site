@@ -804,6 +804,8 @@ var searchData=
   ['mxnet_5fpredict_5fonly',['MXNET_PREDICT_ONLY',['../include_2mxnet_2base_8h.html#a966330f8fb9e6e7bd65ab3603beb49db',1,'base.h']]],
   ['mxnet_5fregister_5fapi',['MXNET_REGISTER_API',['../api__registry_8h.html#a7ecf4af4ccf3a3e05e7276d96dec70ca',1,'api_registry.h']]],
   ['mxnet_5fregister_5fglobal',['MXNET_REGISTER_GLOBAL',['../include_2mxnet_2runtime_2registry_8h.html#a47b953eb63d70c34c3c915ce55b04200',1,'registry.h']]],
+  ['mxnet_5fregister_5fio_5fbatchify_5ffunction',['MXNET_REGISTER_IO_BATCHIFY_FUNCTION',['../include_2mxnet_2io_8h.html#afbf843dbcd7eaddddd8255fc6981d011',1,'io.h']]],
+  ['mxnet_5fregister_5fio_5fdataset',['MXNET_REGISTER_IO_DATASET',['../include_2mxnet_2io_8h.html#a9f850e39cd969f9730635e3ef9a274bf',1,'io.h']]],
   ['mxnet_5fregister_5fio_5fiter',['MXNET_REGISTER_IO_ITER',['../include_2mxnet_2io_8h.html#ad3d0e409cb072cac4a1eb93ee390077b',1,'io.h']]],
   ['mxnet_5fregister_5fndarray_5ffun',['MXNET_REGISTER_NDARRAY_FUN',['../include_2mxnet_2ndarray_8h.html#a21d0a394bdf34194b9954252d9476d56',1,'ndarray.h']]],
   ['mxnet_5fregister_5fobject_5ftype',['MXNET_REGISTER_OBJECT_TYPE',['../object_8h.html#a6b28c0e1dc09b67696ad1369794b89c6',1,'object.h']]],

@@ -742,7 +742,7 @@
 <span class="c1"># pylint: disable=</span>
 <span class="sd">&quot;&quot;&quot;Dataset container.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MNIST&#39;</span><span class="p">,</span> <span class="s1">&#39;FashionMNIST&#39;</span><span class="p">,</span> <span class="s1">&#39;CIFAR10&#39;</span><span class="p">,</span> <span class="s1">&#39;CIFAR100&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;ImageRecordDataset&#39;</span><span class="p">,</span> <span class="s1">&#39;ImageFolderDataset&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;ImageRecordDataset&#39;</span><span class="p">,</span> <span class="s1">&#39;ImageFolderDataset&#39;</span><span class="p">,</span> <span class="s1">&#39;ImageListDataset&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">gzip</span>
@@ -755,7 +755,8 @@
 <span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">download</span><span class="p">,</span> <span class="n">check_sha1</span><span class="p">,</span> <span class="n">_get_repo_file_url</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">nd</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">recordio</span><span class="p">,</span> <span class="n">base</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>  <span class="c1"># pylint: disable=reimported</span>
-<span class="kn">from</span> <span class="nn">....util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
+<span class="kn">from</span> <span class="nn">....util</span> <span class="kn">import</span> <span class="n">is_np_array</span><span class="p">,</span> <span class="n">default_array</span>
+<span class="kn">from</span> <span class="nn">....base</span> <span class="kn">import</span> <span class="n">numeric_types</span>
 
 
 <div class="viewcode-block" id="MNIST"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/datasets/index.html#mxnet.gluon.data.vision.datasets.MNIST">[docs]</a><span class="k">class</span> <span class="nc">MNIST</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">_DownloadedDataset</span><span class="p">):</span>
@@ -981,7 +982,12 @@
         <span class="n">header</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">recordio</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">),</span> <span class="n">header</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">),</span> <span class="n">header</span><span class="o">.</span><span class="n">label</span></div>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">),</span> <span class="n">header</span><span class="o">.</span><span class="n">label</span>
+
+    <span class="k">def</span> <span class="nf">__mx_handle__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.._internal</span> <span class="kn">import</span> <span class="n">ImageRecordFileDataset</span> <span class="k">as</span> <span class="n">_ImageRecordFileDataset</span>
+        <span class="k">return</span> <span class="n">_ImageRecordFileDataset</span><span class="p">(</span><span class="n">rec_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">idx_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_file</span><span class="p">,</span>
+                                       <span class="n">flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ImageFolderDataset"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/datasets/index.html#mxnet.gluon.data.vision.datasets.ImageFolderDataset">[docs]</a><span class="k">class</span> <span class="nc">ImageFolderDataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
@@ -1021,6 +1027,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="o">=</span> <span class="n">transform</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;.png&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_list_images</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_list_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synsets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1050,7 +1057,111 @@
         <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__mx_handle__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.._internal</span> <span class="kn">import</span> <span class="n">ImageSequenceDataset</span><span class="p">,</span> <span class="n">NDArrayDataset</span><span class="p">,</span> <span class="n">GroupDataset</span>
+            <span class="n">path_sep</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span>
+            <span class="n">im_names</span> <span class="o">=</span> <span class="n">path_sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">])</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">default_array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">GroupDataset</span><span class="p">(</span><span class="n">datasets</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">ImageSequenceDataset</span><span class="p">(</span><span class="n">img_list</span><span class="o">=</span><span class="n">im_names</span><span class="p">,</span> <span class="n">path_sep</span><span class="o">=</span><span class="n">path_sep</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">),</span>
+                <span class="n">NDArrayDataset</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">label</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span></div>
+
+
+<div class="viewcode-block" id="ImageListDataset"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/datasets/index.html#mxnet.gluon.data.vision.datasets.ImageListDataset">[docs]</a><span class="k">class</span> <span class="nc">ImageListDataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dataset for loading image files specified by a list of entries.</span>
+
+<span class="sd">    like::</span>
+
+<span class="sd">        # if written to text file *.lst</span>
+<span class="sd">        0\t0\troot/car/0001.jpg</span>
+<span class="sd">        1\t0\troot/car/xxxa.jpg</span>
+<span class="sd">        2\t0\troot/car/yyyb.jpg</span>
+<span class="sd">        3\t1\troot/bus/123.jpg</span>
+<span class="sd">        4\t1\troot/bus/023.jpg</span>
+<span class="sd">        5\t1\troot/bus/wwww.jpg</span>
+
+<span class="sd">        # if as a pure list, each item is a list [imagelabel: float or list of float, imgpath]</span>
+<span class="sd">        [[0, root/car/0001.jpg]</span>
+<span class="sd">         [0, root/car/xxxa.jpg]</span>
+<span class="sd">         [0, root/car/yyyb.jpg]</span>
+<span class="sd">         [1, root/bus/123.jpg]</span>
+<span class="sd">         [1, root/bus/023.jpg]</span>
+<span class="sd">         [1, root/bus/wwww.jpg]]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    root : str</span>
+<span class="sd">        Path to root directory.</span>
+<span class="sd">    imglist : str or list</span>
+<span class="sd">        Specify the path of imglist file or a list directly</span>
+<span class="sd">    flag : {0, 1}, default 1</span>
+<span class="sd">        If 0, always convert loaded images to greyscale (1 channel).</span>
+<span class="sd">        If 1, always convert loaded images to colored (3 channels).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    items : list of tuples</span>
+<span class="sd">        List of all images in (filename, label) pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">imglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="n">flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">array_fn</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">imglist</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># read from file</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span> <span class="n">imglist</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">imglist</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">imglist</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">(</span><span class="n">img</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">numeric_types</span><span class="p">):</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">([</span><span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">array_fn</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span> <span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;imglist must be filename or list of valid entries, given </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="p">(</span><span class="n">imglist</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">label</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__mx_handle__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.._internal</span> <span class="kn">import</span> <span class="n">ImageSequenceDataset</span><span class="p">,</span> <span class="n">NDArrayDataset</span><span class="p">,</span> <span class="n">GroupDataset</span>
+            <span class="n">path_sep</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span>
+            <span class="n">im_names</span> <span class="o">=</span> <span class="n">path_sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="p">])</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">default_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_imglist</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imgkeys</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">GroupDataset</span><span class="p">(</span><span class="n">datasets</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">ImageSequenceDataset</span><span class="p">(</span><span class="n">img_list</span><span class="o">=</span><span class="n">im_names</span><span class="p">,</span> <span class="n">path_sep</span><span class="o">=</span><span class="n">path_sep</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_flag</span><span class="p">),</span>
+                <span class="n">NDArrayDataset</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">label</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span></div>
 </pre></div>
 
         </div>

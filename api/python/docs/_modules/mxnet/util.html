@@ -1626,6 +1626,32 @@
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;cuDeviceComputeCapability failed with error code </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span>
                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">error_str</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()))</span>
     <span class="k">return</span> <span class="n">cc_major</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">cc_minor</span><span class="o">.</span><span class="n">value</span>
+
+<span class="k">def</span> <span class="nf">default_array</span><span class="p">(</span><span class="n">source_array</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates an array from any object exposing the default(nd or np) array interface.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_array : array_like</span>
+<span class="sd">        An object exposing the array interface, an object whose `__array__`</span>
+<span class="sd">        method returns an array, or any (nested) sequence.</span>
+<span class="sd">    ctx : Context, optional</span>
+<span class="sd">        Device context (default is the current default context).</span>
+<span class="sd">    dtype : str or numpy.dtype, optional</span>
+<span class="sd">        The data type of the output array. The default dtype is ``source_array.dtype``</span>
+<span class="sd">        if `source_array` is an `NDArray`, `float32` otherwise.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NDArray</span>
+<span class="sd">        An `NDArray`(nd or np) with the same contents as the `source_array`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">nd</span> <span class="k">as</span> <span class="n">_mx_nd</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">np</span> <span class="k">as</span> <span class="n">_mx_np</span>
+    <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">source_array</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_mx_nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">source_array</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 </pre></div>
 
         </div>

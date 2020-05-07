@@ -7,6 +7,8 @@ var searchData=
   ['dataiter',['DataIter',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiter_3c_20rowblock_3c_20indextype_2c_20dtype_20_3e_20_3e',['DataIter&lt; RowBlock&lt; IndexType, DType &gt; &gt;',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiteratorreg',['DataIteratorReg',['../structmxnet_1_1DataIteratorReg.html',1,'mxnet']]],
+  ['dataset',['Dataset',['../classmxnet_1_1Dataset.html',1,'mxnet']]],
+  ['datasetreg',['DatasetReg',['../structmxnet_1_1DatasetReg.html',1,'mxnet']]],
   ['datatype',['DataType',['../structmshadow_1_1DataType.html',1,'mshadow']]],
   ['datatype_3c_20bfloat_3a_3abf16_5ft_20_3e',['DataType&lt; bfloat::bf16_t &gt;',['../structmshadow_1_1DataType_3_01bfloat_1_1bf16__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20bool_20_3e',['DataType&lt; bool &gt;',['../structmshadow_1_1DataType_3_01bool_01_4.html',1,'mshadow']]],

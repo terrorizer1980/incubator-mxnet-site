@@ -739,17 +739,18 @@
 <span class="c1"># under the License.</span>
 
 <span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable= arguments-differ</span>
-<span class="s2">&quot;Image transforms.&quot;</span>
+<span class="c1"># pylint: disable= arguments-differ, wildcard-import</span>
+<span class="s2">&quot;Vision transforms.&quot;</span>
 
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">...block</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">HybridBlock</span>
-<span class="kn">from</span> <span class="nn">...nn</span> <span class="kn">import</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">HybridSequential</span>
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">image</span>
-<span class="kn">from</span> <span class="nn">....base</span> <span class="kn">import</span> <span class="n">numeric_types</span>
-<span class="kn">from</span> <span class="nn">....util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
+<span class="kn">from</span> <span class="nn">....block</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">HybridBlock</span>
+<span class="kn">from</span> <span class="nn">....nn</span> <span class="kn">import</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">HybridSequential</span>
+<span class="kn">from</span> <span class="nn">.....util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="n">image</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.image</span> <span class="kn">import</span> <span class="n">_append_return</span>
 
 
 <div class="viewcode-block" id="Compose"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Compose">[docs]</a><span class="k">class</span> <span class="nc">Compose</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
@@ -799,8 +800,41 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="HybridCompose"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.HybridCompose">[docs]</a><span class="k">class</span> <span class="nc">HybridCompose</span><span class="p">(</span><span class="n">HybridSequential</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sequentially composes multiple transforms. This is the Hybrid version of Compose.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transforms : list of transform Blocks.</span>
+<span class="sd">        The list of transforms to be composed.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor with shape of the first transform Block requires.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: output tensor with shape of the last transform Block produces.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; transformer = transforms.HybridCompose([transforms.Resize(300),</span>
+<span class="sd">    ...                                   transforms.CenterCrop(256),</span>
+<span class="sd">    ...                                   transforms.ToTensor()])</span>
+<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (224, 224, 3)).astype(dtype=np.uint8)</span>
+<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
+<span class="sd">    &lt;NDArray 3x256x256 @cpu(0)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridCompose</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a HybridBlock, try use `Compose` instead&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="Cast"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Cast">[docs]</a><span class="k">class</span> <span class="nc">Cast</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Cast input to a specific data type</span>
+    <span class="sd">&quot;&quot;&quot;Cast inputs to a specific data type</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -818,566 +852,10 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Cast</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 
-<div class="viewcode-block" id="Cast.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Cast.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="Cast.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Cast.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
             <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="ToTensor"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.ToTensor">[docs]</a><span class="k">class</span> <span class="nc">ToTensor</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts an image NDArray or batch of image NDArray to a tensor NDArray.</span>
-
-<span class="sd">    Converts an image NDArray of shape (H x W x C) in the range</span>
-<span class="sd">    [0, 255] to a float32 tensor NDArray of shape (C x H x W) in</span>
-<span class="sd">    the range [0, 1].</span>
-
-<span class="sd">    If batch input, converts a batch image NDArray of shape (N x H x W x C) in the</span>
-<span class="sd">    range [0, 255] to a float32 tensor NDArray of shape (N x C x H x W).</span>
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) or (N x H x W x C) shape and uint8 type.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (C x H x W) or (N x C x H x W) shape and float32 type.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; transformer = vision.transforms.ToTensor()</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (4, 2, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    [[[ 0.85490197  0.72156864]</span>
-<span class="sd">      [ 0.09019608  0.74117649]</span>
-<span class="sd">      [ 0.61960787  0.92941177]</span>
-<span class="sd">      [ 0.96470588  0.1882353 ]]</span>
-<span class="sd">     [[ 0.6156863   0.73725492]</span>
-<span class="sd">      [ 0.46666667  0.98039216]</span>
-<span class="sd">      [ 0.44705883  0.45490196]</span>
-<span class="sd">      [ 0.01960784  0.8509804 ]]</span>
-<span class="sd">     [[ 0.39607844  0.03137255]</span>
-<span class="sd">      [ 0.72156864  0.52941179]</span>
-<span class="sd">      [ 0.16470589  0.7647059 ]</span>
-<span class="sd">      [ 0.05490196  0.70588237]]]</span>
-<span class="sd">    &lt;NDArray 3x4x2 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ToTensor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-<div class="viewcode-block" id="ToTensor.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.ToTensor.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="Normalize"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Normalize">[docs]</a><span class="k">class</span> <span class="nc">Normalize</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Normalize an tensor of shape (C x H x W) or (N x C x H x W) with mean and</span>
-<span class="sd">    standard deviation.</span>
-
-<span class="sd">    Given mean `(m1, ..., mn)` and std `(s1, ..., sn)` for `n` channels,</span>
-<span class="sd">    this transform normalizes each channel of the input tensor with::</span>
-
-<span class="sd">        output[i] = (input[i] - mi) / si</span>
-
-<span class="sd">    If mean or std is scalar, the same value will be applied to all channels.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    mean : float or tuple of floats</span>
-<span class="sd">        The mean values.</span>
-<span class="sd">    std : float or tuple of floats</span>
-<span class="sd">        The standard deviation values.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with the shape as `data`.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; transformer = transforms.Normalize(mean=(0, 1, 2), std=(3, 2, 1))</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 1, (3, 4, 2))</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    [[[ 0.18293785  0.19761486]</span>
-<span class="sd">      [ 0.23839645  0.28142193]</span>
-<span class="sd">      [ 0.20092112  0.28598186]</span>
-<span class="sd">      [ 0.18162774  0.28241724]]</span>
-<span class="sd">     [[-0.2881726  -0.18821815]</span>
-<span class="sd">      [-0.17705294 -0.30780914]</span>
-<span class="sd">      [-0.2812064  -0.3512327 ]</span>
-<span class="sd">      [-0.05411351 -0.4716435 ]]</span>
-<span class="sd">     [[-1.0363373  -1.7273437 ]</span>
-<span class="sd">      [-1.6165586  -1.5223348 ]</span>
-<span class="sd">      [-1.208275   -1.1878313 ]</span>
-<span class="sd">      [-1.4711051  -1.5200229 ]]]</span>
-<span class="sd">    &lt;NDArray 3x4x2 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Normalize</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_std</span> <span class="o">=</span> <span class="n">std</span>
-
-<div class="viewcode-block" id="Normalize.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Normalize.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="Rotate"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Rotate">[docs]</a><span class="k">class</span> <span class="nc">Rotate</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Rotate the input image by a given angle. Keeps the original image shape.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    rotation_degrees : float32</span>
-<span class="sd">        Desired rotation angle in degrees.</span>
-<span class="sd">    zoom_in : bool</span>
-<span class="sd">        Zoom in image so that no padding is present in final output.</span>
-<span class="sd">    zoom_out : bool</span>
-<span class="sd">        Zoom out image so that the entire original image is present in final output.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (C x H x W) or (N x C x H x W) shape.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Rotate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotation_degrees</span><span class="p">,</span> <span class="n">zoom_in</span><span class="p">,</span> <span class="n">zoom_out</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Rotate.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Rotate.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;This transformation only supports float32. &quot;</span>
-                            <span class="s2">&quot;Consider calling it after ToTensor&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">imrotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomRotation"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomRotation">[docs]</a><span class="k">class</span> <span class="nc">RandomRotation</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Random rotate the input image by a random angle.</span>
-<span class="sd">       Keeps the original image shape and aspect ratio.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    angle_limits: tuple</span>
-<span class="sd">        Tuple of 2 elements containing the upper and lower limit</span>
-<span class="sd">        for rotation angles in degree.</span>
-<span class="sd">    zoom_in : bool</span>
-<span class="sd">        Zoom in image so that no padding is present in final output.</span>
-<span class="sd">    zoom_out : bool</span>
-<span class="sd">        Zoom out image so that the entire original image is present in final output.</span>
-<span class="sd">    rotate_with_proba : float32</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (C x H x W) or (N x C x H x W) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (C x H x W) or (N x C x H x W) shape.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle_limits</span><span class="p">,</span> <span class="n">zoom_in</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zoom_out</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rotate_with_proba</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomRotation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">angle_limits</span>
-        <span class="k">if</span> <span class="n">lower</span> <span class="o">&gt;=</span> <span class="n">upper</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`angle_limits` must be an ordered tuple&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">rotate_with_proba</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rotate_with_proba</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Probability of rotating the image should be between 0 and 1&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle_limits</span><span class="p">,</span> <span class="n">zoom_in</span><span class="p">,</span> <span class="n">zoom_out</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rotate_with_proba</span> <span class="o">=</span> <span class="n">rotate_with_proba</span>
-
-<div class="viewcode-block" id="RandomRotation.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomRotation.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rotate_with_proba</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">x</span>
-        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;This transformation only supports float32. &quot;</span>
-                            <span class="s2">&quot;Consider calling it after ToTensor&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">random_rotate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomResizedCrop"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomResizedCrop">[docs]</a><span class="k">class</span> <span class="nc">RandomResizedCrop</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Crop the input image with random scale and aspect ratio.</span>
-
-<span class="sd">    Makes a crop of the original image with random size (default: 0.08</span>
-<span class="sd">    to 1.0 of the original image size) and random aspect ratio (default:</span>
-<span class="sd">    3/4 to 4/3), then resize it to the specified size.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    size : int or tuple of (W, H)</span>
-<span class="sd">        Size of the final output.</span>
-<span class="sd">    scale : tuple of two floats</span>
-<span class="sd">        If scale is `(min_area, max_area)`, the cropped image&#39;s area will</span>
-<span class="sd">        range from min_area to max_area of the original image&#39;s area</span>
-<span class="sd">    ratio : tuple of two floats</span>
-<span class="sd">        Range of aspect ratio of the cropped image before resizing.</span>
-<span class="sd">    interpolation : int</span>
-<span class="sd">        Interpolation method for resizing. By default uses bilinear</span>
-<span class="sd">        interpolation. See OpenCV&#39;s resize function for available choices.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (Hi x Wi x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (H x W x C) shape.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">ratio</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="o">/</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">),</span>
-                 <span class="n">interpolation</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomResizedCrop</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomResizedCrop.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomResizedCrop.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">random_size_crop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div></div>
-
-
-<div class="viewcode-block" id="CropResize"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.CropResize">[docs]</a><span class="k">class</span> <span class="nc">CropResize</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Crop the input image with and optionally resize it.</span>
-
-<span class="sd">    Makes a crop of the original image then optionally resize it to the specified size.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x : int</span>
-<span class="sd">        Left boundary of the cropping area</span>
-<span class="sd">    y : int</span>
-<span class="sd">        Top boundary of the cropping area</span>
-<span class="sd">    w : int</span>
-<span class="sd">        Width of the cropping area</span>
-<span class="sd">    h : int</span>
-<span class="sd">        Height of the cropping area</span>
-<span class="sd">    size : int or tuple of (w, h)</span>
-<span class="sd">        Optional, resize to new size after cropping</span>
-<span class="sd">    interpolation : int, optional</span>
-<span class="sd">        Interpolation method for resizing. By default uses bilinear</span>
-<span class="sd">        interpolation. See OpenCV&#39;s resize function for available choices.</span>
-<span class="sd">        https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html?highlight=resize#resize</span>
-<span class="sd">        Note that the Resize on gpu use contrib.bilinearResize2D operator</span>
-<span class="sd">        which only support bilinear interpolation(1).</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) or (N x H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: input tensor with (H x W x C) or (N x H x W x C) shape.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; transformer = vision.transforms.CropResize(x=0, y=0, width=100, height=100)</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (224, 224, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 100x100x3 @cpu(0)&gt;</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (3, 224, 224, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 3x100x100x3 @cpu(0)&gt;</span>
-<span class="sd">    &gt;&gt;&gt; transformer = vision.transforms.CropResize(x=0, y=0, width=100, height=100, size=(50, 50), interpolation=1)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 3x50x50 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">CropResize</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">width</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">height</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
-
-<div class="viewcode-block" id="CropResize.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.CropResize.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></div></div>
-
-<div class="viewcode-block" id="CenterCrop"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.CenterCrop">[docs]</a><span class="k">class</span> <span class="nc">CenterCrop</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Crops the image `src` to the given `size` by trimming on all four</span>
-<span class="sd">    sides and preserving the center of the image. Upsamples if `src` is</span>
-<span class="sd">    smaller than `size`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    size : int or tuple of (W, H)</span>
-<span class="sd">        Size of output image.</span>
-<span class="sd">    interpolation : int</span>
-<span class="sd">        Interpolation method for resizing. By default uses bilinear</span>
-<span class="sd">        interpolation. See OpenCV&#39;s resize function for available choices.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (Hi x Wi x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; transformer = vision.transforms.CenterCrop(size=(1000, 500))</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (2321, 3482, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 500x1000x3 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">CenterCrop</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="p">)</span>
-
-<div class="viewcode-block" id="CenterCrop.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.CenterCrop.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">center_crop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div></div>
-
-
-<div class="viewcode-block" id="Resize"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Resize">[docs]</a><span class="k">class</span> <span class="nc">Resize</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Resize an image or a batch of image NDArray to the given size.</span>
-<span class="sd">    Should be applied before `mxnet.gluon.data.vision.transforms.ToTensor`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    size : int or tuple of (W, H)</span>
-<span class="sd">        Size of output image.</span>
-<span class="sd">    keep_ratio : bool</span>
-<span class="sd">        Whether to resize the short edge or both edges to `size`,</span>
-<span class="sd">        if size is give as an integer.</span>
-<span class="sd">    interpolation : int</span>
-<span class="sd">        Interpolation method for resizing. By default uses bilinear</span>
-<span class="sd">        interpolation. See OpenCV&#39;s resize function for available choices.</span>
-<span class="sd">        Note that the Resize on gpu use contrib.bilinearResize2D operator</span>
-<span class="sd">        which only support bilinear interpolation(1).</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) or (N x H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with (H x W x C) or (N x H x W x C) shape.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; transformer = vision.transforms.Resize(size=(1000, 500))</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (224, 224, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 500x1000x3 @cpu(0)&gt;</span>
-<span class="sd">    &gt;&gt;&gt; image = mx.nd.random.uniform(0, 255, (3, 224, 224, 3)).astype(dtype=np.uint8)</span>
-<span class="sd">    &gt;&gt;&gt; transformer(image)</span>
-<span class="sd">    &lt;NDArray 3x500x1000x3 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">keep_ratio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Resize</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_keep</span> <span class="o">=</span> <span class="n">keep_ratio</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
-
-<div class="viewcode-block" id="Resize.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.Resize.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolation</span><span class="p">)</span></div></div>
-
-<div class="viewcode-block" id="RandomFlipLeftRight"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomFlipLeftRight">[docs]</a><span class="k">class</span> <span class="nc">RandomFlipLeftRight</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly flip the input image left to right with a probability</span>
-<span class="sd">    of 0.5.</span>
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomFlipLeftRight</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-<div class="viewcode-block" id="RandomFlipLeftRight.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomFlipLeftRight.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_flip_left_right</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomFlipTopBottom"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomFlipTopBottom">[docs]</a><span class="k">class</span> <span class="nc">RandomFlipTopBottom</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly flip the input image top to bottom with a probability</span>
-<span class="sd">    of 0.5.</span>
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomFlipTopBottom</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-<div class="viewcode-block" id="RandomFlipTopBottom.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomFlipTopBottom.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_flip_top_bottom</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomBrightness"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomBrightness">[docs]</a><span class="k">class</span> <span class="nc">RandomBrightness</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly jitters image brightness with a factor</span>
-<span class="sd">    chosen from `[max(0, 1 - brightness), 1 + brightness]`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    brightness: float</span>
-<span class="sd">        How much to jitter brightness. brightness factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - brightness), 1 + brightness]`.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brightness</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomBrightness</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">brightness</span><span class="p">),</span> <span class="mi">1</span><span class="o">+</span><span class="n">brightness</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomBrightness.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomBrightness.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_brightness</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomContrast"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomContrast">[docs]</a><span class="k">class</span> <span class="nc">RandomContrast</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly jitters image contrast with a factor</span>
-<span class="sd">    chosen from `[max(0, 1 - contrast), 1 + contrast]`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    contrast: float</span>
-<span class="sd">        How much to jitter contrast. contrast factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - contrast), 1 + contrast]`.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contrast</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomContrast</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">contrast</span><span class="p">),</span> <span class="mi">1</span><span class="o">+</span><span class="n">contrast</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomContrast.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomContrast.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_contrast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomSaturation"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomSaturation">[docs]</a><span class="k">class</span> <span class="nc">RandomSaturation</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly jitters image saturation with a factor</span>
-<span class="sd">    chosen from `[max(0, 1 - saturation), 1 + saturation]`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    saturation: float</span>
-<span class="sd">        How much to jitter saturation. saturation factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - saturation), 1 + saturation]`.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saturation</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomSaturation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">saturation</span><span class="p">),</span> <span class="mi">1</span><span class="o">+</span><span class="n">saturation</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomSaturation.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomSaturation.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_saturation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomHue"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomHue">[docs]</a><span class="k">class</span> <span class="nc">RandomHue</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly jitters image hue with a factor</span>
-<span class="sd">    chosen from `[max(0, 1 - hue), 1 + hue]`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    hue: float</span>
-<span class="sd">        How much to jitter hue. hue factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - hue), 1 + hue]`.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hue</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomHue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">hue</span><span class="p">),</span> <span class="mi">1</span><span class="o">+</span><span class="n">hue</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomHue.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomHue.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_hue</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomColorJitter"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomColorJitter">[docs]</a><span class="k">class</span> <span class="nc">RandomColorJitter</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomly jitters the brightness, contrast, saturation, and hue</span>
-<span class="sd">    of an image.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    brightness : float</span>
-<span class="sd">        How much to jitter brightness. brightness factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - brightness), 1 + brightness]`.</span>
-<span class="sd">    contrast : float</span>
-<span class="sd">        How much to jitter contrast. contrast factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - contrast), 1 + contrast]`.</span>
-<span class="sd">    saturation : float</span>
-<span class="sd">        How much to jitter saturation. saturation factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - saturation), 1 + saturation]`.</span>
-<span class="sd">    hue : float</span>
-<span class="sd">        How much to jitter hue. hue factor is randomly</span>
-<span class="sd">        chosen from `[max(0, 1 - hue), 1 + hue]`.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brightness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">contrast</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">saturation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomColorJitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">brightness</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span> <span class="n">hue</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RandomColorJitter.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomColorJitter.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_color_jitter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="RandomLighting"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomLighting">[docs]</a><span class="k">class</span> <span class="nc">RandomLighting</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add AlexNet-style PCA-based noise to an image.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    alpha : float</span>
-<span class="sd">        Intensity of the image.</span>
-
-
-<span class="sd">    Inputs:</span>
-<span class="sd">        - **data**: input tensor with (H x W x C) shape.</span>
-
-<span class="sd">    Outputs:</span>
-<span class="sd">        - **out**: output tensor with same shape as `data`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RandomLighting</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
-
-<div class="viewcode-block" id="RandomLighting.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomLighting.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="n">F</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">random_lighting</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">F</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span></div></div>
 
 
 <div class="viewcode-block" id="RandomApply"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomApply">[docs]</a><span class="k">class</span> <span class="nc">RandomApply</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
@@ -1403,11 +881,43 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
 
-<div class="viewcode-block" id="RandomApply.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomApply.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="RandomApply.forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.RandomApply.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">x</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span></div></div>
+        <span class="k">return</span> <span class="n">_append_return</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="HybridRandomApply"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.HybridRandomApply">[docs]</a><span class="k">class</span> <span class="nc">HybridRandomApply</span><span class="p">(</span><span class="n">HybridSequential</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Apply a list of transformations randomly given probability</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transforms</span>
+<span class="sd">        List of transformations which must be HybridBlocks.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        Probability of applying the transformations.</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: transformed image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridRandomApply</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+
+<div class="viewcode-block" id="HybridRandomApply.hybrid_forward"><a class="viewcode-back" href="../../../../../api/gluon/data/vision/transforms/index.html#mxnet.gluon.data.vision.transforms.HybridRandomApply.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">F</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">F</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_append_return</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div></div>
 </pre></div>
 
         </div>
