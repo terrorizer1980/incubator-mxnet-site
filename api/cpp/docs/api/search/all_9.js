@@ -1,6 +1,7 @@
 var searchData=
 [
   ['half_2eh',['half.h',['../half_8h.html',1,'']]],
+  ['half2_2eh',['half2.h',['../half2_8h.html',1,'']]],
   ['handle',['Handle',['../structmxnet_1_1Storage_1_1Handle.html',1,'mxnet::Storage']]],
   ['handle',['Handle',['../classmxnet_1_1runtime_1_1MXNetDataType.html#a3af027de80c0cddc4908a98b49e3249a',1,'mxnet::runtime::MXNetDataType']]],
   ['handle_5f',['handle_',['../structmxnet_1_1cpp_1_1MXDataIterBlob.html#a90d3f6381459e542e865be2e010b3b27',1,'mxnet::cpp::MXDataIterBlob::handle_()'],['../structmxnet_1_1cpp_1_1NDBlob.html#a5003302311ab4ac51f2fa71445d181be',1,'mxnet::cpp::NDBlob::handle_()'],['../structmxnet_1_1cpp_1_1SymBlob.html#a32924152dd1a19a98ea18b273ffa54d5',1,'mxnet::cpp::SymBlob::handle_()']]],

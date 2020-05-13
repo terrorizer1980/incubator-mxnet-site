@@ -73,7 +73,7 @@ var searchData=
   ['sum_5freal_5fimag',['sum_real_imag',['../structmshadow_1_1op_1_1complex_1_1sum__real__imag.html',1,'mshadow::op::complex']]],
   ['swapaxisexp',['SwapAxisExp',['../structmshadow_1_1expr_1_1SwapAxisExp.html',1,'mshadow::expr']]],
   ['symblob',['SymBlob',['../structmxnet_1_1cpp_1_1SymBlob.html',1,'mxnet::cpp']]],
-  ['symbol',['Symbol',['../classnnvm_1_1Symbol.html',1,'nnvm']]],
   ['symbol',['Symbol',['../classmxnet_1_1cpp_1_1Symbol.html',1,'mxnet::cpp']]],
+  ['symbol',['Symbol',['../classnnvm_1_1Symbol.html',1,'nnvm']]],
   ['syncedgpuauxstream',['SyncedGPUAuxStream',['../classmxnet_1_1SyncedGPUAuxStream.html',1,'mxnet']]]
 ];
