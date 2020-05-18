@@ -216,7 +216,6 @@ var searchData=
   ['prodshape',['ProdShape',['../structmshadow_1_1Shape.html#a92103c631795f9ddb27841c210531acc',1,'mshadow::Shape::ProdShape()'],['../classmxnet_1_1TShape.html#aa72c62b4d22066e55b77d0296a3dedf5',1,'mxnet::TShape::ProdShape()'],['../classnnvm_1_1TShape.html#aca52533ba52853bbb550bc8a2b3e3962',1,'nnvm::TShape::ProdShape()']]],
   ['producer',['Producer',['../classdmlc_1_1ThreadedIter_1_1Producer.html',1,'dmlc::ThreadedIter']]],
   ['profilehandle',['ProfileHandle',['../include_2mxnet_2c__api_8h.html#a2f6ad8b0cc1e894f64b5ecad2ceb1aa7',1,'c_api.h']]],
-  ['profiler',['PROFILER',['../namespacemxnet_1_1features.html#a2172d84ddd7f18a0092271aa5b2bf87daf655c75ca4b00702eef0ae2233dd706b',1,'mxnet::features']]],
   ['profiler_5fmessage_5ffuncname',['PROFILER_MESSAGE_FUNCNAME',['../include_2mxnet_2base_8h.html#ae34be2bf889657a1452b87fd36f034c3',1,'base.h']]],
   ['profiler_5fscope',['profiler_scope',['../structmxnet_1_1Storage_1_1Handle.html#a774b62c70d76375a42f7ceb0ef77937b',1,'mxnet::Storage::Handle']]],
   ['prop',['prop',['../structmshadow_1_1Stream_3_01gpu_01_4.html#a4ec551c8440da0c89eb728e753906936',1,'mshadow::Stream&lt; gpu &gt;']]],
