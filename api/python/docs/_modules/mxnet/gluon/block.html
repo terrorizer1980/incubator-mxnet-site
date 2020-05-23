@@ -1071,7 +1071,7 @@
                         <span class="k">return</span> <span class="kc">True</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
-                <span class="k">return</span> <span class="ow">not</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">children</span>
+                <span class="k">return</span> <span class="ow">not</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">(</span><span class="n">c</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1149,7 +1149,7 @@
             <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)})</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cld</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">))</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
     <span class="k">def</span> <span class="nf">_collect_params_with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
@@ -1157,7 +1157,7 @@
             <span class="n">prefix</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
 <div class="viewcode-block" id="Block.save_parameters"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">deduplicate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1325,7 +1325,7 @@
 <span class="sd">        attributes will be registered automatically.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">block</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.register_forward_pre_hook"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_forward_pre_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_forward_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward pre-hook on the block.</span>
@@ -1378,7 +1378,7 @@
 <span class="sd">        this block</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">cld</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
         <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -1405,7 +1405,7 @@
         <span class="sd">&quot;&quot;&quot; Please refer description of HybridBlock hybridize().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">cld</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.cast"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cast this Block to use another data type.</span>
@@ -1416,7 +1416,7 @@
 <span class="sd">            The new data type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">child</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">param</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span></div>
 
@@ -1460,7 +1460,7 @@
 <span class="sd">            If True, monitor both input and output, otherwise monitor output only.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">cld</span><span class="o">.</span><span class="n">register_op_hook</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="p">)</span></div>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">register_op_hook</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.summary"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Print the summary of the model&#39;s output and parameters.</span>
@@ -2038,8 +2038,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">c_callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">cld</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">c_callback</span>
-            <span class="n">cld</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span></div>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">c_callback</span>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>

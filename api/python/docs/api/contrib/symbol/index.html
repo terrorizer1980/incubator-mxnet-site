@@ -890,7 +890,7 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.symbol.getnnz" title="mxnet.contrib.symbol.getnnz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getnnz</span></code></a>([data, axis, name, attr, out])</p></td>
 <td><p>Number of stored values for a sparse tensor, including explicit zeros.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.symbol.gradientmultiplier" title="mxnet.contrib.symbol.gradientmultiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gradientmultiplier</span></code></a>([data, scalar, name, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.symbol.gradientmultiplier" title="mxnet.contrib.symbol.gradientmultiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gradientmultiplier</span></code></a>([data, scalar, is_int, …])</p></td>
 <td><p>This operator implements the gradient multiplier function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.symbol.group_adagrad_update" title="mxnet.contrib.symbol.group_adagrad_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group_adagrad_update</span></code></a>([weight, grad, …])</p></td>
@@ -1781,12 +1781,13 @@ the specified axis in input shape.</p>
 
 <dl class="function">
 <dt id="mxnet.contrib.symbol.backward_gradientmultiplier">
-<code class="sig-prename descclassname">mxnet.contrib.symbol.</code><code class="sig-name descname">backward_gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.symbol.backward_gradientmultiplier" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.contrib.symbol.</code><code class="sig-name descname">backward_gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">is_int=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.symbol.backward_gradientmultiplier" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<a class="reference internal" href="../../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – source input</p></li>
-<li><p><strong>scalar</strong> (<em>float</em>) – scalar input</p></li>
+<li><p><strong>scalar</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar input value</p></li>
+<li><p><strong>is_int</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Indicate whether scalar input is int type</p></li>
 <li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</p></li>
 </ul>
 </dd>
@@ -2742,7 +2743,7 @@ The output data has shape: (N, 2*d) or (N1, N2, N3, 2*d). The format is: [real0,
 
 <dl class="function">
 <dt id="mxnet.contrib.symbol.gradientmultiplier">
-<code class="sig-prename descclassname">mxnet.contrib.symbol.</code><code class="sig-name descname">gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.symbol.gradientmultiplier" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.contrib.symbol.</code><code class="sig-name descname">gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">is_int=_Null</em>, <em class="sig-param">name=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.symbol.gradientmultiplier" title="Permalink to this definition">¶</a></dt>
 <dd><p>This operator implements the gradient multiplier function.
 In forward pass it acts as an identity transform. During backpropagation it
 multiplies the gradient from the subsequent level by a scalar factor lambda and passes it to
@@ -2752,7 +2753,8 @@ the preceding layer.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<a class="reference internal" href="../../symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a>) – The input array.</p></li>
-<li><p><strong>scalar</strong> (<em>float</em>) – lambda multiplier</p></li>
+<li><p><strong>scalar</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar input value</p></li>
+<li><p><strong>is_int</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Indicate whether scalar input is int type</p></li>
 <li><p><strong>name</strong> (<em>string</em><em>, </em><em>optional.</em>) – Name of the resulting symbol.</p></li>
 </ul>
 </dd>

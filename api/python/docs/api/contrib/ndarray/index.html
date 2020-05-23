@@ -890,7 +890,7 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.ndarray.getnnz" title="mxnet.contrib.ndarray.getnnz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getnnz</span></code></a>([data, axis, out, name])</p></td>
 <td><p>Number of stored values for a sparse tensor, including explicit zeros.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.ndarray.gradientmultiplier" title="mxnet.contrib.ndarray.gradientmultiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gradientmultiplier</span></code></a>([data, scalar, out, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.ndarray.gradientmultiplier" title="mxnet.contrib.ndarray.gradientmultiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gradientmultiplier</span></code></a>([data, scalar, is_int, …])</p></td>
 <td><p>This operator implements the gradient multiplier function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.ndarray.group_adagrad_update" title="mxnet.contrib.ndarray.group_adagrad_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group_adagrad_update</span></code></a>([weight, grad, …])</p></td>
@@ -1781,12 +1781,13 @@ the specified axis in input shape.</p>
 
 <dl class="function">
 <dt id="mxnet.contrib.ndarray.backward_gradientmultiplier">
-<code class="sig-prename descclassname">mxnet.contrib.ndarray.</code><code class="sig-name descname">backward_gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.ndarray.backward_gradientmultiplier" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.contrib.ndarray.</code><code class="sig-name descname">backward_gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">is_int=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.ndarray.backward_gradientmultiplier" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – source input</p></li>
-<li><p><strong>scalar</strong> (<em>float</em>) – scalar input</p></li>
+<li><p><strong>scalar</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar input value</p></li>
+<li><p><strong>is_int</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Indicate whether scalar input is int type</p></li>
 <li><p><strong>out</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
 </ul>
 </dd>
@@ -2738,7 +2739,7 @@ The output data has shape: (N, 2*d) or (N1, N2, N3, 2*d). The format is: [real0,
 
 <dl class="function">
 <dt id="mxnet.contrib.ndarray.gradientmultiplier">
-<code class="sig-prename descclassname">mxnet.contrib.ndarray.</code><code class="sig-name descname">gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.ndarray.gradientmultiplier" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mxnet.contrib.ndarray.</code><code class="sig-name descname">gradientmultiplier</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">scalar=_Null</em>, <em class="sig-param">is_int=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.contrib.ndarray.gradientmultiplier" title="Permalink to this definition">¶</a></dt>
 <dd><p>This operator implements the gradient multiplier function.
 In forward pass it acts as an identity transform. During backpropagation it
 multiplies the gradient from the subsequent level by a scalar factor lambda and passes it to
@@ -2748,7 +2749,8 @@ the preceding layer.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The input array.</p></li>
-<li><p><strong>scalar</strong> (<em>float</em>) – lambda multiplier</p></li>
+<li><p><strong>scalar</strong> (<em>double</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Scalar input value</p></li>
+<li><p><strong>is_int</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Indicate whether scalar input is int type</p></li>
 <li><p><strong>out</strong> (<a class="reference internal" href="../../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
 </ul>
 </dd>
