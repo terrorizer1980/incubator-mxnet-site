@@ -1147,7 +1147,6 @@
 <span class="sd">        If True, use global moving statistics instead of local batch-norm. This will force</span>
 <span class="sd">        change batch-norm into a scale shift operator.</span>
 <span class="sd">        If False, use local batch-norm.</span>
-<span class="sd">    fuse_relu: False</span>
 <span class="sd">    beta_initializer: str or `Initializer`, default &#39;zeros&#39;</span>
 <span class="sd">        Initializer for the beta weight.</span>
 <span class="sd">    gamma_initializer: str or `Initializer`, default &#39;ones&#39;</span>
@@ -1169,17 +1168,20 @@
 <span class="sd">        - **out**: output tensor with the same shape as `data`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">beta_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">gamma_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
                  <span class="n">running_mean_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">running_variance_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
                  <span class="n">in_channels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">fuse_relu</span><span class="p">,</span> <span class="s2">&quot;Please use BatchNormReLU with Relu fusion&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BatchNorm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">beta_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">gamma_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
-            <span class="n">running_mean_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">running_variance_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
-            <span class="n">in_channels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">momentum</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">use_global_stats</span><span class="o">=</span><span class="n">use_global_stats</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">beta_initializer</span><span class="o">=</span><span class="n">beta_initializer</span><span class="p">,</span>
+            <span class="n">gamma_initializer</span><span class="o">=</span><span class="n">gamma_initializer</span><span class="p">,</span>
+            <span class="n">running_mean_initializer</span><span class="o">=</span><span class="n">running_mean_initializer</span><span class="p">,</span>
+            <span class="n">running_variance_initializer</span><span class="o">=</span><span class="n">running_variance_initializer</span><span class="p">,</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="BatchNormReLU"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.BatchNormReLU">[docs]</a><span class="k">class</span> <span class="nc">BatchNormReLU</span><span class="p">(</span><span class="n">_BatchNorm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Batch normalization layer (Ioffe and Szegedy, 2014).</span>
@@ -1209,7 +1211,6 @@
 <span class="sd">        If True, use global moving statistics instead of local batch-norm. This will force</span>
 <span class="sd">        change batch-norm into a scale shift operator.</span>
 <span class="sd">        If False, use local batch-norm.</span>
-<span class="sd">    fuse_relu: True</span>
 <span class="sd">    beta_initializer: str or `Initializer`, default &#39;zeros&#39;</span>
 <span class="sd">        Initializer for the beta weight.</span>
 <span class="sd">    gamma_initializer: str or `Initializer`, default &#39;ones&#39;</span>
@@ -1231,17 +1232,20 @@
 <span class="sd">        - **out**: output tensor with the same shape as `data`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">beta_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">gamma_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
                  <span class="n">running_mean_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">running_variance_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
                  <span class="n">in_channels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">fuse_relu</span><span class="p">,</span> <span class="s2">&quot;Please use BatchNorm w/o Relu fusion&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BatchNormReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">use_global_stats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">beta_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">gamma_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
-            <span class="n">running_mean_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">running_variance_initializer</span><span class="o">=</span><span class="s1">&#39;ones&#39;</span><span class="p">,</span>
-            <span class="n">in_channels</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">momentum</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+            <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">use_global_stats</span><span class="o">=</span><span class="n">use_global_stats</span><span class="p">,</span> <span class="n">fuse_relu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">beta_initializer</span><span class="o">=</span><span class="n">beta_initializer</span><span class="p">,</span>
+            <span class="n">gamma_initializer</span><span class="o">=</span><span class="n">gamma_initializer</span><span class="p">,</span>
+            <span class="n">running_mean_initializer</span><span class="o">=</span><span class="n">running_mean_initializer</span><span class="p">,</span>
+            <span class="n">running_variance_initializer</span><span class="o">=</span><span class="n">running_variance_initializer</span><span class="p">,</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Embedding"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.Embedding">[docs]</a><span class="k">class</span> <span class="nc">Embedding</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Turns non-negative integers (indexes/tokens) into dense vectors</span>
