@@ -2181,17 +2181,15 @@
 <span class="sd">        backend : str</span>
 <span class="sd">            The name of backend, as registered in `SubgraphBackendRegistry`</span>
 
-<span class="sd">        args : list of NDArray or dict of str to NDArray, optional</span>
+<span class="sd">        args : dict of str to NDArray, optional</span>
 <span class="sd">            Input arguments to the symbol, required to infer shapes/types before partitioning</span>
 
-<span class="sd">            - If type is a list of `NDArray`, the order is the same as that of `list_arguments()`.</span>
 <span class="sd">            - If type is a dict of str to `NDArray`, then it maps the name of arguments</span>
 <span class="sd">              to the corresponding `NDArray`.</span>
 
-<span class="sd">        aux : list of NDArray or dict of str to NDArray, optional</span>
+<span class="sd">        aux : dict of str to NDArray, optional</span>
 <span class="sd">            Input auxiliary arguments to the symbol</span>
 
-<span class="sd">            - If type is a list of `NDArray`, the order is the same as that of `list_arguments()`.</span>
 <span class="sd">            - If type is a dict of str to `NDArray`, then it maps the name of arguments</span>
 <span class="sd">              to the corresponding `NDArray`.</span>
 
@@ -2208,6 +2206,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">aux</span> <span class="ow">is</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">args_</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2255,30 +2255,22 @@
                                              <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_size</span><span class="p">),</span>
                                              <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">),</span>
                                              <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">)))</span>
-        <span class="n">arg_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># add new args/aux</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_args_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
                 <span class="n">args</span><span class="p">[</span><span class="n">py_str</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_args_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">py_str</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="n">arg_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                    <span class="n">args</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_args_handle</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
-        <span class="n">aux_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">new_args_size</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot add new args in optimize_for since args is None</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;Provide a dictionary to the args argument to optimize_for&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">aux</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_aux_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
                 <span class="n">aux</span><span class="p">[</span><span class="n">py_str</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">new_aux_size</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">py_str</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span><span class="p">:</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="n">aux_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                    <span class="n">aux</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">aux</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDArray</span><span class="p">(</span><span class="n">NDArrayHandle</span><span class="p">(</span><span class="n">new_aux_handle</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+        <span class="k">elif</span> <span class="n">new_aux_size</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot add new aux in optimize_for since aux is None</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;Provide a dictionary to the aux argument to optimize_for&#39;</span><span class="p">)</span>
+
+        <span class="c1"># return modified symbol</span>
         <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 
