@@ -284,14 +284,8 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
             
               <!-- page-category -->
             
-              <!-- page-category -->
-            
-              <!-- page-category -->
-            
             
             <li><a href="/api/faq/cloud">MXNet on the Cloud</a></li>
-              <!-- page-category -->
-            
               <!-- page-category -->
             
               <!-- page-category -->
@@ -310,8 +304,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
             
             
             <li><a href="/api/faq/env_var">Environment Variables</a></li>
-              <!-- page-category -->
-            
               <!-- page-category -->
             
               <!-- page-category -->
@@ -380,18 +372,8 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
             
               <!-- page-category -->
             
-              <!-- page-category -->
-            
-              <!-- page-category -->
-            
-              <!-- page-category -->
-            
             
             <li><a href="/api/faq/model_parallel_lstm">Model Parallel</a></li>
-              <!-- page-category -->
-            
-              <!-- page-category -->
-            
               <!-- page-category -->
             
               <!-- page-category -->
@@ -470,10 +452,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
             <li><a href="/api/faq/tensor_inspector_tutorial">Use TensorInspector to Help Debug Operators</a></li>
               <!-- page-category -->
             
-              <!-- page-category -->
-            
-            
-            <li><a href="/api/faq/visualize_graph">Visualize Neural Networks</a></li>
               <!-- page-category -->
             
             
@@ -584,74 +562,9 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">net</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">))</span>
 </code></pre></div></div>
 
-<h2 id="using-the-symbolic-api">Using the Symbolic API</h2>
-
-<p>Training a network in float16 with the Symbolic API involves the following steps.</p>
-
-<ol>
-  <li>Add a layer at the beginning of the network, to cast the data to float16. This will ensure that all the following layers compute in float16.</li>
-  <li>It is advisable to cast the output of the layers before softmax to float32, so that the softmax computation is done in float32. This is because softmax involves large reductions and it helps to keep that in float32 for more precise answer.</li>
-  <li>It is advisable to use the multi-precision mode of the optimizer for more precise weight updates. Here’s how you would enable this mode when creating an optimizer.</li>
-</ol>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'sgd'</span><span class="p">,</span> <span class="n">multi_precision</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>For a full example, please refer to <a href="https://github.com/apache/incubator-mxnet/blob/master/example/image-classification/symbols/resnet.py">resnet.py</a> file on GitHub. A small, relevant excerpt from that file is presented below.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"data"</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s">'float16'</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">Cast</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-
-<span class="c1"># ... the rest of the network
-</span><span class="n">net_out</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s">'float16'</span><span class="p">:</span>
-    <span class="n">net_out</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">Cast</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net_out</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">SoftmaxOutput</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">net_out</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'softmax'</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>If you would like to train ResNet50 model on ImageNet using float16 precision, you can find the full script <a href="https://github.com/apache/incubator-mxnet/blob/master/docs/static_site/src/pages/api/faq/float16.md">here</a></p>
-
-<p>If you don’t have ImageNet dataset at your disposal, you can still run the script above using synthetic float16 data by providing the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python train_imagenet.py <span class="nt">--network</span> resnet-v1 <span class="nt">--num-layers</span> 50 <span class="nt">--benchmark</span> 1 <span class="nt">--gpus</span> 0 <span class="nt">--batch-size</span> 256 <span class="nt">--dtype</span> float16
-</code></pre></div></div>
-
-<p>There’s a similar example for float16 fine tuning <a href="https://github.com/apache/incubator-mxnet/tree/master/example/image-classification/fine-tune.py">here</a> of selected models: Inception v3, Inception v4, ResNetV1, ResNet50, ResNext or VGG. The command below shows how to use that script to fine-tune a Resnet50 model trained on Imagenet for the Caltech 256 dataset using float16.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python fine-tune.py <span class="nt">--network</span> resnet <span class="nt">--num-layers</span> 50 <span class="nt">--pretrained-model</span> imagenet1k-resnet-50 <span class="nt">--data-train</span> ~/.mxnet/dataset/caltech-256/caltech256-train.rec <span class="nt">--data-val</span> ~/data/caltech-256/caltech256-val.rec <span class="nt">--num-examples</span> 15420 <span class="nt">--num-classes</span> 256 <span class="nt">--gpus</span> 0 <span class="nt">--batch-size</span> 64 <span class="nt">--dtype</span> float16
-</code></pre></div></div>
-
-<p>If you don’t have the <code class="highlighter-rouge">Caltech256</code> dataset, you can download it using the script below, and convert it into .rec file format using <a href="https://github.com/apache/incubator-mxnet/blob/master/tools/im2rec.py">im2rec utility file</a></p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
-<span class="kn">import</span> <span class="nn">tarfile</span>
-<span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="n">mx</span>
-
-
-<span class="n">data_folder</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="s">"~/.mxnet/datasets/"</span><span class="p">)</span>
-<span class="n">dataset_name</span> <span class="o">=</span> <span class="s">"256_ObjectCategories"</span>
-<span class="n">archive_file</span> <span class="o">=</span> <span class="s">"{}.tar"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-<span class="n">archive_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">archive_file</span><span class="p">)</span>
-<span class="n">data_url</span> <span class="o">=</span> <span class="s">"http://www.vision.caltech.edu/Image_Datasets/Caltech256/"</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">archive_path</span><span class="p">):</span>
-    <span class="n">mx</span><span class="o">.</span><span class="n">test_utils</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s">"{}{}"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">data_url</span><span class="p">,</span> <span class="n">archive_file</span><span class="p">),</span>
-                           <span class="n">dirname</span><span class="o">=</span><span class="n">data_folder</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Extracting {} in {}...'</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">archive_file</span><span class="p">,</span> <span class="n">data_folder</span><span class="p">))</span>
-    <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">archive_path</span><span class="p">)</span>
-    <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span>
-    <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Data extracted.'</span><span class="p">)</span>
-</code></pre></div></div>
-
 <h2 id="example-training-results">Example training results</h2>
 
-<p>Let us consider training a Resnet50V1 model on the ImageNet 2012 dataset. For this model, the GPU memory usage is close to the capacity of V100 GPU with a batch size of 128 when using float32. Using float16 allows the use of 256 batch size. Shared below are results using 8 V100 GPUs on a an <a href="https://aws.amazon.com/ec2/instance-types/p3/#Amazon_EC2_P3_Instance_Product_Details">AWS p3.16xlarge</a> instance.</p>
+<p>Let us consider training a Resnet50-V1 model on the ImageNet 2012 dataset. For this model, the GPU memory usage is close to the capacity of V100 GPU with a batch size of 128 when using float32. Using float16 allows the use of 256 batch size. Shared below are results using 8 V100 GPUs on a an <a href="https://aws.amazon.com/ec2/instance-types/p3/#Amazon_EC2_P3_Instance_Product_Details">AWS p3.16xlarge</a> instance.</p>
 
 <p>Let us compare the three scenarios that arise here: float32 with 1024 batch size, float16 with 1024 batch size and float16 with 2048 batch size. These jobs trained for 90 epochs using a learning rate of 0.4 for 1024 batch size and 0.8 for 2048 batch size. This learning rate was decayed by a factor of 0.1 at the 30th, 60th and 80th epochs. The only changes made for the float16 jobs when compared to the float32 job were that the network and data were cast to float16, and the multi-precision mode was used for optimizer. The final accuracy at 90th epoch and the time to train are tabulated below for these three scenarios. The top-1 validation errors at the end of each epoch are also plotted below.</p>
 
@@ -742,14 +655,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
 <p><em>Gluon API</em></p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">loss</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">SoftmaxCrossEntropyLoss</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'sgd'</span><span class="p">,</span>
-                                <span class="n">multi_precision</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                <span class="n">rescale_grad</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">128</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p><em>Module API</em></p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mxnet</span><span class="o">.</span><span class="n">sym</span><span class="o">.</span><span class="n">SoftmaxOutput</span><span class="p">(</span><span class="n">other_args</span><span class="p">,</span> <span class="n">grad_scale</span><span class="o">=</span><span class="mf">128.0</span><span class="p">)</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">'sgd'</span><span class="p">,</span>
                                 <span class="n">multi_precision</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                 <span class="n">rescale_grad</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">128</span><span class="p">)</span>

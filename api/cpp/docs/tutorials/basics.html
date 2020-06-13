@@ -328,14 +328,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                   <!-- page-category -->
                    <!-- resource-p -->
                 
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
@@ -344,8 +336,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                   <!-- page-category -->
                    <!-- resource-p -->
                 
-                
-                  <!-- page-category -->
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
@@ -362,12 +352,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                 
                    <!-- resource-p -->
                 
-                   <!-- resource-p -->
-                
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
@@ -436,26 +420,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                 
                    <!-- resource-p -->
                 
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
-                   <!-- resource-p -->
-                
-                
-                  <!-- page-category -->
                    <!-- resource-p -->
                 
                 
@@ -561,8 +525,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
                    <!-- resource-p -->
                 
                    <!-- resource-p -->
-                
-                   <!-- resource-p -->
                   <!-- page -->
                 
             </ul>
@@ -574,26 +536,6 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
         
         
         
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
-        
-           <!-- resource-p -->
         
            <!-- resource-p -->
         
@@ -824,114 +766,6 @@ The digits in MNIST are 2-dimension arrays, so we should set <code class="highli
 
 <p>The data have been successfully loaded. We can now easily construct various models to identify
 the digits with the help of C++ package.</p>
-
-<h2 id="multilayer-perceptron">Multilayer Perceptron</h2>
-<p>If you are not familiar with multilayer perceptron, you can get some basic information
-<a href="https://mxnet.apache.org/api/python/docs/tutorials/packages/gluon/image/mnist.html">here</a>. We only focus on
-the implementation in this tutorial.</p>
-
-<p>Constructing multilayer perceptron model is straightforward, assume we store the hidden size
-for each layer in <code class="highlighter-rouge">layers</code>, and each layer uses
-<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLu</a> function as activation.</p>
-
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Symbol</span> <span class="nf">mlp</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">layers</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Symbol</span><span class="o">::</span><span class="n">Variable</span><span class="p">(</span><span class="s">"X"</span><span class="p">);</span>
-  <span class="k">auto</span> <span class="n">label</span> <span class="o">=</span> <span class="n">Symbol</span><span class="o">::</span><span class="n">Variable</span><span class="p">(</span><span class="s">"label"</span><span class="p">);</span>
-
-  <span class="n">vector</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span> <span class="n">weights</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-  <span class="n">vector</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span> <span class="n">biases</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-  <span class="n">vector</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span> <span class="n">outputs</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-
-  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">layers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Symbol</span><span class="o">::</span><span class="n">Variable</span><span class="p">(</span><span class="s">"w"</span> <span class="o">+</span> <span class="n">to_string</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
-    <span class="n">biases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Symbol</span><span class="o">::</span><span class="n">Variable</span><span class="p">(</span><span class="s">"b"</span> <span class="o">+</span> <span class="n">to_string</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
-    <span class="n">Symbol</span> <span class="n">fc</span> <span class="o">=</span> <span class="n">FullyConnected</span><span class="p">(</span>
-      <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="o">?</span> <span class="n">x</span> <span class="o">:</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-      <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-      <span class="n">biases</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-      <span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="p">);</span>
-    <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">==</span> <span class="n">layers</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span> <span class="o">?</span> <span class="n">fc</span> <span class="o">:</span> <span class="n">Activation</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="n">ActivationActType</span><span class="o">::</span><span class="n">relu</span><span class="p">);</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="n">SoftmaxOutput</span><span class="p">(</span><span class="n">outputs</span><span class="p">.</span><span class="n">back</span><span class="p">(),</span> <span class="n">label</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>The above function defines a multilayer perceptron model where hidden sizes are specified
-by <code class="highlighter-rouge">layers</code>.</p>
-
-<p>We now create and initialize the parameters after the model is constructed. MXNet can help
- you to infer shapes of most of the parameters. Basically only the shape of data and label
- is needed.</p>
-
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">NDArray</span><span class="o">&gt;</span> <span class="n">args</span><span class="p">;</span>
-<span class="n">args</span><span class="p">[</span><span class="s">"X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">Shape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">image_size</span><span class="o">*</span><span class="n">image_size</span><span class="p">),</span> <span class="n">ctx</span><span class="p">);</span>
-<span class="n">args</span><span class="p">[</span><span class="s">"label"</span><span class="p">]</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">(</span><span class="n">Shape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">),</span> <span class="n">ctx</span><span class="p">);</span>
-<span class="c1">// Let MXNet infer shapes other parameters such as weights</span>
-<span class="n">net</span><span class="p">.</span><span class="n">InferArgsMap</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">args</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>
-
-<span class="c1">// Initialize all parameters with uniform distribution U(-0.01, 0.01)</span>
-<span class="k">auto</span> <span class="n">initializer</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span><span class="mf">0.01</span><span class="p">);</span>
-<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">arg</span> <span class="o">:</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// arg.first is parameter name, and arg.second is the value</span>
-  <span class="n">initializer</span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">first</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arg</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>The rest is to train the model with an optimizer.</p>
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create sgd optimizer</span>
-<span class="n">Optimizer</span><span class="o">*</span> <span class="n">opt</span> <span class="o">=</span> <span class="n">OptimizerRegistry</span><span class="o">::</span><span class="n">Find</span><span class="p">(</span><span class="s">"sgd"</span><span class="p">);</span>
-<span class="n">opt</span><span class="o">-&gt;</span><span class="n">SetParam</span><span class="p">(</span><span class="s">"rescale_grad"</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">batch_size</span><span class="p">);</span>
-
-<span class="c1">// Start training</span>
-<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">iter</span> <span class="o">&lt;</span> <span class="n">max_epoch</span><span class="p">;</span> <span class="o">++</span><span class="n">iter</span><span class="p">)</span> <span class="p">{</span>
-  <span class="n">train_iter</span><span class="p">.</span><span class="n">Reset</span><span class="p">();</span>
-
-  <span class="k">while</span> <span class="p">(</span><span class="n">train_iter</span><span class="p">.</span><span class="n">Next</span><span class="p">())</span> <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">data_batch</span> <span class="o">=</span> <span class="n">train_iter</span><span class="p">.</span><span class="n">GetDataBatch</span><span class="p">();</span>
-    <span class="c1">// Set data and label</span>
-    <span class="n">args</span><span class="p">[</span><span class="s">"X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_batch</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
-    <span class="n">args</span><span class="p">[</span><span class="s">"label"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_batch</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
-
-    <span class="c1">// Create executor by binding parameters to the model</span>
-    <span class="k">auto</span> <span class="o">*</span><span class="n">exec</span> <span class="o">=</span> <span class="n">net</span><span class="p">.</span><span class="n">SimpleBind</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>
-    <span class="c1">// Compute gradients</span>
-    <span class="n">exec</span><span class="o">-&gt;</span><span class="n">Forward</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
-    <span class="n">exec</span><span class="o">-&gt;</span><span class="n">Backward</span><span class="p">();</span>
-    <span class="c1">// Update parameters</span>
-    <span class="n">exec</span><span class="o">-&gt;</span><span class="n">UpdateAll</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">weight_decay</span><span class="p">);</span>
-    <span class="c1">// Remember to free the memory</span>
-    <span class="k">delete</span> <span class="n">exec</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>We also want to see how our model performs. The C++ package provides convenient APIs for
-evaluating. Here we use accuracy as metric. The inference is almost the same as training,
- except that we don’t need gradients.</p>
-
-<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Accuracy</span> <span class="n">acc</span><span class="p">;</span>
-<span class="n">val_iter</span><span class="p">.</span><span class="n">Reset</span><span class="p">();</span>
-<span class="k">while</span> <span class="p">(</span><span class="n">val_iter</span><span class="p">.</span><span class="n">Next</span><span class="p">())</span> <span class="p">{</span>
-  <span class="k">auto</span> <span class="n">data_batch</span> <span class="o">=</span> <span class="n">val_iter</span><span class="p">.</span><span class="n">GetDataBatch</span><span class="p">();</span>
-  <span class="n">args</span><span class="p">[</span><span class="s">"X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_batch</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
-  <span class="n">args</span><span class="p">[</span><span class="s">"label"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_batch</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
-  <span class="k">auto</span> <span class="o">*</span><span class="n">exec</span> <span class="o">=</span> <span class="n">net</span><span class="p">.</span><span class="n">SimpleBind</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>
-  <span class="c1">// Forward pass is enough as no gradient is needed when evaluating</span>
-  <span class="n">exec</span><span class="o">-&gt;</span><span class="n">Forward</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
-  <span class="n">acc</span><span class="p">.</span><span class="n">Update</span><span class="p">(</span><span class="n">data_batch</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">exec</span><span class="o">-&gt;</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-  <span class="k">delete</span> <span class="n">exec</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>You can find the complete code in <code class="highlighter-rouge">mlp_cpu.cpp</code>. Use <code class="highlighter-rouge">make mlp_cpu</code> to compile it,
- and <code class="highlighter-rouge">./mlp_cpu</code> to run it. If it complains that the shared library <code class="highlighter-rouge">libmxnet.so</code> is not found
- after typing <code class="highlighter-rouge">./mlp_cpu</code>, you will need to specify the path to the shared library in
- the environment variable <code class="highlighter-rouge">LD_LIBRARY_PATH</code> in Linux and <code class="highlighter-rouge">DYLD_LIBRARY_PATH</code>
- in MacOS. For example, if you are using MacOS, typing
- <code class="highlighter-rouge">DYLD_LIBRARY_PATH+=. ./mlp_cpu</code> would solve the problem. It basically tells the system
- to find the shared library under the current directory since we have just copied it here.</p>
 
 <h2 id="gpu-support">GPU Support</h2>
 <p>It’s worth noting that changing context from <code class="highlighter-rouge">Context::cpu()</code> to <code class="highlighter-rouge">Context::gpu()</code> is not enough,

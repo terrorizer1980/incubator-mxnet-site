@@ -878,56 +878,6 @@
 <span class="sd">            cases you want to call backward with is_train=False to get gradient</span>
 <span class="sd">            during inference.</span>
 
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; # Example for binding on loss function symbol, which gives the loss value of the model.</span>
-<span class="sd">        &gt;&gt;&gt; # Equivalently it gives the head gradient for backward pass.</span>
-<span class="sd">        &gt;&gt;&gt; # In this example the built-in SoftmaxOutput is used as loss function.</span>
-<span class="sd">        &gt;&gt;&gt; # MakeLoss can be used to define customized loss function symbol.</span>
-<span class="sd">        &gt;&gt;&gt; net = mx.sym.Variable(&#39;data&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; net = mx.sym.FullyConnected(net, name=&#39;fc&#39;, num_hidden=6)</span>
-<span class="sd">        &gt;&gt;&gt; net = mx.sym.Activation(net, name=&#39;relu&#39;, act_type=&quot;relu&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; net = mx.sym.SoftmaxOutput(net, name=&#39;softmax&#39;)</span>
-
-<span class="sd">        &gt;&gt;&gt; args =  {&#39;data&#39;: mx.nd.ones((1, 4)), &#39;fc_weight&#39;: mx.nd.ones((6, 4)),</span>
-<span class="sd">        &gt;&gt;&gt;          &#39;fc_bias&#39;: mx.nd.array((1, 4, 4, 4, 5, 6)), &#39;softmax_label&#39;: mx.nd.ones((1))}</span>
-<span class="sd">        &gt;&gt;&gt; args_grad = {&#39;fc_weight&#39;: mx.nd.zeros((6, 4)), &#39;fc_bias&#39;: mx.nd.zeros((6))}</span>
-<span class="sd">        &gt;&gt;&gt; texec = net.bind(ctx=mx.cpu(), args=args, args_grad=args_grad)</span>
-<span class="sd">        &gt;&gt;&gt; out = texec.forward(is_train=True)[0].copy()</span>
-<span class="sd">        &gt;&gt;&gt; print out.asnumpy()</span>
-<span class="sd">        [[ 0.00378404  0.07600445  0.07600445  0.07600445  0.20660152  0.5616011 ]]</span>
-<span class="sd">        &gt;&gt;&gt; texec.backward()</span>
-<span class="sd">        &gt;&gt;&gt; print(texec.grad_arrays[1].asnumpy())</span>
-<span class="sd">        [[ 0.00378404  0.00378404  0.00378404  0.00378404]</span>
-<span class="sd">         [-0.92399555 -0.92399555 -0.92399555 -0.92399555]</span>
-<span class="sd">         [ 0.07600445  0.07600445  0.07600445  0.07600445]</span>
-<span class="sd">         [ 0.07600445  0.07600445  0.07600445  0.07600445]</span>
-<span class="sd">         [ 0.20660152  0.20660152  0.20660152  0.20660152]</span>
-<span class="sd">         [ 0.5616011   0.5616011   0.5616011   0.5616011 ]]</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # Example for binding on non-loss function symbol.</span>
-<span class="sd">        &gt;&gt;&gt; # Here the binding symbol is neither built-in loss function</span>
-<span class="sd">        &gt;&gt;&gt; # nor customized loss created by MakeLoss.</span>
-<span class="sd">        &gt;&gt;&gt; # As a result the head gradient is not automatically provided.</span>
-<span class="sd">        &gt;&gt;&gt; a = mx.sym.Variable(&#39;a&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; b = mx.sym.Variable(&#39;b&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; # c is not a loss function symbol</span>
-<span class="sd">        &gt;&gt;&gt; c = 2 * a + b</span>
-<span class="sd">        &gt;&gt;&gt; args = {&#39;a&#39;: mx.nd.array([1,2]), &#39;b&#39;:mx.nd.array([2,3])}</span>
-<span class="sd">        &gt;&gt;&gt; args_grad = {&#39;a&#39;: mx.nd.zeros((2)), &#39;b&#39;: mx.nd.zeros((2))}</span>
-<span class="sd">        &gt;&gt;&gt; texec = c.bind(ctx=mx.cpu(), args=args, args_grad=args_grad)</span>
-<span class="sd">        &gt;&gt;&gt; out = texec.forward(is_train=True)[0].copy()</span>
-<span class="sd">        &gt;&gt;&gt; print(out.asnumpy())</span>
-<span class="sd">        [ 4.  7.]</span>
-<span class="sd">        &gt;&gt;&gt; # out_grads is the head gradient in backward pass.</span>
-<span class="sd">        &gt;&gt;&gt; # Here we define &#39;c&#39; as loss function.</span>
-<span class="sd">        &gt;&gt;&gt; # Then &#39;out&#39; is passed as head gradient of backward pass.</span>
-<span class="sd">        &gt;&gt;&gt; texec.backward(out)</span>
-<span class="sd">        &gt;&gt;&gt; print(texec.grad_arrays[0].asnumpy())</span>
-<span class="sd">        [ 8.  14.]</span>
-<span class="sd">        &gt;&gt;&gt; print(texec.grad_arrays[1].asnumpy())</span>
-<span class="sd">        [ 4.  7.]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">out_grads</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">out_grads</span> <span class="o">=</span> <span class="p">[]</span>
