@@ -729,7 +729,7 @@ Show Source
 <h1>gluon.Block<a class="headerlink" href="#gluon-block" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="mxnet.gluon.Block">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.</code><code class="sig-name descname">Block</code><span class="sig-paren">(</span><em class="sig-param">prefix=None</em>, <em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.</code><code class="sig-name descname">Block</code><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for all neural network layers and models. Your models should
 subclass this class.</p>
@@ -741,10 +741,8 @@ assign child <a class="reference internal" href="#mxnet.gluon.Block" title="mxne
 <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># use name_scope to give child Blocks appropriate names.</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dense0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dense0</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -769,7 +767,7 @@ assign child <a class="reference internal" href="#mxnet.gluon.Block" title="mxne
 <td><p>Cast this Block to use another data type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.collect_params" title="mxnet.gluon.Block.collect_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_params</span></code></a>([select])</p></td>
-<td><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code> containing this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code> and all of its children’s Parameters(default), also can returns the select <code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code> which match some given regular expressions.</p></td>
+<td><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code> containing this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code> and all of its children’s Parameters(default), also can returns the select <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code> which match some given regular expressions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.forward" title="mxnet.gluon.Block.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(*args)</p></td>
 <td><p>Overrides to implement forward computation using <code class="xref py py-class docutils literal notranslate"><span class="pre">NDArray</span></code>.</p></td>
@@ -780,35 +778,41 @@ assign child <a class="reference internal" href="#mxnet.gluon.Block" title="mxne
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.initialize" title="mxnet.gluon.Block.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>([init, ctx, verbose, force_reinit])</p></td>
 <td><p>Initializes <code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code> s of this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code> and its children.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.load_parameters" title="mxnet.gluon.Block.load_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_parameters</span></code></a>(filename[, ctx, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.load_dict" title="mxnet.gluon.Block.load_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_dict</span></code></a>(param_dict[, ctx, allow_missing, …])</p></td>
+<td><p>Load parameters from dict</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.load_parameters" title="mxnet.gluon.Block.load_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_parameters</span></code></a>(filename[, ctx, …])</p></td>
 <td><p>Load parameters from file previously saved by <cite>save_parameters</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.load_params" title="mxnet.gluon.Block.load_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_params</span></code></a>(filename[, ctx, allow_missing, …])</p></td>
-<td><p>[Deprecated] Please use load_parameters.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.name_scope" title="mxnet.gluon.Block.name_scope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name_scope</span></code></a>()</p></td>
-<td><p>Returns a name space object managing a child <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code> and parameter names.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_child" title="mxnet.gluon.Block.register_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_child</span></code></a>(block[, name])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_child" title="mxnet.gluon.Block.register_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_child</span></code></a>(block[, name])</p></td>
 <td><p>Registers block as a child of self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_forward_hook" title="mxnet.gluon.Block.register_forward_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_forward_hook</span></code></a>(hook)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_forward_hook" title="mxnet.gluon.Block.register_forward_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_forward_hook</span></code></a>(hook)</p></td>
 <td><p>Registers a forward hook on the block.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_forward_pre_hook" title="mxnet.gluon.Block.register_forward_pre_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_forward_pre_hook</span></code></a>(hook)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_forward_pre_hook" title="mxnet.gluon.Block.register_forward_pre_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_forward_pre_hook</span></code></a>(hook)</p></td>
 <td><p>Registers a forward pre-hook on the block.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_op_hook" title="mxnet.gluon.Block.register_op_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_op_hook</span></code></a>(callback[, monitor_all])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.register_op_hook" title="mxnet.gluon.Block.register_op_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_op_hook</span></code></a>(callback[, monitor_all])</p></td>
 <td><p>Install callback monitor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.reset_ctx" title="mxnet.gluon.Block.reset_ctx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_ctx</span></code></a>(ctx)</p></td>
+<td><p>Re-assign all Parameters to other contexts.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.save_parameters" title="mxnet.gluon.Block.save_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_parameters</span></code></a>(filename[, deduplicate])</p></td>
 <td><p>Save parameters to file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.save_params" title="mxnet.gluon.Block.save_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_params</span></code></a>(filename)</p></td>
-<td><p>[Deprecated] Please use save_parameters. Note that if you want load</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.setattr" title="mxnet.gluon.Block.setattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setattr</span></code></a>(name, value)</p></td>
+<td><p>Set an attribute to a new value for all Parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.summary" title="mxnet.gluon.Block.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>(*inputs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.share_parameters" title="mxnet.gluon.Block.share_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">share_parameters</span></code></a>(shared)</p></td>
+<td><p>Share parameters recursively inside the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.summary" title="mxnet.gluon.Block.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>(*inputs)</p></td>
 <td><p>Print the summary of the model’s output and parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.zero_grad" title="mxnet.gluon.Block.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a>()</p></td>
+<td><p>Sets all Parameters’ gradient buffer to 0.</p></td>
 </tr>
 </tbody>
 </table>
@@ -820,37 +824,16 @@ assign child <a class="reference internal" href="#mxnet.gluon.Block" title="mxne
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.name" title="mxnet.gluon.Block.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
-<td><p>Name of this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code>, without ‘_’ in the end.</p></td>
+<td><p>Name of this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code>, class name + counter</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.Block.params" title="mxnet.gluon.Block.params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code></a></p></td>
 <td><p>Returns this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code>’s parameter dictionary (does not include its children’s parameters).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.Block.prefix" title="mxnet.gluon.Block.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span></code></a></p></td>
-<td><p>Prefix of this <code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 <p>Child <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> assigned this way will be registered and <a class="reference internal" href="#mxnet.gluon.Block.collect_params" title="mxnet.gluon.Block.collect_params"><code class="xref py py-meth docutils literal notranslate"><span class="pre">collect_params()</span></code></a>
 will collect their Parameters recursively. You can also manually register
 child blocks with <a class="reference internal" href="#mxnet.gluon.Block.register_child" title="mxnet.gluon.Block.register_child"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register_child()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prefix</strong> (<em>str</em>) – Prefix acts like a name space. All children blocks created in parent block’s
-<a class="reference internal" href="#mxnet.gluon.Block.name_scope" title="mxnet.gluon.Block.name_scope"><code class="xref py py-meth docutils literal notranslate"><span class="pre">name_scope()</span></code></a> will have parent block’s prefix in their name.
-Please refer to
-<a class="reference external" href="/api/python/docs/tutorials/packages/gluon/blocks/naming.html">naming tutorial</a>
-for more info on prefix and naming.</p></li>
-<li><p><strong>params</strong> (<a class="reference internal" href="parameter_dict.html#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><em>ParameterDict</em></a><em> or </em><em>None</em>) – <p><a class="reference internal" href="parameter_dict.html#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code></a> for sharing weights with the new <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>. For example,
-if you want <code class="docutils literal notranslate"><span class="pre">dense1</span></code> to share <code class="docutils literal notranslate"><span class="pre">dense0</span></code>’s weights, you can do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dense0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">dense0</span><span class="o">.</span><span class="n">collect_params</span><span class="p">())</span>
-</pre></div>
-</div>
-</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="method">
 <dt id="mxnet.gluon.Block.apply">
 <code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">fn</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.apply" title="Permalink to this definition">¶</a></dt>
@@ -882,12 +865,12 @@ if you want <code class="docutils literal notranslate"><span class="pre">dense1<
 <dl class="method">
 <dt id="mxnet.gluon.Block.collect_params">
 <code class="sig-name descname">collect_params</code><span class="sig-paren">(</span><em class="sig-param">select=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.collect_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.collect_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="parameter_dict.html#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code></a> containing this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> and all of its
-children’s Parameters(default), also can returns the select <a class="reference internal" href="parameter_dict.html#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code></a>
+<dd><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code> containing this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> and all of its
+children’s Parameters(default), also can returns the select <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>
 which match some given regular expressions.</p>
-<p>For example, collect the specified parameters in [‘conv1_weight’, ‘conv1_bias’, ‘fc_weight’,
-‘fc_bias’]:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="s1">&#39;conv1_weight|conv1_bias|fc_weight|fc_bias&#39;</span><span class="p">)</span>
+<p>For example, collect the specified parameters in [‘conv1.weight’, ‘conv1.bias’, ‘fc.weight’,
+‘fc.bias’]:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="s1">&#39;conv1.weight|conv1.bias|fc.weight|fc.bias&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or collect all parameters whose names end with ‘weight’ or ‘bias’, this can be done
@@ -903,7 +886,7 @@ using regular expressions:</p>
 <dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>The selected <a class="reference internal" href="parameter_dict.html#mxnet.gluon.ParameterDict" title="mxnet.gluon.ParameterDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterDict</span></code></a></p>
+<dd class="field-odd"><p>The selected <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -929,8 +912,7 @@ accepts positional arguments.</p>
 <dl class="method">
 <dt id="mxnet.gluon.Block.initialize">
 <code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">init=&lt;mxnet.initializer.Uniform object&gt;</em>, <em class="sig-param">ctx=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">force_reinit=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes <a class="reference internal" href="parameter.html#mxnet.gluon.Parameter" title="mxnet.gluon.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> s of this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> and its children.
-Equivalent to <code class="docutils literal notranslate"><span class="pre">block.collect_params().initialize(...)</span></code></p>
+<dd><p>Initializes <a class="reference internal" href="parameter.html#mxnet.gluon.Parameter" title="mxnet.gluon.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> s of this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> and its children.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -939,6 +921,28 @@ Otherwise, <code class="xref py py-meth docutils literal notranslate"><span clas
 <li><p><strong>ctx</strong> (<a class="reference internal" href="../mxnet/context/index.html#mxnet.context.Context" title="mxnet.context.Context"><em>Context</em></a><em> or </em><em>list of Context</em>) – Keeps a copy of Parameters on one or many context(s).</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to verbosely print out details on initialization.</p></li>
 <li><p><strong>force_reinit</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to force re-initialization if parameter is already initialized.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.gluon.Block.load_dict">
+<code class="sig-name descname">load_dict</code><span class="sig-paren">(</span><em class="sig-param">param_dict</em>, <em class="sig-param">ctx=None</em>, <em class="sig-param">allow_missing=False</em>, <em class="sig-param">ignore_extra=False</em>, <em class="sig-param">cast_dtype=False</em>, <em class="sig-param">dtype_source='current'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.load_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.load_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load parameters from dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_dict</strong> (<em>dict</em>) – Dictionary containing model parameters</p></li>
+<li><p><strong>ctx</strong> (<a class="reference internal" href="../mxnet/context/index.html#mxnet.context.Context" title="mxnet.context.Context"><em>Context</em></a><em> or </em><em>list of Context</em>) – Context(s) initialize loaded parameters on.</p></li>
+<li><p><strong>allow_missing</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently skip loading parameters not represented in the file.</p></li>
+<li><p><strong>ignore_extra</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to silently ignore parameters from the file that are not
+present in this dict.</p></li>
+<li><p><strong>cast_dtype</strong> (<em>bool</em><em>, </em><em>default False</em>) – Cast the data type of the NDArray loaded from the checkpoint to the dtype
+provided by the Parameter if any</p></li>
+<li><p><strong>dtype_source</strong> (<em>str</em><em>, </em><em>default 'current'</em>) – must be in {‘current’, ‘saved’}
+Only valid if cast_dtype=True, specify the source of the dtype for casting
+the parameters</p></li>
 </ul>
 </dd>
 </dl>
@@ -969,41 +973,9 @@ the parameters</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="mxnet.gluon.Block.load_params">
-<code class="sig-name descname">load_params</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">ctx=None</em>, <em class="sig-param">allow_missing=False</em>, <em class="sig-param">ignore_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.load_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.load_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>[Deprecated] Please use load_parameters.</p>
-<p>Load parameters from file.</p>
-<dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>Path to parameter file.</p>
-</dd>
-<dt>ctx<span class="classifier">Context or list of Context, default cpu()</span></dt><dd><p>Context(s) to initialize loaded parameters on.</p>
-</dd>
-<dt>allow_missing<span class="classifier">bool, default False</span></dt><dd><p>Whether to silently skip loading parameters not represents in the file.</p>
-</dd>
-<dt>ignore_extra<span class="classifier">bool, default False</span></dt><dd><p>Whether to silently ignore parameters from the file that are not
-present in this Block.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="mxnet.gluon.Block.name">
 <em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#mxnet.gluon.Block.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Name of this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>, without ‘_’ in the end.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="mxnet.gluon.Block.name_scope">
-<code class="sig-name descname">name_scope</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.name_scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.name_scope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a name space object managing a child <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a> and parameter
-names. Should be used within a <code class="docutils literal notranslate"><span class="pre">with</span></code> statement:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">dense</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Please refer to
-<a class="reference external" href="/api/python/docs/tutorials/packages/gluon/blocks/naming.html">the naming tutorial</a>
-for more info on prefix and naming.</p>
+<dd><p>Name of this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>, class name + counter</p>
 </dd></dl>
 
 <dl class="method">
@@ -1011,12 +983,6 @@ for more info on prefix and naming.</p>
 <em class="property">property </em><code class="sig-name descname">params</code><a class="headerlink" href="#mxnet.gluon.Block.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>’s parameter dictionary (does not include its
 children’s parameters).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="mxnet.gluon.Block.prefix">
-<em class="property">property </em><code class="sig-name descname">prefix</code><a class="headerlink" href="#mxnet.gluon.Block.prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prefix of this <a class="reference internal" href="#mxnet.gluon.Block" title="mxnet.gluon.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1083,6 +1049,18 @@ tensor being inspected (NDArray).</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="mxnet.gluon.Block.reset_ctx">
+<code class="sig-name descname">reset_ctx</code><span class="sig-paren">(</span><em class="sig-param">ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.reset_ctx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.reset_ctx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-assign all Parameters to other contexts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ctx</strong> (Context or list of Context, default <code class="xref py py-meth docutils literal notranslate"><span class="pre">context.current_context()</span></code>.) – Assign Parameter to given context. If ctx is a list of Context, a
+copy will be made for each context.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="mxnet.gluon.Block.save_parameters">
 <code class="sig-name descname">save_parameters</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">deduplicate=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.save_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.save_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save parameters to file.</p>
@@ -1104,13 +1082,52 @@ shared parameters will be separately saved for every sub-block.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="mxnet.gluon.Block.save_params">
-<code class="sig-name descname">save_params</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.save_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.save_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>[Deprecated] Please use save_parameters. Note that if you want load
-from SymbolBlock later, please use export instead.</p>
-<p>Save parameters to file.</p>
+<dt id="mxnet.gluon.Block.setattr">
+<code class="sig-name descname">setattr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.setattr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.setattr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an attribute to a new value for all Parameters.</p>
+<p>For example, set grad_req to null if you don’t need gradient w.r.t a
+model’s Parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;grad_req&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or change the learning rate multiplier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;lr_mult&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the attribute.</p></li>
+<li><p><strong>value</strong> (<em>valid type for attribute name</em>) – The new value for the attribute.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.gluon.Block.share_parameters">
+<code class="sig-name descname">share_parameters</code><span class="sig-paren">(</span><em class="sig-param">shared</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.share_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.share_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share parameters recursively inside the model.</p>
+<p>For example, if you want <code class="docutils literal notranslate"><span class="pre">dense1</span></code> to share <code class="docutils literal notranslate"><span class="pre">dense0</span></code>’s weights, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dense0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">dense1</span><span class="o">.</span><span class="n">share_parameters</span><span class="p">(</span><span class="n">dense0</span><span class="o">.</span><span class="n">collect_params</span><span class="p">())</span>
+</pre></div>
+</div>
 <dl class="simple">
-<dt>filename<span class="classifier">str</span></dt><dd><p>Path to file.</p>
+<dt>which equals to</dt><dd><p>dense1.weight = dense0.weight
+dense1.bias = dense0.bias</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shared</strong> (<em>Dict</em>) – Dict of the shared parameters.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>this block</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1126,6 +1143,12 @@ from SymbolBlock later, please use export instead.</p>
 <a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.ndarray.NDArray</span></code></a> is supported.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.gluon.Block.zero_grad">
+<code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/block.html#Block.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Block.zero_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets all Parameters’ gradient buffer to 0.</p>
 </dd></dl>
 
 </dd></dl>

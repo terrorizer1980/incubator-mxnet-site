@@ -729,7 +729,7 @@ Show Source
 <h1>gluon.Parameter<a class="headerlink" href="#gluon-parameter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="mxnet.gluon.Parameter">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.</code><code class="sig-name descname">Parameter</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">grad_req='write'</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">dtype=&lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">lr_mult=1.0</em>, <em class="sig-param">wd_mult=1.0</em>, <em class="sig-param">init=None</em>, <em class="sig-param">allow_deferred_init=False</em>, <em class="sig-param">differentiable=True</em>, <em class="sig-param">stype='default'</em>, <em class="sig-param">grad_stype='default'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/parameter.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Parameter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.gluon.</code><code class="sig-name descname">Parameter</code><span class="sig-paren">(</span><em class="sig-param">name='weight'</em>, <em class="sig-param">grad_req='write'</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">dtype=&lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">lr_mult=1.0</em>, <em class="sig-param">wd_mult=1.0</em>, <em class="sig-param">init=None</em>, <em class="sig-param">allow_deferred_init=False</em>, <em class="sig-param">differentiable=True</em>, <em class="sig-param">stype='default'</em>, <em class="sig-param">grad_stype='default'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/parameter.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Container holding parameters (weights) of Blocks.</p>
 <p><a class="reference internal" href="#mxnet.gluon.Parameter" title="mxnet.gluon.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> holds a copy of the parameter on each <code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code> after
@@ -810,7 +810,7 @@ not <code class="docutils literal notranslate"><span class="pre">'null'</span></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Name of this parameter.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default 'weight'</em>) – Name of this parameter. It decides the corresponding default initializer.</p></li>
 <li><p><strong>grad_req</strong> (<em>{'write'</em><em>, </em><em>'add'</em><em>, </em><em>'null'}</em><em>, </em><em>default 'write'</em>) – <p>Specifies how to update gradient to grad arrays.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'write'</span></code> means everytime gradient is written to grad <code class="xref py py-class docutils literal notranslate"><span class="pre">NDArray</span></code>.</p></li>
@@ -921,7 +921,7 @@ initialized on this context before. For sparse parameters, use
 
 <dl class="method">
 <dt id="mxnet.gluon.Parameter.initialize">
-<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">init=None</em>, <em class="sig-param">ctx=None</em>, <em class="sig-param">default_init=&lt;mxnet.initializer.Uniform object&gt;</em>, <em class="sig-param">force_reinit=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/parameter.html#Parameter.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Parameter.initialize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">init=None</em>, <em class="sig-param">ctx=None</em>, <em class="sig-param">default_init=&lt;mxnet.initializer.Uniform object&gt;</em>, <em class="sig-param">force_reinit=False</em>, <em class="sig-param">structural_name=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/gluon/parameter.html#Parameter.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.Parameter.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes parameter and gradient arrays. Only used for <code class="xref py py-class docutils literal notranslate"><span class="pre">NDArray</span></code> API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -939,6 +939,9 @@ Normally <code class="xref py py-class docutils literal notranslate"><span class
 <li><p><strong>default_init</strong> (<a class="reference internal" href="../initializer/index.html#mxnet.initializer.Initializer" title="mxnet.initializer.Initializer"><em>Initializer</em></a>) – Default initializer is used when both <code class="xref py py-func docutils literal notranslate"><span class="pre">init()</span></code>
 and <code class="xref py py-meth docutils literal notranslate"><span class="pre">Parameter.init()</span></code> are <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>force_reinit</strong> (<em>bool</em><em>, </em><em>default False</em>) – Whether to force re-initialization if parameter is already initialized.</p></li>
+<li><p><strong>structural_name</strong> (<em>str</em><em>, </em><em>default &quot;&quot;</em>) – The structural name for the parameter in the block.
+The value would be accessed in InitDesc.attrs[‘structure’] by self-defined initializers.
+Users may want to initialize parameters based on the block’s structure</p></li>
 </ul>
 </dd>
 </dl>

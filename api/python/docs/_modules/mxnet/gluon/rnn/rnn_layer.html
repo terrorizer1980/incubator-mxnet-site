@@ -737,13 +737,12 @@
 <span class="c1"># pylint: disable=too-many-branches, too-many-arguments, no-self-use</span>
 <span class="c1"># pylint: disable=too-many-lines, arguments-differ</span>
 <span class="sd">&quot;&quot;&quot;Definition of various recurrent neural network layers.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">re</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">,</span> <span class="s1">&#39;GRU&#39;</span><span class="p">]</span>
 
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">symbol</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">HybridBlock</span><span class="p">,</span> <span class="n">tensor_types</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">rnn_cell</span>
+<span class="kn">from</span> <span class="nn">..parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">...util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
 
 
@@ -820,8 +819,7 @@
                 <span class="n">ni</span> <span class="o">=</span> <span class="n">np</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span>
 
     <span class="k">def</span> <span class="nf">_register_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">init</span><span class="p">,</span>
-                            <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span>
 
@@ -840,65 +838,8 @@
                         <span class="n">mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_collect_params_with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(l|r)(\d)_(i2h|h2h|h2r)_(weight|bias)\Z&#39;</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">convert_key</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">bidirectional</span><span class="p">):</span> <span class="c1"># for compatibility with old parameter format</span>
-            <span class="n">d</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
-            <span class="k">if</span> <span class="n">bidirectional</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s1">&#39;_unfused.</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">_cell.</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s1">&#39;_unfused.</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-        <span class="n">bidirectional</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">)</span>
-
-        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">convert_key</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">bidirectional</span><span class="p">)</span> <span class="p">:</span> <span class="n">val</span>
-               <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">ret</span>
-
     <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">_unfuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Unfuses the fused RNN in to a stack of rnn cells.&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_projection_size</span><span class="p">,</span> <span class="s2">&quot;_unfuse does not support projection layer yet!&quot;</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lstm_state_clip_min</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lstm_state_clip_max</span><span class="p">,</span> \
-                <span class="s2">&quot;_unfuse does not support state clipping yet!&quot;</span>
-        <span class="n">get_cell</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rnn_relu&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">rnn_cell</span><span class="o">.</span><span class="n">RNNCell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span>
-                                                                  <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
-                                                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-                    <span class="s1">&#39;rnn_tanh&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">rnn_cell</span><span class="o">.</span><span class="n">RNNCell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span>
-                                                                  <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                                                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-                    <span class="s1">&#39;lstm&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">rnn_cell</span><span class="o">.</span><span class="n">LSTMCell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span>
-                                                               <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-                    <span class="s1">&#39;gru&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">rnn_cell</span><span class="o">.</span><span class="n">GRUCell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span>
-                                                             <span class="o">**</span><span class="n">kwargs</span><span class="p">)}[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="p">]</span>
-
-        <span class="n">stack</span> <span class="o">=</span> <span class="n">rnn_cell</span><span class="o">.</span><span class="n">HybridSequentialRNNCell</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">stack</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-            <span class="n">ni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_layers</span><span class="p">):</span>
-                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input_size&#39;</span><span class="p">:</span> <span class="n">ni</span><span class="p">,</span>
-                          <span class="s1">&#39;i2h_weight_initializer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i2h_weight_initializer</span><span class="p">,</span>
-                          <span class="s1">&#39;h2h_weight_initializer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h2h_weight_initializer</span><span class="p">,</span>
-                          <span class="s1">&#39;i2h_bias_initializer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i2h_bias_initializer</span><span class="p">,</span>
-                          <span class="s1">&#39;h2h_bias_initializer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h2h_bias_initializer</span><span class="p">}</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">stack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rnn_cell</span><span class="o">.</span><span class="n">BidirectionalCell</span><span class="p">(</span>
-                        <span class="n">get_cell</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;l</span><span class="si">%d</span><span class="s1">_&#39;</span><span class="o">%</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-                        <span class="n">get_cell</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;r</span><span class="si">%d</span><span class="s1">_&#39;</span><span class="o">%</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">stack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">get_cell</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;l</span><span class="si">%d</span><span class="s1">_&#39;</span><span class="o">%</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropout</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">stack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rnn_cell</span><span class="o">.</span><span class="n">DropoutCell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dropout</span><span class="p">))</span>
-
-                <span class="n">ni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span>
-
-        <span class="k">return</span> <span class="n">stack</span>
 
     <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_RNNLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
@@ -936,7 +877,7 @@
                 <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">info</span> <span class="o">=</span> <span class="n">kwargs</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">h0_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="o">**</span><span class="n">info</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;h0_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="o">**</span><span class="n">info</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
                 <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span>
             <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -1065,10 +1006,6 @@
 <span class="sd">        If not specified, it will be inferred from input.</span>
 <span class="sd">    dtype : str, default &#39;float32&#39;</span>
 <span class="sd">        Type to initialize the parameters and default states to</span>
-<span class="sd">    prefix : str or None</span>
-<span class="sd">        Prefix of this `Block`.</span>
-<span class="sd">    params : ParameterDict or None</span>
-<span class="sd">        Shared Parameters for this `Block`.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1185,10 +1122,6 @@
 <span class="sd">    input_size: int, default 0</span>
 <span class="sd">        The number of expected features in the input x.</span>
 <span class="sd">        If not specified, it will be inferred from input.</span>
-<span class="sd">    prefix : str or None</span>
-<span class="sd">        Prefix of this `Block`.</span>
-<span class="sd">    params : `ParameterDict` or `None`</span>
-<span class="sd">        Shared Parameters for this `Block`.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1299,10 +1232,6 @@
 <span class="sd">    input_size: int, default 0</span>
 <span class="sd">        The number of expected features in the input x.</span>
 <span class="sd">        If not specified, it will be inferred from input.</span>
-<span class="sd">    prefix : str or None</span>
-<span class="sd">        Prefix of this `Block`.</span>
-<span class="sd">    params : ParameterDict or None</span>
-<span class="sd">        Shared Parameters for this `Block`.</span>
 
 
 <span class="sd">    Inputs:</span>

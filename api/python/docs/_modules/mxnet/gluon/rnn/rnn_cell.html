@@ -746,6 +746,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span>
 <span class="kn">from</span> <span class="nn">...base</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">,</span> <span class="n">_as_list</span>
 <span class="kn">from</span> <span class="nn">..block</span> <span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">HybridBlock</span>
+<span class="kn">from</span> <span class="nn">..parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">_indent</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">tensor_types</span>
 <span class="kn">from</span> <span class="nn">..nn</span> <span class="kn">import</span> <span class="n">LeakyReLU</span>
@@ -842,18 +843,9 @@
 <div class="viewcode-block" id="RecurrentCell"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.RecurrentCell">[docs]</a><span class="k">class</span> <span class="nc">RecurrentCell</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstract base class for RNN cells</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    prefix : str, optional</span>
-<span class="sd">        Prefix for names of `Block`s</span>
-<span class="sd">        (this prefix is also used for names of weights if `params` is `None`</span>
-<span class="sd">        i.e. if `params` are being created and not reused)</span>
-<span class="sd">    params : Parameter or None, default None</span>
-<span class="sd">        Container for weight sharing between cells.</span>
-<span class="sd">        A new Parameter container is created if `params` is `None`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RecurrentCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RecurrentCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -904,7 +896,7 @@
                 <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">info</span> <span class="o">=</span> <span class="n">kwargs</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">begin_state_</span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_counter</span><span class="p">),</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;begin_state_</span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_counter</span><span class="p">),</span>
                          <span class="o">**</span><span class="n">info</span><span class="p">)</span>
             <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">states</span></div>
@@ -1034,8 +1026,8 @@
 
 <div class="viewcode-block" id="HybridRecurrentCell"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.HybridRecurrentCell">[docs]</a><span class="k">class</span> <span class="nc">HybridRecurrentCell</span><span class="p">(</span><span class="n">RecurrentCell</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;HybridRecurrentCell supports hybridize.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridRecurrentCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridRecurrentCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="HybridRecurrentCell.hybrid_forward"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.HybridRecurrentCell.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
@@ -1073,12 +1065,6 @@
 <span class="sd">    input_size: int, default 0</span>
 <span class="sd">        The number of expected features in the input x.</span>
 <span class="sd">        If not specified, it will be inferred from input.</span>
-<span class="sd">    prefix : str, default ``&#39;rnn_&#39;``</span>
-<span class="sd">        Prefix for name of `Block`s</span>
-<span class="sd">        (and name of weight if params is `None`).</span>
-<span class="sd">    params : Parameter or None</span>
-<span class="sd">        Container for weight sharing between cells.</span>
-<span class="sd">        Created if `None`.</span>
 
 
 <span class="sd">    Inputs:</span>
@@ -1094,23 +1080,23 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="n">input_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RNNCell.state_info"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.RNNCell.state_info">[docs]</a>    <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">),</span> <span class="s1">&#39;__layout__&#39;</span><span class="p">:</span> <span class="s1">&#39;NC&#39;</span><span class="p">}]</span></div>
@@ -1183,12 +1169,6 @@
 <span class="sd">    input_size: int, default 0</span>
 <span class="sd">        The number of expected features in the input x.</span>
 <span class="sd">        If not specified, it will be inferred from input.</span>
-<span class="sd">    prefix : str, default ``&#39;lstm_&#39;``</span>
-<span class="sd">        Prefix for name of `Block`s</span>
-<span class="sd">        (and name of weight if params is `None`).</span>
-<span class="sd">    params : Parameter or None, default None</span>
-<span class="sd">        Container for weight sharing between cells.</span>
-<span class="sd">        Created if `None`.</span>
 <span class="sd">    activation : str, default &#39;tanh&#39;</span>
 <span class="sd">        Activation type to use. See nd/symbol Activation</span>
 <span class="sd">        for supported types.</span>
@@ -1210,24 +1190,23 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">recurrent_activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">recurrent_activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="n">input_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recurrent_activation</span> <span class="o">=</span> <span class="n">recurrent_activation</span>
 
@@ -1311,12 +1290,6 @@
 <span class="sd">    input_size: int, default 0</span>
 <span class="sd">        The number of expected features in the input x.</span>
 <span class="sd">        If not specified, it will be inferred from input.</span>
-<span class="sd">    prefix : str, default ``&#39;gru_&#39;``</span>
-<span class="sd">        prefix for name of `Block`s</span>
-<span class="sd">        (and name of weight if params is `None`).</span>
-<span class="sd">    params : Parameter or None, default None</span>
-<span class="sd">        Container for weight sharing between cells.</span>
-<span class="sd">        Created if `None`.</span>
 <span class="sd">    activation : str, default &#39;tanh&#39;</span>
 <span class="sd">        Activation type to use. See nd/symbol Activation</span>
 <span class="sd">        for supported types.</span>
@@ -1338,23 +1311,22 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">recurrent_activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                 <span class="n">input_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">recurrent_activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="n">input_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">),</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recurrent_activation</span> <span class="o">=</span> <span class="n">recurrent_activation</span>
 
@@ -1419,8 +1391,8 @@
 
 <div class="viewcode-block" id="SequentialRNNCell"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.SequentialRNNCell">[docs]</a><span class="k">class</span> <span class="nc">SequentialRNNCell</span><span class="p">(</span><span class="n">RecurrentCell</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sequentially stacking multiple RNN cells.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SequentialRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SequentialRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1499,8 +1471,8 @@
 
 <div class="viewcode-block" id="HybridSequentialRNNCell"><a class="viewcode-back" href="../../../../api/gluon/rnn/index.html#mxnet.gluon.rnn.HybridSequentialRNNCell">[docs]</a><span class="k">class</span> <span class="nc">HybridSequentialRNNCell</span><span class="p">(</span><span class="n">HybridRecurrentCell</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sequentially stacking multiple HybridRNN cells.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridSequentialRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridSequentialRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1594,8 +1566,8 @@
 <span class="sd">        - **out**: output tensor with shape `(batch_size, size)`.</span>
 <span class="sd">        - **next_states**: returns input `states` directly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DropoutCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">()):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DropoutCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">),</span> <span class="s2">&quot;rate must be a number&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="n">rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span> <span class="o">=</span> <span class="n">axes</span>
@@ -1642,8 +1614,7 @@
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">base_cell</span><span class="o">.</span><span class="n">_modified</span><span class="p">,</span> \
             <span class="s2">&quot;Cell </span><span class="si">%s</span><span class="s2"> is already modified. One cell cannot be modified twice&quot;</span><span class="o">%</span><span class="n">base_cell</span><span class="o">.</span><span class="n">name</span>
         <span class="n">base_cell</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ModifierCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">base_cell</span><span class="o">.</span><span class="n">prefix</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_alias</span><span class="p">(),</span>
-                                           <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ModifierCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_cell</span> <span class="o">=</span> <span class="n">base_cell</span>
 
     <span class="nd">@property</span>
@@ -1767,11 +1738,10 @@
 <span class="sd">    r_cell : RecurrentCell</span>
 <span class="sd">        Cell for backward unrolling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_cell</span><span class="p">,</span> <span class="n">r_cell</span><span class="p">,</span> <span class="n">output_prefix</span><span class="o">=</span><span class="s1">&#39;bi_&#39;</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">BidirectionalCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_cell</span><span class="p">,</span> <span class="n">r_cell</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BidirectionalCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l_cell</span> <span class="o">=</span> <span class="n">l_cell</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_cell</span> <span class="o">=</span> <span class="n">r_cell</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_prefix</span> <span class="o">=</span> <span class="n">output_prefix</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Bidirectional cannot be stepped. Please use unroll&quot;</span><span class="p">)</span>
@@ -1822,10 +1792,10 @@
         <span class="k">if</span> <span class="n">merge_outputs</span><span class="p">:</span>
             <span class="n">reversed_r_outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">reversed_r_outputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
             <span class="n">outputs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">l_outputs</span><span class="p">,</span> <span class="n">reversed_r_outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                               <span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">out&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_prefix</span><span class="p">)</span>
+                               <span class="n">name</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">l_o</span><span class="p">,</span> <span class="n">r_o</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">t</span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_prefix</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">l_o</span><span class="p">,</span> <span class="n">r_o</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;t</span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">l_o</span><span class="p">,</span> <span class="n">r_o</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l_outputs</span><span class="p">,</span> <span class="n">reversed_r_outputs</span><span class="p">))]</span>
         <span class="k">if</span> <span class="n">valid_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">outputs</span> <span class="o">=</span> <span class="n">_mask_sequence_variable_length</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">valid_length</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span>

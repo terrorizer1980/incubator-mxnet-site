@@ -744,6 +744,7 @@
 
 <span class="kn">from</span> <span class="nn">....base</span> <span class="kn">import</span> <span class="n">numeric_types</span>
 <span class="kn">from</span> <span class="nn">...rnn</span> <span class="kn">import</span> <span class="n">HybridRecurrentCell</span>
+<span class="kn">from</span> <span class="nn">...parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
 
 <span class="k">def</span> <span class="nf">_get_conv_out_size</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">paddings</span><span class="p">,</span> <span class="n">dilations</span><span class="p">):</span>
@@ -759,9 +760,8 @@
                  <span class="n">i2h_weight_initializer</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="p">,</span>
                  <span class="n">dims</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">_BaseConvRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                 <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_BaseConvRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_channels</span> <span class="o">=</span> <span class="n">hidden_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">input_shape</span>
@@ -796,18 +796,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_h2h_pad</span><span class="p">,</span> \
         <span class="bp">self</span><span class="o">.</span><span class="n">_state_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_shapes</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">i2h_param_shape</span><span class="p">,</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">h2h_param_shape</span><span class="p">,</span>
-                                          <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
-                                          <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_channels</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_gates</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_channels</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_gates</span><span class="p">,),</span>
-                                        <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                                        <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">i2h_param_shape</span><span class="p">,</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">i2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_weight&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">h2h_param_shape</span><span class="p">,</span>
+                                    <span class="n">init</span><span class="o">=</span><span class="n">h2h_weight_initializer</span><span class="p">,</span>
+                                    <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;i2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_channels</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_gates</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h2h_bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;h2h_bias&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">hidden_channels</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_gates</span><span class="p">,),</span>
+                                  <span class="n">init</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
+                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_decide_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">channel_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_layout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
@@ -896,7 +896,7 @@
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span> <span class="n">i2h_pad</span><span class="p">,</span> <span class="n">i2h_dilate</span><span class="p">,</span> <span class="n">h2h_dilate</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_ConvRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                            <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
@@ -908,8 +908,7 @@
                                            <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="n">i2h_bias_initializer</span><span class="p">,</span>
                                            <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                            <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
-                                           <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                           <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                                           <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_shape</span><span class="p">,</span> <span class="s1">&#39;__layout__&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_layout</span><span class="p">}]</span>
@@ -972,18 +971,13 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_rnn_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
                  <span class="n">i2h_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv1DRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -995,8 +989,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv2DRNNCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv2DRNNCell">[docs]</a><span class="k">class</span> <span class="nc">Conv2DRNNCell</span><span class="p">(</span><span class="n">_ConvRNNCell</span><span class="p">):</span>
@@ -1039,18 +1032,13 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_rnn_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
                  <span class="n">i2h_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv2DRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1062,8 +1050,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv3DRNNCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv3DRNNCell">[docs]</a><span class="k">class</span> <span class="nc">Conv3DRNNCell</span><span class="p">(</span><span class="n">_ConvRNNCell</span><span class="p">):</span>
@@ -1106,10 +1093,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_rnn_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1117,8 +1100,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv3DRNNCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1130,8 +1112,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">_ConvLSTMCell</span><span class="p">(</span><span class="n">_BaseConvRNNCell</span><span class="p">):</span>
@@ -1140,7 +1121,7 @@
                  <span class="n">i2h_pad</span><span class="p">,</span> <span class="n">i2h_dilate</span><span class="p">,</span> <span class="n">h2h_dilate</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_ConvLSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1152,8 +1133,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_shape</span><span class="p">,</span> <span class="s1">&#39;__layout__&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_layout</span><span class="p">},</span>
@@ -1236,10 +1216,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_lstm_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1247,8 +1223,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv1DLSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                              <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                              <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1260,8 +1235,7 @@
                                              <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                              <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                                              <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv2DLSTMCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv2DLSTMCell">[docs]</a><span class="k">class</span> <span class="nc">Conv2DLSTMCell</span><span class="p">(</span><span class="n">_ConvLSTMCell</span><span class="p">):</span>
@@ -1313,10 +1287,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_lstm_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1324,8 +1294,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv2DLSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                              <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                              <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1337,8 +1306,7 @@
                                              <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                              <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                              <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv3DLSTMCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv3DLSTMCell">[docs]</a><span class="k">class</span> <span class="nc">Conv3DLSTMCell</span><span class="p">(</span><span class="n">_ConvLSTMCell</span><span class="p">):</span>
@@ -1390,10 +1358,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_lstm_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1401,8 +1365,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv3DLSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                              <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                              <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1414,8 +1377,7 @@
                                              <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                              <span class="n">dims</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                              <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">_ConvGRUCell</span><span class="p">(</span><span class="n">_BaseConvRNNCell</span><span class="p">):</span>
@@ -1423,7 +1385,7 @@
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span> <span class="n">i2h_pad</span><span class="p">,</span> <span class="n">i2h_dilate</span><span class="p">,</span> <span class="n">h2h_dilate</span><span class="p">,</span>
                  <span class="n">i2h_weight_initializer</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="p">,</span>
-                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+                 <span class="n">dims</span><span class="p">,</span> <span class="n">conv_layout</span><span class="p">,</span> <span class="n">activation</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_ConvGRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                            <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                            <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1435,8 +1397,7 @@
                                            <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                            <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
                                            <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                           <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                           <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                                           <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_shape</span><span class="p">,</span> <span class="s1">&#39;__layout__&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_layout</span><span class="p">}]</span>
@@ -1520,10 +1481,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_gru_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1531,8 +1488,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv1DGRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1544,8 +1500,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv2DGRUCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv2DGRUCell">[docs]</a><span class="k">class</span> <span class="nc">Conv2DGRUCell</span><span class="p">(</span><span class="n">_ConvGRUCell</span><span class="p">):</span>
@@ -1592,10 +1547,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_gru_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1603,8 +1554,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv2DGRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1616,8 +1566,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Conv3DGRUCell"><a class="viewcode-back" href="../../../../../api/gluon/contrib/index.html#mxnet.gluon.contrib.rnn.Conv3DGRUCell">[docs]</a><span class="k">class</span> <span class="nc">Conv3DGRUCell</span><span class="p">(</span><span class="n">_ConvGRUCell</span><span class="p">):</span>
@@ -1664,10 +1613,6 @@
 <span class="sd">        If argument type is string, it&#39;s equivalent to nn.Activation(act_type=str). See</span>
 <span class="sd">        :func:`~mxnet.ndarray.Activation` for available choices.</span>
 <span class="sd">        Alternatively, other activation blocks such as nn.LeakyReLU can be used.</span>
-<span class="sd">    prefix : str, default ``&#39;conv_gru_``&#39;</span>
-<span class="sd">        Prefix for name of layers (and name of weight if params is None).</span>
-<span class="sd">    params : RNNParams, default None</span>
-<span class="sd">        Container for weight sharing between cells. Created if None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
                  <span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1675,8 +1620,7 @@
                  <span class="n">i2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">h2h_dilate</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                  <span class="n">i2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h2h_weight_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">i2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span> <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">conv_layout</span><span class="o">=</span><span class="s1">&#39;NCDHW&#39;</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Conv3DGRUCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">,</span>
                                             <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_channels</span><span class="p">,</span>
                                             <span class="n">i2h_kernel</span><span class="o">=</span><span class="n">i2h_kernel</span><span class="p">,</span> <span class="n">h2h_kernel</span><span class="o">=</span><span class="n">h2h_kernel</span><span class="p">,</span>
@@ -1688,8 +1632,7 @@
                                             <span class="n">h2h_bias_initializer</span><span class="o">=</span><span class="n">h2h_bias_initializer</span><span class="p">,</span>
                                             <span class="n">dims</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                             <span class="n">conv_layout</span><span class="o">=</span><span class="n">conv_layout</span><span class="p">,</span>
-                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
-                                            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+                                            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">)</span></div>
 </pre></div>
 
         </div>

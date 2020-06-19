@@ -739,6 +739,7 @@
 
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..block</span> <span class="kn">import</span> <span class="n">HybridBlock</span>
+<span class="kn">from</span> <span class="nn">..parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">...util</span> <span class="kn">import</span> <span class="n">is_np_array</span>
 
 
@@ -851,9 +852,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha_initializer</span><span class="o">=</span><span class="n">initializer</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span>
                  <span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,),</span>
-                                         <span class="n">init</span><span class="o">=</span><span class="n">alpha_initializer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,),</span> <span class="n">init</span><span class="o">=</span><span class="n">alpha_initializer</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PReLU.hybrid_forward"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.PReLU.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
         <span class="n">leaky_relu</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">leaky_relu</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">F</span><span class="o">.</span><span class="n">LeakyReLU</span>

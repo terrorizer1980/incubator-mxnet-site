@@ -753,7 +753,7 @@
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">profiler</span> <span class="k">as</span> <span class="n">_profiler</span>
-<span class="kn">from</span> <span class="nn">.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterDict</span><span class="p">,</span> <span class="n">DeferredInitializationError</span>
+<span class="kn">from</span> <span class="nn">.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">DeferredInitializationError</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">,</span> <span class="n">HookHandle</span><span class="p">,</span> <span class="n">shape_is_known</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_check_same_symbol_type</span><span class="p">,</span> <span class="n">_check_all_np_ndarrays</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy_extension</span> <span class="k">as</span> <span class="n">_mx_npx</span>
@@ -774,57 +774,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates prefix, params, and profiler scope name for new `Block`.</span>
+<span class="sd">        Creates unique name for new `Block`.</span>
 <span class="sd">        The profiler scope is to support the GPU memory profiler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">_block</span><span class="p">()</span> <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-                    <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="p">()</span>
-                <span class="n">prefix</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">hint</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>
-            <span class="c1"># replace the trailing underscore with colon</span>
-            <span class="n">profiler_scope_name</span> <span class="o">=</span> <span class="p">(</span><span class="n">prefix</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> \
-                                   <span class="k">else</span> <span class="n">prefix</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-            <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">profiler_scope_name</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+                <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="p">()</span>
+            <span class="n">block_name</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">hint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">block_name</span>
 
-        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">count</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">_&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="p">[</span><span class="n">hint</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">parent</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">params</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">prefix</span><span class="o">+</span><span class="n">prefix</span><span class="p">,</span> <span class="n">parent</span><span class="o">.</span><span class="n">_shared</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="c1"># replace the trailing underscore with colon</span>
-        <span class="n">profiler_scope_name</span> <span class="o">=</span> <span class="p">(</span><span class="n">prefix</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> \
-                               <span class="k">else</span> <span class="n">prefix</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> \
-               <span class="n">block</span><span class="o">.</span><span class="n">_profiler_scope_name</span> <span class="o">+</span> <span class="n">profiler_scope_name</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">block_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="p">[</span><span class="n">hint</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">block_name</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">_empty_prefix</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">Prefix</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">Prefix</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span> <span class="o">=</span> <span class="n">_profiler</span><span class="o">.</span><span class="n">Scope</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_profiler_scope_name</span><span class="p">)</span>
+        <span class="n">_profiler_scope_name</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span> <span class="o">=</span> <span class="n">_profiler</span><span class="o">.</span><span class="n">Scope</span><span class="p">(</span><span class="n">_profiler_scope_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">_empty_prefix</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="kc">None</span>
@@ -965,7 +947,7 @@
     <span class="k">return</span> <span class="n">_merger</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block">[docs]</a><span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block">[docs]</a><span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for all neural network layers and models. Your models should</span>
 <span class="sd">    subclass this class.</span>
 
@@ -978,10 +960,8 @@
 <span class="sd">        class Model(Block):</span>
 <span class="sd">            def __init__(self, **kwargs):</span>
 <span class="sd">                super(Model, self).__init__(**kwargs)</span>
-<span class="sd">                # use name_scope to give child Blocks appropriate names.</span>
-<span class="sd">                with self.name_scope():</span>
-<span class="sd">                    self.dense0 = nn.Dense(20)</span>
-<span class="sd">                    self.dense1 = nn.Dense(20)</span>
+<span class="sd">                self.dense0 = nn.Dense(20)</span>
+<span class="sd">                self.dense1 = nn.Dense(20)</span>
 
 <span class="sd">            def forward(self, x):</span>
 <span class="sd">                x = mx.nd.relu(self.dense0(x))</span>
@@ -996,31 +976,14 @@
 <span class="sd">    will collect their Parameters recursively. You can also manually register</span>
 <span class="sd">    child blocks with :py:meth:`register_child`.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    prefix : str</span>
-<span class="sd">        Prefix acts like a name space. All children blocks created in parent block&#39;s</span>
-<span class="sd">        :py:meth:`name_scope` will have parent block&#39;s prefix in their name.</span>
-<span class="sd">        Please refer to</span>
-<span class="sd">        `naming tutorial &lt;/api/python/docs/tutorials/packages/gluon/blocks/naming.html&gt;`_</span>
-<span class="sd">        for more info on prefix and naming.</span>
-<span class="sd">    params : ParameterDict or None</span>
-<span class="sd">        :py:class:`ParameterDict` for sharing weights with the new :py:class:`Block`. For example,</span>
-<span class="sd">        if you want ``dense1`` to share ``dense0``&#39;s weights, you can do::</span>
-
-<span class="sd">            dense0 = nn.Dense(20)</span>
-<span class="sd">            dense1 = nn.Dense(20, params=dense0.collect_params())</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_empty_prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profiler_scope_name</span> <span class="o">=</span> \
-                <span class="n">_BlockScope</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alias</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span> <span class="o">=</span> <span class="n">_BlockScope</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">_BlockScope</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alias</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span> <span class="o">=</span> <span class="n">_BlockScope</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">(</span><span class="se">\n</span><span class="si">{modstr}</span><span class="se">\n</span><span class="s1">)&#39;</span>
@@ -1042,10 +1005,6 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Block</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register_child</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">,</span> \
-                <span class="s2">&quot;Overriding Parameter attribute </span><span class="si">%s</span><span class="s2"> is not allowed. &quot;</span> \
-                <span class="s2">&quot;If you want to share parameters between blocks, please set &quot;</span> \
-                <span class="s2">&quot;&#39;params&#39; at Block construction instead.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -1082,43 +1041,25 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prefix of this :py:class:`Block`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Name of this :py:class:`Block`, without &#39;_&#39; in the end.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Name of this :py:class:`Block`, class name + counter &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
-
-<div class="viewcode-block" id="Block.name_scope"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.name_scope">[docs]</a>    <span class="k">def</span> <span class="nf">name_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a name space object managing a child :py:class:`Block` and parameter</span>
-<span class="sd">        names. Should be used within a ``with`` statement::</span>
-
-<span class="sd">            with self.name_scope():</span>
-<span class="sd">                self.dense = nn.Dense(20)</span>
-
-<span class="sd">        Please refer to</span>
-<span class="sd">        `the naming tutorial &lt;/api/python/docs/tutorials/packages/gluon/blocks/naming.html&gt;`_</span>
-<span class="sd">        for more info on prefix and naming.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns this :py:class:`Block`&#39;s parameter dictionary (does not include its</span>
 <span class="sd">        children&#39;s parameters).&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span>
 
-<div class="viewcode-block" id="Block.collect_params"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.collect_params">[docs]</a>    <span class="k">def</span> <span class="nf">collect_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a :py:class:`ParameterDict` containing this :py:class:`Block` and all of its</span>
-<span class="sd">        children&#39;s Parameters(default), also can returns the select :py:class:`ParameterDict`</span>
+<div class="viewcode-block" id="Block.collect_params"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.collect_params">[docs]</a>    <span class="k">def</span> <span class="nf">collect_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a :py:class:`Dict` containing this :py:class:`Block` and all of its</span>
+<span class="sd">        children&#39;s Parameters(default), also can returns the select :py:class:`Dict`</span>
 <span class="sd">        which match some given regular expressions.</span>
 
-<span class="sd">        For example, collect the specified parameters in [&#39;conv1_weight&#39;, &#39;conv1_bias&#39;, &#39;fc_weight&#39;,</span>
-<span class="sd">        &#39;fc_bias&#39;]::</span>
+<span class="sd">        For example, collect the specified parameters in [&#39;conv1.weight&#39;, &#39;conv1.bias&#39;, &#39;fc.weight&#39;,</span>
+<span class="sd">        &#39;fc.bias&#39;]::</span>
 
-<span class="sd">            model.collect_params(&#39;conv1_weight|conv1_bias|fc_weight|fc_bias&#39;)</span>
+<span class="sd">            model.collect_params(&#39;conv1.weight|conv1.bias|fc.weight|fc.bias&#39;)</span>
 
 <span class="sd">        or collect all parameters whose names end with &#39;weight&#39; or &#39;bias&#39;, this can be done</span>
 <span class="sd">        using regular expressions::</span>
@@ -1132,29 +1073,26 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        The selected :py:class:`ParameterDict`</span>
+<span class="sd">        The selected :py:class:`Dict`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># We need to check here because blocks inside containers are not supported.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_container_with_block</span><span class="p">()</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">select</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)})</span>
-        <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">ret</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_collect_params_with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_collect_params_with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="n">select</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">key</span><span class="p">)}</span>
+
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">select</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-<div class="viewcode-block" id="Block.save_parameters"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">deduplicate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.save_parameters"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.save_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">deduplicate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save parameters to file.</span>
 
 <span class="sd">        Saved parameters can only be loaded with `load_parameters`. Note that this</span>
@@ -1190,27 +1128,7 @@
         <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
         <span class="n">save_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.save_params"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.save_params">[docs]</a>    <span class="k">def</span> <span class="nf">save_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;[Deprecated] Please use save_parameters. Note that if you want load</span>
-<span class="sd">        from SymbolBlock later, please use export instead.</span>
-
-<span class="sd">        Save parameters to file.</span>
-
-<span class="sd">        filename : str</span>
-<span class="sd">            Path to file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;save_params is deprecated. Please use save_parameters. &quot;</span>
-                      <span class="s2">&quot;Note that if you want load from SymbolBlock later, please &quot;</span>
-                      <span class="s2">&quot;use export instead. For details, see &quot;</span>
-                      <span class="s2">&quot;https://mxnet.apache.org/tutorials/gluon/save_lo&quot;</span>
-                      <span class="s2">&quot;ad_params.html&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">strip_prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">save_params is deprecated. Using &#39;</span> \
-                              <span class="s1">&#39;save_parameters may resolve this error.&#39;</span><span class="o">%</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Block.load_parameters"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.load_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="Block.load_parameters"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.load_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">&#39;current&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load parameters from file previously saved by `save_parameters`.</span>
 
@@ -1259,69 +1177,74 @@
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">loaded</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_params_with_prefix</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">loaded</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
-            <span class="k">return</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">loaded</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="c1"># legacy loading</span>
-            <span class="n">loaded</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># This should be changed to `del loaded` when dropping Python 2</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
-                <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">loaded</span><span class="p">:</span>
             <span class="k">return</span>
+        <span class="n">full_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">loaded</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">full_dict</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.load_dict"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.load_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s2">&quot;current&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load parameters from dict</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param_dict : dict</span>
+<span class="sd">            Dictionary containing model parameters</span>
+<span class="sd">        ctx : Context or list of Context</span>
+<span class="sd">            Context(s) initialize loaded parameters on.</span>
+<span class="sd">        allow_missing : bool, default False</span>
+<span class="sd">            Whether to silently skip loading parameters not represented in the file.</span>
+<span class="sd">        ignore_extra : bool, default False</span>
+<span class="sd">            Whether to silently ignore parameters from the file that are not</span>
+<span class="sd">            present in this dict.</span>
+<span class="sd">        cast_dtype : bool, default False</span>
+<span class="sd">            Cast the data type of the NDArray loaded from the checkpoint to the dtype</span>
+<span class="sd">            provided by the Parameter if any</span>
+<span class="sd">        dtype_source : str, default &#39;current&#39;</span>
+<span class="sd">            must be in {&#39;current&#39;, &#39;saved&#39;}</span>
+<span class="sd">            Only valid if cast_dtype=True, specify the source of the dtype for casting</span>
+<span class="sd">            the parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># pass from load_parameters</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="n">error_str</span> <span class="o">=</span> <span class="s2">&quot;file: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">if</span> <span class="n">filename</span> <span class="k">else</span> <span class="s2">&quot;param_dict&quot;</span>
+        <span class="n">loaded</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;arg:&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;aux:&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span> \
+                  <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_missing</span><span class="p">:</span>
-            <span class="c1"># Shared parameters are stored only a single time as of MXNet 1.6.</span>
-            <span class="c1"># We thus retrieve all prefixes (through _collect_params_with_prefix)</span>
-            <span class="c1"># that a shared parameter is used with. Check that there are no</span>
-            <span class="c1"># missing parameters that were not yet already loaded from the</span>
-            <span class="c1"># shared version.</span>
             <span class="n">params_inv</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">params_inv</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">loaded</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_inv</span><span class="p">[</span><span class="n">param</span><span class="p">]),</span> \
-                    <span class="s2">&quot;Parameter &#39;</span><span class="si">%s</span><span class="s2">&#39; is missing in file &#39;</span><span class="si">%s</span><span class="s2">&#39;, which contains parameters: </span><span class="si">%s</span><span class="s2">. &quot;</span> \
+                    <span class="s2">&quot;Parameter &#39;</span><span class="si">%s</span><span class="s2">&#39; is missing in &#39;</span><span class="si">%s</span><span class="s2">&#39;, which contains parameters: </span><span class="si">%s</span><span class="s2">. &quot;</span> \
                     <span class="s2">&quot;Set allow_missing=True to ignore missing parameters.&quot;</span><span class="o">%</span><span class="p">(</span>
-                        <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">loaded</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">loaded</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">loaded</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_extra</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Parameter &#39;</span><span class="si">%s</span><span class="s2">&#39; loaded from file &#39;</span><span class="si">%s</span><span class="s2">&#39; is not present in ParameterDict, &quot;</span> \
+                    <span class="s2">&quot;Parameter &#39;</span><span class="si">%s</span><span class="s2">&#39; loaded from &#39;</span><span class="si">%s</span><span class="s2">&#39; is not present in Dict, &quot;</span> \
                     <span class="s2">&quot;which contains parameters </span><span class="si">%s</span><span class="s2">. Set ignore_extra=True to ignore. &quot;</span><span class="o">%</span><span class="p">(</span>
-                        <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.load_params"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.load_params">[docs]</a>    <span class="k">def</span> <span class="nf">load_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;[Deprecated] Please use load_parameters.</span>
-
-<span class="sd">        Load parameters from file.</span>
-
-<span class="sd">        filename : str</span>
-<span class="sd">            Path to parameter file.</span>
-<span class="sd">        ctx : Context or list of Context, default cpu()</span>
-<span class="sd">            Context(s) to initialize loaded parameters on.</span>
-<span class="sd">        allow_missing : bool, default False</span>
-<span class="sd">            Whether to silently skip loading parameters not represents in the file.</span>
-<span class="sd">        ignore_extra : bool, default False</span>
-<span class="sd">            Whether to silently ignore parameters from the file that are not</span>
-<span class="sd">            present in this Block.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;load_params is deprecated. Please use load_parameters.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Block.register_child"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.register_child">[docs]</a>    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.register_child"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_child">[docs]</a>    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Registers block as a child of self. :py:class:`Block` s assigned to self as</span>
 <span class="sd">        attributes will be registered automatically.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">block</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.register_forward_pre_hook"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.register_forward_pre_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_forward_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.register_forward_pre_hook"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_forward_pre_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_forward_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward pre-hook on the block.</span>
 
 <span class="sd">        The hook function is called immediately before :func:`forward`.</span>
@@ -1340,7 +1263,7 @@
         <span class="n">handle</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">handle</span></div>
 
-<div class="viewcode-block" id="Block.register_forward_hook"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.register_forward_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.register_forward_hook"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_forward_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward hook on the block.</span>
 
 <span class="sd">        The hook function is called immediately after :func:`forward`.</span>
@@ -1359,7 +1282,7 @@
         <span class="n">handle</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">handle</span></div>
 
-<div class="viewcode-block" id="Block.apply"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.apply"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies ``fn`` recursively to every child block as well as self.</span>
 
 <span class="sd">        Parameters</span>
@@ -1376,10 +1299,9 @@
         <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Block.initialize"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">initializer</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(),</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="Block.initialize"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">initializer</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(),</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                    <span class="n">force_reinit</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes :py:class:`Parameter` s of this :py:class:`Block` and its children.</span>
-<span class="sd">        Equivalent to ``block.collect_params().initialize(...)``</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1393,15 +1315,19 @@
 <span class="sd">        force_reinit : bool, default False</span>
 <span class="sd">            Whether to force re-initialization if parameter is already initialized.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">force_reinit</span><span class="p">)</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">init</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">force_reinit</span><span class="o">=</span><span class="n">force_reinit</span><span class="p">,</span> <span class="n">structural_name</span><span class="o">=</span><span class="n">k</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.hybridize"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.hybridize">[docs]</a>    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.hybridize"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.hybridize">[docs]</a>    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Please refer description of HybridBlock hybridize().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.cast"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.cast"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cast this Block to use another data type.</span>
 
 <span class="sd">        Parameters</span>
@@ -1413,6 +1339,111 @@
             <span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">param</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.zero_grad"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets all Parameters&#39; gradient buffer to 0.&quot;&quot;&quot;</span>
+        <span class="c1"># collect gradient arrays for each ctx</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad_req</span> <span class="o">==</span> <span class="s1">&#39;null&#39;</span> <span class="ow">or</span> <span class="n">p</span><span class="o">.</span><span class="n">_grad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">list_grad</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;row_sparse&#39;</span><span class="p">:</span>
+                    <span class="n">ndarray</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">ctx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+                    <span class="n">ele</span><span class="p">[()]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">ndarray</span><span class="o">.</span><span class="n">reset_arrays</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="n">num_arrays</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Block.reset_ctx"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.reset_ctx">[docs]</a>    <span class="k">def</span> <span class="nf">reset_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Re-assign all Parameters to other contexts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ctx : Context or list of Context, default :py:meth:`context.current_context()`.</span>
+<span class="sd">            Assign Parameter to given context. If ctx is a list of Context, a</span>
+<span class="sd">            copy will be made for each context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">reset_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.setattr"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.setattr">[docs]</a>    <span class="k">def</span> <span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set an attribute to a new value for all Parameters.</span>
+
+<span class="sd">        For example, set grad_req to null if you don&#39;t need gradient w.r.t a</span>
+<span class="sd">        model&#39;s Parameters::</span>
+
+<span class="sd">            model.setattr(&#39;grad_req&#39;, &#39;null&#39;)</span>
+
+<span class="sd">        or change the learning rate multiplier::</span>
+
+<span class="sd">            model.setattr(&#39;lr_mult&#39;, 0.5)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of the attribute.</span>
+<span class="sd">        value : valid type for attribute name</span>
+<span class="sd">            The new value for the attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.share_parameters"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.share_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">share_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shared</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Share parameters recursively inside the model.</span>
+
+<span class="sd">        For example, if you want ``dense1`` to share ``dense0``&#39;s weights, you can do::</span>
+
+<span class="sd">            dense0 = nn.Dense(20)</span>
+<span class="sd">            dense1 = nn.Dense(20)</span>
+<span class="sd">            dense1.share_parameters(dense0.collect_params())</span>
+
+<span class="sd">        which equals to</span>
+<span class="sd">            dense1.weight = dense0.weight</span>
+<span class="sd">            dense1.bias = dense0.bias</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shared : Dict</span>
+<span class="sd">            Dict of the shared parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        this block</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shared</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;shared&#39; should be in type of Dict. Get type </span><span class="si">{}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">shared</span><span class="p">)))</span>
+        <span class="n">shared_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">shared</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shared_parameters</span><span class="p">(</span><span class="n">shared</span><span class="p">,</span> <span class="n">shared_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shared_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">shared_set</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Parameter name </span><span class="si">{}</span><span class="s2"> is not in the current model!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_shared_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shared</span><span class="p">,</span> <span class="n">shared_set</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">+=</span> <span class="s1">&#39;.&#39;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span>
+            <span class="k">if</span> <span class="n">shared</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">shared</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">shared_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">child</span><span class="p">()</span><span class="o">.</span><span class="n">_shared_parameters</span><span class="p">(</span><span class="n">shared</span><span class="p">,</span> <span class="n">shared_set</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calls forward. Only accepts positional arguments.&quot;&quot;&quot;</span>
@@ -1427,7 +1458,7 @@
             <span class="n">_check_all_np_ndarrays</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
 
-<div class="viewcode-block" id="Block.forward"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overrides to implement forward computation using :py:class:`NDArray`. Only</span>
 <span class="sd">        accepts positional arguments.</span>
 
@@ -1439,7 +1470,7 @@
         <span class="c1"># pylint: disable= invalid-name</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="Block.register_op_hook"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.register_op_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.register_op_hook"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_op_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Install callback monitor.</span>
 
 <span class="sd">        Parameters</span>
@@ -1456,7 +1487,7 @@
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">register_op_hook</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Block.summary"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="Block.summary"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Print the summary of the model&#39;s output and parameters.</span>
 
 <span class="sd">        The network must have been initialized, and must not have been hybridized.</span>
@@ -1568,7 +1599,7 @@
                 <span class="n">h</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">HybridBlock</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock">[docs]</a><span class="k">class</span> <span class="nc">HybridBlock</span><span class="p">(</span><span class="n">Block</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;`HybridBlock` supports forwarding with both Symbol and NDArray.</span>
 
 <span class="sd">    `HybridBlock` is similar to `Block`, with a few differences::</span>
@@ -1579,10 +1610,8 @@
 <span class="sd">        class Model(HybridBlock):</span>
 <span class="sd">            def __init__(self, **kwargs):</span>
 <span class="sd">                super(Model, self).__init__(**kwargs)</span>
-<span class="sd">                # use name_scope to give child Blocks appropriate names.</span>
-<span class="sd">                with self.name_scope():</span>
-<span class="sd">                    self.dense0 = nn.Dense(20)</span>
-<span class="sd">                    self.dense1 = nn.Dense(20)</span>
+<span class="sd">                self.dense0 = nn.Dense(20)</span>
+<span class="sd">                self.dense1 = nn.Dense(20)</span>
 
 <span class="sd">            def forward(self, x):</span>
 <span class="sd">                x = nd.relu(self.dense0(x))</span>
@@ -1612,8 +1641,8 @@
 <span class="sd">        `Hybrid - Faster training and easy deployment</span>
 <span class="sd">        &lt;https://mxnet.io/tutorials/gluon/hybrid.html&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1630,6 +1659,10 @@
         <span class="sd">&quot;&quot;&quot;Registers parameters.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Currently the model has been hybridized. Automatically deactivate the hybridization </span><span class="se">\</span>
+<span class="s2">                               when changing the children blocks.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_graph_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -1657,7 +1690,7 @@
                     <span class="n">flatten_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">grouped_inputs</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">flatten_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span><span class="p">)</span>
             <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span><span class="p">:</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="o">*</span><span class="n">grouped_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># pylint: disable=no-value-for-parameter</span>
             <span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)</span>
 
@@ -1703,6 +1736,7 @@
         <span class="n">data</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">data_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
         <span class="n">input_names</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
         <span class="n">param_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">expected_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_names</span><span class="p">)</span>
@@ -1809,7 +1843,7 @@
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.optimize_for"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.optimize_for">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Partitions the current HybridBlock and optimizes it for a given backend</span>
 <span class="sd">        without executing a forward pass. Modifies the HybridBlock in-place.</span>
 
@@ -1869,14 +1903,14 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">,</span> <span class="s2">&quot;Gluon failed to build the cache. &quot;</span> \
                                 <span class="s2">&quot;This should never happen. &quot;</span> \
                                 <span class="s2">&quot;Please submit an issue on Github&quot;</span> \
-                                <span class="s2">&quot; https://github.com/apache/incubator-mxnet.&quot;</span>
+                                <span class="s2">&quot; https://github.com/apache/incubator-mxnet.&quot;</span></div>
         <span class="c1"># do not actually call the cached_op</span>
 
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.register_child"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.register_child">[docs]</a>    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Children of HybridBlock must also be HybridBlock, &quot;</span> \
@@ -1884,9 +1918,13 @@
                 <span class="s2">&quot;please try HybridSequential instead.&quot;</span><span class="o">%</span><span class="p">(</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">))))</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register_child</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Currently the model has been hybridized. Automatically deactivate the hybridization </span><span class="se">\</span>
+<span class="s2">                           when adding new children block.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.hybridize"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.hybridize">[docs]</a>    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Activates or deactivates :py:class:`HybridBlock` s recursively. Has no effect on</span>
 <span class="sd">        non-hybrid children.</span>
 
@@ -1919,11 +1957,15 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">{block}</span><span class="s1">&quot; is being hybridized while still having forward hook/pre-hook. &#39;</span>
                           <span class="s1">&#39;If &quot;</span><span class="si">{block}</span><span class="s1">&quot; is a child of HybridBlock, the hooks will not take effect.&#39;</span>
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.cast"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Currently the model has been hybridized. Automatically deactivate the hybridization </span><span class="se">\</span>
+<span class="s2">                           when cast the block to use another data type.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_infer_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infer_fn</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generic infer attributes.&quot;&quot;&quot;</span>
@@ -1941,7 +1983,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">sdict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.infer_shape"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.infer_shape">[docs]</a>    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Infers shape of Parameters from inputs.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
             <span class="c1"># Gluon 1 based on F:  hybrid_forward is defined by user</span>
@@ -1956,13 +1998,13 @@
                     <span class="s2">&quot;</span><span class="si">{name}</span><span class="s2"> has parameters with unknown shape. You need to either specify the shape &quot;</span>
                     <span class="s2">&quot;in __init__ or implement </span><span class="si">{name}</span><span class="s2">.infer_shape to set the parameter shapes &quot;</span>
                     <span class="s2">&quot;based on the first input. Parameters with unknown shapes are </span><span class="si">{params}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">name</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params_str</span><span class="p">))</span>
+                        <span class="n">name</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params_str</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.infer_type"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.infer_type">[docs]</a>    <span class="k">def</span> <span class="nf">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Infers data type of Parameters from inputs.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_attrs</span><span class="p">(</span><span class="s1">&#39;infer_type&#39;</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_attrs</span><span class="p">(</span><span class="s1">&#39;infer_type&#39;</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.export"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Export HybridBlock to json format that can be loaded by</span>
 <span class="sd">        `gluon.SymbolBlock.imports` or the C++ interface.</span>
 
@@ -1976,7 +2018,8 @@
 <span class="sd">            will be created, where xxxx is the 4 digits epoch number.</span>
 <span class="sd">        epoch : int</span>
 <span class="sd">            Epoch number of saved model.</span>
-
+<span class="sd">        remove_amp_cast : bool, optional</span>
+<span class="sd">            Whether to remove the amp_cast and amp_multicast operators, before saving the model.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        symbol_filename : str</span>
@@ -1995,18 +2038,18 @@
         <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">())</span>
         <span class="n">aux_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">())</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
-                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;arg:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
+                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;arg:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span>
-                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;aux:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span>
+                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;aux:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
         <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
         <span class="n">params_filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%04d</span><span class="s1">.params&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
         <span class="n">save_fn</span><span class="p">(</span><span class="n">params_filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">sym_filename</span><span class="p">,</span> <span class="n">params_filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">sym_filename</span><span class="p">,</span> <span class="n">params_filename</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.register_op_hook"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.register_op_hook">[docs]</a>    <span class="k">def</span> <span class="nf">register_op_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">monitor_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Install op hook for block recursively.</span>
 
 <span class="sd">        Parameters</span>
@@ -2033,7 +2076,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span>
         <span class="k">for</span> <span class="n">cld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">c_callback</span>
-            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span>
+            <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
@@ -2061,7 +2104,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_cached_op</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Defines the forward computation. Arguments can be either</span>
 <span class="sd">        :py:class:`NDArray` or :py:class:`Symbol`.&quot;&quot;&quot;</span>
 
@@ -2095,10 +2138,10 @@
 
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HybridBlock.hybrid_forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overrides to construct symbolic graph for this `Block`.</span>
 
 <span class="sd">        Parameters</span>
@@ -2109,22 +2152,10 @@
 <span class="sd">            Additional input tensors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable= invalid-name</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-<span class="k">def</span> <span class="nf">_common_prefix</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the common prefix for all names&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prefix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">prefix</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">SymbolBlock</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+<div class="viewcode-block" id="SymbolBlock"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock">[docs]</a><span class="k">class</span> <span class="nc">SymbolBlock</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Construct block from symbol. This is useful for using pre-trained models</span>
 <span class="sd">    as feature extractors. For example, you may want to extract the output</span>
 <span class="sd">    from fc2 layer in AlexNet.</span>
@@ -2135,28 +2166,27 @@
 <span class="sd">        The desired output for SymbolBlock.</span>
 <span class="sd">    inputs : Symbol or list of Symbol</span>
 <span class="sd">        The Variables in output&#39;s argument that should be used as inputs.</span>
-<span class="sd">    params : ParameterDict</span>
+<span class="sd">    params : dict</span>
 <span class="sd">        Parameter dictionary for arguments and auxililary states of outputs</span>
 <span class="sd">        that are not inputs.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; # To extract the feature from fc1 and fc2 layers of AlexNet:</span>
-<span class="sd">    &gt;&gt;&gt; alexnet = gluon.model_zoo.vision.alexnet(pretrained=True, ctx=mx.cpu(),</span>
-<span class="sd">                                                 prefix=&#39;model_&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; alexnet = gluon.model_zoo.vision.alexnet(pretrained=True, ctx=mx.cpu())</span>
 <span class="sd">    &gt;&gt;&gt; inputs = mx.sym.var(&#39;data&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; out = alexnet(inputs)</span>
 <span class="sd">    &gt;&gt;&gt; internals = out.get_internals()</span>
 <span class="sd">    &gt;&gt;&gt; print(internals.list_outputs())</span>
-<span class="sd">    [&#39;data&#39;, ..., &#39;model_dense0_relu_fwd_output&#39;, ..., &#39;model_dense1_relu_fwd_output&#39;, ...]</span>
-<span class="sd">    &gt;&gt;&gt; outputs = [internals[&#39;model_dense0_relu_fwd_output&#39;],</span>
-<span class="sd">                   internals[&#39;model_dense1_relu_fwd_output&#39;]]</span>
+<span class="sd">    [&#39;data&#39;, ..., &#39;features_9_act_fwd_output&#39;, ..., &#39;features_11_act_fwd_output&#39;, ...]</span>
+<span class="sd">    &gt;&gt;&gt; outputs = [internals[&#39;features_9_act_fwd_output&#39;],</span>
+<span class="sd">                   internals[&#39;features_11_act_fwd_output&#39;]]</span>
 <span class="sd">    &gt;&gt;&gt; # Create SymbolBlock that shares parameters with alexnet</span>
 <span class="sd">    &gt;&gt;&gt; feat_model = gluon.SymbolBlock(outputs, inputs, params=alexnet.collect_params())</span>
 <span class="sd">    &gt;&gt;&gt; x = mx.nd.random.normal(shape=(16, 3, 224, 224))</span>
 <span class="sd">    &gt;&gt;&gt; print(feat_model(x))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SymbolBlock.imports"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock.imports">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">param_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Import model previously saved by `gluon.HybridBlock.export`</span>
 <span class="sd">        as a `gluon.SymbolBlock` for use in Gluon.</span>
@@ -2179,8 +2209,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; net1 = gluon.model_zoo.vision.resnet18_v1(</span>
-<span class="sd">        ...     prefix=&#39;resnet&#39;, pretrained=True)</span>
+<span class="sd">        &gt;&gt;&gt; net1 = gluon.model_zoo.vision.resnet18_v1(pretrained=True)</span>
 <span class="sd">        &gt;&gt;&gt; net1.hybridize()</span>
 <span class="sd">        &gt;&gt;&gt; x = mx.nd.random.normal(shape=(1, 3, 32, 32))</span>
 <span class="sd">        &gt;&gt;&gt; out1 = net1(x)</span>
@@ -2204,8 +2233,8 @@
             <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">SymbolBlock</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">&#39;saved&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">&#39;saved&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">(</span><span class="se">\n</span><span class="si">{modstr}</span><span class="se">\n</span><span class="s1">)&#39;</span>
@@ -2217,9 +2246,17 @@
                         <span class="n">modstr</span><span class="o">=</span><span class="n">modstr</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">ParameterDict</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">structure</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2253,19 +2290,33 @@
 
         <span class="n">arg_types</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">_infer_param_types</span><span class="p">(</span><span class="n">syms</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
 
+        <span class="k">def</span> <span class="nf">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">_check_and_setattr</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span><span class="p">:</span>
+                <span class="n">lis</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Can not find structured name for Parameter </span><span class="si">%s</span><span class="s2"> in &#39;params&#39;. &quot;</span> \
+                    <span class="s2">&quot;Please check &#39;params&#39; is complete!&quot;</span> <span class="o">%</span> <span class="n">name</span>
+                <span class="k">for</span> <span class="n">structured_name</span> <span class="ow">in</span> <span class="n">lis</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">structured_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arg_params</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">aux</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aux_params</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">aux</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">aux</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">syms</span><span class="p">,</span> <span class="n">out</span>
-        <span class="n">len_prefix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_common_prefix</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">[</span><span class="n">len_prefix</span><span class="p">:]:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="SymbolBlock.forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">dc</span><span class="o">.</span><span class="n">is_deferred_compute</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Calling a SymbolBlock from within HybridBlock &#39;</span>
                                <span class="s1">&#39;is not yet supported in Gluon 2.&#39;</span><span class="p">)</span>
@@ -2281,14 +2332,14 @@
         <span class="k">assert</span> <span class="n">in_fmt</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span><span class="p">,</span> <span class="s2">&quot;Invalid input format&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">ret</span><span class="o">.</span><span class="n">_compose</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">)})</span>
-        <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ret</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ret</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">tmp</span>
 
-    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<div class="viewcode-block" id="SymbolBlock.cast"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;float16&#39;</span><span class="p">:</span>
@@ -2312,10 +2363,10 @@
                     <span class="k">if</span> <span class="n">is_bn</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">sib</span> <span class="ow">in</span> <span class="n">sibs</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sib</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sib</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<div class="viewcode-block" id="SymbolBlock.hybrid_forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 
 <span class="k">def</span> <span class="nf">_infer_param_types</span><span class="p">(</span><span class="n">in_params</span><span class="p">,</span> <span class="n">out_params</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">,</span> <span class="n">default_dtype</span><span class="o">=</span><span class="n">mx_real_t</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Utility function that helps in inferring DType of args and auxs params</span>
