@@ -283,8 +283,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -563,8 +562,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -741,7 +739,7 @@
 
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">_LIB</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">c_str_array</span><span class="p">,</span> <span class="n">c_handle_array</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">CachedOpHandle</span>
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">CachedOpHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span>
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">check_call</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">_global_var</span>
 
@@ -839,9 +837,24 @@
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXFreeCachedOp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
 
+<div class="viewcode-block" id="CachedOp.get_optimized_symbol"><a class="viewcode-back" href="../../../api/ndarray/ndarray.html#mxnet.ndarray.CachedOp.get_optimized_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimized_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an optimized version of the symbol from the cached op.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        symbol : Symbol</span>
+<span class="sd">            Optimized symbol from the executor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">..symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+        <span class="n">sym_handle</span> <span class="o">=</span> <span class="n">SymbolHandle</span><span class="p">()</span>
+        <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXCachedOpGetOptimizedSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">sym_handle</span><span class="p">)))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">sym_handle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;ctypes implementation of imperative invoke wrapper&quot;&quot;&quot;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">default_ctx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;default_ctx&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">original_output</span> <span class="o">=</span> <span class="n">out</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">NDArrayBase</span><span class="p">):</span>
@@ -862,10 +875,19 @@
         <span class="c1"># a handle&#39;s stype in _ndarray_cls</span>
         <span class="n">out_stypes</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)()</span>
 
+        <span class="c1"># (None, ) -&gt; []</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">assert</span> <span class="n">default_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;default_ctx is required if no input is provided&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_ctx</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ctx</span> <span class="k">if</span> <span class="n">default_ctx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default_ctx</span>
+
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXInvokeCachedOpEx</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)),</span>
             <span class="n">c_handle_array</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">default_ctx</span><span class="o">.</span><span class="n">device_typeid</span><span class="p">),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">default_ctx</span><span class="o">.</span><span class="n">device_id</span><span class="p">),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">num_output</span><span class="p">),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">output_vars</span><span class="p">),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">out_stypes</span><span class="p">)))</span>

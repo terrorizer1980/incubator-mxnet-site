@@ -294,8 +294,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -574,8 +573,7 @@ Show Source
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -725,129 +723,8 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <div class="section" id="module-mxnet.contrib.quantization">
-<span id="contrib-quantization"></span><h1>contrib.quantization<a class="headerlink" href="#module-mxnet.contrib.quantization" title="Permalink to this headline">¶</a></h1>
-<p>Quantization module for generating quantized (INT8) models from FP32 models.</p>
-<p><strong>Functions</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.quantization.calib_graph" title="mxnet.contrib.quantization.calib_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calib_graph</span></code></a>(qsym, arg_params, aux_params, …)</p></td>
-<td><p>User-level API for calibrating a quantized model using a filled collector.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.contrib.quantization.combine_histogram" title="mxnet.contrib.quantization.combine_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_histogram</span></code></a>(old_hist, arr, new_min, …)</p></td>
-<td><p>Collect layer histogram for arr and combine it with old histogram.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.contrib.quantization.quantize_graph" title="mxnet.contrib.quantization.quantize_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantize_graph</span></code></a>(sym, arg_params, aux_params)</p></td>
-<td><p>User-level API for generating a quantized model from a FP32 model w/o calibration and a collector for naive or entropy calibration.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="mxnet.contrib.quantization.calib_graph">
-<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">calib_graph</code><span class="sig-paren">(</span><em class="sig-param">qsym</em>, <em class="sig-param">arg_params</em>, <em class="sig-param">aux_params</em>, <em class="sig-param">collector</em>, <em class="sig-param">calib_mode='entropy'</em>, <em class="sig-param">quantized_dtype='int8'</em>, <em class="sig-param">logger=&lt;module 'logging' from '/work/conda_env/lib/python3.8/logging/__init__.py'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#calib_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.calib_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>User-level API for calibrating a quantized model using a filled collector.
-The backend quantized operators are only enabled for Linux systems. Please do not run
-inference using the quantized models on Windows for now.
-:param qsym: Defines the structure of a neural network for INT8 data types.
-:type qsym: str or Symbol
-:param arg_params: Dictionary of name to <cite>NDArray</cite>.
-:type arg_params: dict
-:param aux_params: Dictionary of name to <cite>NDArray</cite>.
-:type aux_params: dict
-:param collector: layer collector for naive or entropy calibration.
-:type collector: function
-:param calib_mode: If calib_mode=’none’, no calibration will be used and the thresholds for</p>
-<blockquote>
-<div><p>requantization after the corresponding layers will be calculated at runtime by
-calling min and max operators. The quantized models generated in this
-mode are normally 10-20% slower than those with calibrations during inference.
-If calib_mode=’naive’, the min and max values of the layer outputs from a calibration
-dataset will be directly taken as the thresholds for quantization.
-If calib_mode=’entropy’ (default mode), the thresholds for quantization will be
-derived such that the KL divergence between the distributions of FP32 layer outputs and
-quantized layer outputs is minimized based upon the calibration dataset.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>quantized_dtype</strong> (<em>str</em>) – The quantized destination type for input data. Currently support ‘int8’
-, ‘uint8’ and ‘auto’. ‘auto’ means automatically select output type according to calibration result.
-Default value is ‘int8’.</p></li>
-<li><p><strong>logger</strong> (<em>Object</em>) – A logging object for printing information during the process of quantization.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>tuple</em> – A tuple of calibrated symbol, quantized arg_params, aux_params.</p></li>
-<li><p><em>——-</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="mxnet.contrib.quantization.combine_histogram">
-<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">combine_histogram</code><span class="sig-paren">(</span><em class="sig-param">old_hist</em>, <em class="sig-param">arr</em>, <em class="sig-param">new_min</em>, <em class="sig-param">new_max</em>, <em class="sig-param">new_th</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#combine_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.combine_histogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collect layer histogram for arr and combine it with old histogram.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="mxnet.contrib.quantization.quantize_graph">
-<code class="sig-prename descclassname">mxnet.contrib.quantization.</code><code class="sig-name descname">quantize_graph</code><span class="sig-paren">(</span><em class="sig-param">sym</em>, <em class="sig-param">arg_params</em>, <em class="sig-param">aux_params</em>, <em class="sig-param">ctx=cpu(0)</em>, <em class="sig-param">excluded_sym_names=None</em>, <em class="sig-param">excluded_op_names=None</em>, <em class="sig-param">calib_mode='entropy'</em>, <em class="sig-param">quantized_dtype='int8'</em>, <em class="sig-param">quantize_mode='full'</em>, <em class="sig-param">quantize_granularity='tensor-wise'</em>, <em class="sig-param">LayerOutputCollector=None</em>, <em class="sig-param">logger=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/contrib/quantization.html#quantize_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.contrib.quantization.quantize_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>User-level API for generating a quantized model from a FP32 model w/o calibration
-and a collector for naive or entropy calibration.
-The backend quantized operators are only enabled for Linux systems. Please do not run
-inference using the quantized models on Windows for now.
-:param sym: Defines the structure of a neural network for FP32 data types.
-:type sym: str or Symbol
-:param ctx: Defines the device that users want to run forward propagation on the calibration</p>
-<blockquote>
-<div><p>dataset for collecting layer output statistics. Currently, only supports single context.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>arg_params</strong> (<em>dict</em>) – Dictionary of name to <cite>NDArray</cite>.</p></li>
-<li><p><strong>aux_params</strong> (<em>dict</em>) – Dictionary of name to <cite>NDArray</cite>.</p></li>
-<li><p><strong>excluded_sym_names</strong> (<em>list of strings</em>) – A list of strings representing the names of the symbols that users want to excluding
-from being quantized.</p></li>
-<li><p><strong>excluded_op_names</strong> (<em>list of strings</em>) – A list of strings representing the names of the operators that users want to excluding</p></li>
-<li><p><strong>calib_mode</strong> (<em>str</em>) – If calib_mode=’none’, no calibration will be used and the thresholds for
-requantization after the corresponding layers will be calculated at runtime by
-calling min and max operators. The quantized models generated in this
-mode are normally 10-20% slower than those with calibrations during inference.
-If calib_mode=’naive’, the min and max values of the layer outputs from a calibration
-dataset will be directly taken as the thresholds for quantization.
-If calib_mode=’entropy’ (default mode), the thresholds for quantization will be
-derived such that the KL divergence between the distributions of FP32 layer outputs and
-quantized layer outputs is minimized based upon the calibration dataset.</p></li>
-<li><p><strong>quantized_dtype</strong> (<em>str</em>) – The quantized destination type for input data. Currently support ‘int8’
-, ‘uint8’ and ‘auto’. ‘auto’ means automatically select output type according to calibration result.
-Default value is ‘int8’.</p></li>
-<li><p><strong>quantize_mode</strong> (<em>str</em>) – The mode that quantization pass to apply. Support ‘full’ and ‘smart’.
-‘full’ means quantize all operator if possible.
-‘smart’ means quantization pass will smartly choice which operator should be quantized.</p></li>
-<li><p><strong>quantize_granularity</strong> (<em>str</em>) – The granularity of quantization, currently supports ‘tensor-wise’ and ‘channel-wise’
-quantization. The default value is ‘tensor-wise’.</p></li>
-<li><p><strong>LayerOutputCollector</strong> (<em>class</em>) – For customize calibration method usage.</p></li>
-<li><p><strong>logger</strong> (<em>Object</em>) – A logging object for printing information during the process of quantization.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>tuple</em> – A tuple of quantized symbol, quantized arg_params, aux_params and collector.</p></li>
-<li><p><em>——-</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <div class="section" id="contrib-quantization">
+<h1>contrib.quantization<a class="headerlink" href="#contrib-quantization" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

@@ -283,8 +283,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -563,8 +562,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/mkldnn/mkldnn_readme.html">Install MXNet with MKL-DNN</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/tensorrt.html">Optimizing Deep Learning Computation Graphs with TensorRT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tensorrt/index.html">TensorRT</a><ul class="simple">
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tutorials/performance/backend/tvm.html">Use TVM</a></li>
@@ -871,13 +869,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hdl</span> <span class="o">=</span> <span class="n">NDArrayHandle</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">_int64_enabled</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;bfloat16&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)]):</span>
+            <span class="n">dtype_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dtype_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">type</span>
         <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXNDArrayCreateEx64</span><span class="p">(</span>
             <span class="n">c_array_buf</span><span class="p">(</span><span class="n">mx_int64</span><span class="p">,</span> <span class="n">native_array</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="p">)),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">device_typeid</span><span class="p">),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">device_id</span><span class="p">),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">delay_alloc</span><span class="p">)),</span>
-            <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_DTYPE_NP_TO_MX</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">])),</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_DTYPE_NP_TO_MX</span><span class="p">[</span><span class="n">dtype_type</span><span class="p">])),</span>
             <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">hdl</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># When shape is larger than unit32 then there is an overflow error at python end itself.</span>
@@ -3533,7 +3535,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">zeros</span> <span class="k">as</span> <span class="n">_zeros</span>
         <span class="k">if</span> <span class="n">stype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">grad</span> <span class="o">=</span> <span class="n">_zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="n">stype</span><span class="p">)</span>
+            <span class="n">grad</span> <span class="o">=</span> <span class="n">_zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="n">stype</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">grad</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># pylint: disable=undefined-variable</span>
         <span class="n">grad_req</span> <span class="o">=</span> <span class="n">_GRAD_REQ_MAP</span><span class="p">[</span><span class="n">grad_req</span><span class="p">]</span>
