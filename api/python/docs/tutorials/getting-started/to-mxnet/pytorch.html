@@ -1524,9 +1524,8 @@ outperforms PyTorch by ~77% on training ResNet-50: 10,925 images per second vs.�
 </div>
 <div class="section" id="PyTorch-module-and-Gluon-blocks">
 <h2>PyTorch module and Gluon blocks<a class="headerlink" href="#PyTorch-module-and-Gluon-blocks" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="For-new-block-definition,-gluon-needs-name_scope">
-<h3>For new block definition, gluon needs name_scope<a class="headerlink" href="#For-new-block-definition,-gluon-needs-name_scope" title="Permalink to this headline">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">name_scope</span></code> coerces Gluon to give each parameter an appropriate name, indicating which model it belongs to.</p>
+<div class="section" id="For-new-block-definition,-gluon-is-similar-to-PyTorch">
+<h3>For new block definition, gluon is similar to PyTorch<a class="headerlink" href="#For-new-block-definition,-gluon-is-similar-to-PyTorch" title="Permalink to this headline">¶</a></h3>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 18%" />
@@ -1543,8 +1542,7 @@ outperforms PyTorch by ~77% on training ResNet-50: 10,925 images per second vs.�
 <tr class="row-even"><td><p>New block definition</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Net(torch.nn.Module):</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">__init__(self,</span> <span class="pre">D_in,</span> <span class="pre">D_out):</span></code>        <code class="docutils literal notranslate"><span class="pre">super(Net,</span> <span class="pre">self).__init__</span>
 <span class="pre">()</span></code>        <code class="docutils literal notranslate"><span class="pre">self.linear</span> <span class="pre">=</span> <span class="pre">torch.nn.Linear(D_in,</span> <span class="pre">D_out)</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">forward(self,</span> <span class="pre">x):</span></code>        <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">self.linear(x)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">cla</span>
-<span class="pre">ss</span> <span class="pre">Net(mx.gluon.Block):</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">__init__(self,</span> <span class="pre">D_in,</span> <span class="pre">D_out):</span></code>        <code class="docutils literal notranslate"><span class="pre">super(Net,</span> <span class="pre">self).__init__()</span></code>        <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">self.name_scope():</span></code>            <code class="docutils literal notranslate"><span class="pre">self.dense=mx.gluon.nn.Dense(D_out,</span> <span class="pre">in_units=D_in)</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">forward(self,</span> <span class="pre">x):</span></code>        <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">self.dense(x)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Net(mx.gluon.Block):</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">__init__(self,</span> <span class="pre">D_in,</span> <span class="pre">D_out):</span></code>        <code class="docutils literal notranslate"><span class="pre">super(Net,</span> <span class="pre">self).__init__()</span></code>        <code class="docutils literal notranslate"><span class="pre">self.dense=mx.gluon.nn.Dense(D_out,</span> <span class="pre">in_units=D_in)</span></code>    <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">forward(self,</span> <span class="pre">x):</span></code>        <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">self.dense(x)</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1621,7 +1619,7 @@ outperforms PyTorch by ~77% on training ResNet-50: 10,925 images per second vs.�
 <tbody>
 <tr class="row-even"><td><p>partial-shape hybridized</p></td>
 <td><p>Not Available</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">net</span> <span class="pre">=</span> <span class="pre">mx.gluon.nn.HybridSequential()</span></code><code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">net.name_scope():</span></code>    <code class="docutils literal notranslate"><span class="pre">net.add(mx.gluon.nn.Dense(10))</span></code><code class="docutils literal notranslate"><span class="pre">net.hybridize()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">net</span> <span class="pre">=</span> <span class="pre">mx.gluon.nn.HybridSequential()</span></code><code class="docutils literal notranslate"><span class="pre">net.add(mx.gluon.nn.Dense(10))</span></code><code class="docutils literal notranslate"><span class="pre">net.hybridize()</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1644,8 +1642,8 @@ outperforms PyTorch by ~77% on training ResNet-50: 10,925 images per second vs.�
 <tbody>
 <tr class="row-even"><td><p>SymbolBlock</p></td>
 <td><p>Not Available</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">alexnet</span> <span class="pre">=</span> <span class="pre">mx.gluon</span>
-<span class="pre">.model_zoo.vision.alexnet(pretrained=True,</span> <span class="pre">prefix='model_')</span></code><code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">=</span> <span class="pre">alexnet(inputs)</span></code><code class="docutils literal notranslate"><span class="pre">internals</span> <span class="pre">=</span> <span class="pre">out.get_internals()</span></code><code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">[internals['model_dense0_relu_fwd_output']]</span></code><code class="docutils literal notranslate"><span class="pre">feat_model</span> <span class="pre">=</span> <span class="pre">gluon.SymbolBlock(outputs,</span> <span class="pre">inputs,</span> <span class="pre">params=alexnet.collect_params())</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span>
+<span class="pre">lexnet</span> <span class="pre">=</span> <span class="pre">mx.gluon.model_zoo.vision.alexnet(pretrained=True)</span></code><code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">=</span> <span class="pre">alexnet(inputs)</span></code><code class="docutils literal notranslate"><span class="pre">internals</span> <span class="pre">=</span> <span class="pre">out.get_internals()</span></code><code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">[internals['model_dense0_relu_fwd_output']]</span></code><code class="docutils literal notranslate"><span class="pre">feat_model</span> <span class="pre">=</span> <span class="pre">gluon.SymbolBlock(outputs,</span> <span class="pre">inputs,</span> <span class="pre">params=alexnet.collect_params())</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1932,7 +1930,7 @@ outperforms PyTorch by ~77% on training ResNet-50: 10,925 images per second vs.�
 </ul>
 </li>
 <li><a class="reference internal" href="#PyTorch-module-and-Gluon-blocks">PyTorch module and Gluon blocks</a><ul>
-<li><a class="reference internal" href="#For-new-block-definition,-gluon-needs-name_scope">For new block definition, gluon needs name_scope</a></li>
+<li><a class="reference internal" href="#For-new-block-definition,-gluon-is-similar-to-PyTorch">For new block definition, gluon is similar to PyTorch</a></li>
 <li><a class="reference internal" href="#Parameter-and-Initializer">Parameter and Initializer</a></li>
 <li><a class="reference internal" href="#Usage-of-existing-blocks-look-alike">Usage of existing blocks look alike</a></li>
 <li><a class="reference internal" href="#HybridBlock-can-be-hybridized,-and-allows-partial-shape-info">HybridBlock can be hybridized, and allows partial-shape info</a></li>

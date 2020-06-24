@@ -727,7 +727,7 @@ Show Source
         
   <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="Parameter-and-Block-Naming">
 <h1>Parameter and Block Naming<a class="headerlink" href="#Parameter-and-Block-Naming" title="Permalink to this headline">¶</a></h1>
-<p>In gluon, each Parameter or Block has a name (and prefix). Parameter names are specified by users and Block names can be either specified by users or automatically created.</p>
+<p>In gluon, each Parameter or Block has a name. Parameter names and Block names can be automatically created.</p>
 <p>In this tutorial we talk about the best practices on naming. First, let’s import MXNet and Gluon:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
@@ -736,111 +736,69 @@ Show Source
 </div>
 <div class="section" id="Naming-Blocks">
 <h2>Naming Blocks<a class="headerlink" href="#Naming-Blocks" title="Permalink to this headline">¶</a></h2>
-<p>When creating a block, you can assign a prefix to it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mydense</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;mydense_&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mydense</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>When no prefix is given, Gluon will automatically generate one:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dense0</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dense0</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+<p>When creating a block, you can simply do as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mydense</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mydense</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When you create more Blocks of the same kind, they will be named with incrementing suffixes to avoid collision:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dense1</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dense1</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dense1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="Naming-Parameters">
 <h2>Naming Parameters<a class="headerlink" href="#Naming-Parameters" title="Permalink to this headline">¶</a></h2>
-<p>Parameters within a Block will be named by prepending the prefix of the Block to the name of the Parameter:</p>
+<p>Parameters will be named automatically by a unique name in the format of <code class="docutils literal notranslate"><span class="pre">param_{uuid4}_{name}</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">param</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;bias&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">param.name</span></code> is used as the name of a parameter’s symbol representation. And it can not be changed once the parameter is created.</p>
+<p>When getting parameters within a Block, you should use the structure based name as the key:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">dense0</span><span class="o">.</span><span class="n">collect_params</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="Name-scopes">
-<h2>Name scopes<a class="headerlink" href="#Name-scopes" title="Permalink to this headline">¶</a></h2>
-<p>To manage the names of nested Blocks, each Block has a <code class="docutils literal notranslate"><span class="pre">name_scope</span></code> attached to it. All Blocks created within a name scope will have its parent Block’s prefix prepended to its name.</p>
-<p>Let’s demonstrate this by first defining a simple neural net:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">Block</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dense0</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mydense</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;mydense_&#39;</span><span class="p">)</span>
+<div class="section" id="Nested-Blocks">
+<h2>Nested Blocks<a class="headerlink" href="#Nested-Blocks" title="Permalink to this headline">¶</a></h2>
+<p>In MXNet 2, we don’t have to define children blocks within a <code class="docutils literal notranslate"><span class="pre">name_scope</span></code> any more. Let’s demonstrate this by defining and initiating a simple neural net:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">HybridBlock</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense0</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mydense</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dense0</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dense1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mydense</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>Now let’s instantiate our neural net.</p>
-<ul class="simple">
-<li><p>Note that <code class="docutils literal notranslate"><span class="pre">model0.dense0</span></code> is named as <code class="docutils literal notranslate"><span class="pre">model0_dense0_</span></code> instead of <code class="docutils literal notranslate"><span class="pre">dense0_</span></code>.</p></li>
-<li><p>Also note that although we specified <code class="docutils literal notranslate"><span class="pre">mydense_</span></code> as prefix for <code class="docutils literal notranslate"><span class="pre">model.mydense</span></code>, its parent’s prefix is automatically prepended to generate the prefix <code class="docutils literal notranslate"><span class="pre">model0_mydense_</span></code>.</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model0</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+
+<span class="n">model0</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
 <span class="n">model0</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="n">model0</span><span class="o">.</span><span class="n">hybridize</span><span class="p">()</span>
 <span class="n">model0</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model0</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model0</span><span class="o">.</span><span class="n">dense0</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model0</span><span class="o">.</span><span class="n">dense1</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model0</span><span class="o">.</span><span class="n">mydense</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If we instantiate <code class="docutils literal notranslate"><span class="pre">Model</span></code> again, it will be given a different name like shown before for <code class="docutils literal notranslate"><span class="pre">Dense</span></code>.</p>
-<ul class="simple">
-<li><p>Note that <code class="docutils literal notranslate"><span class="pre">model1.dense0</span></code> is still named as <code class="docutils literal notranslate"><span class="pre">dense0_</span></code> instead of <code class="docutils literal notranslate"><span class="pre">dense2_</span></code>, following dense layers in previously created <code class="docutils literal notranslate"><span class="pre">model0</span></code>. This is because each instance of model’s name scope is independent of each other.</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="o">.</span><span class="n">dense0</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="o">.</span><span class="n">dense1</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="o">.</span><span class="n">mydense</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>It is recommended that you manually specify a prefix for the top level Block, i.e. ``model = Model(prefix=’mymodel_’)``, to avoid potential confusions in naming.</strong></p>
-<p>The same principle also applies to container blocks like Sequential. <code class="docutils literal notranslate"><span class="pre">name_scope</span></code> can be used inside <code class="docutils literal notranslate"><span class="pre">__init__</span></code> as well as out side of <code class="docutils literal notranslate"><span class="pre">__init__</span></code>:</p>
+<p>The same principle also applies to container blocks like Sequential. We can simply do as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">net</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">gluon.model_zoo</span></code> also behaves similarly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">net</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">alexnet</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">alexnet</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">net</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="Saving-and-loading">
 <h2>Saving and loading<a class="headerlink" href="#Saving-and-loading" title="Permalink to this headline">¶</a></h2>
-<p>Because model0 and model1 have different prefixes, their parameters also have different names:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model0</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="o">.</span><span class="n">collect_params</span><span class="p">())</span>
-</pre></div>
-</div>
-<p>As a result, if you try to save parameters from model0 and load it with model1, you’ll get an error due to unmatching names:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model0</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;model.params&#39;</span><span class="p">)</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">model1</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model.params&#39;</span><span class="p">,</span> <span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To solve this problem, we use <code class="docutils literal notranslate"><span class="pre">save_parameters</span></code>/<code class="docutils literal notranslate"><span class="pre">load_parameters</span></code> instead of <code class="docutils literal notranslate"><span class="pre">collect_params</span></code> and <code class="docutils literal notranslate"><span class="pre">save</span></code>/<code class="docutils literal notranslate"><span class="pre">load</span></code>. <code class="docutils literal notranslate"><span class="pre">save_parameters</span></code> uses model structure, instead of parameter name, to match parameters.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">HybridBlock</span></code>, we use <code class="docutils literal notranslate"><span class="pre">save_parameters</span></code>/<code class="docutils literal notranslate"><span class="pre">load_parameters</span></code>, which uses model structure, instead of parameter name, to match parameters.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model0</span><span class="o">.</span><span class="n">save_parameters</span><span class="p">(</span><span class="s1">&#39;model.params&#39;</span><span class="p">)</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s1">&#39;model.params&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model.params&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">SymbolBlock.imports</span></code>, we use <code class="docutils literal notranslate"><span class="pre">export</span></code>, which uses parameter name <code class="docutils literal notranslate"><span class="pre">param.name</span></code>, to save parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model0</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;model0&#39;</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">SymbolBlock</span><span class="o">.</span><span class="n">imports</span><span class="p">(</span><span class="s1">&#39;model0-symbol.json&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="s1">&#39;model0-0000.params&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -855,15 +813,11 @@ Show Source
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alexnet</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">model_zoo</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">alexnet</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">alexnet</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">alexnet</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To change the output to 100 dimension, we replace it with a new block.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">alexnet</span><span class="o">.</span><span class="n">name_scope</span><span class="p">():</span>
-    <span class="n">alexnet</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alexnet</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">alexnet</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">alexnet</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">alexnet</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -881,7 +835,7 @@ Show Source
 <li><a class="reference internal" href="#">Parameter and Block Naming</a><ul>
 <li><a class="reference internal" href="#Naming-Blocks">Naming Blocks</a></li>
 <li><a class="reference internal" href="#Naming-Parameters">Naming Parameters</a></li>
-<li><a class="reference internal" href="#Name-scopes">Name scopes</a></li>
+<li><a class="reference internal" href="#Nested-Blocks">Nested Blocks</a></li>
 <li><a class="reference internal" href="#Saving-and-loading">Saving and loading</a></li>
 <li><a class="reference internal" href="#Replacing-Blocks-from-networks-and-fine-tuning">Replacing Blocks from networks and fine-tuning</a></li>
 </ul>
