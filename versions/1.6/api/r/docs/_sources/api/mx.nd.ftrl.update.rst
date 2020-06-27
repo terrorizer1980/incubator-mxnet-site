@@ -88,5 +88,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/optimizer_op.cc#L876
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/optimizer_op.cc#L876
 

@@ -37,5 +37,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/custom/custom.cc#L546
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/custom/custom.cc#L546
 

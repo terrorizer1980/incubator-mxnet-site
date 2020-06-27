@@ -81,5 +81,5 @@ Value
 ``iter`` The result mx.dataiter
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/io/iter_mnist.cc#L265
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/io/iter_mnist.cc#L265
 

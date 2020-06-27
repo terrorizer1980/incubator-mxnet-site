@@ -377,5 +377,5 @@ Value
 ``iter`` The result mx.dataiter
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/io/iter_image_recordio_2.cc#L904
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/io/iter_image_recordio_2.cc#L904
 

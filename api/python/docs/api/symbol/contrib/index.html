@@ -2764,7 +2764,7 @@ This function support variable length of positional input.</p>
 <blockquote>
 <div><p>out = data / sqrt(data.shape[-1])</p>
 </div></blockquote>
-<p>Defined in src/operator/contrib/transformer.cc:L835</p>
+<p>Defined in src/operator/contrib/transformer.cc:L840</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3130,15 +3130,17 @@ queries and keys in multihead attention use as encoder-decoder.</p>
 (seq_length, batch_size, num_heads * head_dim)</p>
 <p>and a tensor of interleaved projections of values and keys following the layout:
 (seq_length, batch_size, num_heads * head_dim * 2)</p>
-<p>the equivalent code would be:
-q_proj = mx.nd.transpose(queries, axes=(1, 2, 0, 3))
-q_proj = mx.nd.reshape(q_proj, shape=(-1, 0, 0), reverse=True)
-q_proj = mx.nd.contrib.div_sqrt_dim(q_proj)
-tmp = mx.nd.reshape(keys_values, shape=(0, 0, num_heads, 2, -1))
-k_proj = mx.nd.transpose(tmp[:,:,:,0,:], axes=(1, 2, 0, 3))
-k_proj = mx.nd.reshap(k_proj, shape=(-1, 0, 0), reverse=True)
-output = mx.nd.batch_dot(q_proj, k_proj, transpose_b=True)</p>
-<p>Defined in src/operator/contrib/transformer.cc:L756</p>
+<p>the equivalent code would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">q_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">q_proj</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">q_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">div_sqrt_dim</span><span class="p">(</span><span class="n">q_proj</span><span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">keys_values</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">k_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">tmp</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">k_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshap</span><span class="p">(</span><span class="n">k_proj</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">batch_dot</span><span class="p">(</span><span class="n">q_proj</span><span class="p">,</span> <span class="n">k_proj</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/transformer.cc:L760</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3168,14 +3170,16 @@ keys and values following the layout:
 <p>and the attention weights following the layout:
 (batch_size, seq_length, seq_length)</p>
 <p>the equivalent code would be:</p>
-<p>tmp = mx.nd.reshape(queries_keys_values, shape=(0, 0, num_heads, 3, -1))
-v_proj = mx.nd.transpose(tmp[:,:,:,1,:], axes=(1, 2, 0, 3))
-v_proj = mx.nd.reshape(v_proj, shape=(-1, 0, 0), reverse=True)
-output = mx.nd.batch_dot(attention, v_proj, transpose_b=True)
-output = mx.nd.reshape(output, shape=(-1, num_heads, 0, 0), reverse=True)
-output = mx.nd.transpose(output, axes=(0, 2, 1, 3))
-output = mx.nd.reshape(output, shape=(0, 0, -1))</p>
-<p>Defined in src/operator/contrib/transformer.cc:L802</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tmp</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">queries_keys_values</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">v_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">tmp</span><span class="p">[:,:,:,</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">v_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v_proj</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">batch_dot</span><span class="p">(</span><span class="n">attention</span><span class="p">,</span> <span class="n">v_proj</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/transformer.cc:L807</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3240,15 +3244,17 @@ of queries, keys and values following the layout:
 (seq_length, batch_size, num_heads * head_dim * 3)</p>
 <p>and the attention weights following the layout:
 (batch_size, seq_length, seq_length)</p>
-<p>the equivalent code would be:
-tmp = mx.nd.reshape(queries_keys_values, shape=(0, 0, num_heads, 3, -1))
-v_proj = mx.nd.transpose(tmp[:,:,:,2,:], axes=(1, 2, 0, 3))
-v_proj = mx.nd.reshape(v_proj, shape=(-1, 0, 0), reverse=True)
-output = mx.nd.batch_dot(attention, v_proj)
-output = mx.nd.reshape(output, shape=(-1, num_heads, 0, 0), reverse=True)
-output = mx.nd.transpose(output, axes=(2, 0, 1, 3))
-output = mx.nd.reshape(output, shape=(0, 0, -1))</p>
-<p>Defined in src/operator/contrib/transformer.cc:L712</p>
+<p>the equivalent code would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tmp</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">queries_keys_values</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">v_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">tmp</span><span class="p">[:,:,:,</span><span class="mi">2</span><span class="p">,:],</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">v_proj</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v_proj</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">batch_dot</span><span class="p">(</span><span class="n">attention</span><span class="p">,</span> <span class="n">v_proj</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Defined in src/operator/contrib/transformer.cc:L714</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

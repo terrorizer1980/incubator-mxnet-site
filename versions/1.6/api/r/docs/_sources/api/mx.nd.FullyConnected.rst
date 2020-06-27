@@ -80,5 +80,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/nn/fully_connected.cc#L291
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/nn/fully_connected.cc#L291
 

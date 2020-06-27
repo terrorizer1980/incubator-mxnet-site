@@ -111,5 +111,5 @@ Value
 ``out`` The result mx.symbol
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/batch_norm_v1.cc#L95
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/batch_norm_v1.cc#L95
 

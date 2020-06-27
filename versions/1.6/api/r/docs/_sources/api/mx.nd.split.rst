@@ -109,5 +109,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/slice_channel.cc#L107
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/slice_channel.cc#L107
 

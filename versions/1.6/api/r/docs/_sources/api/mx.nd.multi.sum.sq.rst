@@ -31,5 +31,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/contrib/multi_sum_sq.cc#L36
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/contrib/multi_sum_sq.cc#L36
 

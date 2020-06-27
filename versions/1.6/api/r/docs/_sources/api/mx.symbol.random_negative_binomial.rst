@@ -70,5 +70,5 @@ Value
 ``out`` The result mx.symbol
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/random/sample_op.cc#L164
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/random/sample_op.cc#L164
 

@@ -101,5 +101,5 @@ Value
 ``out`` The result mx.ndarray
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/tensor/diag_op.cc#L87
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/tensor/diag_op.cc#L87
 

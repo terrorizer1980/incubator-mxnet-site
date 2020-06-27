@@ -115,5 +115,5 @@ Value
 ``out`` The result mx.symbol
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/optimizer_op.cc#L836
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/optimizer_op.cc#L836
 

@@ -56,5 +56,5 @@ Value
 ``out`` The result mx.symbol
 
 
-Link to Source Code: http://github.com/apache/incubator-mxnet/blob/master/src/operator/tensor/elemwise_binary_broadcast_op_logic.cc#L64
+Link to Source Code: http://github.com/apache/incubator-mxnet/blob/1.6.0/src/operator/tensor/elemwise_binary_broadcast_op_logic.cc#L64
 
