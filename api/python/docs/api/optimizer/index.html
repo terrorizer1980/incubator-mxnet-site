@@ -786,6 +786,9 @@ Show Source
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.RMSProp" title="mxnet.optimizer.RMSProp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RMSProp</span></code></a>([learning_rate, rho, momentum, …])</p></td>
 <td><p>The RMSProp optimizer.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.LANS" title="mxnet.optimizer.LANS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LANS</span></code></a>([learning_rate, beta1, beta2, epsilon, …])</p></td>
+<td><p>LANS Optimizer.</p></td>
+</tr>
 </tbody>
 </table>
 <p><strong>Functions</strong></p>
@@ -2948,6 +2951,125 @@ and <cite>set_wd_mult()</cite>, respectively.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mxnet.optimizer.LANS">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.optimizer.</code><code class="sig-name descname">LANS</code><span class="sig-paren">(</span><em class="sig-param">learning_rate=0.001</em>, <em class="sig-param">beta1=0.9</em>, <em class="sig-param">beta2=0.999</em>, <em class="sig-param">epsilon=1e-06</em>, <em class="sig-param">lower_bound=None</em>, <em class="sig-param">upper_bound=None</em>, <em class="sig-param">aggregate_num=4</em>, <em class="sig-param">use_fused_step=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/lans.html#LANS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LANS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.optimizer.optimizer.Optimizer</span></code></p>
+<p>LANS Optimizer.</p>
+<p>Referenced from ‘Accelerated Large Batch Optimization of BERT Pretraining in 54 minutes’
+(<a class="reference external" href="http://arxiv.org/abs/2006.13484">http://arxiv.org/abs/2006.13484</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>learning_rate</strong> (<em>float</em><em>, </em><em>default 0.001</em>) – The initial learning rate. If None, the optimization will use the
+learning rate from <code class="docutils literal notranslate"><span class="pre">lr_scheduler</span></code>. If not None, it will overwrite
+the learning rate in <code class="docutils literal notranslate"><span class="pre">lr_scheduler</span></code>. If None and <code class="docutils literal notranslate"><span class="pre">lr_scheduler</span></code>
+is also None, then it will be set to 0.01 by default.</p></li>
+<li><p><strong>beta1</strong> (<em>float</em><em>, </em><em>default 0.9</em>) – Exponential decay rate for the first moment estimates.</p></li>
+<li><p><strong>beta2</strong> (<em>float</em><em>, </em><em>default 0.999</em>) – Exponential decay rate for the second moment estimates.</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em>, </em><em>default 1e-6</em>) – Small value to avoid division by 0.</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em><em>, </em><em>default None</em>) – Lower limit of norm of weight</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em><em>, </em><em>default None</em>) – Upper limit of norm of weight</p></li>
+<li><p><strong>aggregate_num</strong> (<em>int</em><em>, </em><em>default 4</em>) – Number of weights to be aggregated in a list.
+They are passed to the optimizer for a single optimization step.
+In default, all the weights are aggregated.</p></li>
+<li><p><strong>use_fused_step</strong> (<em>bool</em><em>, </em><em>default True</em>) – Whether or not to use fused kernels for optimizer.
+When use_fused_step=False, step is called,
+otherwise, fused_step is called.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Methods</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.LANS.create_state" title="mxnet.optimizer.LANS.create_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_state</span></code></a>(index, weight)</p></td>
+<td><p>Creates auxiliary state for a given weight.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.LANS.fused_step" title="mxnet.optimizer.LANS.fused_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fused_step</span></code></a>(indices, weights, grads, states)</p></td>
+<td><p>Perform a fused optimization step using gradients and states.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.optimizer.LANS.step" title="mxnet.optimizer.LANS.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a>(indices, weights, grads, states)</p></td>
+<td><p>Perform a fused optimization step using gradients and states.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.optimizer.LANS.update_multi_precision" title="mxnet.optimizer.LANS.update_multi_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_multi_precision</span></code></a>(indices, weights, …)</p></td>
+<td><p>Override update_multi_precision.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.optimizer.LANS.create_state">
+<code class="sig-name descname">create_state</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">weight</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/lans.html#LANS.create_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LANS.create_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates auxiliary state for a given weight.</p>
+<p>Some optimizers require additional states, e.g. as momentum, in addition
+to gradients in order to update weights. This function creates state
+for a given weight which will be used in <cite>update</cite>. This function is
+called only once for each weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>int</em>) – An unique index to identify the weight.</p></li>
+<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>state</strong> – The state associated with the weight.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>any obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.optimizer.LANS.fused_step">
+<code class="sig-name descname">fused_step</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">weights</em>, <em class="sig-param">grads</em>, <em class="sig-param">states</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/lans.html#LANS.fused_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LANS.fused_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a fused optimization step using gradients and states.
+Fused kernel is used for update.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>list of int</em>) – List of unique indices of the parameters into the individual learning rates
+and weight decays. Learning rates and weight decay may be set via <cite>set_lr_mult()</cite>
+and <cite>set_wd_mult()</cite>, respectively.</p></li>
+<li><p><strong>weights</strong> (<em>list of NDArray</em>) – List of parameters to be updated.</p></li>
+<li><p><strong>grads</strong> (<em>list of NDArray</em>) – List of gradients of the objective with respect to this parameter.</p></li>
+<li><p><strong>states</strong> (<em>List of any obj</em>) – List of state returned by <cite>create_state()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.optimizer.LANS.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">weights</em>, <em class="sig-param">grads</em>, <em class="sig-param">states</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/lans.html#LANS.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LANS.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a fused optimization step using gradients and states.
+Fused kernel is used for update.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>list of int</em>) – List of unique indices of the parameters into the individual learning rates
+and weight decays. Learning rates and weight decay may be set via <cite>set_lr_mult()</cite>
+and <cite>set_wd_mult()</cite>, respectively.</p></li>
+<li><p><strong>weights</strong> (<em>list of NDArray</em>) – List of parameters to be updated.</p></li>
+<li><p><strong>grads</strong> (<em>list of NDArray</em>) – List of gradients of the objective with respect to this parameter.</p></li>
+<li><p><strong>states</strong> (<em>List of any obj</em>) – List of state returned by <cite>create_state()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.optimizer.LANS.update_multi_precision">
+<code class="sig-name descname">update_multi_precision</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">weights</em>, <em class="sig-param">grads</em>, <em class="sig-param">states</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mxnet/optimizer/lans.html#LANS.update_multi_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.optimizer.LANS.update_multi_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override update_multi_precision.</p>
 </dd></dl>
 
 </dd></dl>
