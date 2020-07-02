@@ -886,7 +886,7 @@ profiling jointly with vendor tools is recommended.</p>
 <p><code class="docutils literal notranslate"><span class="pre">dump()</span></code> creates a <code class="docutils literal notranslate"><span class="pre">json</span></code> file which can be viewed using a trace consumer like <code class="docutils literal notranslate"><span class="pre">chrome://tracing</span></code> in the Chrome browser. Here is a snapshot that shows the output of the profiling we did above. Note that setting the <code class="docutils literal notranslate"><span class="pre">finished</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">False</span></code> will prevent the profiler from finishing dumping to file. If you just use <code class="docutils literal notranslate"><span class="pre">profiler.dump()</span></code>, you will no longer be able to profile the remaining sections of your model.</p>
 <p><img alt="Tracing Screenshot" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_output_chrome.png" /></p>
 <p>Let’s zoom in to check the time taken by operators</p>
-<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png" /></p>
+<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_nvprof.png" /></p>
 <p>The above picture visualizes the sequence in which the operators were executed and the time taken by each operator.</p>
 </div>
 </div>
@@ -993,11 +993,11 @@ scripts running MXNet. And you can use these in conjunction with the MXNet Profi
 <p><code class="docutils literal notranslate"><span class="pre">==11588==</span> <span class="pre">Generated</span> <span class="pre">result</span> <span class="pre">file:</span> <span class="pre">/home/user/Development/incubator-mxnet/ci/my_profile.nvvp</span></code></p>
 <p>We specified an output file called <code class="docutils literal notranslate"><span class="pre">my_profile.nvvp</span></code> and this will be annotated with NVTX ranges (for MXNet operations) that will be displayed alongside the standard NVProf timeline. This can be very useful when you’re trying to find patterns between operators run by MXNet, and their associated CUDA kernel calls.</p>
 <p>You can open this file in Visual Profiler to visualize the results.</p>
-<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png" /></p>
+<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_nvprof.png" /></p>
 <p>At the top of the plot we have CPU tasks such as driver operations, memory copy calls, MXNet engine operator invocations, and imperative MXNet API calls. Below we see the kernels active on the GPU during the same time period.</p>
-<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png" /></p>
+<p><img alt="image1" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_nvprof_zoomed.png" /></p>
 <p>Zooming in on a backwards convolution operator we can see that it is in fact made up of a number of different GPU kernel calls, including a cuDNN winograd convolution call, and a fast-fourier transform call.</p>
-<p><img alt="Operator profiling" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png" /></p>
+<p><img alt="image2" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profiler_winograd.png" /></p>
 <p>Selecting any of these kernel calls (the winograd convolution call shown here) will get you some interesting GPU performance information such as occupancy rates (vs theoretical), shared memory usage and execution duration.</p>
 <p>Nsight Compute is available in CUDA 10 toolkit, but can be used to profile code running CUDA 9. You don’t get a timeline view, but you get many low level statistics about each individual kernel executed and can compare multiple runs (i.e. create a baseline).</p>
 <p><img alt="Nsight Compute" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/tutorials/python/profiler/profile_nsight_compute.png" /></p>
