@@ -725,8 +725,28 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <div class="section" id="mxnet-runtime">
-<h1>mxnet.runtime<a class="headerlink" href="#mxnet-runtime" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-mxnet.runtime">
+<span id="mxnet-runtime"></span><h1>mxnet.runtime<a class="headerlink" href="#module-mxnet.runtime" title="Permalink to this headline">¶</a></h1>
+<p>Runtime querying of compile time features in the native library.</p>
+<p>With this module you can check at runtime which libraries and features were compiled in the library.</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>import mxnet
+features=mxnet.runtime.Features()
+
+features.is_enabled(&quot;CUDNN&quot;)
+False
+
+features.is_enabled(&quot;CPU_SSE&quot;)
+True
+
+print(features)
+[✖ CUDA, ✖ CUDNN, ✖ NCCL, ✖ CUDA_RTC, ✖ TENSORRT, ✔ CPU_SSE, ✔ CPU_SSE2, ✔ CPU_SSE3,
+✔ CPU_SSE4_1, ✔ CPU_SSE4_2, ✖ CPU_SSE4A, ✔ CPU_AVX, ✖ CPU_AVX2, ✔ OPENMP, ✖ SSE,
+✔ F16C, ✔ JEMALLOC, ✔ BLAS_OPEN, ✖ BLAS_ATLAS, ✖ BLAS_MKL, ✖ BLAS_APPLE, ✔ LAPACK,
+✖ MKLDNN, ✔ OPENCV, ✖ CAFFE, ✖ DIST_KVSTORE, ✖ CXX14, ✖ INT64_TENSOR_SIZE,
+✔ SIGNAL_HANDLER, ✔ DEBUG, ✖ TVM_OP]
+</pre></div>
+</div>
 <p><strong>Classes</strong></p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -734,10 +754,10 @@ Show Source
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Feature</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.runtime.Feature" title="mxnet.runtime.Feature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Feature</span></code></a></p></td>
 <td><p>Compile time feature description, member fields: <cite>name</cite> and <cite>enabled</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Features</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.runtime.Features" title="mxnet.runtime.Features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Features</span></code></a></p></td>
 <td><p>OrderedDict of name to Feature</p></td>
 </tr>
 </tbody>
@@ -749,11 +769,95 @@ Show Source
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_list</span></code>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.runtime.feature_list" title="mxnet.runtime.feature_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_list</span></code></a>()</p></td>
 <td><p>Check the library for compile-time features.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="class">
+<dt id="mxnet.runtime.Feature">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.runtime.</code><code class="sig-name descname">Feature</code><a class="reference internal" href="../../../_modules/mxnet/runtime.html#Feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.Feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ctypes.Structure</span></code></p>
+<p>Compile time feature description, member fields: <cite>name</cite> and <cite>enabled</cite>.</p>
+<p><strong>Attributes</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.runtime.Feature.enabled" title="mxnet.runtime.Feature.enabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enabled</span></code></a></p></td>
+<td><p>True if MXNet was compiled with the given compile-time feature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.runtime.Feature.name" title="mxnet.runtime.Feature.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Feature name.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.runtime.Feature.enabled">
+<em class="property">property </em><code class="sig-name descname">enabled</code><a class="headerlink" href="#mxnet.runtime.Feature.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if MXNet was compiled with the given compile-time feature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mxnet.runtime.Feature.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#mxnet.runtime.Feature.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mxnet.runtime.Features">
+<em class="property">class </em><code class="sig-prename descclassname">mxnet.runtime.</code><code class="sig-name descname">Features</code><a class="reference internal" href="../../../_modules/mxnet/runtime.html#Features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.Features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></p>
+<p>OrderedDict of name to Feature</p>
+<p><strong>Methods</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.runtime.Features.is_enabled" title="mxnet.runtime.Features.is_enabled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_enabled</span></code></a>(feature_name)</p></td>
+<td><p>Check for a particular feature by name</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mxnet.runtime.Features.is_enabled">
+<code class="sig-name descname">is_enabled</code><span class="sig-paren">(</span><em class="sig-param">feature_name</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/runtime.html#Features.is_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.Features.is_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for a particular feature by name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>feature_name</strong> (<em>str</em>) – The name of a valid feature as string for example ‘CUDA’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if it’s enabled, False if it’s disabled, RuntimeError if the feature is not known</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.runtime.feature_list">
+<code class="sig-prename descclassname">mxnet.runtime.</code><code class="sig-name descname">feature_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/runtime.html#feature_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.runtime.feature_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the library for compile-time features. The list of features are maintained in libinfo.h and libinfo.cc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of <a class="reference internal" href="#mxnet.runtime.Feature" title="mxnet.runtime.Feature"><code class="xref py py-class docutils literal notranslate"><span class="pre">Feature</span></code></a> objects</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
