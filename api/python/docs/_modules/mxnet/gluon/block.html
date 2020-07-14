@@ -1757,41 +1757,69 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Parameter </span><span class="si">%s</span><span class="s2"> is not used by any computation. &quot;</span>
                           <span class="s2">&quot;Is this intended?&quot;</span><span class="o">%</span><span class="n">unused</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-        <span class="n">data_indices</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">param_indices</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_names</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">:</span>
-                <span class="n">data_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">param_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
-        <span class="n">flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;param_indices&#39;</span><span class="p">,</span> <span class="n">param_indices</span><span class="p">)]</span> <span class="o">+</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
-
         <span class="n">args</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_arg</span><span class="p">:</span>
-                    <span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                    <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">DeferredInitializationError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_deferred_infer_shape</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_arg</span><span class="p">:</span>
-                    <span class="n">i</span><span class="o">.</span><span class="n">_finish_deferred_init</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                    <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_finish_deferred_init</span><span class="p">()</span>
 
+        <span class="n">arg_dict</span><span class="p">,</span> <span class="n">aux_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">:</span>
             <span class="n">ctx</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span>
             <span class="c1"># get list of params in the order of out.list_arguments</span>
-            <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
-                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()}</span>
-            <span class="n">aux_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
-                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()}</span>
+            <span class="n">arg_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+                             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()})</span>
+            <span class="n">aux_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="n">args</span><span class="p">[</span><span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+                             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()})</span>
             <span class="c1"># Partition the graph.</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">,</span> <span class="n">aux_dict</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span><span class="p">)</span>
+
             <span class="c1">#update cached graph with partitioned graph</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">out</span>
+
+        <span class="n">input_names</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+        <span class="n">data_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">param_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># In the default case, _cached_ops_args contains all the parameters from params (the sets are identical)</span>
+        <span class="c1"># In the case of Partition API optimized graph _cached_ops_args might contain some parameters from params,</span>
+        <span class="c1"># might contain some new parameters created during optimization and added to `arg_dict/aux_dict`,</span>
+        <span class="c1"># and might not contain some parameters that were deleted during optimization.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_names</span><span class="p">):</span>
+            <span class="n">pair</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">:</span>
+                <span class="n">data_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">param_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                    <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># The param is missing from the original params dictionary, which means the param must have</span>
+                    <span class="c1"># been added by the Partition API backend</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_dict</span> <span class="ow">or</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="n">param_data</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_dict</span><span class="p">:</span>
+                        <span class="n">param_data</span> <span class="o">=</span> <span class="n">aux_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;A parameter was added to the graph during optimization but it was not &#39;</span>
+                                           <span class="s1">&#39;added to the parameter dicts.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                           <span class="s1">&#39;Please check the backend.&#39;</span><span class="p">)</span>
+
+                    <span class="n">param</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">param</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">param_data</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+        <span class="n">flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;param_indices&#39;</span><span class="p">,</span> <span class="n">param_indices</span><span class="p">)]</span> <span class="o">+</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">CachedOp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
 
 
@@ -2038,12 +2066,14 @@
         <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">())</span>
         <span class="n">aux_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">())</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
-                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;arg:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span>
-                <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;aux:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_arg</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
+                    <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;arg:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aux_names</span>
+                    <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;aux:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
         <span class="n">save_fn</span> <span class="o">=</span> <span class="n">_mx_npx</span><span class="o">.</span><span class="n">save</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">save</span>
         <span class="n">params_filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%04d</span><span class="s1">.params&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
         <span class="n">save_fn</span><span class="p">(</span><span class="n">params_filename</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span>
@@ -2152,8 +2182,25 @@
 <span class="sd">            Additional input tensors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable= invalid-name</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
+<div class="viewcode-block" id="HybridBlock.reset_ctx"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.reset_ctx">[docs]</a>    <span class="k">def</span> <span class="nf">reset_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Re-assign all Parameters to other contexts. If the Block is hybridized, it will reset the _cached_op_args.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ctx : Context or list of Context, default :py:meth:`context.current_context()`.</span>
+<span class="sd">            Assign Parameter to given context. If ctx is a list of Context, a</span>
+<span class="sd">            copy will be made for each context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
+                <span class="c1"># resetting parameters creating by the partitioning backend</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">reset_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">reset_ctx</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="SymbolBlock"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock">[docs]</a><span class="k">class</span> <span class="nc">SymbolBlock</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Construct block from symbol. This is useful for using pre-trained models</span>

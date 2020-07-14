@@ -2261,8 +2261,36 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot add new aux in optimize_for since aux is None</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
                                <span class="s1">&#39;Provide a dictionary to the aux argument to optimize_for&#39;</span><span class="p">)</span>
 
-        <span class="c1"># return modified symbol</span>
-        <span class="k">return</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+        <span class="n">new_sym</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">arg_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()</span>
+        <span class="n">new_arg_names</span> <span class="o">=</span> <span class="n">new_sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">()</span>
+        <span class="n">deleted_arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">arg_names</span>
+                                 <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_arg_names</span><span class="p">)])</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deleted_arg_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a_n</span> <span class="ow">in</span> <span class="n">deleted_arg_names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">a_n</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+                        <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a_n</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;A param was deleted during optimization, but no args dictionary was provided.</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                              <span class="s1">&#39;Please ensure that your model weights match the newly optimized model.&#39;</span><span class="p">)</span>
+
+        <span class="n">aux_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
+        <span class="n">new_aux_names</span> <span class="o">=</span> <span class="n">new_sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">()</span>
+        <span class="n">deleted_aux_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">aux_names</span>
+                                 <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_aux_names</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deleted_aux_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">aux</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a_n</span> <span class="ow">in</span> <span class="n">deleted_aux_names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">a_n</span> <span class="ow">in</span> <span class="n">aux</span><span class="p">:</span>
+                        <span class="n">aux</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a_n</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;A param was deleted during optimization, but no args dictionary was provided.</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                              <span class="s1">&#39;Please ensure that your model weights match the newly optimized model.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_sym</span></div>
 
     <span class="c1"># pylint: disable=too-many-locals</span>
     <span class="k">def</span> <span class="nf">_simple_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;write&#39;</span><span class="p">,</span> <span class="n">type_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stype_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
