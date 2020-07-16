@@ -787,82 +787,50 @@
 <span class="sd">&quot;&quot;&quot;Base container class for all neural network models.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Block&#39;</span><span class="p">,</span> <span class="s1">&#39;HybridBlock&#39;</span><span class="p">,</span> <span class="s1">&#39;SymbolBlock&#39;</span><span class="p">]</span>
 
-<span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">contextvars</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">mx_real_t</span><span class="p">,</span> <span class="n">MXNetError</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">py_str</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">_deferred_compute</span> <span class="k">as</span> <span class="n">dc</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">_deferred_compute</span> <span class="k">as</span> <span class="n">dc</span><span class="p">,</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span><span class="p">,</span> \
+    <span class="n">profiler</span> <span class="k">as</span> <span class="n">_profiler</span><span class="p">,</span> <span class="n">context</span> <span class="k">as</span> <span class="n">_context</span>
 <span class="kn">from</span> <span class="nn">..symbol.numpy</span> <span class="kn">import</span> <span class="n">_symbol</span> <span class="k">as</span> <span class="n">np_symbol</span>
 <span class="kn">from</span> <span class="nn">..symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">profiler</span> <span class="k">as</span> <span class="n">_profiler</span>
 <span class="kn">from</span> <span class="nn">.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">DeferredInitializationError</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">,</span> <span class="n">HookHandle</span><span class="p">,</span> <span class="n">shape_is_known</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_check_same_symbol_type</span><span class="p">,</span> <span class="n">_check_all_np_ndarrays</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy_extension</span> <span class="k">as</span> <span class="n">_mx_npx</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">_mx_np</span><span class="p">,</span> <span class="n">ndarray</span> <span class="k">as</span> <span class="n">nd</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="n">util</span> <span class="kn">import</span> <span class="nn">is_np_array</span><span class="o">,</span> <span class="nn">np_shape</span><span class="o">,</span> <span class="nn">np_array</span>
 
 
+<span class="n">_naming_counter</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span><span class="s1">&#39;namecounter&#39;</span><span class="p">)</span>
+<span class="n">_prefix</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span><span class="s1">&#39;prefix&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">_BlockScope</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Scope for collecting child `Block` s.&quot;&quot;&quot;</span>
-    <span class="n">_current</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates unique name for new `Block`.</span>
-<span class="sd">        The profiler scope is to support the GPU memory profiler.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-                <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="p">()</span>
-            <span class="n">block_name</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">hint</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">block_name</span>
-
-        <span class="n">count</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">block_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">hint</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-        <span class="n">current</span><span class="o">.</span><span class="n">_counter</span><span class="p">[</span><span class="n">hint</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">block_name</span>
-
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="n">_name</span><span class="o">.</span><span class="n">Prefix</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
-        <span class="n">_profiler_scope_name</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span> <span class="o">=</span> <span class="n">_profiler</span><span class="o">.</span><span class="n">Scope</span><span class="p">(</span><span class="n">_profiler_scope_name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_name_scope</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_profiler_scope</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">_BlockScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_scope</span>
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<span class="k">def</span> <span class="nf">_block_scope</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Append the classname of the current Block to the symbolic and memory profiler name scopes.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">_naming_counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">counter</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+    <span class="n">counter_token</span> <span class="o">=</span> <span class="n">_naming_counter</span><span class="o">.</span><span class="n">set</span><span class="p">({})</span>
+    <span class="n">prefix_token</span> <span class="o">=</span> <span class="n">_prefix</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">_prefix</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">_name</span><span class="o">.</span><span class="n">Prefix</span><span class="p">(</span><span class="n">_prefix</span><span class="o">.</span><span class="n">get</span><span class="p">()):</span>
+        <span class="k">with</span> <span class="n">_profiler</span><span class="o">.</span><span class="n">scope</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span><span class="p">):</span>
+            <span class="k">yield</span>
+    <span class="n">_naming_counter</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">counter_token</span><span class="p">)</span>
+    <span class="n">_prefix</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">prefix_token</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_gather_type_ctx_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
@@ -997,7 +965,7 @@
     <span class="k">return</span> <span class="n">_merger</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block">[docs]</a><span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block">[docs]</a><span class="k">class</span> <span class="nc">Block</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Base class for all neural network layers and models. Your models should</span>
 <span class="sd">    subclass this class.</span>
 
@@ -1032,8 +1000,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">_BlockScope</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alias</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span> <span class="o">=</span> <span class="n">_BlockScope</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">(</span><span class="se">\n</span><span class="si">{modstr}</span><span class="se">\n</span><span class="s1">)&#39;</span>
@@ -1089,11 +1055,6 @@
 
     <span class="k">def</span> <span class="nf">_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Name of this :py:class:`Block`, class name + counter &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1278,6 +1239,8 @@
                     <span class="s2">&quot;Set allow_missing=True to ignore missing parameters.&quot;</span><span class="o">%</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">loaded</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">_context</span><span class="o">.</span><span class="n">current_context</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">loaded</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_extra</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1285,7 +1248,10 @@
                     <span class="s2">&quot;which contains parameters </span><span class="si">%s</span><span class="s2">. Set ignore_extra=True to ignore. &quot;</span><span class="o">%</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="n">error_str</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">param</span> <span class="o">=</span> <span class="n">_mx_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="n">cast_dtype</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="n">dtype_source</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.register_child"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.register_child">[docs]</a>    <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Registers block as a child of self. :py:class:`Block` s assigned to self as</span>
@@ -1368,8 +1334,8 @@
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">init</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">v</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">force_reinit</span><span class="o">=</span><span class="n">force_reinit</span><span class="p">,</span> <span class="n">structural_name</span><span class="o">=</span><span class="n">k</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">force_reinit</span><span class="o">=</span><span class="n">force_reinit</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.hybridize"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.Block.hybridize">[docs]</a>    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Please refer description of HybridBlock hybridize().</span>
@@ -1463,6 +1429,14 @@
 <span class="sd">        which equals to</span>
 <span class="sd">            dense1.weight = dense0.weight</span>
 <span class="sd">            dense1.bias = dense0.bias</span>
+
+<span class="sd">        Note that unlike the `load_parameters` or `load_dict` functions,</span>
+<span class="sd">        `share_parameters` results in the `Parameter` object being shared (or</span>
+<span class="sd">        tied) between the models, whereas `load_parameters` or `load_dict` only</span>
+<span class="sd">        set the value of the data dictionary of a model. If you call</span>
+<span class="sd">        `load_parameters` or `load_dict` after `share_parameters`, the loaded</span>
+<span class="sd">        value will be reflected in all networks that use the shared (or tied)</span>
+<span class="sd">        `Parameter` object.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1587,7 +1561,7 @@
 
         <span class="k">def</span> <span class="nf">_register_summary_hook</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
             <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">block</span><span class="o">.</span><span class="n">_active</span><span class="p">,</span> \
-                    <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; must not be hybridized to print summary.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; must not be hybridized to print summary.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">_summary_hook</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
                 <span class="n">class_name</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
                 <span class="n">block_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1739,8 +1713,9 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">flatten_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">grouped_inputs</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">flatten_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_format</span><span class="p">)</span>
+
             <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">_block_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="o">*</span><span class="n">grouped_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># pylint: disable=no-value-for-parameter</span>
             <span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)</span>
 
@@ -1785,10 +1760,10 @@
     <span class="k">def</span> <span class="nf">_build_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">data_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
-        <span class="n">input_names</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+        <span class="n">param_serialization_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="n">param_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">input_names</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
         <span class="n">expected_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_names</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">expected_names</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">param_names</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">,</span> \
@@ -1842,14 +1817,15 @@
         <span class="c1"># and might not contain some parameters that were deleted during optimization.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_names</span><span class="p">):</span>
-            <span class="n">pair</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">triple</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">:</span>
                 <span class="n">data_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">triple</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_names</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">param_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                     <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="n">serialization_name</span> <span class="o">=</span> <span class="n">param_serialization_names</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>  <span class="c1"># HybridBlock.export</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># The param is missing from the original params dictionary, which means the param must have</span>
                     <span class="c1"># been added by the Partition API backend</span>
@@ -1863,10 +1839,12 @@
                                            <span class="s1">&#39;Please check the backend.&#39;</span><span class="p">)</span>
 
                     <span class="n">param</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">param</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">name</span>
+                    <span class="n">serialization_name</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1"># HybridBlock.export</span>
                     <span class="n">param</span><span class="o">.</span><span class="n">_load_init</span><span class="p">(</span><span class="n">param_data</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
+                <span class="n">triple</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">serialization_name</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span>
 
         <span class="n">flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;param_indices&#39;</span><span class="p">,</span> <span class="n">param_indices</span><span class="p">)]</span> <span class="o">+</span> \
                 <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
@@ -1915,7 +1893,7 @@
 
         <span class="n">args_without_none</span> <span class="o">=</span> <span class="p">[</span><span class="n">ele</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">ele</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">cargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">args_without_none</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_arg</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
-                 <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">]</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">(</span><span class="o">*</span><span class="n">cargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
@@ -2059,7 +2037,7 @@
         <span class="n">sdict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span> <span class="p">:</span> <span class="n">attr</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> \
              <span class="nb">zip</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">(),</span> <span class="n">aux_attrs</span><span class="p">)})</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">sdict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">sdict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 
 <div class="viewcode-block" id="HybridBlock.infer_shape"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.infer_shape">[docs]</a>    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Infers shape of Parameters from inputs.&quot;&quot;&quot;</span>
@@ -2109,16 +2087,28 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="s2">&quot;Please first call block.hybridize() and then run forward with &quot;</span>
                 <span class="s2">&quot;this block at least once before calling export.&quot;</span><span class="p">)</span>
-        <span class="n">sym</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sym</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Deduplicate params (shared parameters use the same input symbol)</span>
+        <span class="n">reverse_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">reverse_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># In export we have global information on the structure of the graph</span>
+        <span class="c1"># can rename the symbol inputs to human-readable, deterministic names.</span>
+        <span class="c1"># That&#39;s not true in general, which is why internally random unique identifiers are used.</span>
+        <span class="n">rename_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">rename_map</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">_set_attr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">rename_map</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+
         <span class="n">sym_filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-symbol.json&#39;</span><span class="o">%</span><span class="n">path</span>
         <span class="n">sym</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">sym_filename</span><span class="p">,</span> <span class="n">remove_amp_cast</span><span class="o">=</span><span class="n">remove_amp_cast</span><span class="p">)</span>
 
         <span class="n">arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_arguments</span><span class="p">())</span>
         <span class="n">aux_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">list_auxiliary_states</span><span class="p">())</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">is_arg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_arg</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
                     <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;arg:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_reduce</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -2217,8 +2207,9 @@
                     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">j</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">_block_scope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HybridBlock.hybrid_forward"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -2344,15 +2335,6 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SymbolBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="n">structure</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">structure</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
@@ -2387,29 +2369,31 @@
 
         <span class="n">arg_types</span><span class="p">,</span> <span class="n">aux_types</span> <span class="o">=</span> <span class="n">_infer_param_types</span><span class="p">(</span><span class="n">syms</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">param</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-                <span class="n">param</span><span class="o">.</span><span class="n">_check_and_setattr</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structured_named</span><span class="p">:</span>
-                <span class="n">lis</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Can not find structured name for Parameter </span><span class="si">%s</span><span class="s2"> in &#39;params&#39;. &quot;</span> \
-                    <span class="s2">&quot;Please check &#39;params&#39; is complete!&quot;</span> <span class="o">%</span> <span class="n">name</span>
-                <span class="k">for</span> <span class="n">structured_name</span> <span class="ow">in</span> <span class="n">lis</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">structured_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">unused_params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">arg_params</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">aux_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unused_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> params are unused by the model.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unused_params</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span> <span class="o">=</span> <span class="n">params</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arg_params</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="n">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">.</span><span class="n">_check_and_setattr</span><span class="p">(</span><span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">.</span><span class="n">_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">arg</span>
+            <span class="k">elif</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arg_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">arg</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">aux</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aux_params</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">aux</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
-                <span class="n">_set_params_attr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">aux</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">aux</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">aux</span><span class="p">]</span><span class="o">.</span><span class="n">_check_and_setattr</span><span class="p">(</span><span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">aux</span><span class="p">]</span><span class="o">.</span><span class="n">_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">aux</span><span class="p">]</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">aux</span>
+            <span class="k">elif</span> <span class="n">aux</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">aux</span><span class="p">,</span> <span class="n">grad_req</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span>
+                                                  <span class="n">allow_deferred_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">aux_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reg_params</span><span class="p">[</span><span class="n">aux</span><span class="p">]</span><span class="o">.</span><span class="n">_var_name</span> <span class="o">=</span> <span class="n">aux</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">syms</span><span class="p">,</span> <span class="n">out</span>
 

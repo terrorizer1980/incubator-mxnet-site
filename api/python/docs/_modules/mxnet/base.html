@@ -1040,69 +1040,6 @@
         <span class="p">]</span>
 
 
-<span class="c1"># Please see: https://stackoverflow.com/questions/5189699/how-to-make-a-class-property</span>
-<span class="k">class</span> <span class="nc">_MXClassPropertyDescriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="o">=</span> <span class="n">fget</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fset</span> <span class="o">=</span> <span class="n">fset</span>
-
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">clas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">clas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">clas</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">clas</span><span class="p">)()</span>
-
-    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fset</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MXNetError</span><span class="p">(</span><span class="s2">&quot;cannot use the setter: </span><span class="si">%s</span><span class="s2"> to set attribute&quot;</span> <span class="o">%</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-            <span class="n">type_</span> <span class="o">=</span> <span class="n">obj</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">type_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fset</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">type_</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">(</span><span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">)):</span>
-            <span class="n">func</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fset</span> <span class="o">=</span> <span class="n">func</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-
-<span class="k">class</span> <span class="nc">_MXClassPropertyMetaClass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">obj</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_MXClassPropertyDescriptor</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="fm">__set__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_MXClassPropertyMetaClass</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-
-<span class="c1"># with_metaclass function obtained from: https://github.com/benjaminp/six/blob/master/six.py</span>
-<span class="c1"># pylint: disable=unused-argument</span>
-<span class="k">def</span> <span class="nf">with_metaclass</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="o">*</span><span class="n">bases</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a base class with a metaclass.&quot;&quot;&quot;</span>
-    <span class="c1"># This requires a bit of explanation: the basic idea is to make a dummy</span>
-    <span class="c1"># metaclass for one level of class instantiation that replaces itself with</span>
-    <span class="c1"># the actual metaclass.</span>
-    <span class="k">class</span> <span class="nc">metaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-
-        <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">this_bases</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">meta</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-
-        <span class="nd">@classmethod</span>
-        <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">this_bases</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">meta</span><span class="o">.</span><span class="fm">__prepare__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metaclass</span><span class="p">,</span> <span class="s1">&#39;temporary_class&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>
-<span class="c1"># pylint: enable=unused-argument</span>
-
-
-<span class="k">def</span> <span class="nf">classproperty</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">(</span><span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">)):</span>
-        <span class="n">func</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_MXClassPropertyDescriptor</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">_load_lib</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Load library by searching possible path.&quot;&quot;&quot;</span>
     <span class="n">lib_path</span> <span class="o">=</span> <span class="n">libinfo</span><span class="o">.</span><span class="n">find_lib_path</span><span class="p">()</span>

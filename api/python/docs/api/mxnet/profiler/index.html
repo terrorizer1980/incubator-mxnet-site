@@ -800,10 +800,7 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.profiler.Marker" title="mxnet.profiler.Marker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Marker</span></code></a>(domain, name)</p></td>
 <td><p>Set marker for an instant in time.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.profiler.Scope" title="mxnet.profiler.Scope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Scope</span></code></a>([name, append_mode])</p></td>
-<td><p>The <cite>_profiler.Scope</cite> was developed to assign the profiler scope for the GPU memory profiler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.profiler.Task" title="mxnet.profiler.Task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Task</span></code></a>(domain, name)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.profiler.Task" title="mxnet.profiler.Task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Task</span></code></a>(domain, name)</p></td>
 <td><p>Profiling Task class.</p></td>
 </tr>
 </tbody>
@@ -836,10 +833,13 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.profiler.resume" title="mxnet.profiler.resume"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resume</span></code></a>([profile_process])</p></td>
 <td><p>Resume paused profiling.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.profiler.set_config" title="mxnet.profiler.set_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_config</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.profiler.scope" title="mxnet.profiler.scope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scope</span></code></a>([name, append_mode])</p></td>
+<td><p>Assign the profiler scope for the GPU memory profiler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.profiler.set_config" title="mxnet.profiler.set_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_config</span></code></a>(**kwargs)</p></td>
 <td><p>Set up the configure of profiler (only accepts keyword arguments).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.profiler.set_state" title="mxnet.profiler.set_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_state</span></code></a>([state, profile_process])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.profiler.set_state" title="mxnet.profiler.set_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_state</span></code></a>([state, profile_process])</p></td>
 <td><p>Set up the profiler state to ‘run’ or ‘stop’.</p></td>
 </tr>
 </tbody>
@@ -1127,22 +1127,6 @@ Default is <cite>process</cite>.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mxnet.profiler.Scope">
-<em class="property">class </em><code class="sig-prename descclassname">mxnet.profiler.</code><code class="sig-name descname">Scope</code><span class="sig-paren">(</span><em class="sig-param">name='&lt;unk&gt;:'</em>, <em class="sig-param">append_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/profiler.html#Scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.profiler.Scope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The <cite>_profiler.Scope</cite> was developed to assign the profiler scope for the GPU
-memory profiler. It is implicitly invoked when the Gluon API is used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>Name of the Profiler Scope</em>) – </p></li>
-<li><p><strong>append_mode</strong> (<em>Whether to append the old profiler scope at the front.</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="class">
 <dt id="mxnet.profiler.Task">
 <em class="property">class </em><code class="sig-prename descclassname">mxnet.profiler.</code><code class="sig-name descname">Task</code><span class="sig-paren">(</span><em class="sig-param">domain</em>, <em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/profiler.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.profiler.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -1286,6 +1270,21 @@ be ‘stop’ or ‘run’. Default is <cite>stop</cite>.</p>
 <dd class="field-odd"><p><strong>profile_process</strong> (<em>string</em>) – whether to profile kvstore <cite>server</cite> or <cite>worker</cite>.
 server can only be profiled when kvstore is of type dist.
 if this is not passed, defaults to <cite>worker</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mxnet.profiler.scope">
+<code class="sig-prename descclassname">mxnet.profiler.</code><code class="sig-name descname">scope</code><span class="sig-paren">(</span><em class="sig-param">name='&lt;unk&gt;:'</em>, <em class="sig-param">append_mode=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/profiler.html#scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.profiler.scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the profiler scope for the GPU memory profiler.</p>
+<p>It is implicitly invoked when the Gluon API is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>Name of the Profiler Scope</em>) – </p></li>
+<li><p><strong>append_mode</strong> (<em>Whether to append the old profiler scope at the front.</em>) – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

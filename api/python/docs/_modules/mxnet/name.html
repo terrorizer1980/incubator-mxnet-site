@@ -781,24 +781,18 @@
 <span class="c1"># KIND, either express or implied.  See the License for the</span>
 <span class="c1"># specific language governing permissions and limitations</span>
 <span class="c1"># under the License.</span>
-
-<span class="c1"># coding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;Automatic naming support for symbolic API.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">classproperty</span><span class="p">,</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">_MXClassPropertyMetaClass</span>
+<span class="kn">import</span> <span class="nn">contextvars</span>
 
-<div class="viewcode-block" id="NameManager"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.NameManager">[docs]</a><span class="k">class</span> <span class="nc">NameManager</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">_MXClassPropertyMetaClass</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+
+<div class="viewcode-block" id="NameManager"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.NameManager">[docs]</a><span class="k">class</span> <span class="nc">NameManager</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;NameManager to do automatic naming.</span>
 
 <span class="sd">    Developers can also inherit from this class to change naming behavior.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_current</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="NameManager.get"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.NameManager.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the canonical name for a symbol.</span>
@@ -832,30 +826,14 @@
         <span class="k">return</span> <span class="n">name</span></div>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-            <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">NameManager</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
-        <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># Token can&#39;t be pickled and Token.old_value is Token.MISSING if _current.get() uses default value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span> <span class="o">=</span> <span class="n">_current</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">_current</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_manager</span>
-        <span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">_old_manager</span>
+        <span class="n">_current</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_old_manager</span><span class="p">)</span></div>
 
-    <span class="c1">#pylint: disable=no-self-argument</span>
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;NameManager.current has been deprecated. &quot;</span>
-                      <span class="s2">&quot;It is advised to use the `with` statement with NameManager.&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">NameManager</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
-
-    <span class="nd">@current</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span></div>
-    <span class="c1">#pylint: enable=no-self-argument</span>
 
 <div class="viewcode-block" id="Prefix"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.Prefix">[docs]</a><span class="k">class</span> <span class="nc">Prefix</span><span class="p">(</span><span class="n">NameManager</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A name manager that attaches a prefix to all names.</span>
@@ -870,15 +848,20 @@
 <span class="sd">    [&#39;data&#39;, &#39;mynet_fc1_weight&#39;, &#39;mynet_fc1_bias&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Prefix</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
 
 <div class="viewcode-block" id="Prefix.get"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.Prefix.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Prefix</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">hint</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">hint</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+</span> <span class="n">name</span></div></div>
 
-<span class="c1"># initialize the default name manager</span>
-<span class="n">NameManager</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">NameManager</span><span class="p">()</span>
+
+<span class="n">_current</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span><span class="s1">&#39;namemanager&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">NameManager</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="current"><a class="viewcode-back" href="../../api/mxnet/name/index.html#mxnet.name.current">[docs]</a><span class="k">def</span> <span class="nf">current</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the current name manager.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_current</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 </pre></div>
 
         <hr class="feedback-hr-top" />

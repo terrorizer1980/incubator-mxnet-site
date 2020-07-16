@@ -781,16 +781,13 @@
 <span class="c1"># KIND, either express or implied.  See the License for the</span>
 <span class="c1"># specific language governing permissions and limitations</span>
 <span class="c1"># under the License.</span>
-
-<span class="c1"># coding: utf-8</span>
 <span class="sd">&quot;&quot;&quot;Attribute scoping support for symbolic API.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">contextvars</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">classproperty</span><span class="p">,</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">_MXClassPropertyMetaClass</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">string_types</span>
 
-<div class="viewcode-block" id="AttrScope"><a class="viewcode-back" href="../../api/mxnet/attribute/index.html#mxnet.attribute.AttrScope">[docs]</a><span class="k">class</span> <span class="nc">AttrScope</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">_MXClassPropertyMetaClass</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+<div class="viewcode-block" id="AttrScope"><a class="viewcode-back" href="../../api/mxnet/attribute/index.html#mxnet.attribute.AttrScope">[docs]</a><span class="k">class</span> <span class="nc">AttrScope</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Attribute manager for scoping.</span>
 
 <span class="sd">    User can also inherit this object to change naming behavior.</span>
@@ -800,7 +797,6 @@
 <span class="sd">    kwargs</span>
 <span class="sd">        The attributes to set for all symbol creations in the scope.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_current</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
     <span class="n">_subgraph_names</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -832,40 +828,26 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">attr</span> <span class="k">if</span> <span class="n">attr</span> <span class="k">else</span> <span class="p">{}</span></div>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># pylint: disable=protected-access</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-            <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># pylint: disable=protected-access</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">_current</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="n">attr</span>
-        <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># Token can&#39;t be pickled and Token.old_value is Token.MISSING if _current.get() uses default value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span> <span class="o">=</span> <span class="n">_current</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">_current</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span>
-        <span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span>
+        <span class="n">_current</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_old_scope</span><span class="p">)</span></div>
 
-    <span class="c1">#pylint: disable=no-self-argument</span>
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;AttrScope.current has been deprecated. &quot;</span>
-                      <span class="s2">&quot;It is advised to use the `with` statement with AttrScope.&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span>
 
-    <span class="nd">@current</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;AttrScope.current has been deprecated. &quot;</span>
-                      <span class="s2">&quot;It is advised to use the `with` statement with AttrScope.&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span></div>
-    <span class="c1">#pylint: enable=no-self-argument</span>
+<span class="n">_current</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span><span class="s1">&#39;namemanager&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">AttrScope</span><span class="p">())</span>
 
-<span class="n">AttrScope</span><span class="o">.</span><span class="n">_current</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">AttrScope</span><span class="p">()</span>
+
+<div class="viewcode-block" id="current"><a class="viewcode-back" href="../../api/mxnet/attribute/index.html#mxnet.attribute.current">[docs]</a><span class="k">def</span> <span class="nf">current</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the current name manager.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_current</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 </pre></div>
 
         <hr class="feedback-hr-top" />
