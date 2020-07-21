@@ -514,17 +514,9 @@ unzip mnist.zip <span class="o">&amp;&amp;</span> s3cmd put t<span class="k">*</
 </code></pre></div></div>
 
 <h3 id="use-pre-installed-ec2-gpu-instance">Use Pre-installed EC2 GPU Instance</h3>
-<p>The <a href="https://aws.amazon.com/marketplace/pp/B01M0AXXQB?qid=1475211685369&amp;sr=0-1&amp;ref_=srh_res_product_title">Deep Learning AMI</a> is an Amazon Linux image
-supported and maintained by Amazon Web Services for use on Amazon Elastic Compute Cloud (Amazon EC2).
-It contains <a href="https://github.com/apache/incubator-mxnet">MXNet-v0.9.3 tag</a> and the necessary components to get going with deep learning,
-including Nvidia drivers, CUDA, cuDNN, Anaconda, Python2 and Python3. <br />
-The AMI IDs are the following:</p>
-
-<ul>
-  <li>us-east-1: ami-e7c96af1</li>
-  <li>us-west-2: ami-dfb13ebf</li>
-  <li>eu-west-1: ami-6e5d6808</li>
-</ul>
+<p>The <a href="https://aws.amazon.com/marketplace/search/results?x=0&amp;y=0&amp;searchTerms=Deep+Learning+AMI">Deep Learning AMIs</a>
+are a series of images supported and maintained by Amazon Web Services for use
+on Amazon Elastic Compute Cloud (Amazon EC2) and contain the latest MXNet release.</p>
 
 <p>Now you can launch <em>MXNet</em> directly on an EC2 GPU instance.<br />
 You can also use <a href="https://jupyter.org">Jupyter</a> notebook on EC2 machine.
@@ -533,66 +525,19 @@ on how to connect to a Jupyter notebook running on an EC2 instance.</p>
 
 <h3 id="set-up-an-ec2-gpu-instance-from-scratch">Set Up an EC2 GPU Instance from Scratch</h3>
 
-<p><em>MXNet</em> requires the following libraries:</p>
-
-<ul>
-  <li>C++ compiler with C++11 support, such as <code class="highlighter-rouge">gcc &gt;= 4.8</code></li>
-  <li><code class="highlighter-rouge">CUDA</code> (<code class="highlighter-rouge">CUDNN</code> in optional) for GPU linear algebra</li>
-  <li><code class="highlighter-rouge">BLAS</code> (cblas, open-blas, atblas, mkl, or others) for CPU linear algebra</li>
-  <li><code class="highlighter-rouge">opencv</code> for image augmentations</li>
-  <li><code class="highlighter-rouge">curl</code> and <code class="highlighter-rouge">openssl</code> for the ability to read/write to Amazon S3</li>
-</ul>
-
-<p>Installing <code class="highlighter-rouge">CUDA</code> on EC2 instances requires some effort. Caffe has a good
-<a href="https://github.com/BVLC/caffe/wiki/Install-Caffe-on-EC2-from-scratch-(Ubuntu,-CUDA-7,-cuDNN-3)">tutorial</a>
-on how to install CUDA 7.0 on Ubuntu 14.04.</p>
-
-<p><strong><em>Note:</em></strong> We tried CUDA 7.5 on Nov 7, 2015, but found it problematic.</p>
-
-<p>You can install the rest using the package manager. For example, on Ubuntu:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get update
-sudo apt-get install -y build-essential git libcurl4-openssl-dev libatlas-base-dev libopencv-dev python-numpy
-</code></pre></div></div>
-
-<p>The Amazon Machine Image (AMI) <a href="https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LaunchInstanceWizard:ami=ami-12fd8178">ami-12fd8178</a> has the  packages listed above installed.</p>
-
-<h3 id="build-and-run-mxnet-on-a-gpu-instance">Build and Run MXNet on a GPU Instance</h3>
-
-<p>The following commands build <em>MXNet</em> with CUDA/CUDNN, Amazon S3, and distributed
-training.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone <span class="nt">--recursive</span> https://github.com/dmlc/mxnet
-<span class="nb">cd </span>mxnet<span class="p">;</span> <span class="nb">cp </span>make/config.mk <span class="nb">.</span>
-<span class="nb">echo</span> <span class="s2">"USE_CUDA=1"</span> <span class="o">&gt;&gt;</span>config.mk
-<span class="nb">echo</span> <span class="s2">"USE_CUDA_PATH=/usr/local/cuda"</span> <span class="o">&gt;&gt;</span>config.mk
-<span class="nb">echo</span> <span class="s2">"USE_CUDNN=1"</span> <span class="o">&gt;&gt;</span>config.mk
-<span class="nb">echo</span> <span class="s2">"USE_BLAS=atlas"</span> <span class="o">&gt;&gt;</span> config.mk
-<span class="nb">echo</span> <span class="s2">"USE_DIST_KVSTORE = 1"</span> <span class="o">&gt;&gt;</span>config.mk
-<span class="nb">echo</span> <span class="s2">"USE_S3=1"</span> <span class="o">&gt;&gt;</span>config.mk
-make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc</span><span class="si">)</span>
-</code></pre></div></div>
-
-<p>To test whether everything is installed properly, we can try training a convolutional neural network (CNN) on the MNIST dataset using a GPU:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python example/image-classification/train_mnist.py
-</code></pre></div></div>
-
-<p>If you’ve placed the MNIST data on <code class="highlighter-rouge">s3://dmlc/mnist</code>, you can read the data stored on Amazon S3 directly with the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sed</span> <span class="nt">-i</span>.bak <span class="s2">"s!data_dir = 'data'!data_dir = 's3://dmlc/mnist'!"</span> example/image-classification/train_mnist.py
-</code></pre></div></div>
-
-<p><strong><em>Note:</em></strong> You can use <code class="highlighter-rouge">sudo ln /dev/null /dev/raw1394</code> to fix the opencv error <code class="highlighter-rouge">libdc1394 error: Failed to initialize libdc1394</code>.</p>
+<p><a href="https://aws.amazon.com/marketplace/search/results?x=0&amp;y=0&amp;searchTerms=Deep+Learning+Base+AMI">Deep Learning Base AMIs</a>
+provide a foundational image with NVIDIA CUDA, cuDNN, GPU drivers, Intel
+MKL-DNN, Docker and Nvidia-Docker, etc. for deploying your own custom deep
+learning environment. You may follow the [MXNet Build From Source
+instructions](&lt;https://mxnet.apache.org/get_started/build_from_source easily on
+the Deep Learning Base AMIs.</p>
 
 <h3 id="set-up-an-ec2-gpu-cluster-for-distributed-training">Set Up an EC2 GPU Cluster for Distributed Training</h3>
 
 <p>A cluster consists of multiple computers.
 You can use one computer with <em>MXNet</em> installed as the root computer for submitting jobs,and then launch several
 slave computers to run the jobs. For example, launch multiple instances using an
-AMI, e.g.,
-<a href="https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LaunchInstanceWizard:ami=ami-12fd8178">ami-12fd8178</a>,
-with dependencies installed. There are two options:</p>
+AMI with dependencies installed. There are two options:</p>
 
 <ul>
   <li>

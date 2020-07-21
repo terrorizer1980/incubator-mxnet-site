@@ -773,83 +773,8 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <div class="section" id="module-mxnet.random">
-<span id="mxnet-random"></span><h1>mxnet.random<a class="headerlink" href="#module-mxnet.random" title="Permalink to this headline">¶</a></h1>
-<p>Random number interface of MXNet.</p>
-<p><strong>Functions</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.random.seed" title="mxnet.random.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>(seed_state[, ctx])</p></td>
-<td><p>Seeds the random number generators in MXNet.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="mxnet.random.seed">
-<code class="sig-prename descclassname">mxnet.random.</code><code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param">seed_state</em>, <em class="sig-param">ctx='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/random.html#seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.random.seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seeds the random number generators in MXNet.</p>
-<p>This affects the behavior of modules in MXNet that uses random number generators,
-like the dropout operator and <cite>NDArray</cite>’s random sampling operators.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>seed_state</strong> (<em>int</em>) – The random number seed.</p></li>
-<li><p><strong>ctx</strong> (<a class="reference internal" href="../context/index.html#mxnet.context.Context" title="mxnet.context.Context"><em>Context</em></a>) – The device context of the generator. The default is “all” which means seeding random
-number generators of all devices.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Random number generators in MXNet are device specific.
-<cite>mx.random.seed(seed_state)</cite> sets the state of each generator using <cite>seed_state</cite> and the
-device id. Therefore, random numbers generated from different devices can be different
-even if they are seeded using the same seed.</p>
-<p>To produce identical random number sequences independent of the device id,
-set optional <cite>ctx</cite> argument. This produces the same sequence of random numbers independent
-of the device id, but the sequence can be different on different kind of devices as MXNet’s
-random number generators for CPU and GPU use different algorithms.</p>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 1.36481571 -0.62203991]</span>
-<span class="go"> [-1.4962182  -0.08511394]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 1.09544981 -0.20014545]</span>
-<span class="go"> [-0.20808885  0.2527658 ]]</span>
-<span class="go"># Same results on the same device with the same seed</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 0.47400656 -0.75213492]</span>
-<span class="go"> [ 0.20251541  0.95352972]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 0.47400656 -0.75213492]</span>
-<span class="go"> [ 0.20251541  0.95352972]]</span>
-<span class="go"># Different results on gpu(0) and gpu(1) with the same seed</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 2.5020072 -1.6884501]</span>
-<span class="go"> [-0.7931333 -1.4218881]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 0.24336822 -1.664805  ]</span>
-<span class="go"> [-1.0223296   1.253198  ]]</span>
-<span class="go"># Seeding with `ctx` argument produces identical results on gpu(0) and gpu(1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 2.5020072 -1.6884501]</span>
-<span class="go"> [-0.7931333 -1.4218881]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mx</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">gpu</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">())</span>
-<span class="go">[[ 2.5020072 -1.6884501]</span>
-<span class="go"> [-0.7931333 -1.4218881]]</span>
-</pre></div>
-</div>
-</dd></dl>
-
+  <div class="section" id="mxnet-random">
+<h1>mxnet.random<a class="headerlink" href="#mxnet-random" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
