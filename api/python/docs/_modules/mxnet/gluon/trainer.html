@@ -1626,6 +1626,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">ignore_stale_grad</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_stale_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">loss_scaler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_amp_loss_scaler&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loss_scaler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">loss_scaler</span><span class="o">.</span><span class="n">has_overflow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">):</span>
+                <span class="k">return</span>  <span class="c1"># skip on overflow</span>
+
         <span class="n">updates</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updaters</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">):</span>
