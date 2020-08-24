@@ -560,11 +560,11 @@ MXNET_C_API
 =================
 Name                          Total Count        Time (ms)    Min Time (ms)    Max Time (ms)    Avg Time (ms)
 ----                          -----------        ---------    -------------    -------------    -------------
-MXImperativeInvokeEx                    2           0.3360           0.0990           0.2370           0.1680
+MXImperativeInvoke                      2           0.3360           0.0990           0.2370           0.1680
 MXNet C API Calls                      17           0.2320           0.2160           0.2320           0.0080
 MXNDArraySyncCopyFromCPU                1           0.1750           0.1750           0.1750           0.1750
-MXNDArrayCreateEx                       1           0.1050           0.1050           0.1050           0.1050
-MXNDArrayGetShapeEx                    11           0.0210           0.0000           0.0160           0.0019
+MXNDArrayCreate                         1           0.1050           0.1050           0.1050           0.1050
+MXNDArrayGetShape                      11           0.0210           0.0000           0.0160           0.0019
 MXNDArrayWaitAll                        1           0.0200           0.0200           0.0200           0.0200
 MXNDArrayGetDType                       1           0.0010           0.0010           0.0010           0.0010
 MXNet C API Concurrency                34           0.0000           0.0000           0.0010           0.0000
@@ -594,11 +594,11 @@ The profiling data has captured info about interesting functions that have execu
   </thead>
   <tbody>
     <tr>
-      <td><strong>MXImperativeInvokeEx</strong></td>
+      <td><strong>MXImperativeInvoke</strong></td>
       <td>invokes an operator to perform the computation</td>
     </tr>
     <tr>
-      <td><strong>MXNDArrayCreateEx</strong></td>
+      <td><strong>MXNDArrayCreate</strong></td>
       <td>creates  an ndarray</td>
     </tr>
     <tr>
@@ -697,7 +697,7 @@ The profiling data has captured info about interesting functions that have execu
 Here, the four red arrows show the important events in this sequence.</p>
 
 <ol>
-  <li>First, the <code class="highlighter-rouge">MXNDArrayCreateEx</code> is called to physically  allocate space to store the data and other necessary attributes in the <code class="highlighter-rouge">ndarray</code> class.</li>
+  <li>First, the <code class="highlighter-rouge">MXNDArrayCreate</code> is called to physically  allocate space to store the data and other necessary attributes in the <code class="highlighter-rouge">ndarray</code> class.</li>
   <li>Then some support functions are called (<code class="highlighter-rouge">MXNDArrayGetShape,</code> <code class="highlighter-rouge">MXNDArrayGetDType</code>) while initialing the data structure.</li>
   <li>Finally the data is copied from the non-MXNet ndarray into the newly prepared MXNet ndarray by the <code class="highlighter-rouge">MXNDArraySyncCopyFromCPU</code>  function.</li>
 </ol>
@@ -708,9 +708,9 @@ Here, the four red arrows show the important events in this sequence.</p>
 Here you can see that the following sequence of events happen:</p>
 
 <ol>
-  <li><code class="highlighter-rouge">MXImperativeInvokeEx</code> is called the first time to launch the diagonal operator from #3 (in our code example).</li>
+  <li><code class="highlighter-rouge">MXImperativeInvoke</code> is called the first time to launch the diagonal operator from #3 (in our code example).</li>
   <li>Soon after that the actual <strong><code class="highlighter-rouge">diag</code></strong>  operator begins executing in another thread.</li>
-  <li>While that is happening, our main thread moves on and calls <code class="highlighter-rouge">MXImperativeInvokeEx</code> again to launch the <strong><code class="highlighter-rouge">sum</code></strong>  operator. Just like before, this returns without actually executing the operator  and continues.</li>
+  <li>While that is happening, our main thread moves on and calls <code class="highlighter-rouge">MXImperativeInvoke</code> again to launch the <strong><code class="highlighter-rouge">sum</code></strong>  operator. Just like before, this returns without actually executing the operator  and continues.</li>
   <li>Lastly, the <code class="highlighter-rouge">MXNDArrayWaitAll</code> is called as the main thread has progressed to #4 in our app. It will wait here while all the  computation finishes.</li>
 </ol>
 
@@ -773,7 +773,7 @@ profiler.dump()
 The first red box is the first run, and the 2nd smaller one is the 2nd run. First off, we can see how much smaller the 2nd one is now without any of the initialization routines. Here is a zoomed in view of just the 2nd run.</p>
 
 <p><img src="/assets/img/dev_guide_profilling_7.png" alt="dev_guide_profilling_7.png" />
-We still have the same sequence of events at the beginning to initialize the MXNet ndarray (<code class="highlighter-rouge">MXNDArrayCreateEx</code>, <code class="highlighter-rouge">MXNDArrayGetShape</code>, <code class="highlighter-rouge">MXNDArrayGetDType</code>, <code class="highlighter-rouge">MXNDArraySyncCopyFromCPU</code>). Then the <strong><code class="highlighter-rouge">diag</code></strong> operator runs, followed by the <strong><code class="highlighter-rouge">sum</code></strong> operator, and finally the <code class="highlighter-rouge">waitall</code>. When you look at this, be careful about the assumptions that you make. In this version of the timeline, it appears that the operator executes after the <code class="highlighter-rouge">MXImperativeInvokeEx</code> runs, and seems to imply an inherent ordering. But realize that there is no dependency between the <strong><code class="highlighter-rouge">diag</code></strong> operator finishing and the next <strong><code class="highlighter-rouge">MXImperativeInvokeEx</code></strong> launching the <strong><code class="highlighter-rouge">sum</code></strong> operator. In this case, it just-so-happens that the <strong><code class="highlighter-rouge">diag</code></strong> operator finishes so quickly that it appears that way. But in reality the main thread is launching the operators and not waiting for them to finish. Lastly, keep in mind that in this case by the time we hit the <strong><code class="highlighter-rouge">MXNDArrayWaitAll</code></strong> everything is already done and we return immediately, but in other circumstances it may sit here waiting for everything to finish (like we saw earlier in the first run).</p>
+We still have the same sequence of events at the beginning to initialize the MXNet ndarray (<code class="highlighter-rouge">MXNDArrayCreate</code>, <code class="highlighter-rouge">MXNDArrayGetShape</code>, <code class="highlighter-rouge">MXNDArrayGetDType</code>, <code class="highlighter-rouge">MXNDArraySyncCopyFromCPU</code>). Then the <strong><code class="highlighter-rouge">diag</code></strong> operator runs, followed by the <strong><code class="highlighter-rouge">sum</code></strong> operator, and finally the <code class="highlighter-rouge">waitall</code>. When you look at this, be careful about the assumptions that you make. In this version of the timeline, it appears that the operator executes after the <code class="highlighter-rouge">MXImperativeInvoke</code> runs, and seems to imply an inherent ordering. But realize that there is no dependency between the <strong><code class="highlighter-rouge">diag</code></strong> operator finishing and the next <strong><code class="highlighter-rouge">MXImperativeInvoke</code></strong> launching the <strong><code class="highlighter-rouge">sum</code></strong> operator. In this case, it just-so-happens that the <strong><code class="highlighter-rouge">diag</code></strong> operator finishes so quickly that it appears that way. But in reality the main thread is launching the operators and not waiting for them to finish. Lastly, keep in mind that in this case by the time we hit the <strong><code class="highlighter-rouge">MXNDArrayWaitAll</code></strong> everything is already done and we return immediately, but in other circumstances it may sit here waiting for everything to finish (like we saw earlier in the first run).</p>
 
 
     </div>
