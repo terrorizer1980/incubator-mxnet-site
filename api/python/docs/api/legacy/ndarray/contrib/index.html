@@ -1238,14 +1238,8 @@ Show Source
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.CTCLoss" title="mxnet.ndarray.contrib.CTCLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CTCLoss</span></code></a>([data, label, data_lengths, …])</p></td>
 <td><p>Connectionist Temporal Classification Loss.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.DeformableConvolution" title="mxnet.ndarray.contrib.DeformableConvolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeformableConvolution</span></code></a>([data, offset, …])</p></td>
-<td><p>Compute 2-D deformable convolution on 4-D input.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.DeformablePSROIPooling" title="mxnet.ndarray.contrib.DeformablePSROIPooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeformablePSROIPooling</span></code></a>([data, rois, trans, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.DeformablePSROIPooling" title="mxnet.ndarray.contrib.DeformablePSROIPooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeformablePSROIPooling</span></code></a>([data, rois, trans, …])</p></td>
 <td><p>Performs deformable position-sensitive region-of-interest pooling on inputs.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.ModulatedDeformableConvolution" title="mxnet.ndarray.contrib.ModulatedDeformableConvolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModulatedDeformableConvolution</span></code></a>([data, …])</p></td>
-<td><p>Compute 2-D modulated deformable convolution on 4-D input.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.ndarray.contrib.MultiBoxDetection" title="mxnet.ndarray.contrib.MultiBoxDetection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiBoxDetection</span></code></a>([cls_prob, loc_pred, …])</p></td>
 <td><p>Convert multibox detection predictions.</p></td>
@@ -1969,73 +1963,6 @@ information on the definition and the algorithm.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mxnet.ndarray.contrib.DeformableConvolution">
-<code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">DeformableConvolution</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">weight=None</em>, <em class="sig-param">bias=None</em>, <em class="sig-param">kernel=_Null</em>, <em class="sig-param">stride=_Null</em>, <em class="sig-param">dilate=_Null</em>, <em class="sig-param">pad=_Null</em>, <em class="sig-param">num_filter=_Null</em>, <em class="sig-param">num_group=_Null</em>, <em class="sig-param">num_deformable_group=_Null</em>, <em class="sig-param">workspace=_Null</em>, <em class="sig-param">no_bias=_Null</em>, <em class="sig-param">layout=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.DeformableConvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute 2-D deformable convolution on 4-D input.</p>
-<p>The deformable convolution operation is described in <a class="reference external" href="https://arxiv.org/abs/1703.06211">https://arxiv.org/abs/1703.06211</a></p>
-<p>For 2-D deformable convolution, the shapes are</p>
-<ul class="simple">
-<li><p><strong>data</strong>: <em>(batch_size, channel, height, width)</em></p></li>
-<li><p><strong>offset</strong>: <em>(batch_size, num_deformable_group * kernel[0] * kernel[1] * 2, height, width)</em></p></li>
-<li><p><strong>weight</strong>: <em>(num_filter, channel, kernel[0], kernel[1])</em></p></li>
-<li><p><strong>bias</strong>: <em>(num_filter,)</em></p></li>
-<li><p><strong>out</strong>: <em>(batch_size, num_filter, out_height, out_width)</em>.</p></li>
-</ul>
-<p>Define:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="o">=</span> <span class="n">floor</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">-</span><span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-</pre></div>
-</div>
-<p>then we have:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_height</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dilate</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">out_width</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dilate</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>If <code class="docutils literal notranslate"><span class="pre">no_bias</span></code> is set to be true, then the <code class="docutils literal notranslate"><span class="pre">bias</span></code> term is ignored.</p>
-<p>The default data <code class="docutils literal notranslate"><span class="pre">layout</span></code> is <em>NCHW</em>, namely <em>(batch_size, channle, height,
-width)</em>.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">num_group</span></code> is larger than 1, denoted by <em>g</em>, then split the input <code class="docutils literal notranslate"><span class="pre">data</span></code>
-evenly into <em>g</em> parts along the channel axis, and also evenly split <code class="docutils literal notranslate"><span class="pre">weight</span></code>
-along the first dimension. Next compute the convolution on the <em>i</em>-th part of
-the data with the <em>i</em>-th weight part. The output is obtained by concating all
-the <em>g</em> results.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">num_deformable_group</span></code> is larger than 1, denoted by <em>dg</em>, then split the
-input <code class="docutils literal notranslate"><span class="pre">offset</span></code> evenly into <em>dg</em> parts along the channel axis, and also evenly
-split <code class="docutils literal notranslate"><span class="pre">data</span></code> into <em>dg</em> parts along the channel axis. Next compute the
-deformable convolution, apply the <em>i</em>-th part of the offset on the <em>i</em>-th part
-of the data.</p>
-<p>Both <code class="docutils literal notranslate"><span class="pre">weight</span></code> and <code class="docutils literal notranslate"><span class="pre">bias</span></code> are learnable parameters.</p>
-<p>Defined in /work/mxnet/src/operator/contrib/deformable_convolution.cc:L100</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input data to the DeformableConvolutionOp.</p></li>
-<li><p><strong>offset</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input offset to the DeformableConvolutionOp.</p></li>
-<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Weight matrix.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Bias parameter.</p></li>
-<li><p><strong>kernel</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – Convolution kernel size: (h, w) or (d, h, w)</p></li>
-<li><p><strong>stride</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution stride: (h, w) or (d, h, w). Defaults to 1 for each dimension.</p></li>
-<li><p><strong>dilate</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution dilate: (h, w) or (d, h, w). Defaults to 1 for each dimension.</p></li>
-<li><p><strong>pad</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Zero pad for convolution: (h, w) or (d, h, w). Defaults to no padding.</p></li>
-<li><p><strong>num_filter</strong> (<em>int</em><em>, </em><em>required</em>) – Convolution filter(channel) number</p></li>
-<li><p><strong>num_group</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of group partitions.</p></li>
-<li><p><strong>num_deformable_group</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – Number of deformable group partitions.</p></li>
-<li><p><strong>workspace</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1024</em>) – Maximum temperal workspace allowed for convolution (MB).</p></li>
-<li><p><strong>no_bias</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to disable bias parameter.</p></li>
-<li><p><strong>layout</strong> (<em>{None</em><em>, </em><em>'NCDHW'</em><em>, </em><em>'NCHW'</em><em>, </em><em>'NCW'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Set layout for input, output and weight. Empty for
-default layout: NCW for 1d, NCHW for 2d and NCDHW for 3d.</p></li>
-<li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>out</strong> – The output of this function.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="mxnet.ndarray.contrib.DeformablePSROIPooling">
 <code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">DeformablePSROIPooling</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">rois=None</em>, <em class="sig-param">trans=None</em>, <em class="sig-param">spatial_scale=_Null</em>, <em class="sig-param">output_dim=_Null</em>, <em class="sig-param">group_size=_Null</em>, <em class="sig-param">pooled_size=_Null</em>, <em class="sig-param">part_size=_Null</em>, <em class="sig-param">sample_per_part=_Null</em>, <em class="sig-param">trans_std=_Null</em>, <em class="sig-param">no_trans=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.DeformablePSROIPooling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs deformable position-sensitive region-of-interest pooling on inputs.
@@ -2054,76 +1981,6 @@ The DeformablePSROIPooling operation is described in <a class="reference externa
 <li><p><strong>sample_per_part</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default='1'</em>) – fix samples per part</p></li>
 <li><p><strong>trans_std</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – fix transition std</p></li>
 <li><p><strong>no_trans</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to disable trans parameter.</p></li>
-<li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>out</strong> – The output of this function.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray">NDArray</a> or list of NDArrays</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="mxnet.ndarray.contrib.ModulatedDeformableConvolution">
-<code class="sig-prename descclassname">mxnet.ndarray.contrib.</code><code class="sig-name descname">ModulatedDeformableConvolution</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">weight=None</em>, <em class="sig-param">bias=None</em>, <em class="sig-param">kernel=_Null</em>, <em class="sig-param">stride=_Null</em>, <em class="sig-param">dilate=_Null</em>, <em class="sig-param">pad=_Null</em>, <em class="sig-param">num_filter=_Null</em>, <em class="sig-param">num_group=_Null</em>, <em class="sig-param">num_deformable_group=_Null</em>, <em class="sig-param">workspace=_Null</em>, <em class="sig-param">no_bias=_Null</em>, <em class="sig-param">im2col_step=_Null</em>, <em class="sig-param">layout=_Null</em>, <em class="sig-param">out=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mxnet.ndarray.contrib.ModulatedDeformableConvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute 2-D modulated deformable convolution on 4-D input.</p>
-<p>The modulated deformable convolution operation is described in <a class="reference external" href="https://arxiv.org/abs/1811.11168">https://arxiv.org/abs/1811.11168</a></p>
-<p>For 2-D modulated deformable convolution, the shapes are</p>
-<ul class="simple">
-<li><p><strong>data</strong>: <em>(batch_size, channel, height, width)</em></p></li>
-<li><p><strong>offset</strong>: <em>(batch_size, num_deformable_group * kernel[0] * kernel[1] * 2, height, width)</em></p></li>
-<li><p><strong>mask</strong>: <em>(batch_size, num_deformable_group * kernel[0] * kernel[1], height, width)</em></p></li>
-<li><p><strong>weight</strong>: <em>(num_filter, channel, kernel[0], kernel[1])</em></p></li>
-<li><p><strong>bias</strong>: <em>(num_filter,)</em></p></li>
-<li><p><strong>out</strong>: <em>(batch_size, num_filter, out_height, out_width)</em>.</p></li>
-</ul>
-<p>Define:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="o">=</span> <span class="n">floor</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">-</span><span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-</pre></div>
-</div>
-<p>then we have:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_height</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dilate</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">out_width</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dilate</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>If <code class="docutils literal notranslate"><span class="pre">no_bias</span></code> is set to be true, then the <code class="docutils literal notranslate"><span class="pre">bias</span></code> term is ignored.</p>
-<p>The default data <code class="docutils literal notranslate"><span class="pre">layout</span></code> is <em>NCHW</em>, namely <em>(batch_size, channle, height,
-width)</em>.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">num_group</span></code> is larger than 1, denoted by <em>g</em>, then split the input <code class="docutils literal notranslate"><span class="pre">data</span></code>
-evenly into <em>g</em> parts along the channel axis, and also evenly split <code class="docutils literal notranslate"><span class="pre">weight</span></code>
-along the first dimension. Next compute the convolution on the <em>i</em>-th part of
-the data with the <em>i</em>-th weight part. The output is obtained by concating all
-the <em>g</em> results.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">num_deformable_group</span></code> is larger than 1, denoted by <em>dg</em>, then split the
-input <code class="docutils literal notranslate"><span class="pre">offset</span></code> evenly into <em>dg</em> parts along the channel axis, and also evenly
-split <code class="docutils literal notranslate"><span class="pre">out</span></code> evenly into <em>dg</em> parts along the channel axis. Next compute the
-deformable convolution, apply the <em>i</em>-th part of the offset part on the <em>i</em>-th
-out.</p>
-<p>Both <code class="docutils literal notranslate"><span class="pre">weight</span></code> and <code class="docutils literal notranslate"><span class="pre">bias</span></code> are learnable parameters.</p>
-<p>Defined in /work/mxnet/src/operator/contrib/modulated_deformable_convolution.cc:L102</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input data to the ModulatedDeformableConvolutionOp.</p></li>
-<li><p><strong>offset</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input offset to ModulatedDeformableConvolutionOp.</p></li>
-<li><p><strong>mask</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Input mask to the ModulatedDeformableConvolutionOp.</p></li>
-<li><p><strong>weight</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Weight matrix.</p></li>
-<li><p><strong>bias</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – Bias parameter.</p></li>
-<li><p><strong>kernel</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>required</em>) – Convolution kernel size: (h, w) or (d, h, w)</p></li>
-<li><p><strong>stride</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution stride: (h, w) or (d, h, w). Defaults to 1 for each dimension.</p></li>
-<li><p><strong>dilate</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Convolution dilate: (h, w) or (d, h, w). Defaults to 1 for each dimension.</p></li>
-<li><p><strong>pad</strong> (<em>Shape</em><em>(</em><em>tuple</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – Zero pad for convolution: (h, w) or (d, h, w). Defaults to no padding.</p></li>
-<li><p><strong>num_filter</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>required</em>) – Convolution filter(channel) number</p></li>
-<li><p><strong>num_group</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Number of group partitions.</p></li>
-<li><p><strong>num_deformable_group</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1</em>) – Number of deformable group partitions.</p></li>
-<li><p><strong>workspace</strong> (<em>long</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=1024</em>) – Maximum temperal workspace allowed for convolution (MB).</p></li>
-<li><p><strong>no_bias</strong> (<em>boolean</em><em>, </em><em>optional</em><em>, </em><em>default=0</em>) – Whether to disable bias parameter.</p></li>
-<li><p><strong>im2col_step</strong> (<em>int</em><em> (</em><em>non-negative</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default=64</em>) – Maximum number of images per im2col computation; The total batch size should be divisable by this value or smaller than this value; if you face out of memory problem, you can try to use a smaller value here.</p></li>
-<li><p><strong>layout</strong> (<em>{None</em><em>, </em><em>'NCDHW'</em><em>, </em><em>'NCHW'</em><em>, </em><em>'NCW'}</em><em>,</em><em>optional</em><em>, </em><em>default='None'</em>) – Set layout for input, output and weight. Empty for
-default layout: NCW for 1d, NCHW for 2d and NCDHW for 3d.</p></li>
 <li><p><strong>out</strong> (<a class="reference internal" href="../ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a><em>, </em><em>optional</em>) – The output NDArray to hold the result.</p></li>
 </ul>
 </dd>
