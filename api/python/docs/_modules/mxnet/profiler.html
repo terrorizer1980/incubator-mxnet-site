@@ -1697,7 +1697,7 @@ Edit on Github
 
 
 <div class="viewcode-block" id="scope"><a class="viewcode-back" href="../../api/profiler/index.html#mxnet.profiler.scope">[docs]</a><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">scope</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;:&#39;</span><span class="p">,</span> <span class="n">append_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">scope</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;:&#39;</span><span class="p">,</span> <span class="n">append_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Assign the profiler scope for the GPU memory profiler.</span>
 
 <span class="sd">    It is implicitly invoked when the Gluon API is used.</span>
@@ -1709,7 +1709,9 @@ Edit on Github
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">name</span>
-    <span class="n">token</span> <span class="o">=</span> <span class="n">_current_scope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">_current_scope</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="n">name</span> <span class="k">if</span> <span class="n">append_mode</span> <span class="k">else</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">append_mode</span> <span class="ow">and</span> <span class="n">_current_scope</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&lt;unk&gt;:&quot;</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">_current_scope</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="n">name</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">_current_scope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="c1"># Invoke the C API to propagate the profiler scope information to the</span>
     <span class="c1"># C++ backend.</span>
     <span class="n">check_call</span><span class="p">(</span><span class="n">_LIB</span><span class="o">.</span><span class="n">MXSetProfilerScope</span><span class="p">(</span><span class="n">c_str</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
