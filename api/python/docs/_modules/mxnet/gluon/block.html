@@ -1215,6 +1215,7 @@ Edit on Github
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Block&#39;</span><span class="p">,</span> <span class="s1">&#39;HybridBlock&#39;</span><span class="p">,</span> <span class="s1">&#39;SymbolBlock&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
@@ -2178,7 +2179,7 @@ Edit on Github
 
     <span class="k">def</span> <span class="nf">_get_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>  <span class="c1"># Gluon 1</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph_v1</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># Gluon 2 based on deferred compute mode</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph_v2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2471,7 +2472,7 @@ Edit on Github
 
 <div class="viewcode-block" id="HybridBlock.infer_shape"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.HybridBlock.infer_shape">[docs]</a>    <span class="k">def</span> <span class="nf">infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Infers shape of Parameters from inputs.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
             <span class="c1"># Gluon 1 based on F:  hybrid_forward is defined by user</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_infer_attrs</span><span class="p">(</span><span class="s1">&#39;infer_shape&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2582,7 +2583,7 @@ Edit on Github
             <span class="n">cld</span><span class="p">()</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="n">monitor_all</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="o">.</span><span class="vm">__func__</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HybridBlock</span><span class="o">.</span><span class="n">hybrid_forward</span><span class="p">:</span>
             <span class="c1"># Gluon 1 based on F:  hybrid_forward is defined by user</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Gluon 2 based on deferred compute mode</span>
