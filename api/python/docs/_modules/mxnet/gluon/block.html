@@ -2710,7 +2710,8 @@ Edit on Github
 <span class="sd">    &gt;&gt;&gt; print(feat_model(x))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="SymbolBlock.imports"><a class="viewcode-back" href="../../../api/gluon/nn/index.html#mxnet.gluon.nn.SymbolBlock.imports">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">param_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="n">symbol_file</span><span class="p">,</span> <span class="n">input_names</span><span class="p">,</span> <span class="n">param_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">ignore_extra</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Import model previously saved by `gluon.HybridBlock.export`</span>
 <span class="sd">        as a `gluon.SymbolBlock` for use in Gluon.</span>
 
@@ -2724,6 +2725,11 @@ Edit on Github
 <span class="sd">            Path to parameter file.</span>
 <span class="sd">        ctx : Context, default None</span>
 <span class="sd">            The context to initialize `gluon.SymbolBlock` on.</span>
+<span class="sd">        allow_missing : bool, default False</span>
+<span class="sd">            Whether to silently skip loading parameters not represents in the file.</span>
+<span class="sd">        ignore_extra : bool, default False</span>
+<span class="sd">            Whether to silently ignore parameters from the file that are not</span>
+<span class="sd">            present in this Block.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2756,7 +2762,7 @@ Edit on Github
             <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_np_array</span><span class="p">()</span> <span class="k">else</span> <span class="n">symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_names</span><span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">SymbolBlock</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cast_dtype</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype_source</span><span class="o">=</span><span class="s1">&#39;saved&#39;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">allow_missing</span><span class="p">,</span> <span class="n">ignore_extra</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;saved&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
