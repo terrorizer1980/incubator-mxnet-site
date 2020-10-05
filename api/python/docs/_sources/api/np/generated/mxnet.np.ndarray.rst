@@ -51,6 +51,7 @@ mxnet.np.ndarray
       ~ndarray.depth_to_space
       ~ndarray.detach
       ~ndarray.diag
+      ~ndarray.diagonal
       ~ndarray.dot
       ~ndarray.exp
       ~ndarray.expand_dims
