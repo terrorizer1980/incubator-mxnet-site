@@ -1583,7 +1583,13 @@ two modules:</p>
 <td><p>Scaled Exponential Linear Unit (SELU)</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.Swish" title="mxnet.gluon.nn.Swish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Swish</span></code></a></p></td>
-<td><p>Swish Activation function</p></td>
+<td><p>Swish Activation function (SiLU with a hyperparameter)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SiLU" title="mxnet.gluon.nn.SiLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.SiLU</span></code></a></p></td>
+<td><p>Sigmoid Linear Units</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.GELU" title="mxnet.gluon.nn.GELU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.GELU</span></code></a></p></td>
+<td><p>Gaussian Exponential Linear Unit (GELU)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1742,13 +1748,16 @@ two modules:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.Sequential" title="mxnet.gluon.nn.Sequential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sequential</span></code></a>()</p></td>
 <td><p>Stacks Blocks sequentially.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.Swish" title="mxnet.gluon.nn.Swish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Swish</span></code></a>([beta])</p></td>
-<td><p>Swish Activation function</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SiLU" title="mxnet.gluon.nn.SiLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SiLU</span></code></a>(**kwargs)</p></td>
+<td><p>Sigmoid Linear Units</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SymbolBlock" title="mxnet.gluon.nn.SymbolBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SymbolBlock</span></code></a>(outputs, inputs[, params])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.Swish" title="mxnet.gluon.nn.Swish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Swish</span></code></a>([beta])</p></td>
+<td><p>Swish Activation function (SiLU with a hyperparameter)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SymbolBlock" title="mxnet.gluon.nn.SymbolBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SymbolBlock</span></code></a>(outputs, inputs[, params])</p></td>
 <td><p>Construct block from symbol.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SyncBatchNorm" title="mxnet.gluon.nn.SyncBatchNorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SyncBatchNorm</span></code></a>([in_channels, num_devices, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SyncBatchNorm" title="mxnet.gluon.nn.SyncBatchNorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SyncBatchNorm</span></code></a>([in_channels, num_devices, …])</p></td>
 <td><p>Cross-GPU Synchronized Batch normalization (SyncBN)</p></td>
 </tr>
 </tbody>
@@ -4918,11 +4927,63 @@ non-hybrid children.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="mxnet.gluon.nn.SiLU">
+<em class="property">class </em><code class="sig-name descname">SiLU</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/activations.html#SiLU"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.SiLU" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.block.HybridBlock</span></code></p>
+<dl class="simple">
+<dt>Sigmoid Linear Units</dt><dd><p>Originally proposed “Gaussian Error Linear Units (GELUs)”, Hendrycks et al, 2016
+<a class="reference external" href="https://arxiv.org/abs/1606.08415">https://arxiv.org/abs/1606.08415</a></p>
+</dd>
+</dl>
+<p><strong>Methods</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mxnet.gluon.nn.SiLU.hybrid_forward" title="mxnet.gluon.nn.SiLU.hybrid_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hybrid_forward</span></code></a>(F, x)</p></td>
+<td><p>Overrides to construct symbolic graph for this <cite>Block</cite>.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em>) – silu(x) = x * sigmoid(x)</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><p><strong>data</strong>: input tensor with arbitrary shape.</p></li>
+</ul>
+</dd>
+<dt>Outputs:</dt><dd><ul class="simple">
+<li><p><strong>out</strong>: output tensor with the same shape as <cite>data</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="mxnet.gluon.nn.SiLU.hybrid_forward">
+<code class="sig-name descname">hybrid_forward</code><span class="sig-paren">(</span><em class="sig-param">F</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/activations.html#SiLU.hybrid_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.SiLU.hybrid_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides to construct symbolic graph for this <cite>Block</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference internal" href="../../legacy/symbol/symbol.html#mxnet.symbol.Symbol" title="mxnet.symbol.Symbol"><em>Symbol</em></a><em> or </em><a class="reference internal" href="../../legacy/ndarray/ndarray.html#mxnet.ndarray.NDArray" title="mxnet.ndarray.NDArray"><em>NDArray</em></a>) – The first input tensor.</p></li>
+<li><p><strong>*args</strong> (<em>list of Symbol</em><em> or </em><em>list of NDArray</em>) – Additional input tensors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="mxnet.gluon.nn.Swish">
 <em class="property">class </em><code class="sig-name descname">Swish</code><span class="sig-paren">(</span><em class="sig-param">beta=1.0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/mxnet/gluon/nn/activations.html#Swish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mxnet.gluon.nn.Swish" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.gluon.block.HybridBlock</span></code></p>
 <dl class="simple">
-<dt>Swish Activation function</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/1710.05941.pdf">https://arxiv.org/pdf/1710.05941.pdf</a></p>
+<dt>Swish Activation function (SiLU with a hyperparameter)</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/1710.05941.pdf">https://arxiv.org/pdf/1710.05941.pdf</a></p>
 </dd>
 </dl>
 <p><strong>Methods</strong></p>

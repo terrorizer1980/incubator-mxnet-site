@@ -1544,7 +1544,7 @@ div.rendered_html tbody tr:hover {
 <h1>Activation Blocks<a class="headerlink" href="#Activation-Blocks" title="Permalink to this headline">¶</a></h1>
 <p>Deep neural networks are a way to express a nonlinear function with lots of parameters from input data to outputs. The nonlinearities that allow neural networks to capture complex patterns in data are referred to as activation functions. Over the course of the development of neural networks, several nonlinear activation functions have been introduced to make gradient-based deep learning tractable.</p>
 <p>If you are looking to answer the question, ‘which activation function should I use for my neural network model?’, you should probably go with <em>ReLU</em>. Unless you’re trying to implement something like a gating mechanism, like in LSTMs or GRU cells, then you should opt for sigmoid and/or tanh in those cells. However, if you have a working model architecture and you’re trying to improve its performance by swapping out activation functions or treating the activation function as a hyperparameter, then
-you may want to try hand-designed activations like SELU or a function discovered by reinforcement learning and exhaustive search like Swish. This guide describes these activation functions and others implemented in MXNet in detail.</p>
+you may want to try hand-designed activations like SELU, SiLU, or GELU. This guide describes these activation functions and others implemented in MXNet in detail.</p>
 <div class="section" id="Visualizing-Activations">
 <h2>Visualizing Activations<a class="headerlink" href="#Visualizing-Activations" title="Permalink to this headline">¶</a></h2>
 <p>In order to compare the various activation functions and to understand the nuances of their differences we have a snippet of code to plot the activation functions (used in the forward pass) and their gradients (used in the backward pass).</p>
@@ -1764,23 +1764,42 @@ addressed by ensuring that the tuning the learning rate to ensure that it’s no
 </div>
 <p><img alt="selu activation and gradient" src="tutorials/packages/gluon/blocks/activations/images/selu.png" /></p>
 </div>
-<div class="section" id="Swish">
-<h3>Swish<a class="headerlink" href="#Swish" title="Permalink to this headline">¶</a></h3>
-<p>Swish is an activation function that attempts to address the shortcomings of ReLU by combining ideas from ReLU and sigmoid. Swish was discovered by searching the space of activation functions using a combination of exhaustive and reinforcement learning-based search and was introduced in the paper by <a class="reference external" href="https://arxiv.org/pdf/1710.05941.pdf">Ramchandran et al</a>.</p>
-<p>The swish function is given as</p>
+<div class="section" id="SiLU">
+<h3>SiLU<a class="headerlink" href="#SiLU" title="Permalink to this headline">¶</a></h3>
+<p>The SiLU is an activation function that attempts to address the shortcomings of ReLU by combining ideas from ReLU and sigmoid. The SiLU serves as a smooth approximation to the ReLU and was originally introduced in <a class="reference external" href="https://arxiv.org/abs/1606.08415">Hendrycks et al</a>.</p>
+<p>The silu function is given as</p>
 <div class="math notranslate nohighlight">
-\[swish(x) = x\cdot\sigma(\beta x)\]</div>
-<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the sigmoid activation function <span class="math notranslate nohighlight">\(\sigma(x) = \frac{1}{1 + e^{-x}}\)</span> described above and <span class="math notranslate nohighlight">\(\beta\)</span> is a hyperparameter set to 1 by default in MXNet.</p>
+\[silu(x) = x\cdot\sigma(x)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the sigmoid activation function <span class="math notranslate nohighlight">\(\sigma(x) = \frac{1}{1 + e^{-x}}\)</span> described above.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-python notranslate"><div class="highlight"><pre>
-<span></span><span class="n">visualize_activation</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Swish</span><span class="p">())</span>
+<span></span><span class="n">visualize_activation</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SiLU</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<p><img alt="swish activation and gradient" src="tutorials/packages/gluon/blocks/activations/images/swish.png" /></p>
+<p><img alt="silu activation and gradient" src="tutorials/packages/gluon/blocks/activations/images/silu.png" /></p>
+</div>
+<div class="section" id="GELU">
+<h3>GELU<a class="headerlink" href="#GELU" title="Permalink to this headline">¶</a></h3>
+<p>The GELU is a smooth approximation to the ReLU and was introduced in <a class="reference external" href="https://arxiv.org/abs/1606.08415">Hendrycks et al</a>. It is a common activation function in architectures such as Transformers, BERT, and GPT.</p>
+<p>The gelu function is given as</p>
+<div class="math notranslate nohighlight">
+\[gelu(x) = x\cdot\Phi(x),\]</div>
+<p>whereas the ReLU can be written as <span class="math notranslate nohighlight">\(x\cdot\mathbf{1}(x&gt;0)\)</span>, so <span class="math notranslate nohighlight">\(Phi(x)\)</span> serves as a smooth approximation to the ReLU’s indicator function.</p>
+<p>Note <span class="math notranslate nohighlight">\(\Phi(x) = \frac{1}{\sqrt{2 \pi}} \exp\left\{-\frac{x^2}{2}\right\}\)</span> is the standard normal cumulative distribution.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">visualize_activation</span><span class="p">(</span><span class="n">mx</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p><img alt="gelu activation and gradient" src="tutorials/packages/gluon/blocks/activations/images/gelu.png" /></p>
 </div>
 </div>
 <div class="section" id="Summary">
@@ -1791,7 +1810,7 @@ addressed by ensuring that the tuning the learning rate to ensure that it’s no
 <li><p>Sigmoids like the logistic (sigmoid) function and tanh where the first kinds of activation functions used in neural networks. They have since fallen out of use because of their tendency to saturate and have vanishing gradients.</p></li>
 <li><p>Rectifiers like ReLU do not saturate like the Sigmoids and so address the vanishing gradient problem making them the de facto activation functions. ReLU however is still plagued by the dying ReLU problem.</p></li>
 <li><p>LeakyReLU and PReLU are two similar approaches to improve ReLU and address the dying ReLU by introducing a parameter <span class="math notranslate nohighlight">\(\alpha\)</span> (learned in PReLU) that leaks to the gradient of negative inputs</p></li>
-<li><p>MXNet also implements custom state-of-the-art activations like ELU, SELU and Swish.</p></li>
+<li><p>MXNet also implements custom state-of-the-art activations like ELU, SELU, SiLU, and GELU.</p></li>
 </ul>
 </div>
 <div class="section" id="Next-Steps">
@@ -1836,7 +1855,8 @@ guide</a> to learn how to implement your own custom activation layer.</p>
 <li><a class="reference internal" href="#PReLU">PReLU</a></li>
 <li><a class="reference internal" href="#ELU">ELU</a></li>
 <li><a class="reference internal" href="#SELU">SELU</a></li>
-<li><a class="reference internal" href="#Swish">Swish</a></li>
+<li><a class="reference internal" href="#SiLU">SiLU</a></li>
+<li><a class="reference internal" href="#GELU">GELU</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#Summary">Summary</a></li>

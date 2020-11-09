@@ -1356,7 +1356,7 @@ Edit on Github
 <span class="c1"># coding: utf-8</span>
 <span class="c1"># pylint: disable= arguments-differ</span>
 <span class="sd">&quot;&quot;&quot;Basic neural network layers.&quot;&quot;&quot;</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Activation&#39;</span><span class="p">,</span> <span class="s1">&#39;LeakyReLU&#39;</span><span class="p">,</span> <span class="s1">&#39;PReLU&#39;</span><span class="p">,</span> <span class="s1">&#39;ELU&#39;</span><span class="p">,</span> <span class="s1">&#39;SELU&#39;</span><span class="p">,</span> <span class="s1">&#39;Swish&#39;</span><span class="p">,</span> <span class="s1">&#39;GELU&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Activation&#39;</span><span class="p">,</span> <span class="s1">&#39;LeakyReLU&#39;</span><span class="p">,</span> <span class="s1">&#39;PReLU&#39;</span><span class="p">,</span> <span class="s1">&#39;ELU&#39;</span><span class="p">,</span> <span class="s1">&#39;SELU&#39;</span><span class="p">,</span> <span class="s1">&#39;Swish&#39;</span><span class="p">,</span> <span class="s1">&#39;GELU&#39;</span><span class="p">,</span> <span class="s1">&#39;SiLU&#39;</span><span class="p">]</span>
 
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">initializer</span>
 <span class="kn">from</span> <span class="nn">..block</span> <span class="kn">import</span> <span class="n">HybridBlock</span>
@@ -1553,7 +1553,7 @@ Edit on Github
 
 <div class="viewcode-block" id="Swish"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.Swish">[docs]</a><span class="k">class</span> <span class="nc">Swish</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Swish Activation function</span>
+<span class="sd">    Swish Activation function (SiLU with a hyperparameter)</span>
 <span class="sd">        https://arxiv.org/pdf/1710.05941.pdf</span>
 
 <span class="sd">    Parameters</span>
@@ -1578,6 +1578,35 @@ Edit on Github
             <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_beta</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_beta</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fwd&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SiLU"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.SiLU">[docs]</a><span class="k">class</span> <span class="nc">SiLU</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sigmoid Linear Units</span>
+<span class="sd">        Originally proposed &quot;Gaussian Error Linear Units (GELUs)&quot;, Hendrycks et al, 2016</span>
+<span class="sd">        https://arxiv.org/abs/1606.08415</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beta : float</span>
+<span class="sd">        silu(x) = x * sigmoid(x)</span>
+
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        - **data**: input tensor with arbitrary shape.</span>
+
+<span class="sd">    Outputs:</span>
+<span class="sd">        - **out**: output tensor with the same shape as `data`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SiLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SiLU.hybrid_forward"><a class="viewcode-back" href="../../../../api/gluon/nn/index.html#mxnet.gluon.nn.SiLU.hybrid_forward">[docs]</a>    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">npx</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fwd&#39;</span><span class="p">)</span></div></div>
 </pre></div>
 
         <hr class="feedback-hr-top" />
