@@ -2251,6 +2251,8 @@ Edit on Github
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitor_all</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_if_dynamic</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Registers parameters.&quot;&quot;&quot;</span>
@@ -2330,7 +2332,7 @@ Edit on Github
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph_v2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span>
 
-    <span class="k">def</span> <span class="nf">_build_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_build_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">update_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_graph</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">data_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_params</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
@@ -2403,7 +2405,8 @@ Edit on Github
                 <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">as_np_ndarray</span><span class="p">()</span>
 
             <span class="c1">#update cached graph with partitioned graph</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">out</span>
+            <span class="k">if</span> <span class="n">update_graph</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">out</span>
 
         <span class="n">input_names</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">list_inputs</span><span class="p">()</span>
         <span class="n">data_indices</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2444,10 +2447,12 @@ Edit on Github
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span>
 
-        <span class="n">flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;param_indices&#39;</span><span class="p">,</span> <span class="n">param_indices</span><span class="p">)]</span> <span class="o">+</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">CachedOp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
-
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">kv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="s1">&#39;param_indices&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;data_indices&#39;</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;param_indices&#39;</span><span class="p">,</span> <span class="n">param_indices</span><span class="p">)]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">CachedOp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_deferred_infer_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -2460,6 +2465,17 @@ Edit on Github
     <span class="k">def</span> <span class="nf">_call_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_cache</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_if_dynamic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># partition static shape ops if the graph contains any dynamic shape op</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span>
+            <span class="n">is_dynamic</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">has_dynamic_shape_op</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">is_dynamic</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="s1">&#39;static_shape&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_build_cache</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">update_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span><span class="p">,</span> <span class="s2">&quot;Gluon failed to build the cache. &quot;</span> \
                                 <span class="s2">&quot;This should never happen. &quot;</span> \
                                 <span class="s2">&quot;Please submit an issue on Github&quot;</span> \
@@ -2497,7 +2513,7 @@ Edit on Github
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Partitions the current HybridBlock and optimizes it for a given backend</span>
 <span class="sd">        without executing a forward pass. Modifies the HybridBlock in-place.</span>
 
@@ -2528,6 +2544,8 @@ Edit on Github
 <span class="sd">        backend_opts : dict of user-specified options to pass to the backend for partitioning, optional</span>
 <span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
 <span class="sd">        clear : clears any previous optimizations</span>
+<span class="sd">        partition_if_dynamic : bool</span>
+<span class="sd">            whether to partition the graph when dynamic shape op exists</span>
 <span class="sd">        static_alloc : bool, default False</span>
 <span class="sd">            Statically allocate memory to improve speed. Memory usage may increase.</span>
 <span class="sd">        static_shape : bool, default False</span>
@@ -2537,7 +2555,7 @@ Edit on Github
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># do hybrize API call</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">backend_opts</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">backend_opts</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># do part of forward API call</span>
         <span class="n">has_symbol</span><span class="p">,</span> <span class="n">has_ndarray</span><span class="p">,</span> <span class="n">ctx_set</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_gather_type_ctx_info</span><span class="p">([</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
@@ -2558,9 +2576,12 @@ Edit on Github
                                 <span class="s2">&quot; https://github.com/apache/incubator-mxnet.&quot;</span>
         <span class="c1"># do not actually call the cached_op</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">True</span>
+
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_op</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">register_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
@@ -2576,7 +2597,7 @@ Edit on Github
             <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Activates or deactivates :py:class:`HybridBlock` s recursively. Has no effect on</span>
 <span class="sd">        non-hybrid children.</span>
 
@@ -2589,6 +2610,8 @@ Edit on Github
 <span class="sd">        backend_opts : dict of user-specified options to pass to the backend for partitioning, optional</span>
 <span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
 <span class="sd">        clear : clears any previous optimizations</span>
+<span class="sd">        partition_if_dynamic : bool</span>
+<span class="sd">            whether to partition the graph when dynamic shape op exists</span>
 <span class="sd">        static_alloc : bool, default False</span>
 <span class="sd">            Statically allocate memory to improve speed. Memory usage may increase.</span>
 <span class="sd">        static_shape : bool, default False</span>
@@ -2604,6 +2627,7 @@ Edit on Github
             <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="n">backend_opts</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">active</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_if_dynamic</span> <span class="o">=</span> <span class="n">partition_if_dynamic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
