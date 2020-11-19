@@ -2513,7 +2513,14 @@ Edit on Github
             <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_format</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">optimize_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">static_alloc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">static_shape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">inline_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                     <span class="n">forward_bulk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">backward_bulk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Partitions the current HybridBlock and optimizes it for a given backend</span>
 <span class="sd">        without executing a forward pass. Modifies the HybridBlock in-place.</span>
 
@@ -2543,8 +2550,9 @@ Edit on Github
 <span class="sd">            The name of backend, as registered in `SubgraphBackendRegistry`, default None</span>
 <span class="sd">        backend_opts : dict of user-specified options to pass to the backend for partitioning, optional</span>
 <span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
-<span class="sd">        clear : clears any previous optimizations</span>
-<span class="sd">        partition_if_dynamic : bool</span>
+<span class="sd">        clear : bool, default False</span>
+<span class="sd">            clears any previous optimizations</span>
+<span class="sd">        partition_if_dynamic : bool, default False</span>
 <span class="sd">            whether to partition the graph when dynamic shape op exists</span>
 <span class="sd">        static_alloc : bool, default False</span>
 <span class="sd">            Statically allocate memory to improve speed. Memory usage may increase.</span>
@@ -2552,10 +2560,22 @@ Edit on Github
 <span class="sd">            Optimize for invariant input shapes between iterations. Must also</span>
 <span class="sd">            set static_alloc to True. Change of input shapes is still allowed</span>
 <span class="sd">            but slower.</span>
+<span class="sd">        inline_limit : optional int, default 2</span>
+<span class="sd">            Maximum number of operators that can be inlined.</span>
+<span class="sd">        forward_bulk_size : optional int, default None</span>
+<span class="sd">            Segment size of bulk execution during forward pass.</span>
+<span class="sd">        backward_bulk_size : optional int, default None</span>
+<span class="sd">            Segment size of bulk execution during backward pass.</span>
+<span class="sd">        **kwargs: The backend options, optional</span>
+<span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">backend</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-        <span class="c1"># do hybrize API call</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">backend_opts</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="p">,</span> <span class="n">static_alloc</span><span class="p">,</span> <span class="n">static_shape</span><span class="p">,</span>
+                           <span class="n">inline_limit</span><span class="p">,</span> <span class="n">forward_bulk_size</span><span class="p">,</span> <span class="n">backward_bulk_size</span><span class="p">)</span>
 
         <span class="c1"># do part of forward API call</span>
         <span class="n">has_symbol</span><span class="p">,</span> <span class="n">has_ndarray</span><span class="p">,</span> <span class="n">ctx_set</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_gather_type_ctx_info</span><span class="p">([</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
@@ -2577,6 +2597,9 @@ Edit on Github
         <span class="c1"># do not actually call the cached_op</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># clear the backend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>
@@ -2597,7 +2620,13 @@ Edit on Github
             <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backend_opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">partition_if_dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">static_alloc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">static_shape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">inline_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                  <span class="n">forward_bulk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">backward_bulk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Activates or deactivates :py:class:`HybridBlock` s recursively. Has no effect on</span>
 <span class="sd">        non-hybrid children.</span>
 
@@ -2605,12 +2634,7 @@ Edit on Github
 <span class="sd">        ----------</span>
 <span class="sd">        active : bool, default True</span>
 <span class="sd">            Whether to turn hybrid on or off.</span>
-<span class="sd">        backend : str</span>
-<span class="sd">            The name of backend, as registered in `SubgraphBackendRegistry`, default None</span>
-<span class="sd">        backend_opts : dict of user-specified options to pass to the backend for partitioning, optional</span>
-<span class="sd">            Passed on to `PrePartition` and `PostPartition` functions of `SubgraphProperty`</span>
-<span class="sd">        clear : clears any previous optimizations</span>
-<span class="sd">        partition_if_dynamic : bool</span>
+<span class="sd">        partition_if_dynamic : bool, default False</span>
 <span class="sd">            whether to partition the graph when dynamic shape op exists</span>
 <span class="sd">        static_alloc : bool, default False</span>
 <span class="sd">            Statically allocate memory to improve speed. Memory usage may increase.</span>
@@ -2618,24 +2642,33 @@ Edit on Github
 <span class="sd">            Optimize for invariant input shapes between iterations. Must also</span>
 <span class="sd">            set static_alloc to True. Change of input shapes is still allowed</span>
 <span class="sd">            but slower.</span>
+<span class="sd">        inline_limit : optional int, default 2</span>
+<span class="sd">            Maximum number of operators that can be inlined.</span>
+<span class="sd">        forward_bulk_size : optional int, default None</span>
+<span class="sd">            Segment size of bulk execution during forward pass.</span>
+<span class="sd">        backward_bulk_size : optional int, default None</span>
+<span class="sd">            Segment size of bulk execution during backward pass.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">backend</span>
-        <span class="k">if</span> <span class="n">backend_opts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend_opts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-            <span class="s2">&quot;HybridBlock hybridize requires backend_opts to be a dictionary.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="n">backend_opts</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">active</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_if_dynamic</span> <span class="o">=</span> <span class="n">partition_if_dynamic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;static_alloc&quot;</span><span class="p">,</span> <span class="n">static_alloc</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;static_shape&quot;</span><span class="p">,</span> <span class="n">static_shape</span><span class="p">),</span>
+                       <span class="p">(</span><span class="s2">&quot;inline_limit&quot;</span><span class="p">,</span> <span class="n">inline_limit</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">forward_bulk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;forward_bulk_size&quot;</span><span class="p">,</span> <span class="n">forward_bulk_size</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">backward_bulk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;backward_bulk_size&quot;</span><span class="p">,</span> <span class="n">backward_bulk_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_cached_op</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">{block}</span><span class="s1">&quot; is being hybridized while still having forward hook/pre-hook. &#39;</span>
                           <span class="s1">&#39;If &quot;</span><span class="si">{block}</span><span class="s1">&quot; is a child of HybridBlock, the hooks will not take effect.&#39;</span>
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HybridBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">hybridize</span><span class="p">(</span><span class="n">active</span><span class="p">,</span>
+                                           <span class="n">static_alloc</span><span class="o">=</span><span class="n">static_alloc</span><span class="p">,</span>
+                                           <span class="n">static_shape</span><span class="o">=</span><span class="n">static_shape</span><span class="p">,</span>
+                                           <span class="n">inline_limit</span><span class="o">=</span><span class="n">inline_limit</span><span class="p">,</span>
+                                           <span class="n">forward_bulk_size</span><span class="o">=</span><span class="n">forward_bulk_size</span><span class="p">,</span>
+                                           <span class="n">backward_bulk_size</span><span class="o">=</span><span class="n">backward_bulk_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">:</span>
