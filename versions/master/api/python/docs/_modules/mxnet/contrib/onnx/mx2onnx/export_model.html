@@ -1360,14 +1360,14 @@ Edit on Github
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">....base</span> <span class="kn">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">symbol</span>
-<span class="kn">from</span> <span class="nn">.export_onnx</span> <span class="kn">import</span> <span class="n">MXNetGraph</span>
-<span class="kn">from</span> <span class="nn">._export_helper</span> <span class="kn">import</span> <span class="n">load_module</span>
+<span class="kn">from</span> <span class="nn">....base</span> <span class="k">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="k">import</span> <span class="n">symbol</span>
+<span class="kn">from</span> <span class="nn">.export_onnx</span> <span class="k">import</span> <span class="n">MXNetGraph</span>
+<span class="kn">from</span> <span class="nn">._export_helper</span> <span class="k">import</span> <span class="n">load_module</span>
 
 
 <div class="viewcode-block" id="export_model"><a class="viewcode-back" href="../../../../../api/contrib/onnx/index.html#mxnet.contrib.onnx.export_model">[docs]</a><span class="k">def</span> <span class="nf">export_model</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-                 <span class="n">onnx_file_path</span><span class="o">=</span><span class="s1">&#39;model.onnx&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">onnx_file_path</span><span class="o">=</span><span class="s1">&#39;model.onnx&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">opset_version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exports the MXNet model file, passed as a parameter, into ONNX model.</span>
 <span class="sd">    Accepts both symbol,parameter objects as well as json and params filepaths as input.</span>
 <span class="sd">    Operator support and coverage -</span>
@@ -1400,12 +1400,16 @@ Edit on Github
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">onnx</span> <span class="kn">import</span> <span class="n">helper</span><span class="p">,</span> <span class="n">mapping</span>
+        <span class="kn">from</span> <span class="nn">onnx</span> <span class="k">import</span> <span class="n">helper</span><span class="p">,</span> <span class="n">mapping</span>
+        <span class="kn">from</span> <span class="nn">onnx.defs</span> <span class="k">import</span> <span class="n">onnx_opset_version</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Onnx and protobuf need to be installed. &quot;</span>
                           <span class="o">+</span> <span class="s2">&quot;Instructions to install - https://github.com/onnx/onnx&quot;</span><span class="p">)</span>
 
     <span class="n">converter</span> <span class="o">=</span> <span class="n">MXNetGraph</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">opset_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># default is to use latest opset version the onnx package supports</span>
+        <span class="n">opset_version</span> <span class="o">=</span> <span class="n">onnx_opset_version</span><span class="p">()</span>
 
     <span class="n">data_format</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">input_type</span><span class="p">)</span>
     <span class="c1"># if input parameters are strings(file paths), load files and create symbol parameter objects</span>
@@ -1414,11 +1418,11 @@ Edit on Github
         <span class="n">sym_obj</span><span class="p">,</span> <span class="n">params_obj</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">onnx_graph</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">create_onnx_graph_proto</span><span class="p">(</span><span class="n">sym_obj</span><span class="p">,</span> <span class="n">params_obj</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span>
                                                        <span class="n">mapping</span><span class="o">.</span><span class="n">NP_TYPE_TO_TENSOR_TYPE</span><span class="p">[</span><span class="n">data_format</span><span class="p">],</span>
-                                                       <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+                                                       <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">opset_version</span><span class="o">=</span><span class="n">opset_version</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">symbol</span><span class="o">.</span><span class="n">Symbol</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">onnx_graph</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">create_onnx_graph_proto</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span>
                                                        <span class="n">mapping</span><span class="o">.</span><span class="n">NP_TYPE_TO_TENSOR_TYPE</span><span class="p">[</span><span class="n">data_format</span><span class="p">],</span>
-                                                       <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+                                                       <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">opset_version</span><span class="o">=</span><span class="n">opset_version</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input sym and params should either be files or objects&quot;</span><span class="p">)</span>
 

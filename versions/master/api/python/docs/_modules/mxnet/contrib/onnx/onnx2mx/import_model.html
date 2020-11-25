@@ -1357,7 +1357,7 @@ Edit on Github
 <span class="sd">&quot;&quot;&quot;Functions for importing ONNX models to MXNet and for checking metadata&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable=no-member</span>
 
-<span class="kn">from</span> <span class="nn">.import_onnx</span> <span class="kn">import</span> <span class="n">GraphProto</span>
+<span class="kn">from</span> <span class="nn">.import_onnx</span> <span class="k">import</span> <span class="n">GraphProto</span>
 
 <div class="viewcode-block" id="import_model"><a class="viewcode-back" href="../../../../../api/contrib/onnx/index.html#mxnet.contrib.onnx.import_model">[docs]</a><span class="k">def</span> <span class="nf">import_model</span><span class="p">(</span><span class="n">model_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Imports the ONNX model file, passed as a parameter, into MXNet symbol and parameters.</span>
@@ -1394,7 +1394,8 @@ Edit on Github
                           <span class="o">+</span> <span class="s2">&quot;Instructions to install - https://github.com/onnx/onnx&quot;</span><span class="p">)</span>
     <span class="c1"># loads model file and returns ONNX protobuf object</span>
     <span class="n">model_proto</span> <span class="o">=</span> <span class="n">onnx</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
-    <span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">from_onnx</span><span class="p">(</span><span class="n">model_proto</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">model_opset_version</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">model_proto</span><span class="o">.</span><span class="n">opset_import</span><span class="p">])</span>
+    <span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">from_onnx</span><span class="p">(</span><span class="n">model_proto</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">opset_version</span><span class="o">=</span><span class="n">model_opset_version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sym</span><span class="p">,</span> <span class="n">arg_params</span><span class="p">,</span> <span class="n">aux_params</span></div>
 
 <div class="viewcode-block" id="get_model_metadata"><a class="viewcode-back" href="../../../../../api/contrib/onnx/index.html#mxnet.contrib.onnx.get_model_metadata">[docs]</a><span class="k">def</span> <span class="nf">get_model_metadata</span><span class="p">(</span><span class="n">model_file</span><span class="p">):</span>

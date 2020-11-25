@@ -1357,7 +1357,7 @@ Edit on Github
 <span class="sd">&quot;&quot;&quot;Import ONNX model to gluon interface&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable=no-member</span>
 
-<span class="kn">from</span> <span class="nn">.import_onnx</span> <span class="kn">import</span> <span class="n">GraphProto</span>
+<span class="kn">from</span> <span class="nn">.import_onnx</span> <span class="k">import</span> <span class="n">GraphProto</span>
 
 <div class="viewcode-block" id="import_to_gluon"><a class="viewcode-back" href="../../../../../api/contrib/onnx/index.html#mxnet.contrib.onnx.import_to_gluon">[docs]</a><span class="k">def</span> <span class="nf">import_to_gluon</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1387,7 +1387,8 @@ Edit on Github
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Onnx and protobuf need to be installed. Instructions to&quot;</span>
                           <span class="o">+</span> <span class="s2">&quot; install - https://github.com/onnx/onnx#installation&quot;</span><span class="p">)</span>
     <span class="n">model_proto</span> <span class="o">=</span> <span class="n">onnx</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
-    <span class="n">net</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">graph_to_gluon</span><span class="p">(</span><span class="n">model_proto</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span>
+    <span class="n">model_opset_version</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">model_proto</span><span class="o">.</span><span class="n">opset_import</span><span class="p">])</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">graph_to_gluon</span><span class="p">(</span><span class="n">model_proto</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">model_opset_version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">net</span></div>
 </pre></div>
 
