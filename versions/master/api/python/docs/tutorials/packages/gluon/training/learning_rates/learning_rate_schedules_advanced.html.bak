@@ -1579,7 +1579,7 @@ div.rendered_html tbody tr:hover {
 <h2>Custom Schedule Shapes<a class="headerlink" href="#Custom-Schedule-Shapes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="(Slanted)-Triangular">
 <h3>(Slanted) Triangular<a class="headerlink" href="#(Slanted)-Triangular" title="Permalink to this headline">¶</a></h3>
-<p>While trying to push the boundaries of batch size for faster training, <a class="reference external" href="https://arxiv.org/abs/1706.02677">Priya Goyal et al. (2017)</a> found that having a smooth linear warm up in the learning rate at the start of training improved the stability of the optimizer and lead to better solutions. It was found that a smooth increases gave improved performance over stepwise increases.</p>
+<p>While trying to push the boundaries of batch size for faster training, <a class="reference external" href="https://arxiv.org/abs/1706.02677">Priya Goyal et al. (2017)</a> found that having a smooth linear warm up in the learning rate at the start of training improved the stability of the optimizer and lead to better solutions. It was found that a smooth increases gave improved performance over stepwise increases.</p>
 <p>We look at “warm-up” in more detail later in the tutorial, but this could be viewed as a specific case of the <strong>“triangular”</strong> schedule that was proposed by <a class="reference external" href="https://arxiv.org/abs/1506.01186">Leslie N. Smith (2015)</a>. Quite simply, the schedule linearly increases then decreases between a lower and upper bound. Originally it was suggested this schedule be used as part of a cyclical schedule but more recently researchers have been using a single cycle.</p>
 <p>One adjustment proposed by <a class="reference external" href="https://arxiv.org/abs/1801.06146">Jeremy Howard, Sebastian Ruder (2018)</a> was to change the ratio between the increasing and decreasing stages, instead of the 50:50 split. Changing the increasing fraction (<code class="docutils literal notranslate"><span class="pre">inc_fraction!=0.5</span></code>) leads to a <strong>“slanted triangular”</strong> schedule. Using <code class="docutils literal notranslate"><span class="pre">inc_fraction&lt;0.5</span></code> tends to give better results.</p>
 <div class="nbinput nblast docutils container">
@@ -1675,7 +1675,7 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 <p>Unlike the schedules above and those implemented in <code class="docutils literal notranslate"><span class="pre">mx.lr_scheduler</span></code>, these classes are designed to modify existing schedules so they take the argument <code class="docutils literal notranslate"><span class="pre">schedule</span></code> (for initialized schedules) or <code class="docutils literal notranslate"><span class="pre">schedule_class</span></code> when being initialized.</p>
 <div class="section" id="Warm-Up">
 <h3>Warm-Up<a class="headerlink" href="#Warm-Up" title="Permalink to this headline">¶</a></h3>
-<p>Using the idea of linear warm-up of the learning rate proposed in <a class="reference external" href="https://arxiv.org/abs/1706.02677">“Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour” by Priya Goyal et al. (2017)</a>, we implement a wrapper class that adds warm-up to an existing schedule. Going from <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to the initial learning rate of the <code class="docutils literal notranslate"><span class="pre">schedule</span></code> over <code class="docutils literal notranslate"><span class="pre">length</span></code> iterations, this adjustment is useful when training with large batch sizes.</p>
+<p>Using the idea of linear warm-up of the learning rate proposed in <a class="reference external" href="https://arxiv.org/abs/1706.02677">“Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour” by Priya Goyal et al. (2017)</a>, we implement a wrapper class that adds warm-up to an existing schedule. Going from <code class="docutils literal notranslate"><span class="pre">start_lr</span></code> to the initial learning rate of the <code class="docutils literal notranslate"><span class="pre">schedule</span></code> over <code class="docutils literal notranslate"><span class="pre">length</span></code> iterations, this adjustment is useful when training with large batch sizes.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -1765,9 +1765,9 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 </div>
 </div>
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_schedules/adv_sgdr.png" /></p>
-<div class="section" id="1-Cycle:-for-&quot;Super-Convergence&quot;">
-<h4>1-Cycle: for “Super-Convergence”<a class="headerlink" href="#1-Cycle:-for-"Super-Convergence"" title="Permalink to this headline">¶</a></h4>
-<p>So we can implement the “1-Cycle” schedule proposed by <a class="reference external" href="https://arxiv.org/abs/1708.07120">Leslie N. Smith, Nicholay Topin (2017)</a> we use a single and symmetric cycle of the triangular schedule above (i.e. <code class="docutils literal notranslate"><span class="pre">inc_fraction=0.5</span></code>), followed by a cool-down period of <code class="docutils literal notranslate"><span class="pre">cooldown_length</span></code> iterations.</p>
+<div class="section" id="1-Cycle:-for-“Super-Convergence”">
+<h4>1-Cycle: for “Super-Convergence”<a class="headerlink" href="#1-Cycle:-for-“Super-Convergence”" title="Permalink to this headline">¶</a></h4>
+<p>So we can implement the “1-Cycle” schedule proposed by <a class="reference external" href="https://arxiv.org/abs/1708.07120">Leslie N. Smith, Nicholay Topin (2017)</a> we use a single and symmetric cycle of the triangular schedule above (i.e. <code class="docutils literal notranslate"><span class="pre">inc_fraction=0.5</span></code>), followed by a cool-down period of <code class="docutils literal notranslate"><span class="pre">cooldown_length</span></code> iterations.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -1796,7 +1796,7 @@ Stochastic Gradient Descent with Warm Restarts” by Ilya Loshchilov, Frank Hutt
 </pre></div>
 </div>
 </div>
-<p>As an example, we linearly increase and then decrease the learning rate from 0.1 to 0.5 and back over 500 iterations (i.e. single triangular cycle), before reducing the learning rate further to 0.001 over the next 750 iterations (i.e. cool-down).</p>
+<p>As an example, we linearly increase and then decrease the learning rate from 0.1 to 0.5 and back over 500 iterations (i.e. single triangular cycle), before reducing the learning rate further to 0.001 over the next 750 iterations (i.e. cool-down).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -1874,7 +1874,7 @@ is to vary the <code class="docutils literal notranslate"><span class="pre">cycl
 </div>
 </div>
 <p><img alt="png" src="https://raw.githubusercontent.com/dmlc/web-data/master/mxnet/doc/tutorials/lr_schedules/adv_sgdr.png" /></p>
-<p><strong>*Want to learn more?*</strong> Checkout the “Learning Rate Schedules” tutorial for a more basic overview of learning rates found in <code class="docutils literal notranslate"><span class="pre">mx.lr_scheduler</span></code>, and an example of how to use them while training your own models.</p>
+<p><strong>Want to learn more?</strong> Checkout the “Learning Rate Schedules” tutorial for a more basic overview of learning rates found in <code class="docutils literal notranslate"><span class="pre">mx.lr_scheduler</span></code>, and an example of how to use them while training your own models.</p>
 <!-- INSERT SOURCE DOWNLOAD BUTTONS --></div>
 </div>
 </div>
@@ -1907,7 +1907,7 @@ is to vary the <code class="docutils literal notranslate"><span class="pre">cycl
 <li><a class="reference internal" href="#Custom-Schedule-Modifiers">Custom Schedule Modifiers</a><ul>
 <li><a class="reference internal" href="#Warm-Up">Warm-Up</a></li>
 <li><a class="reference internal" href="#Cool-Down">Cool-Down</a><ul>
-<li><a class="reference internal" href="#1-Cycle:-for-&quot;Super-Convergence&quot;">1-Cycle: for “Super-Convergence”</a></li>
+<li><a class="reference internal" href="#1-Cycle:-for-“Super-Convergence”">1-Cycle: for “Super-Convergence”</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#Cyclical">Cyclical</a></li>

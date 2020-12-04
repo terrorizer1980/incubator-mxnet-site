@@ -1543,15 +1543,15 @@ div.rendered_html tbody tr:hover {
 </style>
 <!--- Licensed to the Apache Software Foundation (ASF) under one --><!--- or more contributor license agreements.  See the NOTICE file --><!--- distributed with this work for additional information --><!--- regarding copyright ownership.  The ASF licenses this file --><!--- to you under the Apache License, Version 2.0 (the --><!--- "License"); you may not use this file except in compliance --><!--- with the License.  You may obtain a copy of the License at --><!---   http://www.apache.org/licenses/LICENSE-2.0 --><!--- Unless required by applicable law or agreed to in writing, --><!--- software distributed under the License is distributed on an --><!--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY --><!--- KIND, either express or implied.  See the License for the --><!--- specific language governing permissions and limitations --><!--- under the License. --><div class="section" id="CSRNDArray---NDArray-in-Compressed-Sparse-Row-Storage-Format">
 <h1>CSRNDArray - NDArray in Compressed Sparse Row Storage Format<a class="headerlink" href="#CSRNDArray---NDArray-in-Compressed-Sparse-Row-Storage-Format" title="Permalink to this headline">¶</a></h1>
-<p>Many real world datasets deal with high dimensional sparse feature vectors. Take for instance a recommendation system where the number of categories and users is on the order of millions. The purchase data for each category by user would show that most users only make a few purchases, leading to a dataset with high sparsity (i.e. most of the elements are zeros).</p>
+<p>Many real world datasets deal with high dimensional sparse feature vectors. Take for instance a recommendation system where the number of categories and users is on the order of millions. The purchase data for each category by user would show that most users only make a few purchases, leading to a dataset with high sparsity (i.e. most of the elements are zeros).</p>
 <p>Storing and manipulating such large sparse matrices in the default dense structure results in wasted memory and processing on the zeros. To take advantage of the sparse structure of the matrix, the <code class="docutils literal notranslate"><span class="pre">CSRNDArray</span></code> in MXNet stores the matrix in <a class="reference external" href="https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_.28CSR.2C_CRS_or_Yale_format.29">compressed sparse row (CSR)</a> format and uses specialized algorithms in operators. <strong>The format is designed for 2D matrices with a large number of columns,
-and each row is sparse (i.e. with only a few nonzeros).</strong></p>
+and each row is sparse (i.e. with only a few nonzeros).</strong></p>
 <div class="section" id="Advantages-of-Compressed-Sparse-Row-NDArray-(CSRNDArray)">
 <h2>Advantages of Compressed Sparse Row NDArray (CSRNDArray)<a class="headerlink" href="#Advantages-of-Compressed-Sparse-Row-NDArray-(CSRNDArray)" title="Permalink to this headline">¶</a></h2>
-<p>For matrices of high sparsity (e.g. ~1% non-zeros = ~1% density), there are two primary advantages of <code class="docutils literal notranslate"><span class="pre">CSRNDArray</span></code> over the existing <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>:</p>
+<p>For matrices of high sparsity (e.g. ~1% non-zeros = ~1% density), there are two primary advantages of <code class="docutils literal notranslate"><span class="pre">CSRNDArray</span></code> over the existing <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>:</p>
 <ul class="simple">
 <li><p>memory consumption is reduced significantly</p></li>
-<li><p>certain operations are much faster (e.g. matrix-vector multiplication)</p></li>
+<li><p>certain operations are much faster (e.g. matrix-vector multiplication)</p></li>
 </ul>
 <p>You may be familiar with the CSR storage format in <a class="reference external" href="https://www.scipy.org/">SciPy</a> and will note the similarities in MXNet’s implementation. However there are some additional competitive features in <code class="docutils literal notranslate"><span class="pre">CSRNDArray</span></code> inherited from <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>, such as non-blocking asynchronous evaluation and automatic parallelization that are not available in SciPy’s flavor of CSR. You can find further explanations for evaluation and parallelization strategy in MXNet in the <a class="reference external" href="https://mxnet.apache.org/tutorials/basic/ndarray.html#lazy-evaluation-and-automatic-parallelization">NDArray
 tutorial</a>.</p>
@@ -1560,13 +1560,9 @@ tutorial</a>.</p>
 <div class="section" id="Prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#Prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>To complete this tutorial, you will need:</p>
-<ul>
+<ul class="simple">
 <li><p>MXNet. See the instructions for your operating system in <a class="reference external" href="https://mxnet.io/get_started">Setup and Installation</a></p></li>
-<li><p><a class="reference external" href="http://jupyter.org/">Jupyter</a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyter</span>
-</pre></div>
-</div>
-</li>
+<li><p><a class="reference external" href="http://jupyter.org/">Jupyter</a> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jupyter</span></code></p></li>
 <li><p>Basic knowledge of NDArray in MXNet. See the detailed tutorial for NDArray in <a class="reference external" href="https://mxnet.apache.org/tutorials/basic/ndarray.html">NDArray - Imperative tensor operations on CPU/GPU</a>.</p></li>
 <li><p>SciPy - A section of this tutorial uses SciPy package in Python. If you don’t have SciPy, the example in that section will be ignored.</p></li>
 <li><p>GPUs - A section of this tutorial uses GPUs. If you don’t have GPUs on your machine, simply set the variable <code class="docutils literal notranslate"><span class="pre">gpu_device</span></code> (set in the GPUs section of this tutorial) to <code class="docutils literal notranslate"><span class="pre">mx.cpu()</span></code>.</p></li>
