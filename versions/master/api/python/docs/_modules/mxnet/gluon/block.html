@@ -1383,13 +1383,14 @@ Edit on Github
 <span class="kn">import</span> <span class="nn">contextvars</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">mx_real_t</span><span class="p">,</span> <span class="n">MXNetError</span><span class="p">,</span> <span class="n">NDArrayHandle</span><span class="p">,</span> <span class="n">SymbolHandle</span><span class="p">,</span> <span class="n">py_str</span><span class="p">,</span> <span class="n">check_call</span><span class="p">,</span> <span class="n">_LIB</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">_deferred_compute</span> <span class="k">as</span> <span class="n">dc</span><span class="p">,</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span><span class="p">,</span> \
     <span class="n">profiler</span> <span class="k">as</span> <span class="n">_profiler</span><span class="p">,</span> <span class="n">context</span> <span class="k">as</span> <span class="n">_context</span>
 <span class="kn">from</span> <span class="nn">..symbol.numpy</span> <span class="k">import</span> <span class="n">_symbol</span> <span class="k">as</span> <span class="n">np_symbol</span>
-<span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span>
+<span class="kn">from</span> <span class="nn">..symbol</span> <span class="k">import</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">fromjson</span>
 <span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="n">NDArray</span>
 <span class="kn">from</span> <span class="nn">.parameter</span> <span class="k">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">DeferredInitializationError</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">_indent</span><span class="p">,</span> <span class="n">_brief_print_list</span><span class="p">,</span> <span class="n">HookHandle</span><span class="p">,</span> <span class="n">shape_is_known</span>
@@ -1926,6 +1927,143 @@ Edit on Github
             <span class="n">init</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">v</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">force_reinit</span><span class="o">=</span><span class="n">force_reinit</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.save"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the model architecture and parameters to load again later</span>
+
+<span class="sd">        Saves the model architecture as a nested dictionary where each Block</span>
+<span class="sd">        in the model is a dictionary and its children are sub-dictionaries.</span>
+
+<span class="sd">        Each Block is uniquely identified by Block class name and a unique ID.</span>
+<span class="sd">        We save each Block&#39;s parameter UUID to restore later in order to match</span>
+<span class="sd">        the saved parameters.</span>
+
+<span class="sd">        Recursively traverses a Block&#39;s children in order (since its an</span>
+<span class="sd">        OrderedDict) and uses the unique ID to denote that specific Block.</span>
+
+<span class="sd">        Assumes that the model is created in an identical order every time.</span>
+<span class="sd">        If the model is not able to be recreated deterministically do not</span>
+<span class="sd">        use this set of APIs to save/load your model.</span>
+
+<span class="sd">        For HybridBlocks, the cached_graph is saved (Symbol &amp; inputs) if</span>
+<span class="sd">        it has already been hybridized.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            The prefix to use in filenames for saving this model:</span>
+<span class="sd">            &lt;prefix&gt;-model.json and &lt;prefix&gt;-model.params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create empty model structure</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">def</span> <span class="nf">_save_cached_graphs</span><span class="p">(</span><span class="n">blk</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="c1"># create new entry for this block</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># encode unique name based on block type and ID</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">structure</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span> <span class="o">=</span> <span class="n">mdl</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blk</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">blk</span><span class="o">.</span><span class="n">_cached_graph</span><span class="p">:</span>
+                    <span class="c1"># save in/out formats</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;in_format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">_in_format</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;out_format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">_out_format</span>
+                    <span class="c1"># save cached graph &amp; input symbols</span>
+                    <span class="n">syms</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">_cached_graph</span>
+                    <span class="n">mdl_syms</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">sym</span> <span class="ow">in</span> <span class="n">syms</span><span class="p">:</span>
+                        <span class="n">mdl_syms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">tojson</span><span class="p">())</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;inputs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdl_syms</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">tojson</span><span class="p">()</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;hybridized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;hybridized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># save param uuids</span>
+            <span class="n">pmap</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pmap</span>
+            <span class="n">pnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">blk</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pnames</span><span class="p">:</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="n">pmap</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">_uuid</span>
+            <span class="c1"># recursively save children</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">_save_cached_graphs</span><span class="p">(</span><span class="n">child</span><span class="p">(),</span> <span class="n">mdl</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="c1"># return latest index (ie. block count)</span>
+            <span class="k">return</span> <span class="n">index</span>
+
+        <span class="c1"># save top-level block</span>
+        <span class="n">_save_cached_graphs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="c1"># save model</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span><span class="o">+</span><span class="s1">&#39;-model.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+        <span class="c1"># save params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_parameters</span><span class="p">(</span><span class="s1">&#39;MyModel-model.params&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Block.load"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a model saved using the `save` API</span>
+
+<span class="sd">        Reconfigures a model using the saved configuration. This function</span>
+<span class="sd">        does not regenerate the model architecture. It resets each Block&#39;s</span>
+<span class="sd">        parameter UUIDs as they were when saved in order to match the names of the</span>
+<span class="sd">        saved parameters.</span>
+
+<span class="sd">        This function assumes the Blocks in the model were created in the same</span>
+<span class="sd">        order they were when the model was saved. This is because each Block is</span>
+<span class="sd">        uniquely identified by Block class name and a unique ID in order (since</span>
+<span class="sd">        its an OrderedDict) and uses the unique ID to denote that specific Block.</span>
+
+<span class="sd">        Assumes that the model is created in an identical order every time.</span>
+<span class="sd">        If the model is not able to be recreated deterministically do not</span>
+<span class="sd">        use this set of APIs to save/load your model.</span>
+
+<span class="sd">        For HybridBlocks, the cached_graph (Symbol &amp; inputs) and settings are</span>
+<span class="sd">        restored if it had been hybridized before saving.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            The prefix to use in filenames for loading this model:</span>
+<span class="sd">            &lt;prefix&gt;-model.json and &lt;prefix&gt;-model.params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># load model json from file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span><span class="o">+</span><span class="s1">&#39;-model.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_load_cached_graphs</span><span class="p">(</span><span class="n">blk</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="c1"># get block name</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="c1"># lookup previous encoded name based on block type and ID</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blk</span><span class="p">,</span> <span class="n">HybridBlock</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;hybridized&#39;</span><span class="p">]:</span>
+                    <span class="c1"># restore in/out formats</span>
+                    <span class="n">blk</span><span class="o">.</span><span class="n">_in_format</span> <span class="o">=</span> <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;in_format&#39;</span><span class="p">]</span>
+                    <span class="n">blk</span><span class="o">.</span><span class="n">_out_format</span> <span class="o">=</span> <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;out_format&#39;</span><span class="p">]</span>
+                    <span class="c1"># get saved symbol</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">fromjson</span><span class="p">(</span><span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">])</span>
+                    <span class="n">syms</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="c1"># recreate inputs for this symbol</span>
+                    <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;inputs&#39;</span><span class="p">]:</span>
+                        <span class="n">syms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fromjson</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+                    <span class="c1"># reset cached_graph and active status</span>
+                    <span class="n">blk</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">(</span><span class="n">syms</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+                    <span class="n">blk</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># reload param uuids</span>
+            <span class="n">pmap</span> <span class="o">=</span> <span class="n">mdl</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">pmap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">_uuid</span> <span class="o">=</span> <span class="n">uuid</span>
+            <span class="c1"># recursively reload children</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">_load_cached_graphs</span><span class="p">(</span><span class="n">child</span><span class="p">(),</span> <span class="n">mdl</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="c1"># return latest index (ie. block count)</span>
+            <span class="k">return</span> <span class="n">index</span>
+
+        <span class="c1"># load top-level block</span>
+        <span class="n">_load_cached_graphs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="c1"># load params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s1">&#39;MyModel-model.params&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Block.hybridize"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.hybridize">[docs]</a>    <span class="k">def</span> <span class="nf">hybridize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Please refer description of HybridBlock hybridize().</span>
