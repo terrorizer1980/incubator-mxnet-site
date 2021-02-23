@@ -2096,18 +2096,16 @@ Edit on Github
                 <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;row_sparse&#39;</span><span class="p">:</span>
                     <span class="n">ndarray</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">arrays</span><span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">ctx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
+                        <span class="n">arrays</span><span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">ctx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">as_nd_ndarray</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">arrays</span><span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">ctx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">is_np_array</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
-                    <span class="n">ele</span><span class="p">[()]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="n">ndarray</span><span class="o">.</span><span class="n">reset_arrays</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="n">num_arrays</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span></div>
+        <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">ndarray</span><span class="o">.</span><span class="n">reset_arrays</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="n">num_arrays</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Block.reset_ctx"><a class="viewcode-back" href="../../../api/gluon/block.html#mxnet.gluon.Block.reset_ctx">[docs]</a>    <span class="k">def</span> <span class="nf">reset_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Re-assign all Parameters to other contexts.</span>
@@ -2751,7 +2749,7 @@ Edit on Github
         <span class="bp">self</span><span class="o">.</span><span class="n">_first_forward</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># clear the backend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend_opts</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_clear_cached_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_graph</span> <span class="o">=</span> <span class="p">()</span>
