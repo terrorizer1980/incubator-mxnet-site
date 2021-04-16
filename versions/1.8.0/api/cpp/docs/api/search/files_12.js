@@ -13,7 +13,6 @@ var searchData=
   ['threadediter_2eh',['threadediter.h',['../threadediter_8h.html',1,'']]],
   ['timer_2eh',['timer.h',['../timer_8h.html',1,'']]],
   ['transpose_2eh',['transpose.h',['../transpose_8h.html',1,'']]],
-  ['tuple_2eh',['tuple.h',['../include_2mxnet_2tuple_8h.html',1,'']]],
-  ['tuple_2eh',['tuple.h',['../3rdparty_2tvm_2nnvm_2include_2nnvm_2tuple_8h.html',1,'']]],
+  ['tuple_2eh',['tuple.h',['../include_2mxnet_2tuple_8h.html',1,'(Global Namespace)'],['../3rdparty_2tvm_2nnvm_2include_2nnvm_2tuple_8h.html',1,'(Global Namespace)']]],
   ['type_5ftraits_2eh',['type_traits.h',['../type__traits_8h.html',1,'']]]
 ];

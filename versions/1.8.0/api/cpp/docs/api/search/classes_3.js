@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['databatch',['DataBatch',['../classmxnet_1_1cpp_1_1DataBatch.html',1,'mxnet::cpp']]],
-  ['databatch',['DataBatch',['../structmxnet_1_1DataBatch.html',1,'mxnet']]],
+  ['databatch',['DataBatch',['../classmxnet_1_1cpp_1_1DataBatch.html',1,'mxnet::cpp::DataBatch'],['../structmxnet_1_1DataBatch.html',1,'mxnet::DataBatch']]],
   ['datainst',['DataInst',['../structmxnet_1_1DataInst.html',1,'mxnet']]],
-  ['dataiter',['DataIter',['../classmxnet_1_1cpp_1_1DataIter.html',1,'mxnet::cpp']]],
-  ['dataiter',['DataIter',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
+  ['dataiter',['DataIter',['../classmxnet_1_1cpp_1_1DataIter.html',1,'mxnet::cpp::DataIter'],['../classdmlc_1_1DataIter.html',1,'dmlc::DataIter&lt; DType &gt;']]],
   ['dataiter_3c_20rowblock_3c_20indextype_2c_20dtype_20_3e_20_3e',['DataIter&lt; RowBlock&lt; IndexType, DType &gt; &gt;',['../classdmlc_1_1DataIter.html',1,'dmlc']]],
   ['dataiteratorreg',['DataIteratorReg',['../structmxnet_1_1DataIteratorReg.html',1,'mxnet']]],
   ['datatype',['DataType',['../structmshadow_1_1DataType.html',1,'mshadow']]],
@@ -19,8 +17,7 @@ var searchData=
   ['datatype_3c_20int8_5ft_20_3e',['DataType&lt; int8_t &gt;',['../structmshadow_1_1DataType_3_01int8__t_01_4.html',1,'mshadow']]],
   ['datatype_3c_20uint8_5ft_20_3e',['DataType&lt; uint8_t &gt;',['../structmshadow_1_1DataType_3_01uint8__t_01_4.html',1,'mshadow']]],
   ['devicestore',['DeviceStore',['../classmxnet_1_1common_1_1cuda_1_1DeviceStore.html',1,'mxnet::common::cuda']]],
-  ['div',['div',['../structmshadow_1_1op_1_1complex_1_1div.html',1,'mshadow::op::complex']]],
-  ['div',['div',['../structmshadow_1_1op_1_1div.html',1,'mshadow::op']]],
+  ['div',['div',['../structmshadow_1_1op_1_1complex_1_1div.html',1,'mshadow::op::complex::div'],['../structmshadow_1_1op_1_1div.html',1,'mshadow::op::div']]],
   ['divto',['divto',['../structmshadow_1_1sv_1_1divto.html',1,'mshadow::sv']]],
   ['dlcontext',['DLContext',['../structDLContext.html',1,'']]],
   ['dldatatype',['DLDataType',['../structDLDataType.html',1,'']]],

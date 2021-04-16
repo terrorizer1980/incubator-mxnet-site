@@ -5,7 +5,7 @@ var searchData=
   ['_5f_5fregister_5for_5ffind_5f_5f',['__REGISTER_OR_FIND__',['../classmxnet_1_1op_1_1SimpleOpRegistry.html#a376e3412e9f425db998c384e5d3f0523',1,'mxnet::op::SimpleOpRegistry']]],
   ['_5f_5fregister_5for_5fget_5f_5f',['__REGISTER_OR_GET__',['../classdmlc_1_1Registry.html#a92bb4906a07d6b41cc3b3a52cc929440',1,'dmlc::Registry']]],
   ['_5fdefault_5fmonitor_5ffunc',['_default_monitor_func',['../namespacemxnet_1_1cpp.html#af52dc7c5b66e9ee04b37f39cde0fcc5a',1,'mxnet::cpp']]],
-  ['_5fdfs_5futil',['_dfs_util',['../classmxnet_1_1ext_1_1Graph.html#ad02e51c712fb5645fa997bea4b7b2d83',1,'mxnet::ext::Graph']]],
+  ['_5fdfs_5futil',['_dfs_util',['../classmxnet_1_1ext_1_1Graph.html#a1990d92633c09d529c17e3d5052b9379',1,'mxnet::ext::Graph']]],
   ['_5fdiv',['_Div',['../namespacemxnet_1_1cpp.html#aafc94488768fddc81e4bf7a6513c3d53',1,'mxnet::cpp']]],
   ['_5fdivscalar',['_DivScalar',['../namespacemxnet_1_1cpp.html#abd35f4aea1d59d116f442a9a198f7f08',1,'mxnet::cpp']]],
   ['_5fgetorallocruntimetypeindex',['_GetOrAllocRuntimeTypeIndex',['../classmxnet_1_1runtime_1_1Object.html#a9a14f0cacdb1dc322de5b98714450586',1,'mxnet::runtime::Object']]],
