@@ -56,7 +56,7 @@
     }
     </style>
     
-    <title>mxnet.ndarray.contrib &#8212; Apache MXNet  documentation</title>
+    <title>mxnet.optimizer.adabelief &#8212; Apache MXNet  documentation</title>
 
     <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -129,7 +129,7 @@
         
         <nav class="mdl-navigation breadcrumb">
             <a class="mdl-navigation__link" href="../../index.html">Module code</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active">mxnet.ndarray.contrib</a>
+            <a class="mdl-navigation__link is-active">mxnet.optimizer.adabelief</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -151,7 +151,7 @@
 </form>
         
 <a id="button-show-github"
-    href="https://github.com/apache/mxnet/edit/master/docs/python_docs/python/_modules/mxnet/ndarray/contrib" class="mdl-button mdl-js-button mdl-button--icon">
+    href="https://github.com/apache/mxnet/edit/master/docs/python_docs/python/_modules/mxnet/optimizer/adabelief" class="mdl-button mdl-js-button mdl-button--icon">
 <i class="material-icons">edit</i>
 </a>
 <div class="mdl-tooltip" data-mdl-for="button-show-github">
@@ -1353,8 +1353,9 @@ Edit on Github
     <div class="document">
         <div class="page-content" role="main">
         
-  <h1>Source code for mxnet.ndarray.contrib</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Licensed to the Apache Software Foundation (ASF) under one</span>
+  <h1>Source code for mxnet.optimizer.adabelief</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one</span>
 <span class="c1"># or more contributor license agreements.  See the NOTICE file</span>
 <span class="c1"># distributed with this work for additional information</span>
 <span class="c1"># regarding copyright ownership.  The ASF licenses this file</span>
@@ -1370,799 +1371,220 @@ Edit on Github
 <span class="c1"># KIND, either express or implied.  See the License for the</span>
 <span class="c1"># specific language governing permissions and limitations</span>
 <span class="c1"># under the License.</span>
-
-<span class="c1"># coding: utf-8</span>
-<span class="c1"># pylint: disable=wildcard-import, unused-wildcard-import,redefined-outer-name</span>
-<span class="sd">&quot;&quot;&quot;Contrib NDArray API of MXNet.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;AdaBelief optimizer.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">mxnet</span> <span class="k">as</span> <span class="nn">mx</span>
-<span class="kn">from</span> <span class="nn">..context</span> <span class="k">import</span> <span class="n">current_context</span>
-<span class="kn">from</span> <span class="nn">..random</span> <span class="k">import</span> <span class="n">uniform</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="k">import</span> <span class="n">_as_list</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ndarray</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.gen_contrib</span> <span class="k">import</span> <span class="o">*</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rand_zipfian&quot;</span><span class="p">,</span> <span class="s2">&quot;foreach&quot;</span><span class="p">,</span> <span class="s2">&quot;while_loop&quot;</span><span class="p">,</span> <span class="s2">&quot;cond&quot;</span><span class="p">,</span> <span class="s2">&quot;isinf&quot;</span><span class="p">,</span> <span class="s2">&quot;isfinite&quot;</span><span class="p">,</span> <span class="s2">&quot;isnan&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">_flatten_list</span><span class="p">(</span><span class="n">nested_list</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">nested_list</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
-
-<span class="c1"># pylint: disable=line-too-long</span>
-<div class="viewcode-block" id="rand_zipfian"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.rand_zipfian">[docs]</a><span class="k">def</span> <span class="nf">rand_zipfian</span><span class="p">(</span><span class="n">true_classes</span><span class="p">,</span> <span class="n">num_sampled</span><span class="p">,</span> <span class="n">range_max</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Draw random samples from an approximately log-uniform or Zipfian distribution.</span>
-
-<span class="sd">    This operation randomly samples *num_sampled* candidates the range of integers [0, range_max).</span>
-<span class="sd">    The elements of sampled_candidates are drawn with replacement from the base distribution.</span>
-
-<span class="sd">    The base distribution for this operator is an approximately log-uniform or Zipfian distribution:</span>
-
-<span class="sd">    P(class) = (log(class + 2) - log(class + 1)) / log(range_max + 1)</span>
-
-<span class="sd">    This sampler is useful when the true classes approximately follow such a distribution.</span>
-<span class="sd">    For example, if the classes represent words in a lexicon sorted in decreasing order of \</span>
-<span class="sd">    frequency. If your classes are not ordered by decreasing frequency, do not use this op.</span>
-
-<span class="sd">    Additionaly, it also returns the number of times each of the \</span>
-<span class="sd">    true classes and the sampled classes is expected to occur.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    true_classes : NDArray</span>
-<span class="sd">        A 1-D NDArray of the target classes.</span>
-<span class="sd">    num_sampled: int</span>
-<span class="sd">        The number of classes to randomly sample.</span>
-<span class="sd">    range_max: int</span>
-<span class="sd">        The number of possible classes.</span>
-<span class="sd">    ctx : Context</span>
-<span class="sd">        Device context of output. Default is current context.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    samples: NDArray</span>
-<span class="sd">        The sampled candidate classes in 1-D `int64` dtype.</span>
-<span class="sd">    expected_count_true: NDArray</span>
-<span class="sd">        The expected count for true classes in 1-D `float64` dtype.</span>
-<span class="sd">    expected_count_sample: NDArray</span>
-<span class="sd">        The expected count for sampled candidates in 1-D `float64` dtype.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; true_cls = mx.nd.array([3])</span>
-<span class="sd">    &gt;&gt;&gt; samples, exp_count_true, exp_count_sample = mx.nd.contrib.rand_zipfian(true_cls, 4, 5)</span>
-<span class="sd">    &gt;&gt;&gt; samples</span>
-<span class="sd">    [1 3 3 3]</span>
-<span class="sd">    &lt;NDArray 4 @cpu(0)&gt;</span>
-<span class="sd">    &gt;&gt;&gt; exp_count_true</span>
-<span class="sd">    [ 0.12453879]</span>
-<span class="sd">    &lt;NDArray 1 @cpu(0)&gt;</span>
-<span class="sd">    &gt;&gt;&gt; exp_count_sample</span>
-<span class="sd">    [ 0.22629439  0.12453879  0.12453879  0.12453879]</span>
-<span class="sd">    &lt;NDArray 4 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_context</span><span class="p">()</span>
-    <span class="n">log_range</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">rand</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">log_range</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_sampled</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-    <span class="c1"># make sure sampled_classes are in the range of [0, range_max)</span>
-    <span class="n">sampled_classes</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">range_max</span>
-
-    <span class="n">true_cls</span> <span class="o">=</span> <span class="n">true_classes</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
-    <span class="n">expected_count_true</span> <span class="o">=</span> <span class="p">((</span><span class="n">true_cls</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">true_cls</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_range</span> <span class="o">*</span> <span class="n">num_sampled</span>
-    <span class="c1"># cast sampled classes to fp64 to avoid interget division</span>
-    <span class="n">sampled_cls_fp64</span> <span class="o">=</span> <span class="n">sampled_classes</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
-    <span class="n">expected_prob_sampled</span> <span class="o">=</span> <span class="p">((</span><span class="n">sampled_cls_fp64</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sampled_cls_fp64</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_range</span>
-    <span class="n">expected_count_sampled</span> <span class="o">=</span> <span class="n">expected_prob_sampled</span> <span class="o">*</span> <span class="n">num_sampled</span>
-    <span class="k">return</span> <span class="n">sampled_classes</span><span class="p">,</span> <span class="n">expected_count_true</span><span class="p">,</span> <span class="n">expected_count_sampled</span></div>
-<span class="c1"># pylint: enable=line-too-long</span>
+<span class="kn">from</span> <span class="nn">.optimizer</span> <span class="k">import</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">register</span>
+<span class="kn">from</span> <span class="nn">..ndarray</span> <span class="k">import</span> <span class="p">(</span><span class="n">zeros</span><span class="p">,</span> <span class="n">clip</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">square</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..ndarray.contrib</span> <span class="k">import</span> <span class="n">mp_adabelief_update</span><span class="p">,</span> <span class="n">adabelief_update</span><span class="p">,</span>\
+    <span class="n">multi_mp_adabelief_update</span><span class="p">,</span> <span class="n">multi_adabelief_update</span>
 
 
-<span class="k">def</span> <span class="nf">_flatten</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">inout_str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">args</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)),</span> \
-        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> must be (nested) list of NDArray, &quot;</span> \
-        <span class="s2">&quot;but got </span><span class="si">%s</span><span class="s2"> of type </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">inout_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
-    <span class="n">flat</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">fmts</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="n">arg</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">inout_str</span><span class="p">)</span>
-        <span class="n">flat</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-        <span class="n">fmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flat</span><span class="p">,</span> <span class="n">fmts</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AdaBelief&#39;</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_regroup</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">args</span><span class="p">[:</span><span class="n">fmt</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="n">fmt</span><span class="p">:]</span>
+<div class="viewcode-block" id="AdaBelief"><a class="viewcode-back" href="../../../api/optimizer/index.html#mxnet.optimizer.AdaBelief">[docs]</a><span class="nd">@register</span>
+<span class="k">class</span> <span class="nc">AdaBelief</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The AdaBelief optimizer.</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)),</span> \
-        <span class="s2">&quot;output must be (nested) list of NDArray, &quot;</span> \
-        <span class="s2">&quot;but got </span><span class="si">%s</span><span class="s2"> of type </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fmt</span><span class="p">:</span>
-        <span class="n">res</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">args</span>
+<span class="sd">    This class implements the optimizer described in *Adapting Stepsizes by the Belief in Observed Gradients*,</span>
+<span class="sd">     available at https://arxiv.org/pdf/2010.07468.pdf.</span>
+
+<span class="sd">    Updates are applied by::</span>
+
+<span class="sd">        grad = clip(grad * rescale_grad, clip_gradient) + wd * w</span>
+<span class="sd">        m = beta1 * m + (1 - beta1) * grad</span>
+<span class="sd">        s = beta2 * s + (1 - beta2) * ((grad - m)**2) + epsilon</span>
+<span class="sd">        lr = learning_rate * sqrt(1 - beta2**t) / (1 - beta1**t)</span>
+<span class="sd">        w = w - lr * (m / (sqrt(s) + epsilon))</span>
 
 
-<div class="viewcode-block" id="foreach"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.foreach">[docs]</a><span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">init_states</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run a for loop with user-defined computation over NDArrays on dimension 0.</span>
+<span class="sd">    Also, we can turn off the bias correction term and the updates are as follows::</span>
 
-<span class="sd">    This operator simulates a for loop and body has the computation for an iteration</span>
-<span class="sd">    of the for loop. It runs the computation in body on each slice from the input</span>
-<span class="sd">    NDArrays.</span>
+<span class="sd">        grad = clip(grad * rescale_grad, clip_gradient) + wd * w</span>
+<span class="sd">        m = beta1 * m + (1 - beta1) * grad</span>
+<span class="sd">        s = beta2 * s + (1 - beta2) * ((grad - m)**2) + epsilon</span>
+<span class="sd">        lr = learning_rate</span>
+<span class="sd">        w = w - lr * (m / (sqrt(s) + epsilon))</span>
 
-<span class="sd">    body takes two arguments as input and outputs a tuple of two elements,</span>
-<span class="sd">    as illustrated below::</span>
-
-<span class="sd">        out, states = body(data1, states)</span>
-
-<span class="sd">    data1 can be either an NDArray or a list of NDArrays. If data is an NDArray,</span>
-<span class="sd">    data1 is an NDArray. Otherwise, data1 is a list of NDArrays and has the same</span>
-<span class="sd">    size as data. states is a list of NDArrays and have the same size as init_states.</span>
-<span class="sd">    Similarly, out can be either an NDArray or a list of NDArrays, which are concatenated</span>
-<span class="sd">    as the first output of foreach; states from the last execution of body</span>
-<span class="sd">    are the second output of foreach.</span>
-
-<span class="sd">    The computation done by this operator is equivalent to the pseudo code below</span>
-<span class="sd">    when the input data is NDArray::</span>
-
-<span class="sd">        states = init_states</span>
-<span class="sd">        outs = []</span>
-<span class="sd">        for i in data.shape[0]:</span>
-<span class="sd">            s = data[i]</span>
-<span class="sd">            out, states = body(s, states)</span>
-<span class="sd">            outs.append(out)</span>
-<span class="sd">        outs = stack(*outs)</span>
-
+<span class="sd">    This optimizer accepts the following parameters in addition to those accepted</span>
+<span class="sd">    by :class:`.Optimizer`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    body : a Python function.</span>
-<span class="sd">        Define computation in an iteration.</span>
-<span class="sd">    data: an NDArray or a list of NDArrays.</span>
-<span class="sd">        The input data.</span>
-<span class="sd">    init_states: an NDArray or nested lists of NDArrays.</span>
-<span class="sd">        The initial values of the loop states.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    outputs: an NDArray or nested lists of NDArrays.</span>
-<span class="sd">        The output data concatenated from the output of all iterations.</span>
-<span class="sd">    states: an NDArray or nested lists of NDArrays.</span>
-<span class="sd">        The loop states in the last iteration.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; step = lambda data, states: (data + states[0], [states[0] * 2])</span>
-<span class="sd">    &gt;&gt;&gt; data = mx.nd.random.uniform(shape=(2, 10))</span>
-<span class="sd">    &gt;&gt;&gt; states = [mx.nd.random.uniform(shape=(10))]</span>
-<span class="sd">    &gt;&gt;&gt; outs, states = mx.nd.contrib.foreach(step, data, states)</span>
+<span class="sd">    learning_rate : float, default 0.001</span>
+<span class="sd">        The initial learning rate. If None, the optimization will use the</span>
+<span class="sd">        learning rate from ``lr_scheduler``. If not None, it will overwrite</span>
+<span class="sd">        the learning rate in ``lr_scheduler``. If None and ``lr_scheduler``</span>
+<span class="sd">        is also None, then it will be set to 0.01 by default.</span>
+<span class="sd">    beta1 : float, default 0.9</span>
+<span class="sd">        Exponential decay rate for the first moment estimates.</span>
+<span class="sd">    beta2 : float, default 0.999</span>
+<span class="sd">        Exponential decay rate for the second moment estimates.</span>
+<span class="sd">    epsilon : float, default 1e-6</span>
+<span class="sd">        Small value to avoid division by 0.</span>
+<span class="sd">    correct_bias : bool, default True</span>
+<span class="sd">       Can be set to False to avoid correcting bias in Adam (e.g. like in Bert TF repository).</span>
+<span class="sd">       Default True.</span>
+<span class="sd">    use_fused_step : bool, default True</span>
+<span class="sd">        Whether or not to use fused kernels for optimizer.</span>
+<span class="sd">        When use_fused_step=False, step is called,</span>
+<span class="sd">        otherwise, fused_step is called.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">beta1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                 <span class="n">correct_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_fused_step</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">use_fused_step</span><span class="o">=</span><span class="n">use_fused_step</span><span class="p">,</span>
+                         <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span> <span class="o">=</span> <span class="n">beta1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span> <span class="o">=</span> <span class="n">beta2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correct_bias</span> <span class="o">=</span> <span class="n">correct_bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_num</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span>
+                                        <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MXNET_OPTIMIZER_AGGREGATION_SIZE&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">))))</span>
 
-    <span class="k">def</span> <span class="nf">check_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-        <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">in_type</span><span class="p">):</span>
-                    <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">break</span>
+<div class="viewcode-block" id="AdaBelief.create_state"><a class="viewcode-back" href="../../../api/optimizer/index.html#mxnet.optimizer.AdaBelief.create_state">[docs]</a>    <span class="k">def</span> <span class="nf">create_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;state creation function.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">zeros</span><span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>  <span class="c1"># mean</span>
+                <span class="n">zeros</span><span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>  <span class="c1"># variance</span></div>
+
+<div class="viewcode-block" id="AdaBelief.step"><a class="viewcode-back" href="../../../api/optimizer/index.html#mxnet.optimizer.AdaBelief.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform an optimization step using gradients and states.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : list of int</span>
+<span class="sd">            List of unique indices of the parameters into the individual learning rates</span>
+<span class="sd">            and weight decays. Learning rates and weight decay may be set via `set_lr_mult()`</span>
+<span class="sd">            and `set_wd_mult()`, respectively.</span>
+<span class="sd">        weights : list of NDArray</span>
+<span class="sd">            List of parameters to be updated.</span>
+<span class="sd">        grads : list of NDArray</span>
+<span class="sd">            List of gradients of the objective with respect to this parameter.</span>
+<span class="sd">        states : List of any obj</span>
+<span class="sd">            List of state returned by `create_state()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_count</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">wd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_wd</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_update_count</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="c1"># preprocess grad</span>
+            <span class="n">grad</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span>
+            <span class="n">grad</span> <span class="o">+=</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_gradient</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="n">clip</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_gradient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_gradient</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_bias</span><span class="p">:</span>
+                <span class="n">coef1</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span><span class="o">**</span><span class="n">t</span>
+                <span class="n">coef2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span><span class="o">**</span><span class="n">t</span>
+                <span class="n">lr</span> <span class="o">*=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coef2</span><span class="p">)</span> <span class="o">/</span> <span class="n">coef1</span>
+
+            <span class="c1"># update mean and var</span>
+            <span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">state</span>
+            <span class="n">mean</span><span class="p">[:]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span>
+            <span class="n">mean</span><span class="p">[:]</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span><span class="p">)</span> <span class="o">*</span> <span class="n">grad</span>
+            <span class="n">var</span><span class="p">[:]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span>
+            <span class="n">var</span><span class="p">[:]</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span><span class="p">)</span> <span class="o">*</span> <span class="n">square</span><span class="p">(</span><span class="n">grad</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span>
+            <span class="n">var</span><span class="p">[:]</span> <span class="o">+=</span> <span class="n">eps</span>
+
+            <span class="c1"># update weight</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+            <span class="n">weight</span><span class="p">[:]</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="AdaBelief.fused_step"><a class="viewcode-back" href="../../../api/optimizer/index.html#mxnet.optimizer.AdaBelief.fused_step">[docs]</a>    <span class="k">def</span> <span class="nf">fused_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform a fused optimization step using gradients and states.</span>
+<span class="sd">        Fused kernel is used for update.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : list of int</span>
+<span class="sd">            List of unique indices of the parameters into the individual learning rates</span>
+<span class="sd">            and weight decays. Learning rates and weight decay may be set via `set_lr_mult()`</span>
+<span class="sd">            and `set_wd_mult()`, respectively.</span>
+<span class="sd">        weights : list of NDArray</span>
+<span class="sd">            List of parameters to be updated.</span>
+<span class="sd">        grads : list of NDArray</span>
+<span class="sd">            List of gradients of the objective with respect to this parameter.</span>
+<span class="sd">        states : List of any obj</span>
+<span class="sd">            List of state returned by `create_state()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">multi_precision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_precision</span> <span class="ow">and</span> <span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span>
+        <span class="n">aggregate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_num</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">weights</span><span class="p">]</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="p">[</span><span class="n">grads</span><span class="p">]</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">states</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">w_i</span><span class="p">,</span> <span class="n">g_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">):</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">w_i</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">))</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">g_i</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">))</span>
+            <span class="n">aggregate</span> <span class="o">=</span> <span class="p">(</span><span class="n">aggregate</span> <span class="ow">and</span>
+                         <span class="n">w_i</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span> <span class="ow">and</span>
+                         <span class="n">g_i</span><span class="o">.</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_count</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">lrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lrs</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">wds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_wds</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_bias</span><span class="p">:</span>
+            <span class="n">new_lrs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">lrs</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_update_count</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">coef1</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span> <span class="o">**</span> <span class="n">t</span>
+                <span class="n">coef2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span> <span class="o">**</span> <span class="n">t</span>
+                <span class="n">new_lrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lr</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coef2</span><span class="p">)</span> <span class="o">/</span> <span class="n">coef1</span><span class="p">)</span>
+            <span class="n">lrs</span> <span class="o">=</span> <span class="n">new_lrs</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">is_NDArray_or_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">in_type</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">is_NDArray_or_list</span><span class="p">,</span> <span class="n">msg</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;beta1&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta1</span><span class="p">,</span> <span class="s1">&#39;beta2&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta2</span><span class="p">,</span> <span class="s1">&#39;epsilon&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span>
+                  <span class="s1">&#39;rescale_grad&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale_grad</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_gradient</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;clip_gradient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_gradient</span>
 
-    <span class="n">flatten</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;foreach input&quot;</span><span class="p">)</span>
-    <span class="n">check_input</span><span class="p">(</span><span class="n">flatten</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
-                <span class="s2">&quot;data should be an NDArray or a nested list of NDArrays&quot;</span><span class="p">)</span>
-    <span class="n">flatten</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="s2">&quot;foreach states&quot;</span><span class="p">)</span>
-    <span class="n">check_input</span><span class="p">(</span><span class="n">flatten</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
-                <span class="s2">&quot;init_states should be an NDArray or a nested list of NDArrays&quot;</span><span class="p">)</span>
-
-    <span class="n">not_data_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
-    <span class="n">num_iters</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">not_data_list</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">states</span> <span class="o">=</span> <span class="n">init_states</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iters</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">not_data_list</span><span class="p">:</span>
-            <span class="n">eles</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">aggregate</span><span class="p">:</span>
+            <span class="n">current_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">current_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+                <span class="n">sidx</span> <span class="o">=</span> <span class="n">current_index</span>
+                <span class="n">eidx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">current_index</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_num</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">multi_precision</span><span class="p">:</span>
+                    <span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">states</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]))</span>
+                    <span class="n">multi_adabelief_update</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span> <span class="n">grads</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                           <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span>
+                                           <span class="n">out</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                           <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]),</span>
+                                           <span class="n">lrs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]))),</span>
+                                           <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                           <span class="n">etas</span><span class="o">=</span><span class="n">lrs</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mean_var</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">states</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">tmean_var</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mean_var</span><span class="p">))</span>
+                    <span class="n">mean</span> <span class="o">=</span> <span class="n">tmean_var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">var</span> <span class="o">=</span> <span class="n">tmean_var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">multi_mp_adabelief_update</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                              <span class="n">grads</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                              <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span>
+                                              <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">states</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]))[</span><span class="mi">1</span><span class="p">],</span>
+                                              <span class="n">out</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                              <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]),</span>
+                                              <span class="n">lrs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">]))),</span>
+                                              <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                              <span class="n">etas</span><span class="o">=</span><span class="n">lrs</span><span class="p">[</span><span class="n">sidx</span><span class="p">:</span><span class="n">eidx</span><span class="p">],</span>
+                                              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">current_index</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_num</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">eles</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-        <span class="n">outs</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="n">body</span><span class="p">(</span><span class="n">eles</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
-        <span class="n">outs</span><span class="p">,</span> <span class="n">out_fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span> <span class="s2">&quot;foreach output&quot;</span><span class="p">)</span>
-        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">)</span>
-    <span class="n">tmp_outputs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
-        <span class="n">tmp_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">*</span><span class="n">out</span><span class="p">))</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="n">tmp_outputs</span>
-    <span class="n">outputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">out_fmt</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="while_loop"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.while_loop">[docs]</a><span class="k">def</span> <span class="nf">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">loop_vars</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run a while loop with user-defined computation and loop condition.</span>
-
-<span class="sd">    This operator simulates a while loop which iterately does customized computation</span>
-<span class="sd">    as long as the condition is satisfied.</span>
-
-<span class="sd">    `loop_vars` is a list of NDArrays on which the computation uses.</span>
-
-<span class="sd">    `cond` is a user-defined function, used as the loop condition.</span>
-<span class="sd">    It consumes `loop_vars`, and produces a scalar MXNet NDArray,</span>
-<span class="sd">    indicating the termination of the loop.</span>
-<span class="sd">    The loop ends when `cond` returns false (zero).</span>
-<span class="sd">    The `cond` is variadic, and its signature should be</span>
-<span class="sd">    `cond(*loop_vars) =&gt; NDArray`.</span>
-
-<span class="sd">    `func` is a user-defined function, used as the loop body.</span>
-<span class="sd">    It also consumes `loop_vars`, and produces `step_output` and `new_loop_vars` at each step.</span>
-<span class="sd">    In each step, `step_output` should contain the same number elements.</span>
-<span class="sd">    Through all steps, the i-th element of `step_output` should have the same shape and dtype.</span>
-<span class="sd">    Also, `new_loop_vars` should contain the same number of elements as `loop_vars`,</span>
-<span class="sd">    and the corresponding element should have the same shape and dtype.</span>
-<span class="sd">    The `func` is variadic, and its signature should be</span>
-<span class="sd">    `func(*loop_vars) =&gt;</span>
-<span class="sd">    (NDArray or nested List[NDArray] step_output, NDArray or nested List[NDArray] new_loop_vars)`.</span>
-
-<span class="sd">    `max_iterations` is a scalar that defines the maximum number of iterations allowed.</span>
-
-<span class="sd">    This function returns two lists.</span>
-<span class="sd">    The first list has the length of `|step_output|`,</span>
-<span class="sd">    in which the i-th element are all i-th elements of</span>
-<span class="sd">    `step_output` from all steps, stacked along axis 0.</span>
-<span class="sd">    The second list has the length of `|loop_vars|`,</span>
-<span class="sd">    which represents final states of loop variables.</span>
-
-<span class="sd">    .. warning::</span>
-
-<span class="sd">       For now, the axis 0 of all NDArrays in the first list are `max_iterations`,</span>
-<span class="sd">       due to lack of dynamic shape inference.</span>
-
-<span class="sd">    .. warning::</span>
-
-<span class="sd">       When `cond` is never satisfied, we assume `step_output` is empty,</span>
-<span class="sd">       because it cannot be inferred. This is different from the symbolic version.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    cond: a Python function.</span>
-<span class="sd">        The loop condition.</span>
-<span class="sd">    func: a Python function.</span>
-<span class="sd">        The loop body.</span>
-<span class="sd">    loop_vars: an NDArray or nested lists of NDArrays.</span>
-<span class="sd">        The initial values of the loop variables.</span>
-<span class="sd">    max_iterations: a python int.</span>
-<span class="sd">        Maximum number of iterations.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    ------</span>
-<span class="sd">    outputs: an NDArray or nested lists of NDArrays</span>
-<span class="sd">        stacked output from each step</span>
-<span class="sd">    states: an NDArray or nested lists of NDArrays</span>
-<span class="sd">        final state</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; cond = lambda i, s: i &lt;= 5</span>
-<span class="sd">    &gt;&gt;&gt; func = lambda i, s: ([i + s], [i + 1, s + i])</span>
-<span class="sd">    &gt;&gt;&gt; loop_vars = (mx.nd.array([0], dtype=&quot;int64&quot;), mx.nd.array([1], dtype=&quot;int64&quot;))</span>
-<span class="sd">    &gt;&gt;&gt; outputs, states = mx.nd.contrib.while_loop(cond, func, loop_vars, max_iterations=10)</span>
-<span class="sd">    &gt;&gt;&gt; outputs</span>
-<span class="sd">    [</span>
-<span class="sd">    [[ 1]</span>
-<span class="sd">    [ 2]</span>
-<span class="sd">    [ 4]</span>
-<span class="sd">    [ 7]</span>
-<span class="sd">    [11]</span>
-<span class="sd">    [16]</span>
-<span class="sd">    [...]  # undefined value</span>
-<span class="sd">    [...]</span>
-<span class="sd">    [...]</span>
-<span class="sd">    [...]]</span>
-<span class="sd">    &lt;NDArray 6x1 @cpu(0)&gt;]</span>
-<span class="sd">    &gt;&gt;&gt; states</span>
-<span class="sd">    [</span>
-<span class="sd">    [6]</span>
-<span class="sd">    &lt;NDArray 1 @cpu(0)&gt;,</span>
-<span class="sd">    [16]</span>
-<span class="sd">    &lt;NDArray 1 @cpu(0)&gt;]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_to_python_scalar</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts &quot;inputs&quot;, possibly typed mxnet NDArray, a numpy ndarray, other python types,</span>
-<span class="sd">        to the given type</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">inputs</span>
-
-    <span class="k">def</span> <span class="nf">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This wrapper unifies</span>
-<span class="sd">             &quot;func: loop_vars -&gt; new_loop_vars&quot;</span>
-<span class="sd">         and &quot;func: loop_vars -&gt; (step_output, new_loop_vars)&quot;</span>
-<span class="sd">        into &quot;func: loop_vars -&gt; (None or tuple of step_outputs, tuple of new_loop_vars)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">step_output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">step_output</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">new_loop_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">step_output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
-        <span class="n">new_loop_vars</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_loop_vars</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of loop_vars should be consistent during the loop&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">step_output</span><span class="p">,</span> <span class="n">new_loop_vars</span>
-
-    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_iterations should be specified&quot;</span><span class="p">)</span>
-    <span class="n">max_iterations</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;max_iteration&quot;</span><span class="p">)</span>
-    <span class="c1"># It should be work as fine if loop_vars are empty I guess,</span>
-    <span class="c1"># but it is semantically unnecessary to include this case.</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;loop_vars should contain at least one element&quot;</span><span class="p">)</span>
-
-    <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># there might not be an iteration.</span>
-    <span class="n">out_fmt</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">not_loop_var_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span>
-    <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_as_list</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">max_iterations</span> <span class="ow">and</span> \
-            <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">cond</span><span class="p">(</span><span class="o">*</span><span class="n">loop_vars</span><span class="p">),</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">&quot;Return value of cond&quot;</span><span class="p">):</span> <span class="c1"># loop condition</span>
-        <span class="n">step_output</span><span class="p">,</span> <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">_func_wrapper</span><span class="p">(</span><span class="n">loop_vars</span><span class="p">)</span>
-        <span class="n">step_output</span><span class="p">,</span> <span class="n">out_fmt</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">step_output</span><span class="p">,</span> <span class="s2">&quot;while output&quot;</span><span class="p">)</span>
-        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span>
-        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">steps</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_output</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of elements in step_output should be the same in each step&quot;</span><span class="p">)</span>
-    <span class="n">stacked_outputs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i_th</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">),</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="c1"># `mx.ndarray.pad` only support 4-D or 5-D inputs for now</span>
-        <span class="c1"># so we could not use it.</span>
-        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">steps</span> <span class="o">!=</span> <span class="n">max_iterations</span> <span class="ow">and</span> <span class="n">items</span><span class="p">:</span>
-            <span class="n">pad_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">max_iterations</span> <span class="o">-</span> <span class="n">steps</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="p">])</span>
-            <span class="n">pad</span> <span class="o">=</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
-                <span class="n">shape</span><span class="o">=</span><span class="n">pad_shape</span><span class="p">,</span>
-                <span class="n">ctx</span><span class="o">=</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">pad</span><span class="p">]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">stacked_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndarray</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;Shapes of </span><span class="si">%d</span><span class="s2">-th elements in step_outputs are inconsistent, which are:&quot;</span> <span class="o">%</span> <span class="n">i_th</span><span class="p">]</span> <span class="o">+</span>
-                <span class="p">[</span><span class="s2">&quot;  Step </span><span class="si">%d</span><span class="s2">, shape is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
-            <span class="p">))</span>
-    <span class="k">if</span> <span class="n">out_fmt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_regroup</span><span class="p">(</span><span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">out_fmt</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">not_loop_var_list</span><span class="p">:</span>
-        <span class="n">loop_vars</span> <span class="o">=</span> <span class="n">loop_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">stacked_outputs</span><span class="p">,</span> <span class="n">loop_vars</span></div>
-
-<div class="viewcode-block" id="cond"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.cond">[docs]</a><span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">then_func</span><span class="p">,</span> <span class="n">else_func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run an if-then-else using user-defined condition and computation</span>
-
-<span class="sd">    This operator simulates a if-like branch which chooses to do one of</span>
-<span class="sd">    the two customized computations according to the specified condition.</span>
-
-<span class="sd">    `pred` is a scalar MXNet NDArray,</span>
-<span class="sd">    indicating which branch of computation should be used.</span>
-
-<span class="sd">    `then_func` is a user-defined function, used as computation of the then branch.</span>
-<span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
-<span class="sd">    The signature of `then_func` should be</span>
-<span class="sd">    `then_func() =&gt; NDArray or nested List[NDArray]`.</span>
-
-<span class="sd">    `else_func` is a user-defined function, used as computation of the else branch.</span>
-<span class="sd">    It produces `outputs`, which is a list of NDArrays.</span>
-<span class="sd">    The signature of `else_func` should be</span>
-<span class="sd">    `else_func() =&gt; NDArray or nested List[NDArray]`.</span>
-
-<span class="sd">    The `outputs` produces by `then_func` and `else_func` should have the same number</span>
-<span class="sd">    of elements, all of which should be in the same shape, of the same dtype and stype.</span>
-
-<span class="sd">    This function returns a list of symbols, representing the computation result.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    pred: a MXNet NDArray representing a scalar.</span>
-<span class="sd">        The branch condition.</span>
-<span class="sd">    then_func: a Python function.</span>
-<span class="sd">        The computation to be executed if `pred` is true.</span>
-<span class="sd">    else_func: a Python function.</span>
-<span class="sd">        The computation to be executed if `pred` is false.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    outputs: an NDArray or nested lists of NDArrays, representing the result of computation.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; a, b = mx.nd.array([1]), mx.nd.array([2])</span>
-<span class="sd">    &gt;&gt;&gt; pred = a * b &lt; 5</span>
-<span class="sd">    &gt;&gt;&gt; then_func = lambda: (a + 5) * (b + 5)</span>
-<span class="sd">    &gt;&gt;&gt; else_func = lambda: (a - 5) * (b - 5)</span>
-<span class="sd">    &gt;&gt;&gt; outputs = mx.nd.contrib.cond(pred, then_func, else_func)</span>
-<span class="sd">    &gt;&gt;&gt; outputs[0]</span>
-<span class="sd">    [42.]</span>
-<span class="sd">    &lt;NDArray 1 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_to_python_scalar</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts &quot;inputs&quot;, possibly typed mxnet NDArray, a numpy ndarray, other python types,</span>
-<span class="sd">        to the given type</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s2">&quot;asscalar&quot;</span><span class="p">):</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">asscalar</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">inputs</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot convert </span><span class="si">%s</span><span class="s2"> to python </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">inputs</span>
-
-    <span class="n">branch</span> <span class="o">=</span> <span class="n">_to_python_scalar</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">&quot;pred&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">branch</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">then_func</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">else_func</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="isinf"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.isinf">[docs]</a><span class="k">def</span> <span class="nf">isinf</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performs an element-wise check to determine if the NDArray contains an infinite element</span>
-<span class="sd">    or not.</span>
-
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    input : NDArray</span>
-<span class="sd">        An N-D NDArray.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    output: NDArray</span>
-<span class="sd">        The output NDarray, with same shape as input, where 1 indicates the array element is</span>
-<span class="sd">        equal to positive or negative infinity and 0 otherwise.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; data = mx.nd.array([np.inf, -np.inf, np.NINF, -1])</span>
-<span class="sd">    &gt;&gt;&gt; output = mx.nd.contrib.isinf(data)</span>
-<span class="sd">    &gt;&gt;&gt; output</span>
-<span class="sd">    [1. 1. 1. 0.]</span>
-<span class="sd">    &lt;NDArray 4 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
-
-<div class="viewcode-block" id="isfinite"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.isfinite">[docs]</a><span class="k">def</span> <span class="nf">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performs an element-wise check to determine if the NDArray contains an infinite element</span>
-<span class="sd">    or not.</span>
-
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    input : NDArray</span>
-<span class="sd">        An N-D NDArray.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    output: NDArray</span>
-<span class="sd">        The output NDarray, with same shape as input, where 1 indicates the array element is</span>
-<span class="sd">        finite i.e. not equal to positive or negative infinity and 0 in places where it is</span>
-<span class="sd">        positive or negative infinity.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; data = mx.nd.array([np.inf, -np.inf, np.NINF, -1])</span>
-<span class="sd">    &gt;&gt;&gt; output = mx.nd.contrib.isfinite(data)</span>
-<span class="sd">    &gt;&gt;&gt; output</span>
-<span class="sd">    [0. 0. 0. 1.]</span>
-<span class="sd">    &lt;NDArray 4 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">is_data_not_nan</span> <span class="o">=</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data</span>  <span class="c1"># pylint: disable=comparison-with-itself</span>
-    <span class="n">is_data_not_infinite</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">is_data_not_infinite</span><span class="p">,</span> <span class="n">is_data_not_nan</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="isnan"><a class="viewcode-back" href="../../../api/legacy/ndarray/contrib/index.html#mxnet.ndarray.contrib.isnan">[docs]</a><span class="k">def</span> <span class="nf">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performs an element-wise check to determine if the NDArray contains a NaN element</span>
-<span class="sd">    or not.</span>
-
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data : NDArray</span>
-<span class="sd">        An N-D NDArray.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    output: NDArray</span>
-<span class="sd">        The output NDarray, with same shape as input, where 1 indicates the array element is</span>
-<span class="sd">        NaN i.e. Not a Number and 0 otherwise.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; data = mx.nd.array([np.nan, -1])</span>
-<span class="sd">    &gt;&gt;&gt; output = mx.nd.contrib.isnan(data)</span>
-<span class="sd">    &gt;&gt;&gt; output</span>
-<span class="sd">    [1. 0.]</span>
-<span class="sd">    &lt;NDArray 2 @cpu(0)&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">data</span> <span class="o">!=</span> <span class="n">data</span>  <span class="c1"># pylint: disable=comparison-with-itself</span></div>
-
-<span class="k">def</span> <span class="nf">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mx</span><span class="o">.</span><span class="n">cpu</span><span class="p">()):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">NDArray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">val</span><span class="o">=</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">rescale_grad</span><span class="o">.</span><span class="n">as_in_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">adamw_update</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span>
-                 <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_adamw_update</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
-                                           <span class="n">rescale_grad</span><span class="o">=</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
-                                           <span class="n">beta1</span><span class="o">=</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="n">beta2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
-                                           <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=</span><span class="n">clip_gradient</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                           <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">mp_adamw_update</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weight32</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-                    <span class="n">beta2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_mp_adamw_update</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
-                                              <span class="n">weight32</span><span class="o">=</span><span class="n">weight32</span><span class="p">,</span>
-                                              <span class="n">rescale_grad</span><span class="o">=</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
-                                              <span class="n">beta1</span><span class="o">=</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="n">beta2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
-                                              <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=</span><span class="n">clip_gradient</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                              <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_adamw_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">etas</span><span class="p">,</span>
-                       <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">size</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="n">rescale_grad</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_adamw_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                 <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                 <span class="n">num_weights</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-                                                 <span class="n">lrs</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                 <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                 <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
-                                                 <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_mp_adamw_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">etas</span><span class="p">,</span>
-                          <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">size</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="n">rescale_grad</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_mp_adamw_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                    <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                    <span class="n">num_weights</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-                                                    <span class="n">lrs</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                    <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                    <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
-                                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_lamb_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
-                      <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
-<span class="sd">    following LAMB Optimizer implementation.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
-
-<span class="sd">    grads : List of NDArrays containing input gradients</span>
-
-<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
-
-<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
-
-<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
-
-<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
-
-<span class="sd">    wds : List of weight decays (one for each tensor)</span>
-
-<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
-
-<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
-        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_lamb_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
-                                                <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
-                                                <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_mp_lamb_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
-                         <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
-<span class="sd">    following LAMB Optimizer implementation, and using Mixed-Precision.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
-
-<span class="sd">    grads : List of NDArrays containing input gradients</span>
-
-<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
-
-<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
-
-<span class="sd">    weights32 : Master copy of weights in FP32</span>
-
-<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
-
-<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
-
-<span class="sd">    wds : List of weight decays (one for each tensor)</span>
-
-<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
-
-<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
-        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_mp_lamb_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                   <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                   <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
-                                                   <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
-                                                   <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                   <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">adabelief_update</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span>
-                     <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_adabelief_update</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
-                                               <span class="n">rescale_grad</span><span class="o">=</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
-                                               <span class="n">beta1</span><span class="o">=</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="n">beta2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
-                                               <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=</span><span class="n">clip_gradient</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                               <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">mp_adabelief_update</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weight32</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-                        <span class="n">beta2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weight</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_mp_adabelief_update</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
-                                                  <span class="n">weight32</span><span class="o">=</span><span class="n">weight32</span><span class="p">,</span>
-                                                  <span class="n">rescale_grad</span><span class="o">=</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
-                                                  <span class="n">beta1</span><span class="o">=</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="o">=</span><span class="n">beta2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
-                                                  <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">clip_gradient</span><span class="o">=</span><span class="n">clip_gradient</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                  <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_adabelief_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">etas</span><span class="p">,</span>
-                           <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">size</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="n">rescale_grad</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_adabelief_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                     <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                     <span class="n">num_weights</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-                                                     <span class="n">lrs</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                     <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                     <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
-                                                     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_mp_adabelief_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">,</span> <span class="n">rescale_grad</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">etas</span><span class="p">,</span>
-                              <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">size</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-
-    <span class="n">rescale_grad</span> <span class="o">=</span> <span class="n">_get_rescale_grad</span><span class="p">(</span><span class="n">rescale_grad</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="n">rescale_grad</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_mp_adabelief_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                        <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                        <span class="n">num_weights</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-                                                        <span class="n">lrs</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                        <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                        <span class="n">etas</span><span class="o">=</span><span class="n">etas</span><span class="p">,</span>
-                                                        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">multi_lans_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
-                      <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
-<span class="sd">    following LANS Optimizer implementation.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
-
-<span class="sd">    grads : List of NDArrays containing input gradients</span>
-
-<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
-
-<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
-
-<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
-
-<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
-
-<span class="sd">    wds : List of weight decays (one for each tensor)</span>
-
-<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
-
-<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
-        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_lans_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
-                                                <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
-                                                <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">multi_mp_lans_update</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">,</span> <span class="n">step_count</span><span class="p">,</span>
-                         <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_tensors</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a list of gradients, update weights, mean and variance of multiple tensors</span>
-<span class="sd">    following LANS Optimizer implementation, and using Mixed-Precision.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    weights : List of NDArrays containing the input weights of multiple tensors</span>
-
-<span class="sd">    grads : List of NDArrays containing input gradients</span>
-
-<span class="sd">    mean : List of NDArrays containing mean of multiple tensors to be updated</span>
-
-<span class="sd">    var : List of NDArrays containing variance of multiple tensors to be updated</span>
-
-<span class="sd">    weights32 : Master copy of weights in FP32</span>
-
-<span class="sd">    step_count : List of scalars with the number of update step for each tensor</span>
-
-<span class="sd">    lrs : List of learning rates (one for each tensor)</span>
-
-<span class="sd">    wds : List of weight decays (one for each tensor)</span>
-
-<span class="sd">    out: List of NDArrays where the updated weights will be stored</span>
-
-<span class="sd">    num_tensors : Number of NDArrays/tensors in the list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_tensors</span><span class="p">:</span>
-        <span class="n">num_tensors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-    <span class="n">temp_list</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">weights32</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ndarray</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">_multi_mp_lans_update</span><span class="p">(</span><span class="o">*</span><span class="n">temp_list</span><span class="p">,</span>
-                                                   <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
-                                                   <span class="n">num_tensors</span><span class="o">=</span><span class="n">num_tensors</span><span class="p">,</span>
-                                                   <span class="n">step_count</span><span class="o">=</span><span class="n">step_count</span><span class="p">,</span>
-                                                   <span class="n">learning_rates</span><span class="o">=</span><span class="n">lrs</span><span class="p">,</span>
-                                                   <span class="n">wds</span><span class="o">=</span><span class="n">wds</span><span class="p">,</span>
-                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">w_i</span><span class="p">,</span> <span class="n">g_i</span><span class="p">,</span> <span class="n">s_i</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">wds</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">multi_precision</span><span class="p">:</span>
+                    <span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">s_i</span>
+                    <span class="n">adabelief_update</span><span class="p">(</span><span class="n">w_i</span><span class="p">,</span> <span class="n">g_i</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">w_i</span><span class="p">,</span>
+                                     <span class="n">lr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">s_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">mp_adabelief_update</span><span class="p">(</span><span class="n">w_i</span><span class="p">,</span> <span class="n">g_i</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">s_i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="n">w_i</span><span class="p">,</span>
+                                        <span class="n">lr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
         <hr class="feedback-hr-top" />
