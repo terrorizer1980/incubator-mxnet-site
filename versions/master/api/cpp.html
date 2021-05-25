@@ -311,6 +311,32 @@ if(!(window.doNotTrack === "1" || navigator.doNotTrack === "1" || navigator.doNo
         
         
         
+        
+        <div class="docs-card docs-side">
+            <ul>
+                <div class="docs-action-btn">
+                    <a href="/versions/master/api/cpp.html"> <img src="/versions/master/assets/img/compass.svg"
+                                                                      class="docs-logo-docs">C/C++ Guide <span
+                            class="span-accented">›</span></a>
+                </div>
+                <div class="docs-action-btn">
+                    <a href="/versions/master/api/cpp/docs/tutorials"> <img
+                            src="/versions/master/assets/img/video-tutorial.svg" class="docs-logo-docs">C/C++
+                        Tutorials <span class="span-accented">›</span></a>
+                </div>
+                <div class="docs-action-btn">
+                    <a href="/versions/master/api/cpp/docs/api"> <img src="/versions/master/assets/img/api.svg"
+                                                                    class="docs-logo-docs">C/C++ API Reference
+                        <span class="span-accented">›</span></a>
+                </div>
+
+                <!-- Let's show the list of tutorials -->
+                <br>
+                
+            </ul>
+        </div>
+        
+        
            <!-- resource-p -->
         
            <!-- resource-p -->
@@ -510,8 +536,8 @@ The users of these bindings are required to build this package as mentioned belo
 
 <h2 id="building-c-package">Building C++ Package</h2>
 
-<p>The cpp-package directory contains the implementation of C++ API. As mentioned above, users are required to build this directory or package before using it.
-<strong>The cpp-package is built while building the MXNet shared library, <em>libmxnet.so</em>.</strong></p>
+<p>The cpp-package directory contains the implementation of C++ API. Users are required to build this directory or package before using it. 
+<strong>The cpp-package is built while building the MXNet shared library, <em>libmxnet.so</em>, with <em>USE_CPP_PACKAGE</em> option turned on. Please follow the steps to build the C++ package</strong></p>
 
 <h3 id="steps-to-build-the-c-package">Steps to build the C++ package:</h3>
 <ol>
@@ -520,9 +546,20 @@ The users of these bindings are required to build this package as mentioned belo
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone --recursive https://github.com/apache/incubator-mxnet mxnet
 </code></pre></div>    </div>
   </li>
-  <li>Install the <a href="https://mxnet.apache.org/get_started/build_from_source#prerequisites">prerequisites</a>, desired <a href="https://mxnet.apache.org/get_started/build_from_source#blas-library">BLAS libraries</a> and optional <a href="https://mxnet.apache.org/get_started/build_from_source#optional">OpenCV, CUDA, and cuDNN</a> for building MXNet from source.</li>
-  <li>Please refer to  <a href="https://mxnet.apache.org/get_started/build_from_source#build-instructions-by-operating-system">platform specific build instructions</a> and available <a href="https://mxnet.apache.org/get_started/build_from_source#build-configurations">build configurations</a> for more details.</li>
-  <li>For enabling the build of C++ Package, set the <strong>USE_CPP_PACKAGE = 1</strong> in the config file.</li>
+  <li>Install the <a href="https://mxnet.apache.org/versions/master/get_started/build_from_source.html#installing-mxnet's-recommended-dependencies">recommended dependencies</a> and <a href="https://mxnet.apache.org/versions/master/get_started/build_from_source.html#overview-of-optional-dependencies-and-optional-features">optional dependencies</a> for building MXNet from source.</li>
+  <li>There is a configuration file for cmake, <a href="https://github.com/apache/incubator-mxnet/tree/master/config">config/*.cmake</a> that contains all the compilation options. You can edit this file and set the appropriate options prior to running the <strong>cmake</strong> command.</li>
+  <li>Please refer to  <a href="https://github.com/apache/incubator-mxnet/blob/970a2cfbe77d09ee610fdd70afca1a93247cf4fb/config/linux_gpu.cmake#L18-L37">cmake configuration files</a> for more details on how to configure and compile MXNet.</li>
+  <li>For enabling the build of C++ Package, set the <strong>-DUSE_CPP_PACKAGE = 1</strong> in cmake options.</li>
+</ol>
+
+<h3 id="cross-compilation-steps">Cross-Compilation steps:</h3>
+<ol>
+  <li>Build the C++ package for the <strong>host</strong> platform to generate op.h file.</li>
+  <li>Remove the following line in <a href="https://github.com/apache/incubator-mxnet/blob/master/cpp-package/CMakeLists.txt#L15">CMakeLists.txt</a>.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COMMAND python OpWrapperGenerator.py $&lt;TARGET_FILE:mxnet&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>Re-configure cmake for cross-compilation to build the <strong>target</strong> C++ package.</li>
 </ol>
 
 <h2 id="usage">Usage</h2>
