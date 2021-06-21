@@ -204,7 +204,6 @@ Edit on Github
 <li class="toctree-l3"><a class="reference internal" href="../../tutorials/packages/gluon/index.html">Gluon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/index.html">Blocks</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom-layer.html">Custom Layers</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom_layer_beginners.html">Customer Layers (Beginners)</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/hybridize.html">Hybridize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/init.html">Initialization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/naming.html">Parameter and Block Naming</a></li>
@@ -265,7 +264,6 @@ Edit on Github
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/index.html">Tutorials</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/csr.html">CSRNDArray - NDArray in Compressed Sparse Row Storage Format</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/row_sparse.html">RowSparseNDArray - NDArray for Sparse Gradient Updates</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/train_gluon.html">Sparse NDArrays with Gluon</a></li>
 </ul>
 </li>
 </ul>
@@ -797,7 +795,6 @@ Edit on Github
 <li class="toctree-l3"><a class="reference internal" href="../../tutorials/packages/gluon/index.html">Gluon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/index.html">Blocks</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom-layer.html">Custom Layers</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom_layer_beginners.html">Customer Layers (Beginners)</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/hybridize.html">Hybridize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/init.html">Initialization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/naming.html">Parameter and Block Naming</a></li>
@@ -858,7 +855,6 @@ Edit on Github
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/index.html">Tutorials</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/csr.html">CSRNDArray - NDArray in Compressed Sparse Row Storage Format</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/row_sparse.html">RowSparseNDArray - NDArray for Sparse Gradient Updates</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/train_gluon.html">Sparse NDArrays with Gluon</a></li>
 </ul>
 </li>
 </ul>
@@ -1943,15 +1939,16 @@ zero-size tensors’ shapes in shape inference functions of operators, instead o
 in legacy mode; (2) ndarrays of type <code class="xref py py-class docutils literal notranslate"><span class="pre">mxnet.numpy.ndarray</span></code> should be created instead of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">mx.nd.NDArray</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">nd</span><span class="p">,</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
 <span class="k">class</span> <span class="nc">TestHybridBlock1</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TestHybridBlock1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span><span class="p">())</span> <span class="o">+</span> <span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="n">net1</span> <span class="o">=</span> <span class="n">TestHybridBlock1</span><span class="p">()</span>
@@ -1961,14 +1958,14 @@ in legacy mode; (2) ndarrays of type <code class="xref py py-class docutils lite
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">())</span> <span class="ow">is</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span>
 <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="ow">is</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span>
 
-<span class="nd">@np.use_np</span>
+<span class="nd">@mx.util.use_np</span>
 <span class="k">class</span> <span class="nc">TestHybridBlock2</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TestHybridBlock2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(())</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(())</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="n">net2</span> <span class="o">=</span> <span class="n">TestHybridBlock2</span><span class="p">()</span>
@@ -2002,15 +1999,16 @@ with the semantics of NumPy-array, which means that where ndarrays are created,
 For example, at the time when a parameter is created in a <cite>Block</cite>, an <cite>mxnet.numpy.ndarray</cite>
 is created if it’s decorated with this decorator.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mxnet</span> <span class="kn">as</span> <span class="nn">mx</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">nd</span><span class="p">,</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
 <span class="k">class</span> <span class="nc">TestHybridBlock1</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TestHybridBlock1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span><span class="p">())</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="n">net1</span> <span class="o">=</span> <span class="n">TestHybridBlock1</span><span class="p">()</span>
@@ -2020,14 +2018,14 @@ is created if it’s decorated with this decorator.</p>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">())</span> <span class="ow">is</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span>
 <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="ow">is</span> <span class="n">mx</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">NDArray</span>
 
-<span class="nd">@np.use_np_array</span>
+<span class="nd">@mx.util.use_np_array</span>
 <span class="k">class</span> <span class="nc">TestHybridBlock2</span><span class="p">(</span><span class="n">gluon</span><span class="o">.</span><span class="n">HybridBlock</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TestHybridBlock2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">hybrid_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span><span class="p">())</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="n">net2</span> <span class="o">=</span> <span class="n">TestHybridBlock2</span><span class="p">()</span>

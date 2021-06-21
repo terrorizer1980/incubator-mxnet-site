@@ -203,7 +203,6 @@ Edit on Github
 <li class="toctree-l3"><a class="reference internal" href="../../tutorials/packages/gluon/index.html">Gluon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/index.html">Blocks</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom-layer.html">Custom Layers</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom_layer_beginners.html">Customer Layers (Beginners)</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/hybridize.html">Hybridize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/init.html">Initialization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/naming.html">Parameter and Block Naming</a></li>
@@ -264,7 +263,6 @@ Edit on Github
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/index.html">Tutorials</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/csr.html">CSRNDArray - NDArray in Compressed Sparse Row Storage Format</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/row_sparse.html">RowSparseNDArray - NDArray for Sparse Gradient Updates</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/train_gluon.html">Sparse NDArrays with Gluon</a></li>
 </ul>
 </li>
 </ul>
@@ -796,7 +794,6 @@ Edit on Github
 <li class="toctree-l3"><a class="reference internal" href="../../tutorials/packages/gluon/index.html">Gluon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/index.html">Blocks</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom-layer.html">Custom Layers</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/custom_layer_beginners.html">Customer Layers (Beginners)</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/hybridize.html">Hybridize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/init.html">Initialization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/gluon/blocks/naming.html">Parameter and Block Naming</a></li>
@@ -857,7 +854,6 @@ Edit on Github
 <li class="toctree-l5"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/index.html">Tutorials</a><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/csr.html">CSRNDArray - NDArray in Compressed Sparse Row Storage Format</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/row_sparse.html">RowSparseNDArray - NDArray for Sparse Gradient Updates</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../../tutorials/packages/legacy/ndarray/sparse/train_gluon.html">Sparse NDArrays with Gluon</a></li>
 </ul>
 </li>
 </ul>
@@ -1771,15 +1767,16 @@ Edit on Github
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import mxnet as mx</span>
-<span class="sd">        from mxnet import gluon, np</span>
+<span class="sd">        from mxnet import gluon, nd, np</span>
+<span class="sd">        from mxnet.gluon import Parameter</span>
 
 <span class="sd">        class TestHybridBlock1(gluon.HybridBlock):</span>
 <span class="sd">            def __init__(self):</span>
 <span class="sd">                super(TestHybridBlock1, self).__init__()</span>
-<span class="sd">                self.w = self.params.get(&#39;w&#39;, shape=(2, 2))</span>
+<span class="sd">                self.w = Parameter(&#39;w&#39;, shape=(2, 2))</span>
 
-<span class="sd">            def hybrid_forward(self, F, x, w):</span>
-<span class="sd">                return F.dot(x, w)</span>
+<span class="sd">            def forward(self, x):</span>
+<span class="sd">                return nd.dot(x, self.w.data())</span>
 
 <span class="sd">        x = mx.nd.ones((2, 2))</span>
 <span class="sd">        net1 = TestHybridBlock1()</span>
@@ -1789,14 +1786,14 @@ Edit on Github
 <span class="sd">            assert type(v.data()) is mx.nd.NDArray</span>
 <span class="sd">        assert type(out) is mx.nd.NDArray</span>
 
-<span class="sd">        @np.use_np_array</span>
+<span class="sd">        @mx.util.use_np_array</span>
 <span class="sd">        class TestHybridBlock2(gluon.HybridBlock):</span>
 <span class="sd">            def __init__(self):</span>
 <span class="sd">                super(TestHybridBlock2, self).__init__()</span>
-<span class="sd">                self.w = self.params.get(&#39;w&#39;, shape=(2, 2))</span>
+<span class="sd">                self.w = Parameter(&#39;w&#39;, shape=(2, 2))</span>
 
-<span class="sd">            def hybrid_forward(self, F, x, w):</span>
-<span class="sd">                return F.np.dot(x, w)</span>
+<span class="sd">            def forward(self, x):</span>
+<span class="sd">                return np.dot(x, self.w.data())</span>
 
 <span class="sd">        x = np.ones((2, 2))</span>
 <span class="sd">        net2 = TestHybridBlock2()</span>
@@ -1851,15 +1848,16 @@ Edit on Github
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import mxnet as mx</span>
-<span class="sd">        from mxnet import gluon, np</span>
+<span class="sd">        from mxnet import gluon, nd, np</span>
+<span class="sd">        from mxnet.gluon import Parameter</span>
 
 <span class="sd">        class TestHybridBlock1(gluon.HybridBlock):</span>
 <span class="sd">            def __init__(self):</span>
 <span class="sd">                super(TestHybridBlock1, self).__init__()</span>
-<span class="sd">                self.w = self.params.get(&#39;w&#39;, shape=(2, 2))</span>
+<span class="sd">                self.w = Parameter(&#39;w&#39;, shape=(2, 2))</span>
 
-<span class="sd">            def hybrid_forward(self, F, x, w):</span>
-<span class="sd">                return F.dot(x, w) + F.ones((1,))</span>
+<span class="sd">            def forward(self, x):</span>
+<span class="sd">                return nd.dot(x, self.w.data()) + nd.ones((1,))</span>
 
 <span class="sd">        x = mx.nd.ones((2, 2))</span>
 <span class="sd">        net1 = TestHybridBlock1()</span>
@@ -1869,14 +1867,14 @@ Edit on Github
 <span class="sd">            assert type(v.data()) is mx.nd.NDArray</span>
 <span class="sd">        assert type(out) is mx.nd.NDArray</span>
 
-<span class="sd">        @np.use_np</span>
+<span class="sd">        @mx.util.use_np</span>
 <span class="sd">        class TestHybridBlock2(gluon.HybridBlock):</span>
 <span class="sd">            def __init__(self):</span>
 <span class="sd">                super(TestHybridBlock2, self).__init__()</span>
-<span class="sd">                self.w = self.params.get(&#39;w&#39;, shape=(2, 2))</span>
+<span class="sd">                self.w = Parameter(&#39;w&#39;, shape=(2, 2))</span>
 
-<span class="sd">            def hybrid_forward(self, F, x, w):</span>
-<span class="sd">                return F.np.dot(x, w) + F.np.ones(())</span>
+<span class="sd">            def forward(self, x):</span>
+<span class="sd">                return np.dot(x, self.w.data()) + np.ones(())</span>
 
 <span class="sd">        x = np.ones((2, 2))</span>
 <span class="sd">        net2 = TestHybridBlock2()</span>
